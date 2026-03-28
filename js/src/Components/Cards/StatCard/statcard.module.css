@@ -1,0 +1,27 @@
+.stat-card {
+    width: 21rem;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0.875rem;
+    border: 1px solid #364153;
+    background: #1E2939;
+    gap: 2.25rem;
+    padding: 1.5rem;
+}
+
+.icon-container {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.625rem;
+}
+
+.value {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.text {
+    color: #99A1AF;
+    font-weight: 400;
+    font-size: 0.75rem;
+}

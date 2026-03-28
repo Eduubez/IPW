@@ -1,5 +1,32 @@
 {
+    "Login":{
+        "appName": "IPW",
+        "appSubtitle": "Insurance Process Workflow",
+        "welcome":"Olá !",
+        "welcomeText":"Utilize as suas credenciais para acessar a sua conta"
+    },
     "text":{
         "title": "Bem vindo a IPW "
+        
+    },
+    "Profile": {
+        "title": "O seu Perfil",
+        "description":"Veja e gerencie as informações do seu perfil",
+        "activeProcess": "Nº de Processos Ativos",
+        "completedProcessWeekly": "Nº de Processos Concluídos esta Semana",
+        "waitingApproval": "Nº de Processos a aguardar Aprovação"
+    },
+    "Label": {
+        "createNewProcess": "Criar processo",
+        "enter":"Entrar",
+        "email":"Email",
+        "password":"Password",
+        "permissions":"Permissões"
+    },
+    "RoleSelection": {
+        "title":"Papeis disponíveis",
+        "description":"Escolha o seu papel"
+
     }
+
 }

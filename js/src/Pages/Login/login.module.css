@@ -1,0 +1,58 @@
+.login-container {
+    width: 28rem;
+    height: 43.25rem;
+    gap: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.header {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title-icon-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.body {
+    display: flex;
+    height: 31.5rem;
+    flex-direction: column;
+    gap: 1.5rem;
+    border-radius: 0.875rem;
+    border: 1px solid #364153;
+    background: #1E2939;
+    padding: 1.5rem;
+}
+
+.body-top {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 1.5rem 1.5rem 0 1.5rem;
+}
+
+.subtitle {
+    text-align: center;
+    font-family: Inter;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 500;
+}
+
+.button-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 3rem;
+}

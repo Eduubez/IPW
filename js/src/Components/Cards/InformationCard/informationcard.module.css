@@ -1,0 +1,28 @@
+.information-card {
+    display: flex;
+    flex-direction: row;
+    min-width: 10rem;
+    gap: 0.5rem;
+}
+
+.information-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.information-icon {
+    font-size: 1.25rem;
+    color: var(--color-background-secondary);
+}
+
+.information-icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.625rem;
+    background: var(--color-border-primary);
+}

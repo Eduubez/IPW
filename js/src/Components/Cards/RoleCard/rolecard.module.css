@@ -1,0 +1,62 @@
+.role-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex: 1;
+    border-radius: 0.875rem;
+    align-items: center;
+    background: #1E2939;
+    padding: 1.5rem;
+    min-width: 20rem;
+    max-width: 25rem;
+}
+
+.role-card:hover {
+    transition: background-color 0.4s ease, opacity 0.4s ease;
+    opacity: 0.8;
+}
+
+
+.card-top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-direction: column;
+}
+
+
+.card-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-start;
+
+}
+
+.card-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+
+.permission-item {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.card-top .icon-large {
+    width: 3rem;
+    height: 3rem;
+    font-size: 1.5rem;
+    border-radius: 1rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
