@@ -3,7 +3,7 @@
 Cada endpoint inclui:
 - método HTTP
 - roles que podem aceder
-- regras de negócio
+- Informação extra
 
 
 ## Processes
@@ -15,11 +15,11 @@ Cada endpoint inclui:
 **Roles:**
 - Triator
 
-**Regras:**
+**Info:**
 - Cria um novo processo
 - Prioridade e seguradora são obrigatórios
 - Investigator e supervisor podem ou não ser definidos logo na criação
-- O processo fica com estado inicial `not_assigned` ou `assigned` dependendo de já existir investigator
+- O processo fica com estado inicial `not_assigned` ou `assigned` dependendo de já existir investigator e supervisor
 
 
 ### Get Process By Id
@@ -32,7 +32,7 @@ Cada endpoint inclui:
 - Manager
 - Triator
 
-**Regras:**
+**Info:**
 - Triator: pode ver os processos criados por si
 - Investigator: 
   - Só pode ver processos atribuídos a si
@@ -43,7 +43,7 @@ Cada endpoint inclui:
 
 ### Get Processes
 
-**Endpoint:** `GET /processes`
+**Endpoint:** `GET /processes?offset={offset}&limit={limit}&area_id={area_id}`
 
 **Roles:**
 - Investigator
@@ -51,11 +51,13 @@ Cada endpoint inclui:
 - Manager
 - Triator
 
-**Regras:**
+**Info:**
 - Investigator: vê apenas os seus processos
 - Supervisor: vê apenas processos da sua área
 - Manager: vê todos os processos
 - Triator: vê apenas processos criados por si
+- Suporta paginação através de offset e limit
+- Pode filtrar por área
 
 
 ### Update Process
@@ -66,24 +68,24 @@ Cada endpoint inclui:
 - Supervisor
 - Manager
 
-**Regras:**
+**Info:**
 - Supervisor: só pode editar processos da sua área
 - Manager: pode editar qualquer processo
 - este endpoint serve para atualizar campos gerais do processo
 - não serve para editar report nem notes
 
 
-### Assign Investigator
+### Assign Investigator (and Supervisor)
 
 **Endpoint:** `PUT /processes/{id}/investigator`
 
 **Roles:**
 - Triator
 
-**Regras:**
+**Info:**
 - Apenas o triator pode atribuir investigator
 - O investigator deve pertencer à mesma área do processo, porém pode haver exceções
-- Ao atribuir investigator, o estado passa para `assigned`
+- Se investigator e supervisor ficarem definidos, o processo passa para `assigned`
 
 
 ### Change Priority
@@ -94,7 +96,7 @@ Cada endpoint inclui:
 - Supervisor
 - Manager
 
-**Regras:**
+**Info:**
 - Supervisor: só pode alterar prioridade em processos da sua área
 - Manager: pode alterar prioridade em qualquer processo
 
@@ -106,7 +108,7 @@ Cada endpoint inclui:
 **Roles:**
 - Manager
 
-**Regras:**
+**Info:**
 - Apenas manager pode cancelar processos
 - O estado passa para `canceled`
 
@@ -115,14 +117,14 @@ Cada endpoint inclui:
 
 ### Get Report
 
-**Endpoint:** `GET /processes/{id}/report`
+**Endpoint:** `GET /report/processes/{id}`
 
 **Roles:**
 - Investigator
 - Supervisor
 - Manager
 
-**Regras:**
+**Info:**
 - Investigator: 
   - Pode ver se for o responsável pelo processo
   - Ou se tiver task atribuída
@@ -132,12 +134,12 @@ Cada endpoint inclui:
 
 ### Create / Update Report
 
-**Endpoint:** `PUT /processes/{id}/report`
+**Endpoint:** `PUT /report/processes/{id}`
 
 **Roles:**
 - Investigator
 
-**Regras:**
+**Info:**
 - Investigator: 
   - Pode editar se for o responsável do processo
   - ou se tiver task atribuída
@@ -147,12 +149,12 @@ Cada endpoint inclui:
 
 ### Submit Report
 
-**Endpoint:** `POST /processes/{id}/report/submit`
+**Endpoint:** `POST /report/processes/{id}/submit`
 
 **Roles:**
 - Investigator
 
-**Regras:**
+**Info:**
 - Apenas o investigator do processo pode submeter
 - Ao submeter:
     - Estado passa para `waiting_approval_supervisor`
@@ -161,12 +163,12 @@ Cada endpoint inclui:
 
 ### Approve Report (Supervisor)
 
-**Endpoint:** `POST /processes/{id}/report/approve-supervisor`
+**Endpoint:** `POST /report/processes/{id}/approve-supervisor`
 
 **Roles:**
 - Supervisor
 
-**Regras:**
+**Info:**
 - Apenas supervisor da área do processo
 - Ao aprovar:
     - Estado passa para `waiting_approval_manager`
@@ -174,12 +176,12 @@ Cada endpoint inclui:
 
 ### Reject Report (Supervisor)
 
-**Endpoint:** `POST /processes/{id}/report/reject-supervisor`
+**Endpoint:** `POST /report/processes/{id}/reject-supervisor`
 
 **Roles:**
 - Supervisor
 
-**Regras:**
+**Info:**
 - Apenas supervisor da área do processo
 - Deve incluir comentário
 - Ao rejeitar:
@@ -189,12 +191,12 @@ Cada endpoint inclui:
 
 ### Approve Report (Manager)
 
-**Endpoint:** `POST /processes/{id}/report/approve-manager`
+**Endpoint:** `POST /report/processes/{id}/approve-manager`
 
 **Roles:**
 - Manager
 
-**Regras:**
+**Info:**
 - Manager pode aprovar qualquer report
 - Ao aprovar:
     - Estado passa para `approved_by_manager`
@@ -202,12 +204,12 @@ Cada endpoint inclui:
 
 ### Reject Report (Manager)
 
-**Endpoint:** `POST /processes/{id}/report/reject-manager`
+**Endpoint:** `POST /report/processes/{id}/reject-manager`
 
 **Roles:**
 - Manager
 
-**Regras:**
+**Info:**
 - Manager pode rejeitar qualquer report
 - Deve incluir comentário
 - Ao rejeitar:
@@ -215,19 +217,100 @@ Cada endpoint inclui:
     - Processo volta ao supervisor 
 
 
+## Notes
 
-## Tasks (Diligencia)
+### Get Notes by Process
 
-### Get Tasks
-
-**Endpoint:** `GET /processes/{id}/tasks`
+**Endpoint:** `GET /notes/process/{id}`
 
 **Roles:**
 - Investigator
 - Supervisor
 - Manager
 
-**Regras:**
+**Info:**
+- Retorna todas as notas associadas a um processo
+
+### Create Note on Process
+
+**Endpoint:** `POST /notes/process/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- Cria uma nota associada ao processo
+- O autor é automaticamente o utilizador autenticado
+
+
+### Get Notes by Prove
+
+**Endpoint:** `GET /notes/prove/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- Retorna notas associadas a um anexo
+
+
+
+### Create Note on Prove
+
+**Endpoint:** `POST /notes/prove/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- Cria uma nota associada a um anexo
+
+
+### Update Note
+
+**Endpoint:** `PUT /notes/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- O autor pode editar a sua própria nota
+- Supervisor e Manager podem editar qualquer nota
+
+
+### Delete Note
+
+**Endpoint:** `DELETE /notes/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- O autor pode apagar a sua nota
+- Manager pode apagar qualquer nota
+
+## Tasks (Diligencia)
+
+### Get Tasks
+
+**Endpoint:** `GET /tasks/processes/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
 - Investigator:
     - Pode ver tasks se for o responsável pelo processo
     - Ou se tiver uma task atribuída nesse processo
@@ -246,7 +329,7 @@ Cada endpoint inclui:
 - Supervisor
 - Manager
 
-**Regras:**
+**Info:**
 - Investigator:
     - Pode ver se for responsável pela task
     - Ou se for o investigator principal do processo
@@ -258,12 +341,12 @@ Cada endpoint inclui:
 
 ### Create Task
 
-**Endpoint:** `POST /processes/{id}/tasks`
+**Endpoint:** `POST /tasks/processes/{id}`
 
 **Roles:**
 - Investigator
 
-**Regras:**
+**Info:**
 - Apenas o investigator responsável pelo processo pode criar tasks
 - A task deve ser atribuída a outro investigator
 - A task representa um pedido de apoio no terreno
@@ -279,7 +362,7 @@ Cada endpoint inclui:
 - Supervisor
 - Manager
 
-**Regras:**
+**Info:**
 - Investigator:
     - Pode atualizar se for o responsável pela task
 - Supervisor:
@@ -290,75 +373,19 @@ Cada endpoint inclui:
     - Description (resumo do trabalho realizado)
     - Status (`pending`, `on_going`, `completed`, `canceled`)
 
-
-
-## Dashboards
-
-### Investigator Dashboard
-
-**Endpoint:** `GET /dashboard/investigator`
-
-**Roles:**
-- Investigator
-
-**Regras:**
-- Retorna apenas dados do investigator 
-
-**Inclui:**
-- Processos em curso (`on_going`)
-- Processos a aguardar aprovação do supervisor
-- Processos fechados
-- Número de processos por mês
-
-
-### Supervisor Dashboard
-
-**Endpoint:** `GET /dashboard/supervisor`
-
-**Roles:**
-- Supervisor
-
-**Regras:**
-- Retorna apenas dados da área do supervisor
-
-**Inclui:**
-- Processos da área
-- Processos em curso
-- Processos a aguardar aprovação do manager
-- Processos fechados
-- Número de processos por mês
-
-
-### Manager Dashboard
-
-**Endpoint:** `GET /dashboard/manager`
-
-**Roles:**
-- Manager
-
-**Regras:**
-- Acesso a todos os processos
-
-**Inclui:**
-- Todos os processos
-- Processos em curso
-- Processos fechados
-- Processos por área
-- Número de processos por mês
-
-
-
 ## Users
 
 ### Get Users
 
-**Endpoint:** `GET /users`
+**Endpoint:** `GET /users?offset={offset}&limit={limit}&area_id={area_id}`
 
 **Roles:**
 - Admin
 
-**Regras:**
+**Info:**
 - Retorna todos os utilizadores
+- Suporta paginação através de offset e limit
+- Pode filtrar por área
 
 
 ### Get User By Id
@@ -368,7 +395,7 @@ Cada endpoint inclui:
 **Roles:**
 - Admin
 
-**Regras:**
+**Info:**
 - Retorna informação de um utilizador específico
 
 
@@ -379,7 +406,7 @@ Cada endpoint inclui:
 **Roles:**
 - Admin
 
-**Regras:**
+**Info:**
 - Apenas admin pode criar utilizadores
 - Deve definir:
     - Nome
@@ -396,7 +423,7 @@ Cada endpoint inclui:
 **Roles:**
 - Admin
 
-**Regras:**
+**Info:**
 - Apenas admin pode editar utilizadores
 - Pode alterar:
     - Nome
@@ -404,15 +431,22 @@ Cada endpoint inclui:
     - Password
     - Roles
     - Área
+    - isActive
 
 
-### Delete User
 
-**Endpoint:** `DELETE /users/{id}`
+## Activity
+
+### Get Activity Logs by Process
+
+**Endpoint:** `GET /activity/process/{id}?offset={offset}&limit={limit}`
 
 **Roles:**
-- Admin
+- Investigator
+- Supervisor
+- Manager
 
-**Regras:**
-- Apenas admin pode remover utilizadores
-
+**Info:**
+- Retorna o histórico de atividades de um processo
+- As atividades são geradas automaticamente pelo sistema a partir de outras ações
+- Suporta paginação através de offset e limit
