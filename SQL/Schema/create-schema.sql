@@ -9,13 +9,14 @@ create table Users(
     name          varchar(150) not null,
     email         varchar(150) not null unique,
     password_hash varchar(255) not null,
-    area_id       int null references Area(id)
+    area_id       int null references Area(id),
+    is_active     boolean not null default true
 );
 
 
 create table Token(
     token       varchar(255) primary key,
-    user_id     int not null references Users(id),
+    user_id     int not null references Users(id) on delete cascade,
     created_at  timestamp not null default current_timestamp,
     expires_at  timestamp not null
 );
@@ -55,25 +56,32 @@ create table Typification(
     honorary numeric(10,2)
 );
 
+create table Insurance(
+    id      serial primary key,
+    name    varchar(150) not null unique
+);
+
 create table Process(
     id                  serial primary key,
     name                varchar(150) not null,
+    insurance_id        int not null references Insurance(id),
     location            varchar(255) not null,
     creation_date       timestamp not null default current_timestamp,
     due_date            timestamp,
     priority            varchar(20) not null
-        check (priority in ('low', 'medium', 'high', 'urgent')),
-    insurance_company   varchar(150) not null,
+        check (priority in ('normal', 'with_priority', 'urgent')),
 
     area_id             int not null references Area(id),
     typification_id     int not null references Typification(id),
 
-    triator_id          int references Users(id),
+    triator_id          int not null references Users(id),
     investigator_id     int references Users(id),
-    supervisor_id       int references Users(id)
+    supervisor_id       int references Users(id),
+    constraint due_date_higher_than_creation_date
+        check(due_date is null or due_date >= creation_date)
 );
 
-create table Diligencia(
+create table Diligence(
     id              serial primary key,
     process_id      int not null references Process(id),
     investigator_id int not null references Users(id),
@@ -86,6 +94,7 @@ create table Diligencia(
 );
 
 create table State(
+    id          serial primary key,
     process_id  int not null references Process(id),
     name        varchar(100) not null
               check( name in
@@ -122,5 +131,25 @@ create table Proves(
     created_at  timestamp not null default current_timestamp
 );
 
+create table Notes(
+    id          serial primary key,
+    process_id  int references Process(id),
+    proves_id   int references Proves(id),
+    content     text not null,
+    author_id   int not null references Users(id),
+    created_at timestamp not null default current_timestamp,
+    constraint notes_process_or_proves_check
+        check (
+            (process_id is not null  and proves_id is null) or
+            (process_id is null and proves_id is not null)
+        )
+);
 
-
+create table Activity(
+    id          serial primary key,
+    process_id  int not null references Process(id),
+    user_id     int not null references Users(id),
+    action      varchar(100) not null,
+    description text,
+    created_at  timestamp not null default current_timestamp
+);
