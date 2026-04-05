@@ -1,13 +1,13 @@
 import styles from "./statcard.module.css";
 
-export default function StatCard({
+export function StatCard({
   icon,
   text,
   value,
 }: {
   icon: { name: string; style?: React.CSSProperties };
   text: string;
-  value: string;
+  value: number | string;
 }) {
   return (
     <div className={styles["stat-card"]}>

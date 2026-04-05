@@ -7,14 +7,12 @@ import { useTranslation } from "react-i18next";
 export default function RoleCard({
   icon,
   title,
-  subtitle,
-  permissons,
+  permissions,
   style,
 }: {
   icon: { name: string; style?: React.CSSProperties };
   title: string;
-  subtitle: string;
-  permissons: string[];
+  permissions: string[];
   style?: React.CSSProperties;
 }) {
   const { t } = useTranslation();
@@ -31,7 +29,7 @@ export default function RoleCard({
       </div>
       <div className={styles["card-bottom"]}>
         <span>{t("Label.permissions")}:</span>
-        {permissons.map((perm, index) => (
+        {permissions.map((perm, index) => (
           <div key={index} className={styles["permission-item"]}>
             <span className="material-symbols-outlined">{Icon.Shield}</span>
             <span className="paragraph-s-regular">{perm}</span>

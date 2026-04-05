@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import styles from "./roleselection.module.css";
 import RoleCard from "../../Components/Cards/RoleCard/RoleCard";
 import { mockRoles } from "../../MockData/MockRoles";
@@ -26,8 +26,7 @@ export default function RoleSelection() {
             icon={role.icon}
             key={index}
             title={role.title}
-            subtitle={role.subtitle}
-            permissons={role.permissions}
+            permissions={role.permissions}
             style={role.style}
           />
         ))}

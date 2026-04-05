@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./informationcard.module.css";
 export function InformationCard({
   icon,
@@ -18,8 +17,8 @@ export function InformationCard({
         </span>
       </div>
       <div className={styles["information-content"]}>
-        <span>{title}</span>
-        <span>{description}</span>
+        <span className={styles["information-content-title"]}>{title}</span>
+        <span className={styles["information-content-description"]}>{description}</span>
       </div>
     </div>
   );

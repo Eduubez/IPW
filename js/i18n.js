@@ -1,6 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import translastionPT from "./resources/translation/pt/translation.json";
+import translationEN from "./resources/translation/en/translation.json";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -8,6 +9,9 @@ import translastionPT from "./resources/translation/pt/translation.json";
 const resources = {
     pt: {
         translation: translastionPT
+    },
+    en: {
+        translation: translationEN
     }
 }
 
@@ -16,7 +20,8 @@ i18n
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         resources,
-        lng: "pt", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+        lng: localStorage.getItem("i18nextLng") || "pt", // language to use, more information here: https://www.i18next.com/overview/configuration-options#languages-namespaces-resources
+        fallbackLng: "pt",
         // you can use the i18n.changeLanguage function to change the language manually: https://www.i18next.com/overview/api#changelanguage
         // if you're using a language detector, do not define the lng option
 

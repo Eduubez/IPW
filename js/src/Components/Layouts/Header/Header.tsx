@@ -1,5 +1,4 @@
 import styles from "./header.module.css";
-import React from "react";
 
 export function Header({
   title,

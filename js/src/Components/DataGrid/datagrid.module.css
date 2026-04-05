@@ -1,0 +1,129 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1.5rem;
+    gap: 1.5rem;
+}
+
+.data-grid {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1.5rem;
+    gap: 1.5rem;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: 1px solid #364153;
+    background: #1E2939;
+    width: 50%;
+}
+.icon-wrapper{
+    color: #E0E7FF;
+    font-size: 1.5rem;
+    min-width: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-input {
+    background: transparent;
+    border: none;
+    color: #E0E7FF;
+    padding: 0.625rem;
+    width: 100%;
+    margin-right: 2.25rem;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+.grid-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.grid-title {
+    display: flex;
+    justify-content: start;
+}
+
+.grid-actions {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.grid-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 60vh;
+}
+
+.columns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-width: 5rem;
+    border-bottom: 1px solid #364153;
+
+}
+
+.rows {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 5rem;
+}
+
+.row {
+    border-bottom: 1px solid #364153;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-width: 5rem;
+}
+
+.cell {
+    display: flex;
+    justify-content: start;
+    padding: 10px;
+    width: 100%;
+}
+
+.pagination-button {
+    background: #1E2939;
+    border: 1px solid #364153;
+    color: #E0E7FF;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+.pagination{
+    margin-top:auto;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 1rem;
+}
+.pagination-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 5rem;
+}

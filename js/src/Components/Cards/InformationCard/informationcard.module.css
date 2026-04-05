@@ -26,3 +26,14 @@
     border-radius: 0.625rem;
     background: var(--color-border-primary);
 }
+
+.information-content-title {
+    color: var(--color-background-secondary);
+    font-size: 0.75rem;
+
+}
+
+.information-content-description {
+    font-size: 0.875rem;
+    color: var(--color-text-primary);
+}

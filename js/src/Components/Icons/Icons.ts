@@ -9,4 +9,13 @@ export const Icon = {
     Visibility: "visibility",
     Location: "location_on",
     Calendar: "calendar_today",
+    Success: "check_circle",
+    Error: "cancel",
+    Info: "info",
+    Warning: "warning",
+    ArrowForward: "arrow_forward",
+    ArrowBack: "arrow_back",
+    Check: "check",
+    Circle: "circle",
+    Clock: "schedule",
 }

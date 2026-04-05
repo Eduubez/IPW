@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./profile.module.css";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { useTranslation } from "react-i18next";
@@ -6,10 +5,11 @@ import { Header } from "../../Components/Layouts/Header/Header";
 import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
 import { InformationCard } from "../../Components/Cards/InformationCard/InformationCard";
 import { Icon } from "../../Components/Icons/Icons";
-import { Badge } from "../../Components/Badge/Badge";
+import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { Color } from "../../StyleGuide/colors";
+import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 const mockUser = {
-  name: "João Silva",
+  name: "João Bezerra",
   email: "example@email.com",
   location: "Lisboa, Portugal",
   joinDate: new Date("2022-01-15"),
@@ -42,7 +42,7 @@ export default function Profile() {
           </div>
           <div className={styles["information-container"]}>
             <p className={styles["user-name"]}>{mockUser.name}</p>
-            <Badge
+            <PrimaryBadge
               text={mockUser.role}
               style={{ background: Color.GreenPrimary }}
             />
@@ -65,6 +65,9 @@ export default function Profile() {
                 enabled={true}
               />
             </div>
+            <div className={styles["action-item"]}>
+              <LanguageSwitcher />
+          </div>
           </div>
         </div>
       </WithBackground>

@@ -1,0 +1,19 @@
+.dot-style {
+    width: 1rem;
+    height: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.done {
+    border-color: var(--color-light-green);
+}
+
+.icon-done {
+    font-size: 0.75rem;
+    color: var(--color-light-green);
+}
+.timeline-separator-done{
+    color: var(--color-light-green)
+}
