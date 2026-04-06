@@ -6,15 +6,19 @@ begin
         Role_Permission,
         User_Role,
         Token,
+        Activity,
+        Notes,
         State,
         Report,
         Proves,
-        Diligencia,
+        Diligence,
         Process,
         Permission,
         Role,
         Users,
         Typification,
+        Insurance,
+        Location,
         Area
         restart identity cascade;
 end;

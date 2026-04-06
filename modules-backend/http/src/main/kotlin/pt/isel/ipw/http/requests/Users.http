@@ -1,0 +1,34 @@
+@cookieToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NzU1MTY2NzgsImV4cCI6MTc3NTUyMzg3OH0.KIFA1fVofgFaw54FnXzjLU8Y5vBspBbor0f_d-U6nIbCLIjDOJwWxaWqE_PyAsNzMAEV0arHVTRqv7OvcNI1Sw
+
+
+### Create User
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "name": "Chico",
+  "email": "chico@gmail.com",
+  "password": "123456",
+  "areaId": null,
+  "roles": ["admin"]
+}
+
+
+### Login
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "email": "chico@gmail.com",
+  "password": "123456"
+}
+
+
+### Select Role
+POST http://localhost:8080/users/auth/select-role
+Content-Type: application/json
+Cookie: auth_token={{cookieToken}}
+
+{
+  "role": "admin"
+}

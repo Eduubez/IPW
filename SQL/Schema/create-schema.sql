@@ -1,7 +1,25 @@
+drop table if exists Activity cascade;
+drop table if exists Notes cascade;
+drop table if exists Proves cascade;
+drop table if exists Report cascade;
+drop table if exists State cascade;
+drop table if exists Diligence cascade;
+drop table if exists Process cascade;
+drop table if exists Location cascade;
+drop table if exists Insurance cascade;
+drop table if exists Typification cascade;
+drop table if exists Role_Permission cascade;
+drop table if exists Permission cascade;
+drop table if exists User_Role cascade;
+drop table if exists Token cascade;
+drop table if exists Role cascade;
+drop table if exists Users cascade;
+drop table if exists Area cascade;
+
 
 create table Area(
-                     id   serial primary key,
-                     name varchar(100) not null unique
+    id   serial primary key,
+    name varchar(100) not null unique
 );
 
 create table Users(
@@ -14,24 +32,25 @@ create table Users(
 );
 
 
-create table Token(
-    token       varchar(255) primary key,
-    user_id     int not null references Users(id) on delete cascade,
-    created_at  timestamp not null default current_timestamp,
-    expires_at  timestamp not null
-);
-
 create table Role(
     name varchar(255) not null primary key
-        check (name in
-           (
-           'admin',
-           'triator',
-           'investigator',
-           'supervisor',
-           'manager'
-           )
-        )
+     check (name in
+            (
+             'admin',
+             'triator',
+             'investigator',
+             'supervisor',
+             'manager'
+            )
+     )
+);
+
+create table Token(
+    token       text primary key,
+    user_id     int not null references Users(id) on delete cascade,
+    active_role varchar(50) references Role(name),
+    created_at  timestamp not null default current_timestamp,
+    expires_at  timestamp not null
 );
 
 create table User_Role(
@@ -61,13 +80,23 @@ create table Insurance(
     name    varchar(150) not null unique
 );
 
+create table Location(
+    id           serial primary key,
+    district     varchar(100),
+    county       varchar(100),
+    street       varchar(255),
+    latitude     numeric(10,7),
+    longitude    numeric(10,7)
+);
+
 create table Process(
     id                  serial primary key,
     name                varchar(150) not null,
     insurance_id        int not null references Insurance(id),
-    location            varchar(255) not null,
+    location            int not null references Location(id),
     creation_date       timestamp not null default current_timestamp,
     due_date            timestamp,
+    is_suspect_fraud    boolean not null default false,
     priority            varchar(20) not null
         check (priority in ('normal', 'with_priority', 'urgent')),
 
@@ -87,7 +116,7 @@ create table Diligence(
     investigator_id int not null references Users(id),
     description     text not null,
     status          varchar(20) not null
-       check (status in ('pending', 'on_going', 'completed', 'canceled')),
+      check (status in ('pending', 'on_going', 'completed', 'canceled')),
     created_at      timestamp not null default current_timestamp,
     due_date        timestamp,
     completed_at    timestamp
@@ -97,22 +126,24 @@ create table State(
     id          serial primary key,
     process_id  int not null references Process(id),
     name        varchar(100) not null
-              check( name in
-                  (
-                  'not_assigned',
-                  'assigned',
-                  'on_going',
-                  'waiting_approval_supervisor',
-                  'approved_by_supervisor',
-                  'rejected_by_supervisor',
-                  'waiting_approval_manager',
-                  'approved_by_manager',
-                  'rejected_by_manager',
-                  'canceled'
-                  )
-              ),
+      check( name in
+             (
+              'not_assigned',
+              'assigned',
+              'on_going',
+              'waiting_approval_supervisor',
+              'approved_by_supervisor',
+              'rejected_by_supervisor',
+              'waiting_approval_manager',
+              'approved_by_manager',
+              'rejected_by_manager',
+              'canceled'
+                 )
+          ),
     start_date  timestamp not null default current_timestamp,
     end_date    timestamp
+    constraint state_end_date_after_start_date
+          check (end_date is null or end_date >= start_date)
 );
 
 create table Report(
@@ -139,10 +170,10 @@ create table Notes(
     author_id   int not null references Users(id),
     created_at timestamp not null default current_timestamp,
     constraint notes_process_or_proves_check
-        check (
-            (process_id is not null  and proves_id is null) or
-            (process_id is null and proves_id is not null)
-        )
+      check (
+          (process_id is not null  and proves_id is null) or
+          (process_id is null and proves_id is not null)
+      )
 );
 
 create table Activity(
