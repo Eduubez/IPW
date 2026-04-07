@@ -2,10 +2,19 @@ package pt.isel.ipw.services
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import pt.isel.ipw.domain.User
 import pt.isel.ipw.domain.output.LoginResponse
+import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.auth.LoginResult
 import pt.isel.ipw.services.auth.TokenService
+import pt.isel.ipw.services.errors.Either
+import pt.isel.ipw.services.errors.Failure
+import pt.isel.ipw.services.errors.Success
+import pt.isel.ipw.services.errors.UserError
+import pt.isel.ipw.services.errors.failure
+import pt.isel.ipw.services.errors.success
+
 
 @Service
 class UserService(
@@ -19,43 +28,42 @@ class UserService(
     fun login(
         email: String,
         password: String
-    ): LoginResult = transactionManager.run {
-        val user = usersRepository.getUserByEmail(email)
-            ?: throw IllegalArgumentException("Invalid credentials")
+    ): Either<UserError, LoginResult> = transactionManager.run {
+        val user: User? = usersRepository.getUserByEmail(email)
 
-        if (!user.isActive) {
-            throw IllegalArgumentException("User is inactive")
-        }
+        val error: UserError? = validateLogin(user, password)
+        error?.let { return@run  failure(it)}
 
-        if (!passwordEncoder.matches(password, user.passwordHash)) {
-            throw IllegalArgumentException("Invalid credentials")
-        }
+        val validUser = user!!
+        val roles = usersRepository.getUserRoles(validUser.id)
 
-        val roles = usersRepository.getUserRoles(user.id)
-        val createdToken = tokenService.createLoginToken(user.id, roles)
+        tokensRepository.deleteTokensByUserId(validUser.id) // atençao aqui -> isto significa 1 user = 1 sessao ativa
+        val createdToken = tokenService.createLoginToken(validUser.id, roles)
 
         tokensRepository.createToken(
             createdToken.token,
-            user.id,
+            validUser.id,
             activeRole = null,
             expiresAt = createdToken.expiresAt
         )
 
-        LoginResult(
-            token = createdToken.token,
-            userId = user.id,
-            roles = roles,
-            expiresAt = createdToken.expiresAt
+        success(
+            LoginResult(
+                token = createdToken.token,
+                userId = validUser.id,
+                roles = roles,
+                expiresAt = createdToken.expiresAt
+            )
         )
     }
 
     fun getUserRoles(
         email: String
-    ): List<String> = transactionManager.run {
+    ): Either<UserError, List<String>> = transactionManager.run {
         val user = usersRepository.getUserByEmail(email)
-            ?: return@run emptyList()
+            ?: return@run failure(UserError.InvalidCredentials)
 
-        usersRepository.getUserRoles(user.id)
+        Success(usersRepository.getUserRoles(user.id))
     }
 
     fun createUser(
@@ -64,19 +72,10 @@ class UserService(
         password: String,
         areaId: Int?,
         roles: List<String>
-    ): Int = transactionManager.run {
-        if(usersRepository.isUserStoredByEmail(email)) {
-            throw IllegalArgumentException("User with email $email already exists")
-        }
+    ): Either<UserError, Int> = transactionManager.run {
 
-        if (password.length < 5) {
-            throw IllegalArgumentException("Password must have at least 5 characters")
-        }
-
-
-        if (roles.isEmpty() || roles.size > 5 || roles.any { it !in validRoles } ) {
-            throw IllegalArgumentException("User must have at least one role")
-        }
+        val error: UserError? = this.validateUserCreation(email, password, roles)
+        error?.let { return@run failure(it) }
 
         val passwordHash = passwordEncoder.encode(password)!!
 
@@ -91,19 +90,22 @@ class UserService(
             usersRepository.addUserRole(userId, role)
         }
 
-        userId
+        success(userId)
     }
-
 
     fun selectRole(
         token: String,
         role: String
-    ) = transactionManager.run {
+    ): Either<UserError, Unit> = transactionManager.run {
 
-        val claims = tokenService.parseToken(token)
+        val claims = try {
+            tokenService.parseToken(token)
+        } catch(e: Exception) {
+            return@run failure(UserError.InvalidToken)
+        }
 
         if(role !in claims.roles) {
-            throw IllegalArgumentException("Role $role is not valid for this user")
+            return@run failure(UserError.InvalidRoleSelection)
         }
 
         val updated = tokensRepository.updateActiveRole(
@@ -112,7 +114,30 @@ class UserService(
         )
 
         if(updated == 0) {
-            throw IllegalArgumentException("Invalid token")
+            return@run failure(UserError.InvalidToken)
+        }
+
+        success(Unit)
+    }
+
+    private fun validateLogin(user: User?, password: String): UserError? {
+        return when {
+            user == null -> UserError.InvalidCredentials
+            !(user.isActive) -> UserError.UserNotActive
+            !(passwordEncoder.matches(password, user.passwordHash)) ->
+                UserError.InvalidCredentials
+
+            else -> null
         }
     }
+
+    private fun Transaction.validateUserCreation(email: String, password: String, roles: List<String>): UserError? {
+        return when {
+            usersRepository.isUserStoredByEmail(email) -> UserError.UserAlreadyExists
+            password.length < 5 -> UserError.InsecurePassword
+            roles.isEmpty() || roles.size > 5 || roles.any { it !in validRoles } -> UserError.InvalidRoles
+            else -> null
+        }
+    }
+
 }

@@ -12,4 +12,8 @@ class JdbiTransaction(
     override val usersRepository by lazy { JdbiUsersRepository(handle) }
     override val tokensRepository by lazy { JdbiTokensRepository(handle) }
 
+    override fun rollback() {
+        handle.rollback()
+    }
+
 }

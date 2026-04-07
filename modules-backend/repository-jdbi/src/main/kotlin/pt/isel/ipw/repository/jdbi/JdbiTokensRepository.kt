@@ -40,4 +40,15 @@ class JdbiTokensRepository(
             .bind("activeRole", activeRole)
             .execute()
     }
+
+    override fun deleteTokensByUserId(userId: Int): Int {
+        return handle.createUpdate(
+        """
+                delete from Token
+                where user_id = :userId
+            """
+        )
+            .bind("userId", userId)
+            .execute()
+    }
 }

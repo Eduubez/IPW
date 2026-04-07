@@ -14,4 +14,6 @@ interface TokensRepository {
         token: String,
         activeRole: String
     ): Int
+
+    fun deleteTokensByUserId(userId: Int): Int
 }

@@ -147,7 +147,8 @@ create table State(
 );
 
 create table Report(
-    process_id  int primary key references Process(id),
+    id          serial primary key,
+    process_id  int not null references Process(id),
     content     text not null,
     created_at  timestamp not null default current_timestamp,
     updated_at  timestamp not null default current_timestamp

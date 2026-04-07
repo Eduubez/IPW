@@ -1,5 +1,4 @@
-@cookieToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NzU1MTY2NzgsImV4cCI6MTc3NTUyMzg3OH0.KIFA1fVofgFaw54FnXzjLU8Y5vBspBbor0f_d-U6nIbCLIjDOJwWxaWqE_PyAsNzMAEV0arHVTRqv7OvcNI1Sw
-
+@cookieToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NzU1ODQ0NzEsImV4cCI6MTc3NTU5MTY3MX0.BMjacOEZd1lkbD-22J1PrFIcznW5zmSmtTG7ohXIIPCmSH9PqcsrP0Gd-ub4V1uJBjTws70rzbyb8uBNTbz_Ew
 
 ### Create User
 POST http://localhost:8080/users
@@ -7,10 +6,10 @@ Content-Type: application/json
 
 {
   "name": "Chico",
-  "email": "chico@gmail.com",
-  "password": "123456",
+  "email": "aahhhh@gmail.com",
+  "password": "12345",
   "areaId": null,
-  "roles": ["admin"]
+  "roles": ["admin", "triator"]
 }
 
 
@@ -19,8 +18,8 @@ POST http://localhost:8080/users/login
 Content-Type: application/json
 
 {
-  "email": "chico@gmail.com",
-  "password": "123456"
+  "email": "aahhhh@gmail.com",
+  "password": "12345"
 }
 
 
@@ -32,3 +31,6 @@ Cookie: auth_token={{cookieToken}}
 {
   "role": "admin"
 }
+
+### Get Roles
+GET http://localhost:8080/users/roles?email=chico@gmail.com

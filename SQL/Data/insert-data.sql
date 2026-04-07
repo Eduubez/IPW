@@ -1,5 +1,5 @@
 call clean_database();
-
+call reset_database();
 -- =========================
 -- AREA
 -- =========================
