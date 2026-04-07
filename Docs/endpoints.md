@@ -113,57 +113,9 @@ Cada endpoint inclui:
 - O estado passa para `canceled`
 
 
-## Report
-
-### Get Report
-
-**Endpoint:** `GET /report/processes/{id}`
-
-**Roles:**
-- Investigator
-- Supervisor
-- Manager
-
-**Info:**
-- Investigator: 
-  - Pode ver se for o responsável pelo processo
-  - Ou se tiver task atribuída
-- Supervisor: apenas processos da sua área
-- Manager: acesso total
-
-
-### Create / Update Report
-
-**Endpoint:** `PUT /report/processes/{id}`
-
-**Roles:**
-- Investigator
-
-**Info:**
-- Investigator: 
-  - Pode editar se for o responsável do processo
-  - ou se tiver task atribuída
-- Este endpoint cria o report caso ainda não exista
-- Se já existir, atualiza o content
-
-
-### Submit Report
-
-**Endpoint:** `POST /report/processes/{id}/submit`
-
-**Roles:**
-- Investigator
-
-**Info:**
-- Apenas o investigator do processo pode submeter
-- Ao submeter:
-    - Estado passa para `waiting_approval_supervisor`
-    - Apenas pode voltar a editar após rejeição
-
-
 ### Approve Report (Supervisor)
 
-**Endpoint:** `POST /report/processes/{id}/approve-supervisor`
+**Endpoint:** `POST /process/{id}/report/approve-supervisor`
 
 **Roles:**
 - Supervisor
@@ -171,12 +123,12 @@ Cada endpoint inclui:
 **Info:**
 - Apenas supervisor da área do processo
 - Ao aprovar:
-    - Estado passa para `waiting_approval_manager`
+  - Estado passa para `waiting_approval_manager`
 
 
 ### Reject Report (Supervisor)
 
-**Endpoint:** `POST /report/processes/{id}/reject-supervisor`
+**Endpoint:** `POST /process/{id}/report/reject-supervisor`
 
 **Roles:**
 - Supervisor
@@ -185,13 +137,13 @@ Cada endpoint inclui:
 - Apenas supervisor da área do processo
 - Deve incluir comentário
 - Ao rejeitar:
-    - Estado passa para `rejected_by_supervisor`
-    - Processo volta ao investigator
+  - Estado passa para `rejected_by_supervisor`
+  - Processo volta ao investigator
 
 
 ### Approve Report (Manager)
 
-**Endpoint:** `POST /report/processes/{id}/approve-manager`
+**Endpoint:** `POST /process/{id}/report/approve-manager`
 
 **Roles:**
 - Manager
@@ -199,12 +151,12 @@ Cada endpoint inclui:
 **Info:**
 - Manager pode aprovar qualquer report
 - Ao aprovar:
-    - Estado passa para `approved_by_manager`
+  - Estado passa para `approved_by_manager`
 
 
 ### Reject Report (Manager)
 
-**Endpoint:** `POST /report/processes/{id}/reject-manager`
+**Endpoint:** `POST /process/{id}/report/reject-manager`
 
 **Roles:**
 - Manager
@@ -213,8 +165,8 @@ Cada endpoint inclui:
 - Manager pode rejeitar qualquer report
 - Deve incluir comentário
 - Ao rejeitar:
-    - Estado passa para `rejected_by_manager`
-    - Processo volta ao supervisor 
+  - Estado passa para `rejected_by_manager`
+  - Processo volta ao supervisor
 
 
 ## Notes
@@ -299,80 +251,6 @@ Cada endpoint inclui:
 - O autor pode apagar a sua nota
 - Manager pode apagar qualquer nota
 
-## Tasks (Diligencia)
-
-### Get Tasks
-
-**Endpoint:** `GET /tasks/processes/{id}`
-
-**Roles:**
-- Investigator
-- Supervisor
-- Manager
-
-**Info:**
-- Investigator:
-    - Pode ver tasks se for o responsável pelo processo
-    - Ou se tiver uma task atribuída nesse processo
-- Supervisor:
-    - Apenas processos da sua área
-- Manager:
-    - Acesso total
-
-
-### Get Task By Id
-
-**Endpoint:** `GET /tasks/{taskId}`
-
-**Roles:**
-- Investigator
-- Supervisor
-- Manager
-
-**Info:**
-- Investigator:
-    - Pode ver se for responsável pela task
-    - Ou se for o investigator principal do processo
-- Supervisor:
-    - Apenas tasks de processos da sua área
-- Manager:
-    - Acesso total
-
-
-### Create Task
-
-**Endpoint:** `POST /tasks/processes/{id}`
-
-**Roles:**
-- Investigator
-
-**Info:**
-- Apenas o investigator responsável pelo processo pode criar tasks
-- A task deve ser atribuída a outro investigator
-- A task representa um pedido de apoio no terreno
-- A task fica com estado inicial `pending`
-
-
-### Update Task
-
-**Endpoint:** `PUT /tasks/{taskId}`
-
-**Roles:**
-- Investigator
-- Supervisor
-- Manager
-
-**Info:**
-- Investigator:
-    - Pode atualizar se for o responsável pela task
-- Supervisor:
-    - Apenas tasks de processos da sua área
-- Manager:
-    - Acesso total
-- Pode atualizar:
-    - Description (resumo do trabalho realizado)
-    - Status (`pending`, `on_going`, `completed`, `canceled`)
-
 ## Users
 
 ### Get Users
@@ -450,3 +328,79 @@ Cada endpoint inclui:
 - Retorna o histórico de atividades de um processo
 - As atividades são geradas automaticamente pelo sistema a partir de outras ações
 - Suporta paginação através de offset e limit
+
+
+
+## Tasks (Diligencia)
+
+### Get Tasks
+
+**Endpoint:** `GET /tasks/processes/{id}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- Investigator:
+  - Pode ver tasks se for o responsável pelo processo
+  - Ou se tiver uma task atribuída nesse processo
+- Supervisor:
+  - Apenas processos da sua área
+- Manager:
+  - Acesso total
+
+
+### Get Task By Id
+
+**Endpoint:** `GET /tasks/{taskId}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- Investigator:
+  - Pode ver se for responsável pela task
+  - Ou se for o investigator principal do processo
+- Supervisor:
+  - Apenas tasks de processos da sua área
+- Manager:
+  - Acesso total
+
+
+### Create Task
+
+**Endpoint:** `POST /tasks/processes/{id}`
+
+**Roles:**
+- Investigator
+
+**Info:**
+- Apenas o investigator responsável pelo processo pode criar tasks
+- A task deve ser atribuída a outro investigator
+- A task representa um pedido de apoio no terreno
+- A task fica com estado inicial `pending`
+
+
+### Update Task (Opcional)
+
+**Endpoint:** `PUT /tasks/{taskId}`
+
+**Roles:**
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+- Investigator:
+  - Pode atualizar se for o responsável pela task
+- Supervisor:
+  - Apenas tasks de processos da sua área
+- Manager:
+  - Acesso total
+- Pode atualizar:
+  - Description (resumo do trabalho realizado)
+  - Status (`pending`, `on_going`, `completed`, `canceled`)
