@@ -4,9 +4,11 @@ import { DataGrid } from "../../Components/DataGrid/DataGrid";
 import PriorityBadge from "../../Components/Badge/PriorityBadge/PriorityBadge";
 import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 import {TimeLine} from "../../Components/TimeLine/TimeLine";
+import { DropDownMenu } from "../../Components/DropDownMenu/DropDownMenu";
 
 export default function Dashboard() {
   const columns = ["ID", "Process", "Assignee", "Priority", "Updated"];
+
 
   const rows = [
     {
@@ -102,8 +104,6 @@ export default function Dashboard() {
         title={"Insurance portal Worflow"}
         description={"Olá novamente, veja o que tem acontecido ultimamente!"}
       />
-      <LanguageSwitcher />
-      <TimeLine />
     </div>
   );
 }
