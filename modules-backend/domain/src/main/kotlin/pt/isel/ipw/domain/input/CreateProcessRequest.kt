@@ -5,12 +5,15 @@ data class CreateProcessRequest (
     val street: String,
     val county: String,
     val district: String,
+    val latitude: Int? = null,
+    val longitude: Int? = null,
     val area: String,
     val priority: String,
     val expiresAt: String,
-    val investigatorName: String,  //precisamos de um getUserByName
-    val supervisor: String,
+    val investigatorId: Int,
+    val supervisorId: Int,
     val canBeFraud: Boolean,
+    val note: String,
 )
 
 //id do triador obtem-se através do token

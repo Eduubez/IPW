@@ -18,7 +18,6 @@ export function Toast({
   };
   onClose?: () => void;
 }) {
-  console.log(type);
   const typeOfToastMapper = {
     [ToastType.SUCCESS]: styles["toast-success"],
     [ToastType.ERROR]: styles["toast-error"],
