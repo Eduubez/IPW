@@ -1,6 +1,7 @@
 package pt.isel.ipw.repository.jdbi
 
 import org.jdbi.v3.core.Handle
+import pt.isel.ipw.domain.AccessToken
 import pt.isel.ipw.repository.TokensRepository
 import java.sql.Timestamp
 import java.time.Instant
@@ -41,7 +42,7 @@ class JdbiTokensRepository(
             .execute()
     }
 
-    override fun deleteTokensByUserId(userId: Int): Int {
+    override fun deleteAccessTokens(userId: Int): Int {
         return handle.createUpdate(
         """
                 delete from Token
@@ -50,5 +51,19 @@ class JdbiTokensRepository(
         )
             .bind("userId", userId)
             .execute()
+    }
+
+    override fun getAccessToken(userId: Int): AccessToken? {
+        return handle.createQuery(
+        """
+                select token, user_id, active_role, created_at, expires_at
+                from Token
+                where user_id = :userId
+            """
+        )
+            .bind("userId", userId)
+            .mapTo(AccessToken::class.java)
+            .findOne()
+            .orElse(null)
     }
 }

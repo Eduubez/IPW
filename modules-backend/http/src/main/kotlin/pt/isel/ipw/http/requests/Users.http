@@ -1,4 +1,4 @@
-@cookieToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6WyJhZG1pbiJdLCJpYXQiOjE3NzU1ODQ0NzEsImV4cCI6MTc3NTU5MTY3MX0.BMjacOEZd1lkbD-22J1PrFIcznW5zmSmtTG7ohXIIPCmSH9PqcsrP0Gd-ub4V1uJBjTws70rzbyb8uBNTbz_Ew
+@cookieToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6WyJhZG1pbiIsInRyaWF0b3IiXSwiaWF0IjoxNzc1NjY1NzAwLCJleHAiOjE3NzU2NzI5MDB9.cBbdfGntMgpHiNd_xXa3coOBhvTuHyA6kNFIrTGurWiK5Ser-LKY6uUvD2zyswArQZ9-tlmFDhyC207jm4rwZQ
 
 ### Create User
 POST http://localhost:8080/users
@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
   "name": "Chico",
-  "email": "aahhhh@gmail.com",
+  "email": "chico@gmail.com",
   "password": "12345",
   "areaId": null,
   "roles": ["admin", "triator"]
@@ -18,7 +18,7 @@ POST http://localhost:8080/users/login
 Content-Type: application/json
 
 {
-  "email": "aahhhh@gmail.com",
+  "email": "chico@gmail.com",
   "password": "12345"
 }
 
@@ -29,7 +29,7 @@ Content-Type: application/json
 Cookie: auth_token={{cookieToken}}
 
 {
-  "role": "admin"
+  "role": "triator"
 }
 
 ### Get Roles

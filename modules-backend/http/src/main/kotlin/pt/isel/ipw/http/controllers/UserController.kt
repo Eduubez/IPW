@@ -1,6 +1,5 @@
 package pt.isel.ipw.http.controllers
 
-import jakarta.servlet.http.Cookie
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.http.HttpStatus
@@ -16,8 +15,10 @@ import pt.isel.ipw.domain.input.LoginRequest
 import pt.isel.ipw.domain.input.SelectRoleRequest
 import pt.isel.ipw.domain.output.CreateUserResponse
 import pt.isel.ipw.domain.output.LoginResponse
+import pt.isel.ipw.domain.output.RefreshTokenResponse
 import pt.isel.ipw.domain.output.TokenResponse
 import pt.isel.ipw.domain.output.UserRolesResponse
+import pt.isel.ipw.http.Cookies
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
 import pt.isel.ipw.http.errors.toHttp
@@ -37,14 +38,9 @@ class UserController(
     ): ResponseEntity<*> {
         val result = userService.login(input.email, input.password)
             .mapSuccess {
-                val cookie = Cookie("auth_token", it.token).apply {
-                    isHttpOnly = true
-                    secure = false // false agora pois em localhost o cliente nao pode enviar o cookie de volta
-                    path = "/" // para cookie ficar disponivel em todos os endpoints
-                    maxAge = 120 * 60  // por enquanto hardcoded
-                }
 
-                response.addCookie(cookie)
+                response.addCookie(Cookies.createAuthCookie(it.token))
+                response.addCookie(Cookies.createRefreshCookie(it.refreshToken))
 
                 LoginResponse(
                     token = TokenResponse(
@@ -59,13 +55,38 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
+    @PostMapping("/refresh-token")
+    fun refreshToken(
+        request: HttpServletRequest,
+        response: HttpServletResponse
+    ): ResponseEntity<*> {
+        val refreshToken = request.cookies
+            ?.firstOrNull { it.name == Cookies.REFRESH_COOKIE }
+            ?.value
+            ?: return Problem.response(HttpStatus.UNAUTHORIZED.value(), Problem.invalidToken)
+
+        val result = userService.refreshAccessToken(refreshToken)
+            .mapSuccess {
+                response.addCookie(Cookies.createAuthCookie(it.token))
+
+                RefreshTokenResponse(
+                    token = TokenResponse(
+                        value = it.token,
+                        expiresAt = it.expiresAt.toString()
+                    )
+                )
+            }
+
+        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+    }
+
     @PostMapping("/auth/select-role")
     fun selectRole(
         @RequestBody body: SelectRoleRequest,
         request: HttpServletRequest
     ) : ResponseEntity<*> {
         val token = request.cookies
-            ?.firstOrNull { it.name == "auth_token" } // hardcoded
+            ?.firstOrNull { it.name == Cookies.AUTH_COOKIE }
             ?.value
             ?: return Problem.response(HttpStatus.UNAUTHORIZED.value(), Problem.invalidToken)
 

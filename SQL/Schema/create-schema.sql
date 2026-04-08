@@ -12,10 +12,10 @@ drop table if exists Role_Permission cascade;
 drop table if exists Permission cascade;
 drop table if exists User_Role cascade;
 drop table if exists Token cascade;
+drop table if exists RefreshToken cascade;
 drop table if exists Role cascade;
 drop table if exists Users cascade;
 drop table if exists Area cascade;
-
 
 create table Area(
     id   serial primary key,
@@ -30,7 +30,6 @@ create table Users(
     area_id       int null references Area(id),
     is_active     boolean not null default true
 );
-
 
 create table Role(
     name varchar(255) not null primary key
@@ -49,6 +48,13 @@ create table Token(
     token       text primary key,
     user_id     int not null references Users(id) on delete cascade,
     active_role varchar(50) references Role(name),
+    created_at  timestamp not null default current_timestamp,
+    expires_at  timestamp not null
+);
+
+create table RefreshToken(
+    token       text primary key,
+    user_id     int not null references Users(id) on delete cascade,
     created_at  timestamp not null default current_timestamp,
     expires_at  timestamp not null
 );

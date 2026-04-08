@@ -6,6 +6,8 @@ data class LoginResult(
     val token: String,
     val userId: Int,
     val roles: List<String>,
-    val expiresAt: Instant
+    val expiresAt: Instant,
+    val refreshToken: String,
+    val refreshExpiresAt: Instant
 )
 

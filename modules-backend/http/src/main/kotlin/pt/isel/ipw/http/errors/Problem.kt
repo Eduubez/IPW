@@ -19,5 +19,7 @@ class Problem(type: String) {
         val invalidCredentials = Problem("invalid-credentials")
         val invalidRoleSelection = Problem("invalid-role-selection")
         val invalidToken = Problem("invalid-token")
+        val refreshTokenNotFound = Problem("refresh-token-not-found")
+        val expiredRefreshToken = Problem("refresh-expired")
     }
 }

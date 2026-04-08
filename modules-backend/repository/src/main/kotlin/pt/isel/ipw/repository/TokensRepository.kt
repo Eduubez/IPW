@@ -1,5 +1,6 @@
 package pt.isel.ipw.repository
 
+import pt.isel.ipw.domain.AccessToken
 import java.time.Instant
 
 interface TokensRepository {
@@ -15,5 +16,7 @@ interface TokensRepository {
         activeRole: String
     ): Int
 
-    fun deleteTokensByUserId(userId: Int): Int
+    fun getAccessToken(userId: Int): AccessToken?
+
+    fun deleteAccessTokens(userId: Int): Int
 }

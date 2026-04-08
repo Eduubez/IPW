@@ -8,6 +8,8 @@ private val userErrorMap = mapOf(
     UserError.InvalidCredentials to Problem.invalidCredentials,
     UserError.InvalidRoleSelection to Problem.invalidRoleSelection,
     UserError.InvalidToken to Problem.invalidToken,
+    UserError.RefreshTokenNotFound to Problem.refreshTokenNotFound,
+    UserError.ExpiredRefreshToken to Problem.expiredRefreshToken
 )
 
 fun UserError.toHttp(): Pair<Int, Problem> =

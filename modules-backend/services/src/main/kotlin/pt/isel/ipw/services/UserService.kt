@@ -3,13 +3,12 @@ package pt.isel.ipw.services
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.User
-import pt.isel.ipw.domain.output.LoginResponse
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.auth.LoginResult
+import pt.isel.ipw.services.auth.RefreshAccessToken
 import pt.isel.ipw.services.auth.TokenService
 import pt.isel.ipw.services.errors.Either
-import pt.isel.ipw.services.errors.Failure
 import pt.isel.ipw.services.errors.Success
 import pt.isel.ipw.services.errors.UserError
 import pt.isel.ipw.services.errors.failure
@@ -37,22 +36,61 @@ class UserService(
         val validUser = user!!
         val roles = usersRepository.getUserRoles(validUser.id)
 
-        tokensRepository.deleteTokensByUserId(validUser.id) // atençao aqui -> isto significa 1 user = 1 sessao ativa
-        val createdToken = tokenService.createLoginToken(validUser.id, roles)
+        // atençao aqui -> isto significa 1 user = 1 sessao ativa
+        tokensRepository.deleteAccessTokens(validUser.id)
+        refreshTokensRepository.deleteRefreshTokens(validUser.id)
+
+        val createdAccessToken = tokenService.createAccessToken(validUser.id, roles)
+        val createdRefreshToken = tokenService.createRefreshToken(validUser.id)
 
         tokensRepository.createToken(
-            createdToken.token,
+            createdAccessToken.token,
             validUser.id,
             activeRole = null,
-            expiresAt = createdToken.expiresAt
+            expiresAt = createdAccessToken.expiresAt
+        )
+
+        refreshTokensRepository.createRefreshToken(
+            createdRefreshToken.token,
+            userId = validUser.id,
+            expiresAt = createdRefreshToken.expiresAt
         )
 
         success(
             LoginResult(
-                token = createdToken.token,
+                token = createdAccessToken.token,
                 userId = validUser.id,
                 roles = roles,
-                expiresAt = createdToken.expiresAt
+                expiresAt = createdAccessToken.expiresAt,
+                refreshToken = createdRefreshToken.token,
+                refreshExpiresAt = createdRefreshToken.expiresAt
+            )
+        )
+    }
+
+    fun refreshAccessToken(refreshToken: String): Either<UserError, RefreshAccessToken> = transactionManager.run {
+        val error: UserError? = validateRefreshToken(refreshToken)
+        if(error != null) return@run failure(error)
+
+        val storedRefreshToken = refreshTokensRepository.getRefreshToken(refreshToken)!!
+        val currentAccessToken = tokensRepository.getAccessToken(storedRefreshToken.userId)!!
+        val roles = usersRepository.getUserRoles(storedRefreshToken.userId)
+
+        val createdAccessToken = tokenService.createAccessToken(storedRefreshToken.userId, roles)
+
+        tokensRepository.deleteAccessTokens(storedRefreshToken.userId)
+
+        tokensRepository.createToken(
+            createdAccessToken.token,
+            storedRefreshToken.userId,
+            currentAccessToken.activeRole,
+            createdAccessToken.expiresAt
+        )
+
+        success(
+            RefreshAccessToken(
+                token = createdAccessToken.token,
+                expiresAt = createdAccessToken.expiresAt
             )
         )
     }
@@ -61,9 +99,9 @@ class UserService(
         email: String
     ): Either<UserError, List<String>> = transactionManager.run {
         val user = usersRepository.getUserByEmail(email)
-            ?: return@run failure(UserError.InvalidCredentials)
+            ?: return@run failure(UserError.UserNotFound)
 
-        Success(usersRepository.getUserRoles(user.id))
+        success(usersRepository.getUserRoles(user.id))
     }
 
     fun createUser(
@@ -74,9 +112,10 @@ class UserService(
         roles: List<String>
     ): Either<UserError, Int> = transactionManager.run {
 
-        val error: UserError? = this.validateUserCreation(email, password, roles)
+        val error: UserError? = validateUserCreation(email, password, roles)
         error?.let { return@run failure(it) }
 
+        // salt é gerado automaticamente, sendo diferente para cada password
         val passwordHash = passwordEncoder.encode(password)!!
 
         val userId = usersRepository.createUser(
@@ -99,7 +138,7 @@ class UserService(
     ): Either<UserError, Unit> = transactionManager.run {
 
         val claims = try {
-            tokenService.parseToken(token)
+            tokenService.parseAccessToken(token)
         } catch(e: Exception) {
             return@run failure(UserError.InvalidToken)
         }
@@ -136,6 +175,24 @@ class UserService(
             usersRepository.isUserStoredByEmail(email) -> UserError.UserAlreadyExists
             password.length < 5 -> UserError.InsecurePassword
             roles.isEmpty() || roles.size > 5 || roles.any { it !in validRoles } -> UserError.InvalidRoles
+            else -> null
+        }
+    }
+
+    private fun Transaction.validateRefreshToken(refreshToken: String): UserError? {
+        val refreshUserId = try {
+            tokenService.parseRefreshToken(refreshToken)
+        } catch (e: Exception) {
+            return UserError.InvalidToken
+        }
+
+        val storedRefreshToken = refreshTokensRepository.getRefreshToken(refreshToken)
+            ?: return UserError.RefreshTokenNotFound
+
+        return when {
+            storedRefreshToken.userId != refreshUserId -> UserError.InvalidToken
+            storedRefreshToken.expiresAt.isBefore(java.time.Instant.now()) -> UserError.ExpiredRefreshToken
+            tokensRepository.getAccessToken(storedRefreshToken.userId) == null -> UserError.InvalidToken
             else -> null
         }
     }
