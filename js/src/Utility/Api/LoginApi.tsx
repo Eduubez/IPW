@@ -25,11 +25,12 @@ type TokenResponse = {
 
 
 export const AuthApi = {
-    async login(input: LoginRequest): Promise<void | ErrorType> {
+    async login(input: LoginRequest): Promise<any | ErrorType> {
         const response = await fetchApi<LoginResponse>("users/login", {
             method: "POST",
             body: JSON.stringify(input),
         })
+        return response;
         //localStorage.setItem("roles", )
     },
 
