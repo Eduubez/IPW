@@ -8,7 +8,7 @@ import styles from './dropdownmenu.module.css';
   
 
 
-export function DropDownMenu({label, options,onSelect}: {label: string, options: string[], onSelect: (value: string) => void}) {
+export function DropDownMenu({label, options,onSelect,mandatory}: {label: string, options: string[], onSelect: (value: any) => void, mandatory?: boolean}) {
     const [selectedOption, setSelectedOption] = useState('');
     const formId = useId();
 
@@ -17,8 +17,9 @@ export function DropDownMenu({label, options,onSelect}: {label: string, options:
       onSelect(event.target.value);
     };
     return (
+      <>
       <FormControl className={styles.form}>
-        <InputLabel id={`${formId}-label`}><span>{label}</span></InputLabel>
+        <InputLabel id={`${formId}-label`}><span>{label}  {mandatory && <span style={{ color: 'red' }}> *</span>}</span></InputLabel>
         <Select
           labelId={`${formId}-label`}
           id={formId}
@@ -40,5 +41,6 @@ export function DropDownMenu({label, options,onSelect}: {label: string, options:
           ))}
         </Select>
       </FormControl>
+      </>
     );
 }

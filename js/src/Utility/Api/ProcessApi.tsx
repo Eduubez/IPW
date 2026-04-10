@@ -20,7 +20,7 @@ export type ProcessResponse = {
     activity: ActivityType;
 };
 
-type ProcessRequest = {
+export type ProcessRequest = {
     name: string,
     street: string,
     county: string,
