@@ -5,8 +5,11 @@ import PriorityBadge from "../../Components/Badge/PriorityBadge/PriorityBadge";
 import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 import {TimeLine} from "../../Components/TimeLine/TimeLine";
 import { DropDownMenu } from "../../Components/DropDownMenu/DropDownMenu";
+import { DragAndDrop } from "../../Components/DragAndDrop/DragAndDrop";
+import {   useTranslation } from "react-i18next";
 
 export default function Dashboard() {
+  const { t } = useTranslation()
   const columns = ["ID", "Process", "Assignee", "Priority", "Updated"];
 
 
@@ -100,10 +103,14 @@ export default function Dashboard() {
 
   return (
     <div className={styles["dashboard-container"]}>
+      <LanguageSwitcher />
       <Header
-        title={"Insurance portal Worflow"}
-        description={"Olá novamente, veja o que tem acontecido ultimamente!"}
+        title={t("text.title")}
+        description={t("Profile.title")}
       />
+      <TimeLine />
+      <DataGrid columns={columns} rows={rows} />
+      <DragAndDrop />
     </div>
   );
 }
