@@ -5,6 +5,7 @@ import SideBar from "./Components/SideBar/SideBar";
 import Dashboard from "./Pages/Dashboard/DashBoard";
 import Profile from "./Pages/Profile/Profile";
 import RoleSelection from "./Pages/RoleSelection/RoleSelection";
+import  NewProcess  from "./Pages/NewProcess/NewProcess";
 import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
 
 function AppLayout() {
@@ -36,6 +37,12 @@ function AppLayout() {
             }
           />
           <Route path="/role-selection" element={<RoleSelection />} />
+          <Route path="/processes/new" element={
+            <ProtectedRoute>
+              <NewProcess />
+            </ProtectedRoute>
+          }/>
+
         </Routes>
       </div>
     </div>

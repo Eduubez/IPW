@@ -1,0 +1,23 @@
+.text-area-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+    background-color: #364153;
+    border-radius: 0.7rem;
+    padding: 0.5rem;
+}
+.text-area-container textarea {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
+    color: white;
+    resize: none;
+    font-size: 1rem;
+}
+
+.text-area-container textarea:focus {
+    outline: none;
+    border:none;
+}
