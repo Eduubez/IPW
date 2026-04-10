@@ -6,13 +6,39 @@ import { useState } from "react";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { Color } from "../../StyleGuide/colors";
 import { Icon } from "../../Components/Icons/Icons";
+import { AuthApi } from "../../Utility/Api/LoginApi";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { type ErrorType } from "../../Utility/Api/FetchApi";
 
 export default function Login() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const isButtonEnabled = email.length > 0 && password.length > 0;
+
+  const handleLogin = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await AuthApi.login({ email, password });
+      console.log("Login response:", response);
+      if (response) {
+        localStorage.setItem("loggedIn", "true");
+        const returnUrl = searchParams.get("returnUrl");
+        if (returnUrl) {
+          navigate(returnUrl, { replace: true });
+        } else {
+          navigate("/role-selection", { replace: true });
+        }
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className={styles["login-container"]}>
@@ -35,21 +61,20 @@ export default function Login() {
               type="text"
               value={email}
               onChange={setEmail}
-              icon={{name:Icon.AccountCircle ,style:{color:Color.Gray}}}
+              icon={{ name: Icon.AccountCircle, style: { color: Color.Gray } }}
             />
             <TextBox
               label={t("Label.password")}
-
               type="password"
               value={password}
               onChange={setPassword}
-              icon={{name:Icon.Lock ,style:{color:Color.Gray}}}
+              icon={{ name: Icon.Lock, style: { color: Color.Gray } }}
             />
           </form>
           <div className={styles["button-wrapper"]}>
             <PrimaryButton
               text={t("Label.enter")}
-              onClick={() => {}}
+              onClick={handleLogin}
               enabled={isButtonEnabled}
             />
           </div>

@@ -5,7 +5,7 @@ import SideBar from "./Components/SideBar/SideBar";
 import Dashboard from "./Pages/Dashboard/DashBoard";
 import Profile from "./Pages/Profile/Profile";
 import RoleSelection from "./Pages/RoleSelection/RoleSelection";
-
+import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
 
 function AppLayout() {
   const location = useLocation();
@@ -17,14 +17,28 @@ function AppLayout() {
     <div className="app-container">
       {!hideSidebar && <SideBar />}
       <div className="root">
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path= "/role-selection" element={<RoleSelection />} />
-          </Routes>
-        </div>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/role-selection" element={<RoleSelection />} />
+        </Routes>
       </div>
+    </div>
   );
 }
 
