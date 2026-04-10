@@ -81,30 +81,95 @@ type ReportType = {
 };
 
 
-export const ProcessApi = {create, getById, getAll}
+export const ProcessApi = {
+    create,
+    getById,
+    getAll,
+    update,
+    approveSupervisor,
+    rejectSupervisor,
+    approveManager,
+    rejectManager,
+    assignInvestigator,
+    changePriority,
+    cancelProcess,
 
-    async function create(process: ProcessRequest): Promise<ResponseApi<ProcessResponse>> {
-        return await fetchApi<ProcessResponse>("processes", {
-            method: "POST",
-            body: JSON.stringify(process),
-        });
-    }
+}
 
-    async function getById(id:number): Promise<ResponseApi<ProcessResponse>>{
-        return await fetchApi<ProcessResponse>(`processes/${id}`, {
-            method: "GET",
-        });
-    }
 
-    async function getAll(offset?: number, limit?: number, areaId?: number): Promise<ResponseApi<ProcessResponse[]>> {
-        const params = new URLSearchParams();
-        if (offset !== undefined) params.append("offset", offset.toString());
-        if (limit  !== undefined) params.append("limit",  limit.toString());
-        if (areaId !== undefined) params.append("area_id", areaId.toString());
+async function create(process: ProcessRequest): Promise<ResponseApi<ProcessResponse>> {
+    return await fetchApi<ProcessResponse>("processes", {
+        method: "POST",
+        body: JSON.stringify(process),
+    });
+}
 
-        const query = params.toString() ? `?${params.toString()}` : "";
+async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
+    return await fetchApi<ProcessResponse>(`processes/${id}`, {
+        method: "GET",
+    });
+}
 
-        return await fetchApi<ProcessResponse[]>(`processes${query}`, {
-            method: "GET",
-        });
-    }
+async function getAll(offset?: number, limit?: number, areaId?: number): Promise<ResponseApi<ProcessResponse[]>> {
+    const params = new URLSearchParams();
+    if (offset !== undefined) params.append("offset", offset.toString());
+    if (limit !== undefined) params.append("limit", limit.toString());
+    if (areaId !== undefined) params.append("area_id", areaId.toString());
+
+    const query = params.toString() ? `?${params.toString()}` : "";
+
+    return await fetchApi<ProcessResponse[]>(`processes${query}`, {
+        method: "GET",
+    });
+}
+
+async function update(id: number, process: ProcessRequest): Promise<ResponseApi<ProcessResponse>> {
+    return await fetchApi<ProcessResponse>(`processes/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(process),
+    });
+}
+
+async function assignInvestigator(processId:number, investigatorId: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${processId}/investigator`, {
+        method: "PUT",
+        body: JSON.stringify({investigatorId}),
+    });
+}
+
+async function changePriority(processId: number, priority: string): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${processId}/priority`, {
+        method: "PUT",
+        body: JSON.stringify({priority}),
+    });
+}
+
+async function cancelProcess(id: number):Promise<ResponseApi<void>>{
+    return await fetchApi<void>(`processes/${id}/cancel`, {
+        method: "PUT",
+    });
+}
+
+async function approveSupervisor(id: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${id}/report/approve-supervisor`, {
+        method: "POST",
+    });
+}
+
+async function rejectSupervisor(id: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${id}/report/reject-supervisor`, {
+        method: "POST",
+    });
+}
+
+async function approveManager(id: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${id}/report/approve-manager`, {
+        method: "POST",
+    });
+}
+
+async function rejectManager(id: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${id}/report/reject-manager`, {
+        method: "POST",
+    });
+}

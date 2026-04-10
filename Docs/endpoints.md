@@ -331,7 +331,7 @@ Cada endpoint inclui:
 
 
 
-## Tasks (Diligencia)
+## Tasks (Diligencia) (Opcional)
 
 ### Get Tasks
 
@@ -385,7 +385,7 @@ Cada endpoint inclui:
 - A task fica com estado inicial `pending`
 
 
-### Update Task (Opcional)
+### Update Task 
 
 **Endpoint:** `PUT /tasks/{taskId}`
 

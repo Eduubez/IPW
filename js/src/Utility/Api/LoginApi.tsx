@@ -16,7 +16,7 @@ type TokenResponse = {
     expiresAt: string;
 };
 
-export const AuthApi = { login, logout, refreshToken, signUp };
+export const AuthApi = { login, logout, refreshToken };
 
 async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
     return await fetchApi<LoginResponse>("users/login", {
@@ -37,11 +37,5 @@ async function refreshToken(): Promise<ResponseApi<void>> {
     });
 }
 
-async function signUp(input: LoginRequest): Promise<ResponseApi<void>> {
-    return fetchApi<void>("users", {
-        method: "POST",
-        body: JSON.stringify(input),
-    });
-}
 
 
