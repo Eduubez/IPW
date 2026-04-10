@@ -1,4 +1,4 @@
-import {type ErrorType, fetchApi} from "./FetchApi.tsx";
+import {fetchApi, type ResponseApi} from "./FetchApi.tsx";
 
 
 export type CreateUserResponse = {
@@ -18,19 +18,20 @@ type UserRolesResponse = {
 };
 
 
-export const UsersApi = {
-    async selectRole(role: string): Promise<void> {
-        await fetchApi<void>("users/auth/select-role", {
-            method: "POST",
-            credentials: "include",
-            body: JSON.stringify({role} as SelectRoleRequest),
-        });
-    },
 
-    async getUserRoles(email: string): Promise<UserRolesResponse | ErrorType> {
-        return await fetchApi<UserRolesResponse>(`users/roles?email=${encodeURIComponent(email)}`, {
-            method: "GET",
-            credentials: "include",
-        });
-    }
+export const UsersApi = {selectRole, getUserRoles}
+
+async function selectRole(role: string): Promise<ResponseApi<void>> {
+    return await fetchApi<void>("users/auth/select-role", {
+        method: "POST",
+        credentials: "include",
+        body: JSON.stringify({role} as SelectRoleRequest),
+    });
+}
+
+async function getUserRoles(email: string): Promise < ResponseApi < UserRolesResponse >> {
+    return await fetchApi<UserRolesResponse>(`users/roles?email=${encodeURIComponent(email)}`, {
+        method: "GET",
+        credentials: "include",
+    });
 }

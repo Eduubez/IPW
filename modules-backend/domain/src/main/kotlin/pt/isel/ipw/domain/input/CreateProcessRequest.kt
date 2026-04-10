@@ -13,7 +13,7 @@ data class CreateProcessRequest (
     val investigatorId: Int,
     val supervisorId: Int,
     val canBeFraud: Boolean,
-    val note: String,
+    val note: String? = null,
 )
 
 //id do triador obtem-se através do token

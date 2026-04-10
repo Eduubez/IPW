@@ -1,5 +1,5 @@
 import type {CreateUserResponse} from "./UsersApi.tsx";
-import {type ErrorType, fetchApi} from "./FetchApi.tsx";
+import {fetchApi, type ResponseApi} from "./FetchApi.tsx";
 
 export type ProcessResponse = {
     id: number;
@@ -33,7 +33,7 @@ type ProcessRequest = {
     investigatorId: number,
     supervisorId: number,
     canBeFraud: boolean,
-    note: string
+    note?: string
 }
 
 type LocationType = {
@@ -81,21 +81,22 @@ type ReportType = {
 };
 
 
-export const ProcessApi = {
+export const ProcessApi = {create, getById, getAll}
 
-    async create(process: ProcessRequest): Promise<ProcessResponse| ErrorType> {
+    async function create(process: ProcessRequest): Promise<ResponseApi<ProcessResponse>> {
         return await fetchApi<ProcessResponse>("processes", {
             method: "POST",
             body: JSON.stringify(process),
         });
-    },
-    async getById(id:number): Promise<ProcessResponse| ErrorType>{
+    }
+
+    async function getById(id:number): Promise<ResponseApi<ProcessResponse>>{
         return await fetchApi<ProcessResponse>(`processes/${id}`, {
             method: "GET",
         });
-    },
+    }
 
-    async getAll(offset?: number, limit?: number, areaId?: number): Promise<ProcessResponse[]|ErrorType> {
+    async function getAll(offset?: number, limit?: number, areaId?: number): Promise<ResponseApi<ProcessResponse[]>> {
         const params = new URLSearchParams();
         if (offset !== undefined) params.append("offset", offset.toString());
         if (limit  !== undefined) params.append("limit",  limit.toString());
@@ -106,6 +107,4 @@ export const ProcessApi = {
         return await fetchApi<ProcessResponse[]>(`processes${query}`, {
             method: "GET",
         });
-    },
-}
-
+    }

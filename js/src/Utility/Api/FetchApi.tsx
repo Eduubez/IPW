@@ -1,25 +1,14 @@
 // talvez Colocar num .env
 const API_URL = "http://localhost:8080/"
 
-
-
-export type ResponseApi = ErrorType | SuccessType
-
-export type ErrorType = {
-    type: string,
-    status: number,
-    message: string
-}
-
-export type SuccessType = {
-    status: number,
-    data: any
-}
+export type ResponseApi<T> =
+    | { success: true; data: T; status: number }
+    | { success: false; type: string; status: number; message: string }
 
 export async function fetchApi<T>(
     endpoint: string,
     options: RequestInit = {}
-): Promise<T| ErrorType> {
+): Promise<ResponseApi<T>> {
     const response = await fetch(`${API_URL}${endpoint}`, {
         ...options,
         credentials: "include",
@@ -32,11 +21,21 @@ export async function fetchApi<T>(
     if (!response.ok) {
         const error = await response
             .json()
-            .catch(() => ({ type: "unknown", message: "Unknown error" }));
-        return {type : error.status, status: error.type, message: error.message}
+            .catch(() => ({type: "unknown", message: "Unknown error"}));
+
+        return {
+            success: false,
+            type: error.type ?? "unknown",
+            status: response.status,
+            message: error.message ?? "Unknown error",
+        };
     }
 
-    if (response.status === 204) return undefined as T;
+    const data: T = await response.json();
 
-    return response.json();
+    return {
+        success: true,
+        data,
+        status: response.status,
+    };
 }
