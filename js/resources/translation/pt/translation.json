@@ -29,7 +29,8 @@
     "triator": "Triador",
     "manager": "Gestor",
     "investigator": "Averiguador",
-    "supervisor": "Supervisor"
+    "supervisor": "Supervisor",
+    "roleSelected": "Papel selecionado com sucesso!"
   },
   "Priority": {
     "Urgent": "Alta",

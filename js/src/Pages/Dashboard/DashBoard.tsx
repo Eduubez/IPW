@@ -4,13 +4,16 @@ import { DataGrid } from "../../Components/DataGrid/DataGrid";
 import PriorityBadge from "../../Components/Badge/PriorityBadge/PriorityBadge";
 import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 import {TimeLine} from "../../Components/TimeLine/TimeLine";
-import { DropDownMenu } from "../../Components/DropDownMenu/DropDownMenu";
 import { DragAndDrop } from "../../Components/DragAndDrop/DragAndDrop";
 import {   useTranslation } from "react-i18next";
+import { useSnackbar } from "notistack";
+import { ToastType } from "../../Types/ToastType";
 
 export default function Dashboard() {
   const { t } = useTranslation()
   const columns = ["ID", "Process", "Assignee", "Priority", "Updated"];
+    const { enqueueSnackbar } = useSnackbar();
+
 
 
   const rows = [
@@ -99,11 +102,14 @@ export default function Dashboard() {
       Updated: "13:07",
     },
   ];
-
+  const handleClick = () => {
+    enqueueSnackbar('I love snacks.' ,{ variant: ToastType.SUCCESS });
+  };
 
   return (
     <div className={styles["dashboard-container"]}>
       <LanguageSwitcher />
+      <button onClick={handleClick}>Show Snackbar</button>
       <Header
         title={t("text.title")}
         description={t("Profile.title")}

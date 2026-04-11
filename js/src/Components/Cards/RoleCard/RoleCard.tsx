@@ -1,28 +1,23 @@
-import React, { use } from "react";
+import React from "react";
 import styles from "./rolecard.module.css";
 import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
 import { Icon } from "../../Icons/Icons";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 
 export default function RoleCard({
   icon,
   title,
   permissions,
   style,
+  onClick,
 }: {
   icon: { name: string; style?: React.CSSProperties };
   title: string;
   permissions: string[];
   style?: React.CSSProperties;
+  onClick: () => void;
 }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const handleSelectRole = () => {
-    localStorage.setItem("selectedRole", title);
-    navigate("/dashboard");
-  }
-
   return (
     <div className={styles["role-card"]} style={style}>
       <div className={styles["card-top"]}>
@@ -46,7 +41,7 @@ export default function RoleCard({
         <PrimaryButton
           text={t("Label.enter")}
           enabled={true}
-          onClick={handleSelectRole}
+          onClick={onClick}
         />
       </div>
     </div>

@@ -8,25 +8,29 @@ import { Color } from "../../StyleGuide/colors";
 import { Icon } from "../../Components/Icons/Icons";
 import { AuthApi } from "../../Utility/Api/LoginApi";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { type ErrorType } from "../../Utility/Api/FetchApi";
+import { useSnackbar } from "notistack";
+import { ToastType } from "../../Types/ToastType";
+
 
 export default function Login() {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+
   const isButtonEnabled = email.length > 0 && password.length > 0;
+  
 
   const handleLogin = async () => {
     setIsLoading(true);
 
     try {
       const response = await AuthApi.login({ email, password });
-      console.log("Login response:", response);
-      if (response) {
+      if (response.success) {
         localStorage.setItem("loggedIn", "true");
         const returnUrl = searchParams.get("returnUrl");
         if (returnUrl) {
@@ -34,7 +38,12 @@ export default function Login() {
         } else {
           navigate("/role-selection", { replace: true });
         }
+      }else{
+        enqueueSnackbar(response.message, {
+          variant: ToastType.ERROR,
+        });
       }
+
     } finally {
       setIsLoading(false);
     }

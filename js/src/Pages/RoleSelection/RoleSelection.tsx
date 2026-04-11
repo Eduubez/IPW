@@ -3,9 +3,14 @@ import styles from "./roleselection.module.css";
 import RoleCard from "../../Components/Cards/RoleCard/RoleCard";
 import { useTranslation } from "react-i18next";
 import { ROLES } from "../../MockData/MockRoles";
+import { useNavigate } from "react-router";
+import { ToastType } from "../../Types/ToastType";
+import { useSnackbar } from "notistack";
 
 export default function RoleSelection() {
   const { t } = useTranslation();
+  const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
 
   const userRoles = useMemo(() => {
     const roles = localStorage.getItem("roles");
@@ -25,8 +30,17 @@ export default function RoleSelection() {
     return t("RoleSelection", { returnObjects: true }) as {
       title: string;
       description: string;
-    } // needed cuz ts...
+    }; // needed cuz ts...
   }, [t]);
+
+  const handleSelectRole = (roleKey: string) => {
+    localStorage.setItem("selectedRole", roleKey);
+    enqueueSnackbar(t("RoleSelection.roleSelected"), {
+      variant: ToastType.SUCCESS,
+    });
+
+    navigate("/dashboard");
+  };
 
   return (
     <div className={styles["role-selection-container"]}>
@@ -42,6 +56,7 @@ export default function RoleSelection() {
             title={role.title}
             permissions={role.permissions}
             style={role.style}
+            onClick={() => handleSelectRole(role.key)}
           />
         ))}
       </div>
