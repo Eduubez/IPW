@@ -21,4 +21,5 @@ export const Color = {
 
   YellowDark: "var(--color-yellow-dark)",
   YellowPrimary: "var(--color-yellow-primary)",
+  Purple:"var(--color-purple)",
 }

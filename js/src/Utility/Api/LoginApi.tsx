@@ -19,10 +19,15 @@ type TokenResponse = {
 export const AuthApi = { login, logout, refreshToken };
 
 async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
-    return await fetchApi<LoginResponse>("users/login", {
+    const response = await fetchApi<LoginResponse>("users/login", {
         method: "POST",
         body: JSON.stringify(input),
     });
+    if(response.success) {
+        localStorage.setItem("loggedInto", "true");
+        localStorage.setItem("roles", JSON.stringify(response.data.roles));
+    }
+    return response;
 }
 
 async function logout(): Promise<ResponseApi<void>> {

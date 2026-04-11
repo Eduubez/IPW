@@ -24,11 +24,31 @@
   },
   "RoleSelection": {
     "title": "Papeis disponíveis",
-    "description": "Escolha o seu papel"
+    "description": "Escolha o seu papel",
+    "admin": "Administrador",
+    "triator": "Triador",
+    "manager": "Gestor",
+    "investigator": "Averiguador",
+    "supervisor": "Supervisor"
   },
   "Priority": {
     "Urgent": "Alta",
     "Medium": "Média",
     "Low": "Baixa"
+  },
+  "Permissions": {
+    "ManageUsers": "Gerenciar Utilizadores",
+    "ViewReports": "Visualizar Relatórios",
+    "CreateUsers": "Criar Utilizadores",
+    "AddReport": "Adicionar Relatórios",
+    "MyHistory": "Ver o meu histórico",
+    "ViewOwnProcess": "Visualizar os meus processos",
+    "SubmitProcess": "Submeter processos",
+    "ViewAreaProcess": "Visualizar processos da minha área",
+    "ValidateAreaProcess": "Validar processos da minha área",
+    "AreaHistory": "Ver histórico da minha área",
+    "UpdateEveryProcess": "Atualizar todos os processos",
+    "ValidateAllProcess": "Validar todos os processos",
+    "AllHistory": "Ver todo o histórico"
   }
 }

@@ -24,11 +24,31 @@
   },
   "RoleSelection": {
     "title": "Available roles",
-    "description": "Choose your role"
+    "description": "Choose your role",
+    "admin": "Administrator",
+    "triator": "Triator",
+    "manager": "Manager",
+    "investigator": "Investigator",
+    "supervisor": "Supervisor"
   },
   "Priority": {
     "Urgent": "High",
     "Medium": "Medium",
     "Low": "Low"
+  },
+  "Permissions": {
+    "ManageUsers": "Manage users",
+    "ViewReports": "View reports",
+    "CreateUsers": "Create users",
+    "AddReport": "Add reports",
+    "MyHistory": "View my history",
+    "ViewOwnProcess": "View my processes",
+    "SubmitProcess": "Submit processes",
+    "ViewAreaProcess": "View my area processes",
+    "ValidateAreaProcess": "Validate my area processes",
+    "AreaHistory": "View area history",
+    "UpdateEveryProcess": "Update all processes",
+    "ValidateAllProcess": "Validate all processes",
+    "AllHistory": "View all history"
   }
 }

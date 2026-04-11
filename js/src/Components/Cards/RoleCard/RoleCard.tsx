@@ -1,8 +1,9 @@
-import React from "react";
+import React, { use } from "react";
 import styles from "./rolecard.module.css";
 import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
 import { Icon } from "../../Icons/Icons";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
 
 export default function RoleCard({
   icon,
@@ -16,6 +17,11 @@ export default function RoleCard({
   style?: React.CSSProperties;
 }) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const handleSelectRole = () => {
+    localStorage.setItem("selectedRole", title);
+    navigate("/dashboard");
+  }
 
   return (
     <div className={styles["role-card"]} style={style}>
@@ -40,7 +46,7 @@ export default function RoleCard({
         <PrimaryButton
           text={t("Label.enter")}
           enabled={true}
-          onClick={() => alert(`Click role: ${title}`)}
+          onClick={handleSelectRole}
         />
       </div>
     </div>
