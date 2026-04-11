@@ -1,4 +1,3 @@
-import React from "react";
 import styles from "./timelineactivityitem.module.css";
 import { Icon } from "../../Icons/Icons";
 

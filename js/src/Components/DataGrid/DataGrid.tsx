@@ -106,8 +106,8 @@ export function DataGrid({
       setCurrentPage(currentPage + 1);
     }
   };
-  const hasNextPage = currentPage < pageSettings.totalPages;
-  const hasPreviousPage = currentPage > 1;
+  //const hasNextPage = currentPage < pageSettings.totalPages;
+  //const hasPreviousPage = currentPage > 1;
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);

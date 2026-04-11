@@ -19,14 +19,14 @@ export default function Login() {
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  //const [isLoading, setIsLoading] = useState(false);
 
 
   const isButtonEnabled = email.length > 0 && password.length > 0;
   
 
   const handleLogin = async () => {
-    setIsLoading(true);
+    //setIsLoading(true);
 
     try {
       const response = await AuthApi.login({ email, password });
@@ -45,7 +45,7 @@ export default function Login() {
       }
 
     } finally {
-      setIsLoading(false);
+      //setIsLoading(false);
     }
   };
 
