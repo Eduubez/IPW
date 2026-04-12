@@ -1,0 +1,33 @@
+.page-container {
+    display: flex;
+    padding: 2rem 2rem 0 2rem;
+    flex-direction: column;
+    gap: 2rem;
+    width: 100%;
+}
+
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.stats-container {
+    display: flex;
+    flex-direction: row;
+    height: 9rem;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.stat-item>div {
+    width: 15rem;
+    height: 100%;
+}
+
+
+.loading>div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

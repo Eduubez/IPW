@@ -8,6 +8,7 @@ import RoleSelection from "./Pages/RoleSelection/RoleSelection";
 import  NewProcess  from "./Pages/NewProcess/NewProcess";
 import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
 import { SnackbarProvider } from "notistack";
+import ProcessPage from "./Pages/ProcessPage/ProcessPage";
 function AppLayout() {
   const location = useLocation();
   const pathsWithoutSidebar = ["/login", "/role-selection"];
@@ -42,7 +43,11 @@ function AppLayout() {
               <NewProcess />
             </ProtectedRoute>
           }/>
-
+          <Route path="/processes/:id" element={
+            <ProtectedRoute>
+              <ProcessPage />
+            </ProtectedRoute>
+          }/>
         </Routes>
       </div>
     </div>
@@ -52,7 +57,7 @@ function AppLayout() {
 export default function App() {
   return (
     <BrowserRouter>
-    <SnackbarProvider maxSnack={3} autoHideDuration={1500}>
+    <SnackbarProvider maxSnack={3} autoHideDuration={1500} anchorOrigin={{ vertical: "top", horizontal: "right" }}>
       <AppLayout />
     </SnackbarProvider>
     </BrowserRouter>
