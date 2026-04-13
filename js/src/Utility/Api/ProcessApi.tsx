@@ -1,4 +1,4 @@
-import type {CreateUserResponse} from "./UsersApi.tsx";
+import type {UserResponse} from "./UsersApi.tsx";
 import {buildQuery, fetchApi, type ResponseApi} from "./FetchApi.tsx";
 
 export type ProcessResponse = {
@@ -10,9 +10,9 @@ export type ProcessResponse = {
     priority: number;
     area: string;
     typification: string;
-    triator: CreateUserResponse;
-    investigator: CreateUserResponse;
-    supervisor: CreateUserResponse;
+    triator: UserResponse;
+    investigator: UserResponse;
+    supervisor: UserResponse;
     state: string;
     proves: ProvesType;
     report: ReportType;
