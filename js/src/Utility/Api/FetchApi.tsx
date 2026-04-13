@@ -39,3 +39,15 @@ export async function fetchApi<T>(
         status: response.status,
     };
 }
+
+
+export function buildQuery(params: Record<string, string | number | undefined>): string {
+    const urlParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+        if (value !== undefined && value !== null) {
+            urlParams.append(key, value.toString());
+        }
+    }
+    const query = urlParams.toString();
+    return query ? `?${query}` : "";
+}

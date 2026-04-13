@@ -1,5 +1,5 @@
 import type {CreateUserResponse} from "./UsersApi.tsx";
-import {fetchApi, type ResponseApi} from "./FetchApi.tsx";
+import {buildQuery, fetchApi, type ResponseApi} from "./FetchApi.tsx";
 
 export type ProcessResponse = {
     id: number;
@@ -96,7 +96,7 @@ export const ProcessApi = {
 
 }
 
-
+// create a new process - Triator
 async function create(process: ProcessRequest): Promise<ResponseApi<ProcessResponse>> {
     return await fetchApi<ProcessResponse>("processes", {
         method: "POST",
@@ -104,25 +104,23 @@ async function create(process: ProcessRequest): Promise<ResponseApi<ProcessRespo
     });
 }
 
+// get a process by id - Investigator, Supervisor, Manager
 async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
     return await fetchApi<ProcessResponse>(`processes/${id}`, {
         method: "GET",
     });
 }
 
+// get all processes - Investigator, Supervisor, Manager
 async function getAll(offset?: number, limit?: number, areaId?: number): Promise<ResponseApi<ProcessResponse[]>> {
-    const params = new URLSearchParams();
-    if (offset !== undefined) params.append("offset", offset.toString());
-    if (limit !== undefined) params.append("limit", limit.toString());
-    if (areaId !== undefined) params.append("area_id", areaId.toString());
 
-    const query = params.toString() ? `?${params.toString()}` : "";
-
+    const query = buildQuery({offset: offset, limit, area_id: areaId});
     return await fetchApi<ProcessResponse[]>(`processes${query}`, {
         method: "GET",
     });
 }
 
+// Update info about a process - Supervisor, Manager
 async function update(id: number, process: ProcessRequest): Promise<ResponseApi<ProcessResponse>> {
     return await fetchApi<ProcessResponse>(`processes/${id}`, {
         method: "PUT",
@@ -130,13 +128,15 @@ async function update(id: number, process: ProcessRequest): Promise<ResponseApi<
     });
 }
 
-async function assignInvestigator(processId:number, investigatorId: number): Promise<ResponseApi<void>> {
+// Assign Investigator to a process - Triator
+async function assignInvestigator(processId: number, investigatorId: number): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${processId}/investigator`, {
         method: "PUT",
         body: JSON.stringify({investigatorId}),
     });
 }
 
+// Change the priority of a process - Supervisor, Manager
 async function changePriority(processId: number, priority: string): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${processId}/priority`, {
         method: "PUT",
@@ -144,29 +144,36 @@ async function changePriority(processId: number, priority: string): Promise<Resp
     });
 }
 
-async function cancelProcess(id: number):Promise<ResponseApi<void>>{
+// Cancel a process - Manager
+async function cancelProcess(id: number): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${id}/cancel`, {
         method: "PUT",
     });
 }
 
+// Approve a process in Supervisor view - Supervisor
 async function approveSupervisor(id: number): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${id}/report/approve-supervisor`, {
         method: "POST",
     });
 }
 
+// Reject a process in Supervisor view - Supervisor
 async function rejectSupervisor(id: number): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${id}/report/reject-supervisor`, {
         method: "POST",
     });
 }
 
+// Approve a process in Manager view - Manager
+
 async function approveManager(id: number): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${id}/report/approve-manager`, {
         method: "POST",
     });
 }
+
+// Reject a process in Manager view - Manager
 
 async function rejectManager(id: number): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${id}/report/reject-manager`, {
