@@ -218,3 +218,12 @@ current_timestamp - interval '6 hours',
 current_timestamp + interval '1 day',
 null
 );
+
+
+SELECT id as processId, triator_id
+FROM Process
+WHERE triator_id = 2
+
+Select * from users;
+
+call sample_data();
