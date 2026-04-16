@@ -86,10 +86,8 @@ export const ProcessApi = {
     getById,
     getAll,
     update,
-    approveSupervisor,
-    rejectSupervisor,
-    approveManager,
-    rejectManager,
+    approve,
+    reject,
     assignInvestigator,
     changePriority,
     cancelProcess,
@@ -151,32 +149,17 @@ async function cancelProcess(id: number): Promise<ResponseApi<void>> {
     });
 }
 
-// Approve a process in Supervisor view - Supervisor
-async function approveSupervisor(id: number): Promise<ResponseApi<void>> {
-    return await fetchApi<void>(`processes/${id}/report/approve-supervisor`, {
+// Approve a process - Supervisor, Manager
+async function approve(id: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${id}/report/approve`, {
         method: "POST",
     });
 }
 
-// Reject a process in Supervisor view - Supervisor
-async function rejectSupervisor(id: number): Promise<ResponseApi<void>> {
-    return await fetchApi<void>(`processes/${id}/report/reject-supervisor`, {
-        method: "POST",
-    });
-}
+// Reject a process - Supervisor, Manager
 
-// Approve a process in Manager view - Manager
-
-async function approveManager(id: number): Promise<ResponseApi<void>> {
-    return await fetchApi<void>(`processes/${id}/report/approve-manager`, {
-        method: "POST",
-    });
-}
-
-// Reject a process in Manager view - Manager
-
-async function rejectManager(id: number): Promise<ResponseApi<void>> {
-    return await fetchApi<void>(`processes/${id}/report/reject-manager`, {
+async function reject(id: number): Promise<ResponseApi<void>> {
+    return await fetchApi<void>(`processes/${id}/report/reject`, {
         method: "POST",
     });
 }
