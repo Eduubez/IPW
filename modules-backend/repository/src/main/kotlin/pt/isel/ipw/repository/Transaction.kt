@@ -4,6 +4,7 @@ interface Transaction {
     val usersRepository: UsersRepository
     val tokensRepository: TokensRepository
     val refreshTokensRepository: RefreshTokensRepository
+    val historyRepository: IHistoryRepository
 
     fun rollback()
 }

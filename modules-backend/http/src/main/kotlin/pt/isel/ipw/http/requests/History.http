@@ -1,0 +1,9 @@
+@cookieToken =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2IiwidXNlcklkIjo2LCJyb2xlcyI6WyJhZG1pbiIsInRyaWF0b3IiXSwiaWF0IjoxNzc2NTUxMjc4LCJleHAiOjE3NzY1NTg0Nzh9.N1ypa5iOg4MBZxWthewlbKt_LB_sO6dBmT7oKY9qayYqrG5LD0oLvN1zc3RWqC0SNZOScyDl3VbtQBM2tDCYSw
+
+
+GET http://localhost:8080/history/3
+Cookie: auth_token={{cookieToken}}
+
+###
+GET http://localhost:8080/history/area/1
+Cookie: auth_token={{cookieToken}}
