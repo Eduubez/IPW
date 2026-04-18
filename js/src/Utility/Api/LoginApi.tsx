@@ -24,7 +24,7 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
         body: JSON.stringify(input),
     });
     if(response.success) {
-        localStorage.setItem("loggedInto", "true");
+        localStorage.setItem("loggedIn", "true");
         localStorage.setItem("roles", JSON.stringify(response.data.roles));
     }
     return response;
