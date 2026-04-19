@@ -1,7 +1,9 @@
 package pt.isel.ipw.repository.jdbi.history
 
 import org.jdbi.v3.core.Handle
+import pt.isel.ipw.domain.AreaEntity
 import pt.isel.ipw.domain.HistoryEntryEntity
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.IHistoryRepository
 
 class JdbiHistoryRepository
@@ -34,14 +36,27 @@ class JdbiHistoryRepository
             .mapTo(Int::class.java)
             .list()
     }
+    override fun getAreaById(areaId: Int): AreaEntity? {
+        val query = """
+            SELECT id, name, boss_id
+            FROM Area
+            WHERE id = :areaId
+        """.trimIndent()
+
+        return handle.createQuery(query)
+            .bind("areaId", areaId)
+            .mapTo(AreaEntity::class.java)
+            .findOne()
+            .orElse(null)
+    }
 
 
     private fun roleToColumnMapper(role: String): String {
         return when (role) {
-            "triator" -> "triator_id"
-            "investigator" -> "investigator_id"
-            "supervisor" -> "supervisor_id"
-            else -> throw IllegalArgumentException("Invalid role: $role") // for now
+            Roles.TRIATOR -> "triator_id"
+            Roles.INVESTIGATOR -> "investigator_id"
+            Roles.SUPERVISOR -> "supervisor_id"
+            else -> throw IllegalArgumentException("Invalid role: $role")
         }
     }
 }

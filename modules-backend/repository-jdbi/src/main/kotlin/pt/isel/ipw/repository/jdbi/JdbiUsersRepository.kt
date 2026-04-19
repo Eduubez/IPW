@@ -11,7 +11,7 @@ class JdbiUsersRepository(
 
     override fun getUserByEmail(email: String): User? {
         return handle.createQuery(
-        """
+            """
                 select 
                 u.id,
                 u.name,
@@ -31,7 +31,7 @@ class JdbiUsersRepository(
 
     override fun getUserRoles(userId: Int): List<String> {
         return handle.createQuery(
-        """
+            """
                 select role_name
                 from User_Role
                 where user_id = :userId
@@ -44,7 +44,7 @@ class JdbiUsersRepository(
 
     override fun isUserStoredByEmail(email: String): Boolean {
         return handle.createQuery(
-        """
+            """
                 select count(*) 
                 from Users
                 where email = :email
@@ -62,7 +62,7 @@ class JdbiUsersRepository(
         areaId: Int?
     ): Int {
         return handle.createUpdate(
-        """
+            """
                 insert into Users(name, email, password_hash, area_id)
                 values (:name, :email, :passwordHash, :areaId)
             """
@@ -78,7 +78,7 @@ class JdbiUsersRepository(
 
     override fun addUserRole(userId: Int, roleName: String) {
         handle.createUpdate(
-        """
+            """
                 insert into User_Role(user_id, role_name)
                 values (:userId, :roleName)
             """
@@ -88,5 +88,16 @@ class JdbiUsersRepository(
             .execute()
     }
 
-
+    override fun getUserById(userId: Int): User? {
+        return handle.createQuery(
+            """
+                select name,email, area_id,password_hash, is_active
+                from Users                
+                where id = :userId
+            """
+        )
+            .bind("userId", userId)
+            .map(UserMapper())
+            .singleOrNull()
+    }
 }

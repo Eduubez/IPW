@@ -17,9 +17,11 @@ drop table if exists Role cascade;
 drop table if exists Users cascade;
 drop table if exists Area cascade;
 
+
 create table Area(
-    id   serial primary key,
-    name varchar(100) not null unique
+                     id   serial primary key,
+                     name varchar(100) not null unique,
+                     boss_id int
 );
 
 create table Users(
@@ -191,3 +193,6 @@ create table Activity(
     description text,
     created_at  timestamp not null default current_timestamp
 );
+
+call clean_database();
+call sample_data();

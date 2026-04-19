@@ -93,5 +93,15 @@ class JwtTokenService(
 
         return (claims["userId"] as Number).toInt()
     }
-
+    override fun isValid(token: String): Boolean {
+        return try {
+            Jwts.parser()
+                .verifyWith(signingKey)
+                .build()
+                .parseSignedClaims(token)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }
