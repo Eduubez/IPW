@@ -11,4 +11,6 @@ interface TokenService {
     fun parseAccessToken(token: String): TokenClaims
 
     fun parseRefreshToken(token: String): Int
+
+    fun isValid(token: String): Boolean
 }

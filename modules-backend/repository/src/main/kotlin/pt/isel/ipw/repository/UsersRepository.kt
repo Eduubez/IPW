@@ -18,4 +18,6 @@ interface UsersRepository {
     ): Int
 
     fun addUserRole(userId: Int, roleName: String)
+
+    fun getUserById(userId: Int): User?
 }

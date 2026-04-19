@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.HistoryEntryEntity
 import pt.isel.ipw.domain.output.history.AreaProcessHistory
 import pt.isel.ipw.domain.output.history.UserProcessHistory
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.Either
 import pt.isel.ipw.services.errors.HistoryError
@@ -20,7 +21,8 @@ class HistoryService(
     ) : IHistoryService {
     override fun getUserHistory(userId: Int,userRole:String): HistoryResponse {
         val canBeUser = validateUserId(userId)
-        val possibleRoles = listOf("triator","supervisor","investigator")
+        val possibleRoles = listOf(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.TRIATOR)
+
 
         if(!possibleRoles.contains(userRole)){ // Asside from those 3 roles , theres no history
             return success(UserProcessHistory(userId, listOf()))
@@ -36,13 +38,18 @@ class HistoryService(
         }
     }
 
-    override fun getAreaHistory(areaId: Int): Either<HistoryError, AreaProcessHistory> {
+    override fun getAreaHistory(subject:Int,areaId: Int): Either<HistoryError, AreaProcessHistory> {
         val canBeArea = validateAreaId(areaId)
         if (!canBeArea) {
             return failure(HistoryError.InvalidAreaId)
         }
 
         return transactionManager.run {
+            val area = historyRepository.getAreaById(areaId) ?: return@run failure(HistoryError.AreaNotFound)
+
+            if (area.boss_id != subject) {
+                return@run failure(HistoryError.Forbidden)
+            }
             val areaHistory = historyRepository.getHistoryByAreaId(areaId)
             success(AreaProcessHistory(areaId, areaHistory))
         }

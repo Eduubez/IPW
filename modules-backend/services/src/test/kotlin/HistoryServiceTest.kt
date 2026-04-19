@@ -1,5 +1,6 @@
 import org.jdbi.v3.core.Jdbi
 import org.postgresql.ds.PGSimpleDataSource
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.jdbi.configureWithAppRequirements
 import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
 
@@ -40,7 +41,7 @@ class HistoryServiceTest {
     @Test
     fun `user with bad id should return BadRequest`() {
         val userId = -1
-        val result = historyService.getUserHistory(userId, "triator")
+        val result = historyService.getUserHistory(userId, Roles.TRIATOR)
         when (result) {
             is Failure -> {
                 assert(result.value is HistoryError.InvalidUserId)
@@ -56,7 +57,7 @@ class HistoryServiceTest {
     @Test
     fun `user with no history should return empty list`() {
         val userId = 9999
-        val result = historyService.getUserHistory(userId, "triator")
+        val result = historyService.getUserHistory(userId, Roles.TRIATOR)
         when (result) {
             is Failure -> {
                 assert(false) { "Expected success but got failure: ${result.value}" }
@@ -72,8 +73,8 @@ class HistoryServiceTest {
 
     @Test
     fun `user with history should return correct processes1`() {
-        val userId = 1
-        val result = historyService.getUserHistory(userId, "triator")
+        val userId = 2
+        val result = historyService.getUserHistory(userId, Roles.TRIATOR)
         when (result) {
             is Failure -> {
                 assert(false) { "Expected success but got failure: ${result.value}" }
@@ -105,8 +106,8 @@ class HistoryServiceTest {
 
     @Test
     fun `user with history should return correct processes2`() {
-        val userId = 2
-        val result = historyService.getUserHistory(userId, "investigator")
+        val userId = 3
+        val result = historyService.getUserHistory(userId, Roles.INVESTIGATOR)
         when (result) {
             is Failure -> {
                 assert(false) { "Expected success but got failure: ${result.value}" }
@@ -133,8 +134,9 @@ class HistoryServiceTest {
 
     @Test
     fun `get history by area should return all area processes`() {
+        val userId = 1
         val areaId = 1
-        val result = historyService.getAreaHistory(areaId)
+        val result = historyService.getAreaHistory(userId,areaId)
         when (result) {
             is Failure -> {
                 assert(false) { "Expected success but got failure: ${result.value}" }
@@ -161,8 +163,9 @@ class HistoryServiceTest {
 
     @Test
     fun `Get history by area with no processes should return empty list`() {
-        val areaId = 9999
-        val result = historyService.getAreaHistory(areaId)
+        val userId = 1
+        val areaId = 4
+        val result = historyService.getAreaHistory(userId,areaId)
         when (result) {
             is Failure -> {
                 assert(false) { "Expected success but got failure: ${result.value}" }
@@ -178,8 +181,9 @@ class HistoryServiceTest {
 
     @Test
     fun `Get history by area with invalid id should return BadRequest`() {
+        val userId = 1
         val areaId = -1
-        val result = historyService.getAreaHistory(areaId)
+        val result = historyService.getAreaHistory(userId,areaId)
         when (result) {
             is Failure -> {
                 assert(result.value is HistoryError.InvalidAreaId)
@@ -193,20 +197,19 @@ class HistoryServiceTest {
     }
 
     @Test
-    fun `Get History with a valid ID but area doesnt exist should return 200OK empty List`() {
+    fun `Get History with a valid ID but area doesnt exist should return 404 area not found`() {
+        val usrId = 1
         val areaId = 9999
-        val result = historyService.getAreaHistory(areaId)
+        val result = historyService.getAreaHistory(usrId,areaId)
         when (result) {
             is Failure -> {
-                assert(false) { "Expected success but got failure: ${result.value}" }
+                assert(result.value is HistoryError.AreaNotFound)
+                assert(result.value.status == 404)
             }
 
             is Success -> {
-                val areaHistory = result.value
-                assert(areaHistory.areaId == areaId)
-                assert(areaHistory.processes.isEmpty()) { "Expected empty processes list but got: ${areaHistory.processes.size} elements" }
+                assert(false) { "Expected success but got failure: ${result.value}" }
             }
         }
     }
-
 }
