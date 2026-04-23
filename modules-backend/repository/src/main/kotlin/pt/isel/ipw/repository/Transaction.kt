@@ -2,8 +2,13 @@ package pt.isel.ipw.repository
 
 interface Transaction {
     val usersRepository: UsersRepository
-    val tokensRepository: TokensRepository
+
+    val loginTokensRepository: LoginTokensRepository
+    val accessTokensRepository: AccessTokensRepository
     val refreshTokensRepository: RefreshTokensRepository
+
+    val areasRepository: AreasRepository
+    val activityRepository: ActivityRepository
     val historyRepository: IHistoryRepository
 
     fun rollback()

@@ -11,7 +11,8 @@ drop table if exists Typification cascade;
 drop table if exists Role_Permission cascade;
 drop table if exists Permission cascade;
 drop table if exists User_Role cascade;
-drop table if exists Token cascade;
+drop table if exists AccessToken cascade;
+drop table if exists LoginToken cascade;
 drop table if exists RefreshToken cascade;
 drop table if exists Role cascade;
 drop table if exists Users cascade;
@@ -19,9 +20,9 @@ drop table if exists Area cascade;
 
 
 create table Area(
-                     id   serial primary key,
-                     name varchar(100) not null unique,
-                     boss_id int
+    id   serial primary key,
+    name varchar(100) not null unique,
+    boss_id int
 );
 
 create table Users(
@@ -46,10 +47,17 @@ create table Role(
      )
 );
 
-create table Token(
+create table AccessToken(
     token       text primary key,
     user_id     int not null references Users(id) on delete cascade,
-    active_role varchar(50) references Role(name),
+    role        varchar(50) not null references Role(name),
+    created_at  timestamp not null default current_timestamp,
+    expires_at  timestamp not null
+);
+
+create table LoginToken(
+    token       text primary key,
+    user_id     int not null references Users(id) on delete cascade,
     created_at  timestamp not null default current_timestamp,
     expires_at  timestamp not null
 );
@@ -57,6 +65,7 @@ create table Token(
 create table RefreshToken(
     token       text primary key,
     user_id     int not null references Users(id) on delete cascade,
+    role        varchar(50) not null references Role(name),
     created_at  timestamp not null default current_timestamp,
     expires_at  timestamp not null
 );
@@ -193,6 +202,3 @@ create table Activity(
     description text,
     created_at  timestamp not null default current_timestamp
 );
-
-call clean_database();
-call sample_data();

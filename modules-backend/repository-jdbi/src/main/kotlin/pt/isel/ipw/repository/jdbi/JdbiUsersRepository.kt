@@ -1,6 +1,7 @@
 package pt.isel.ipw.repository.jdbi
 
 import org.jdbi.v3.core.Handle
+import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.ipw.domain.User
 import pt.isel.ipw.repository.UsersRepository
 import pt.isel.ipw.repository.jdbi.mappers.UserMapper
@@ -52,6 +53,19 @@ class JdbiUsersRepository(
         )
             .bind("email", email)
             .mapTo(Int::class.java)
+            .one() > 0
+    }
+
+    override fun isUserStoredById(userId: Int): Boolean {
+        return handle.createQuery(
+            """
+            select count(*)
+            from Users
+            where id = :id
+        """
+        )
+            .bind("id", userId)
+            .mapTo<Int>()
             .one() > 0
     }
 

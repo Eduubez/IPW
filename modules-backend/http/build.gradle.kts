@@ -29,7 +29,9 @@ dependencies {
 
     // Kotlin + JSON
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("tools.jackson.module:jackson-module-kotlin:3.0.0")
+    implementation("tools.jackson.core:jackson-databind:3.1.0")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.7")
+    implementation("tools.jackson.module:jackson-module-kotlin:3.1.0")
 
     // Tests
     testImplementation(kotlin("test"))

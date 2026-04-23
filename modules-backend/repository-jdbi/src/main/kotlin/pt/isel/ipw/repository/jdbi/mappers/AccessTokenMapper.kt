@@ -6,12 +6,11 @@ import pt.isel.ipw.domain.AccessToken
 import java.sql.ResultSet
 
 class AccessTokenMapper : RowMapper<AccessToken> {
-
     override fun map(rs: ResultSet, ctx: StatementContext): AccessToken =
         AccessToken(
             token = rs.getString("token"),
             userId = rs.getInt("user_id"),
-            activeRole = rs.getString("active_role"), // pode ser null
+            role = rs.getString("role"),
             createdAt = rs.getTimestamp("created_at").toInstant(),
             expiresAt = rs.getTimestamp("expires_at").toInstant()
         )

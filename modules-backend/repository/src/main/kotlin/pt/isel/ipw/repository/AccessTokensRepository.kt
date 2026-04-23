@@ -1,10 +1,9 @@
 package pt.isel.ipw.repository
 
-import pt.isel.ipw.domain.RefreshToken
+import pt.isel.ipw.domain.AccessToken
 import java.time.Instant
 
-interface RefreshTokensRepository {
-
+interface AccessTokensRepository {
     fun create(
         token: String,
         userId: Int,
@@ -12,9 +11,9 @@ interface RefreshTokensRepository {
         expiresAt: Instant
     )
 
-    fun getByToken(token: String): RefreshToken?
+    fun getByToken(token: String): AccessToken?
 
-    fun getByUserId(userId: Int): RefreshToken?
+    fun getByUserId(userId: Int): AccessToken?
 
     fun deleteByToken(token: String)
 

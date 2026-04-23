@@ -9,6 +9,7 @@ import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import pt.isel.ipw.http.filters.JwtAuthenticationFilter
 import pt.isel.ipw.services.auth.JwtTokenService
+import tools.jackson.databind.ObjectMapper
 
 @Configuration
 @EnableWebSecurity
@@ -37,8 +38,11 @@ class SecurityConfig {
     }
 
     @Bean
-    fun jwtAuthenticationFilter(jwtTokenService: JwtTokenService): JwtAuthenticationFilter {
-        return JwtAuthenticationFilter(jwtTokenService)
+    fun jwtAuthenticationFilter(
+        jwtTokenService: JwtTokenService,
+        objectMapper: ObjectMapper
+    ): JwtAuthenticationFilter {
+        return JwtAuthenticationFilter(jwtTokenService, objectMapper)
     }
 }
 

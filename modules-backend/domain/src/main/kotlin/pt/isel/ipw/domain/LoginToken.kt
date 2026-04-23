@@ -2,11 +2,10 @@ package pt.isel.ipw.domain
 
 import java.time.Instant
 
-data class AccessToken(
+class LoginToken(
     val token: String,
     val userId: Int,
-    val role: String,
     val createdAt: Instant,
-    val expiresAt: Instant
-){
+    val expiresAt: Instant,
+) {
 }

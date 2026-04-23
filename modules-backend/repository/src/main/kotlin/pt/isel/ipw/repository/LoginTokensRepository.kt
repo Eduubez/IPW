@@ -1,20 +1,17 @@
 package pt.isel.ipw.repository
 
-import pt.isel.ipw.domain.RefreshToken
+import pt.isel.ipw.domain.LoginToken
 import java.time.Instant
 
-interface RefreshTokensRepository {
+interface LoginTokensRepository {
 
     fun create(
         token: String,
         userId: Int,
-        role: String,
         expiresAt: Instant
     )
 
-    fun getByToken(token: String): RefreshToken?
-
-    fun getByUserId(userId: Int): RefreshToken?
+    fun getByToken(token: String): LoginToken?
 
     fun deleteByToken(token: String)
 

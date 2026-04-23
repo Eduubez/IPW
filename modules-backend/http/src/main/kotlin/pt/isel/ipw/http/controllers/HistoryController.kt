@@ -28,6 +28,7 @@ import pt.isel.ipw.services.interfaces.IHistoryService
 class HistoryController(
     private val historyService: IHistoryService,
 ) {
+
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.TRIATOR, Roles.MANAGER)
     @GetMapping("/{userId}")
     fun getUserHistory(

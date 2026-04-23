@@ -1,7 +1,10 @@
-@cookieToken =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI2IiwidXNlcklkIjo2LCJyb2xlcyI6WyJhZG1pbiIsInRyaWF0b3IiXSwiaWF0IjoxNzc2NTUwNjA2LCJleHAiOjE3NzY1NTc4MDZ9.GcXWcrCp_Gr1usYggqHyzkgdxwXXBJUIYb73SkV_iJSJDNtweBjfMQDMnBqlIn4lmA7XQVWqy3gL_dgC8TSJZQ"
+@baseUrl = http://localhost:8080
+@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJ0eXBlIjoibG9naW4iLCJpYXQiOjE3NzY5NjMyMDAsImV4cCI6MTc3Njk2MzUwMH0.mhPpgBEyXOiXa2wnDRdB61dNSy2452Aj8sr9-wZISq5jO6scl96F3UtF_YDvOovUa9KbtzquYWF0K5ZYq-CGKA
+@accessToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc2OTYzMjM3LCJleHAiOjE3NzY5NzA0Mzd9.bUsgH4kB0eGceNGmw3ijciOJPdH_PWj3R08oJ2PWZX5TSxghkxn5q68TMyORKSyXBjK0PXf6cdM-gd8-9zGdwg
+@refreshToken =
 
-### Create User
-POST http://localhost:8080/users
+### Create User - admin + triator (areaId pode ser null)
+POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
@@ -9,12 +12,11 @@ Content-Type: application/json
   "email": "chico@gmail.com",
   "password": "12345",
   "areaId": null,
-  "roles": ["admin", "triator"]
+  "roles": ["admin"]
 }
 
-
 ### Login
-POST http://localhost:8080/users/login
+POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
@@ -22,15 +24,22 @@ Content-Type: application/json
   "password": "12345"
 }
 
-
-### Select Role
-POST http://localhost:8080/users/auth/select-role
+### Select Role - usar loginToken no Authorization header
+POST {{baseUrl}}/users/auth/select-role
 Content-Type: application/json
-Cookie: auth_token={{cookieToken}}
+Authorization: Bearer {{loginToken}}
 
 {
-  "role": "triator"
+  "role": "admin"
 }
 
+### Refresh Access Token - usar refreshToken no Authorization header
+POST {{baseUrl}}/users/refresh-token
+Authorization: Bearer {{refreshToken}}
+
 ### Get Roles
-GET http://localhost:8080/users/roles?email=chico@gmail.com
+GET {{baseUrl}}/users/roles?email=chico@gmail.com
+
+### Exemplo endpoint protegido
+GET {{baseUrl}}/history/6
+Authorization: Bearer {{accessToken}}

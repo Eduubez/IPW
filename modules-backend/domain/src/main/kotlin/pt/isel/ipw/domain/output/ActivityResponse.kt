@@ -1,5 +1,7 @@
 package pt.isel.ipw.domain.output
 
+import pt.isel.ipw.domain.Activity
+
 data class ActivityResponse(
     val id: Int,
     val processId: Int,
@@ -9,7 +11,14 @@ data class ActivityResponse(
     val createdAt: String,
 )
 
-//fun Activity.toResponse() = ActivityResponse()
+fun Activity.toResponse() = ActivityResponse(
+    id = id,
+    processId = processId,
+    userId = userId,
+    action = action,
+    description = description ?: "No description",
+    createdAt = createdAt.toString()
+)
 
-//fun List<Activity>.toResponse() = this.map { it.toResponse() }
+fun List<Activity>.toResponse() = this.map { it.toResponse() }
 
