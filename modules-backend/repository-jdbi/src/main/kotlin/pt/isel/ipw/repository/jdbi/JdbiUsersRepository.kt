@@ -105,10 +105,17 @@ class JdbiUsersRepository(
     override fun getUserById(userId: Int): User? {
         return handle.createQuery(
             """
-                select name,email, area_id,password_hash, is_active
-                from Users                
-                where id = :userId
-            """
+            select 
+                u.id,
+                u.name,
+                u.email,
+                u.password_hash,
+                a.name as area,
+                u.is_active
+            from Users u
+            left join Area a on u.area_id = a.id
+            where u.id = :userId
+        """
         )
             .bind("userId", userId)
             .map(UserMapper())
