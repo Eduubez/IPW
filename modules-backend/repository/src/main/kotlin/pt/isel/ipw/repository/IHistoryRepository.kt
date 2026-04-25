@@ -1,6 +1,6 @@
 package pt.isel.ipw.repository
 
-import pt.isel.ipw.domain.AreaEntity
+import pt.isel.ipw.domain.Entities.area.AreaEntity
 import pt.isel.ipw.domain.HistoryEntryEntity
 
 

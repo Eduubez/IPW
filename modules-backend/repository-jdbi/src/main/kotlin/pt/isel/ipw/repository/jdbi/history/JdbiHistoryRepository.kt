@@ -1,7 +1,7 @@
 package pt.isel.ipw.repository.jdbi.history
 
 import org.jdbi.v3.core.Handle
-import pt.isel.ipw.domain.AreaEntity
+import pt.isel.ipw.domain.Entities.area.AreaEntity
 import pt.isel.ipw.domain.HistoryEntryEntity
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.IHistoryRepository
