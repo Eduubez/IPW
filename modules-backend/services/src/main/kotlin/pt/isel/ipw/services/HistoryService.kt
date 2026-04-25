@@ -2,8 +2,8 @@ package pt.isel.ipw.services
 
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.HistoryEntryEntity
-import pt.isel.ipw.domain.output.history.AreaProcessHistory
-import pt.isel.ipw.domain.output.history.UserProcessHistory
+import pt.isel.ipw.domain.DTO.output.history.AreaProcessHistory
+import pt.isel.ipw.domain.DTO.output.history.UserProcessHistory
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.Either

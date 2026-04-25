@@ -1,5 +1,6 @@
 package pt.isel.ipw.http.controllers
 
+import jakarta.annotation.security.RolesAllowed
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -9,15 +10,16 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import pt.isel.ipw.domain.input.CreateUserRequest
-import pt.isel.ipw.domain.input.LoginRequest
-import pt.isel.ipw.domain.input.SelectRoleRequest
-import pt.isel.ipw.domain.output.CreateUserResponse
-import pt.isel.ipw.domain.output.LoginResponse
-import pt.isel.ipw.domain.output.RefreshTokenResponse
-import pt.isel.ipw.domain.output.SelectRoleResponse
-import pt.isel.ipw.domain.output.TokenResponse
-import pt.isel.ipw.domain.output.UserRolesResponse
+import pt.isel.ipw.domain.DTO.input.CreateUserRequest
+import pt.isel.ipw.domain.DTO.input.LoginRequest
+import pt.isel.ipw.domain.DTO.input.SelectRoleRequest
+import pt.isel.ipw.domain.DTO.output.CreateUserResponse
+import pt.isel.ipw.domain.DTO.output.LoginResponse
+import pt.isel.ipw.domain.DTO.output.RefreshTokenResponse
+import pt.isel.ipw.domain.DTO.output.SelectRoleResponse
+import pt.isel.ipw.domain.DTO.output.TokenResponse
+import pt.isel.ipw.domain.DTO.output.UserRolesResponse
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
 import pt.isel.ipw.http.errors.toHttp
@@ -67,7 +69,6 @@ class UserController(
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
-
     @PostMapping("/auth/select-role")
     fun selectRole(
         @RequestBody body: SelectRoleRequest,
@@ -102,7 +103,7 @@ class UserController(
             }
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
-
+    @RolesAllowed(Roles.ADMIN)
     @PostMapping
     fun createUser(@RequestBody body: CreateUserRequest): ResponseEntity<*> {
         val result = userService.createUser(body.name, body.email, body.password, body.areaId, body.roles)

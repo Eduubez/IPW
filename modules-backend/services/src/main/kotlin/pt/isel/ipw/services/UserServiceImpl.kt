@@ -148,7 +148,6 @@ class UserServiceImpl(
 
         success(userId)
     }
-
     override fun selectRole(
         loginToken: String,
         role: String

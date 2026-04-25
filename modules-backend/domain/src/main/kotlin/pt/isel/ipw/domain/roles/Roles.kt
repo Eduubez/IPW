@@ -1,11 +1,11 @@
 package pt.isel.ipw.domain.roles
 
 object Roles {
-    const val INVESTIGATOR = "INVESTIGATOR"
-    const val SUPERVISOR = "SUPERVISOR"
-    const val TRIATOR = "TRIATOR"
-    const val MANAGER = "MANAGER"
-    const val ADMIN = "ADMIN"
+    const val INVESTIGATOR = "investigator"
+    const val SUPERVISOR = "supervisor"
+    const val TRIATOR = "triator"
+    const val MANAGER = "manager"
+    const val ADMIN = "admin"
 
     val ALL = setOf(INVESTIGATOR, SUPERVISOR, TRIATOR, MANAGER, ADMIN)
     val AREA_ROLES = setOf(INVESTIGATOR, SUPERVISOR)

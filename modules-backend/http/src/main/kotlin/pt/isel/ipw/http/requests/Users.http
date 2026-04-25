@@ -1,10 +1,6 @@
-@baseUrl = http://localhost:8080
-@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJ0eXBlIjoibG9naW4iLCJpYXQiOjE3NzY5NjMyMDAsImV4cCI6MTc3Njk2MzUwMH0.mhPpgBEyXOiXa2wnDRdB61dNSy2452Aj8sr9-wZISq5jO6scl96F3UtF_YDvOovUa9KbtzquYWF0K5ZYq-CGKA
-@accessToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc2OTYzMjM3LCJleHAiOjE3NzY5NzA0Mzd9.bUsgH4kB0eGceNGmw3ijciOJPdH_PWj3R08oJ2PWZX5TSxghkxn5q68TMyORKSyXBjK0PXf6cdM-gd8-9zGdwg
-@refreshToken =
-
-### Create User - admin + triator (areaId pode ser null)
-POST {{baseUrl}}/users
+@cookieToken =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlcyI6WyJhZG1pbiIsInRyaWF0b3IiXSwiaWF0IjoxNzc2NzExMDM2LCJleHAiOjE3NzY3MTgyMzZ9.a4HVNU8aCcOd866jlwyGsp2g52YTEPo-kQvqEFepF97njdqRVRHg0V_ySNc5r-5or9mRIoF4VyN5nZ_-tfp8nA
+### Create User
+POST http://localhost:8080/users
 Content-Type: application/json
 
 {
@@ -12,11 +8,12 @@ Content-Type: application/json
   "email": "chico@gmail.com",
   "password": "12345",
   "areaId": null,
-  "roles": ["admin"]
+  "roles": ["admin", "triator"]
 }
 
+
 ### Login
-POST {{baseUrl}}/users/login
+POST http://localhost:8080/users/login
 Content-Type: application/json
 
 {
@@ -24,22 +21,19 @@ Content-Type: application/json
   "password": "12345"
 }
 
-### Select Role - usar loginToken no Authorization header
-POST {{baseUrl}}/users/auth/select-role
+###
+GET localhost:8080/area/
 Content-Type: application/json
-Authorization: Bearer {{loginToken}}
+Cookie: auth_token={{cookieToken}}
+
+### Select Role
+POST http://localhost:8080/users/auth/select-role
+Content-Type: application/json
+Cookie: auth_token={{cookieToken}}
 
 {
-  "role": "admin"
+  "role": "triator"
 }
 
-### Refresh Access Token - usar refreshToken no Authorization header
-POST {{baseUrl}}/users/refresh-token
-Authorization: Bearer {{refreshToken}}
-
 ### Get Roles
-GET {{baseUrl}}/users/roles?email=chico@gmail.com
-
-### Exemplo endpoint protegido
-GET {{baseUrl}}/history/6
-Authorization: Bearer {{accessToken}}
+GET http://localhost:8080/users/roles?email=chico@gmail.com
