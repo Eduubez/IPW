@@ -45,7 +45,7 @@ class AreaServiceImpl(
         return transactionManager.run {
             val area = areasRepository.getAreaById(id) ?: return@run failure(AreaError.AreaNotFound)
             val user = usersRepository.getUserById(bossId) ?: return@run failure(AreaError.UserNotFound)
-            val alreadySupervisor = usersRepository.getUserRoles(bossId).any { it === Roles.SUPERVISOR }
+            val alreadySupervisor = usersRepository.getUserRoles(bossId).none { it === Roles.SUPERVISOR }
 
             val updatedArea = area.copy(bossId = bossId, bossName = user.name)
             areasRepository.updateBoss(area.id, bossId)
