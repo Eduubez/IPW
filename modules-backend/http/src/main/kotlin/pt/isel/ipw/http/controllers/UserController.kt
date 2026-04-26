@@ -110,7 +110,6 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.ADMIN)
     @PostMapping
     fun createUser(@RequestBody body: CreateUserRequest): ResponseEntity<*> {
         val result = userService.createUser(

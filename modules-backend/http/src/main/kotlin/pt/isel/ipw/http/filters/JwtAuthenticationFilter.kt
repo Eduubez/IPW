@@ -50,7 +50,7 @@ class JwtAuthenticationFilter(
             val tokenClaims = jwtTokenService.parseAccessToken(token)
 
             val authorities = listOf(
-                SimpleGrantedAuthority("ROLE_${tokenClaims.role.uppercase()}")
+                SimpleGrantedAuthority("ROLE_${tokenClaims.role}")
             )
 
             val auth = UsernamePasswordAuthenticationToken(
