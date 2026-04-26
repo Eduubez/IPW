@@ -19,7 +19,7 @@ interface UsersRepository {
 
     fun isUserStoredById(userId: Int): Boolean
 
-    fun addUserRole(userId: Int, roleName: String)
+    fun addUserRoles(userId: Int, roles: List<String>)
 
     fun getUserById(userId: Int): User?
 }

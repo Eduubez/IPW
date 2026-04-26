@@ -1,6 +1,5 @@
 package pt.isel.ipw.http.filters
 
-import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -8,12 +7,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
-import pt.isel.ipw.http.Cookies
+import pt.isel.ipw.http.ApiRoutes
+import pt.isel.ipw.http.TokenExtractor.extractToken
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.toHttp
+import pt.isel.ipw.services.auth.ExpiredAccessTokenException
 import pt.isel.ipw.services.auth.JwtTokenService
 import pt.isel.ipw.services.errors.UserError
 import tools.jackson.databind.ObjectMapper
+
 
 class JwtAuthenticationFilter(
     private val jwtTokenService: JwtTokenService,
@@ -22,11 +24,14 @@ class JwtAuthenticationFilter(
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.servletPath
-        return path == "/users" ||
-                path == "/users/login" ||
-                path == "/users/auth/select-role" ||
-                path == "/users/refresh-token" ||
-                path == "/users/roles"
+
+        return path in setOf(
+            ApiRoutes.Users.BASE,
+            ApiRoutes.Users.LOGIN_FULL,
+            ApiRoutes.Users.SELECT_ROLE_FULL,
+            ApiRoutes.Users.REFRESH_TOKEN_FULL,
+            ApiRoutes.Users.ROLES_FULL
+        )
     }
 
     override fun doFilterInternal(
@@ -57,23 +62,11 @@ class JwtAuthenticationFilter(
             SecurityContextHolder.getContext().authentication = auth
             filterChain.doFilter(request, response)
 
-        } catch (_: ExpiredJwtException) {
+        } catch (_: ExpiredAccessTokenException) {
             writeProblem(response, UserError.ExpiredAccessToken)
-
         } catch (_: Exception) {
             writeProblem(response, UserError.InvalidToken)
         }
-    }
-
-    private fun extractToken(request: HttpServletRequest): String? {
-        val header = request.getHeader("Authorization")
-        if (header != null && header.startsWith("Bearer ")) {
-            return header.substring(7)
-        }
-
-        return request.cookies
-            ?.firstOrNull { it.name == Cookies.AUTH_COOKIE }
-            ?.value
     }
 
     private fun writeProblem(

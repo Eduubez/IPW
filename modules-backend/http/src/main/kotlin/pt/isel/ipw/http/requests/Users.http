@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080
-@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJ0eXBlIjoibG9naW4iLCJpYXQiOjE3NzY5NjMyMDAsImV4cCI6MTc3Njk2MzUwMH0.mhPpgBEyXOiXa2wnDRdB61dNSy2452Aj8sr9-wZISq5jO6scl96F3UtF_YDvOovUa9KbtzquYWF0K5ZYq-CGKA
-@accessToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc2OTYzMjM3LCJleHAiOjE3NzY5NzA0Mzd9.bUsgH4kB0eGceNGmw3ijciOJPdH_PWj3R08oJ2PWZX5TSxghkxn5q68TMyORKSyXBjK0PXf6cdM-gd8-9zGdwg
-@refreshToken =
+@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlcyI6WyJhZG1pbiIsInRyaWF0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzc3MjE1OTM4LCJleHAiOjE3NzcyMTYyMzh9.5s_LrUHA0pQO4a_B25Spa49GtgQlZO8mnwHs6yz0SFv15Yl4dUtfonmphXHbF5L9MN2OKE8q6VvQeBpDPVc-Xg
+@accessToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc3MjE1OTY3LCJleHAiOjE3NzcyMjMxNjd9.CbVxo-O1xfJTgc5QvaVpt5xTRLo9MeoV7iWSwKqFLXgV70q-udewSKGTL6pPVgLP1RGWsIv2O0QZDjDTD4WSTA
+@refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc3NzA0NDUxOSwiZXhwIjoxNzc3NjQ5MzE5fQ._PdxqiNI2OSbRWrXCLTxeogsLQFxxe_xh_OPG3phWWUcxjrp795wxymk5nsJl8zcxGYa6XJpLJK1fJJjjwxZ7Q
 
 ### Create User - admin + triator (areaId pode ser null)
 POST {{baseUrl}}/users
@@ -12,7 +12,7 @@ Content-Type: application/json
   "email": "chico@gmail.com",
   "password": "12345",
   "areaId": null,
-  "roles": ["admin"]
+  "roles": ["admin", "triator"]
 }
 
 ### Login

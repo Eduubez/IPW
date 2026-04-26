@@ -69,6 +69,20 @@ class JdbiUsersRepository(
             .one() > 0
     }
 
+    override fun addUserRoles(userId: Int, roles: List<String>) {
+        val batch = handle.prepareBatch(
+            "insert into User_Role(user_id, role_name) values (:userId, :role)"
+        )
+
+        roles.forEach { role ->
+            batch.bind("userId", userId)
+                .bind("role", role)
+                .add()
+        }
+
+        batch.execute()
+    }
+
     override fun createUser(
         name: String,
         email: String,
@@ -88,18 +102,6 @@ class JdbiUsersRepository(
             .executeAndReturnGeneratedKeys()
             .mapTo(Int::class.java)
             .one()
-    }
-
-    override fun addUserRole(userId: Int, roleName: String) {
-        handle.createUpdate(
-            """
-                insert into User_Role(user_id, role_name)
-                values (:userId, :roleName)
-            """
-        )
-            .bind("userId", userId)
-            .bind("roleName", roleName)
-            .execute()
     }
 
     override fun getUserById(userId: Int): User? {

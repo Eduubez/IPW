@@ -17,9 +17,17 @@ interface UserService {
 
     fun login(email: String, password: String): Either<UserError, LoginResult>
 
-    fun refreshAccessToken(refreshToken: String): Either<UserError, RefreshAccessToken>
-
     fun getUserRoles(email: String): Either<UserError, List<String>>
 
-    fun selectRole(loginToken: String, role: String): Either<UserError, SelectRoleResult>
+    fun refreshAccessToken(
+        refreshToken: String,
+        userId: Int,
+        role: String
+    ): Either<UserError, RefreshAccessToken>
+
+    fun selectRole(
+        loginToken: String,
+        userId: Int,
+        selectedRole: String
+    ): Either<UserError, SelectRoleResult>
 }

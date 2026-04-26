@@ -43,7 +43,7 @@ class UserServiceImpl(
         refreshTokensRepository.deleteByUserId(validUser.id)
         loginTokensRepository.deleteByUserId(validUser.id)
 
-        val createdLoginToken = tokenService.createLoginToken(validUser.id)
+        val createdLoginToken = tokenService.createLoginToken(validUser.id, roles)
 
         loginTokensRepository.create(
             token = createdLoginToken.token,
@@ -62,19 +62,17 @@ class UserServiceImpl(
     }
 
     override fun refreshAccessToken(
-        refreshToken: String
+        refreshToken: String,
+        userId: Int,
+        role: String
     ): Either<UserError, RefreshAccessToken> = transactionManager.run {
-        val refreshClaims = try {
-            tokenService.parseRefreshToken(refreshToken)
-        } catch (e: Exception) {
-            return@run failure(UserError.InvalidToken)
-        }
 
         val storedRefreshToken = refreshTokensRepository.getByToken(refreshToken)
             ?: return@run failure(UserError.RefreshTokenNotFound)
 
-        if (storedRefreshToken.userId != refreshClaims.userId ||
-            storedRefreshToken.role != refreshClaims.role) {
+        if (storedRefreshToken.userId != userId ||
+            storedRefreshToken.role != role
+        ) {
             return@run failure(UserError.InvalidToken)
         }
 
@@ -138,9 +136,7 @@ class UserServiceImpl(
             areaId = areaId
         )
 
-        normalizedRoles.forEach { role ->
-            usersRepository.addUserRole(userId, role)
-        }
+        usersRepository.addUserRoles(userId, normalizedRoles)
 
         if (normalizedRoles.any { it.uppercase() == Roles.SUPERVISOR }) {
             areasRepository.updateBoss(areaId!!, userId)
@@ -151,15 +147,9 @@ class UserServiceImpl(
 
     override fun selectRole(
         loginToken: String,
-        role: String
+        userId: Int,
+        selectedRole: String
     ): Either<UserError, SelectRoleResult> = transactionManager.run {
-
-        val userId = try {
-            tokenService.parseLoginToken(loginToken)
-        } catch (e: Exception) {
-            loginTokensRepository.deleteByToken(loginToken)
-            return@run failure(UserError.InvalidToken)
-        }
 
         val storedLoginToken = loginTokensRepository.getByToken(loginToken)
             ?: return@run failure(UserError.InvalidToken)
@@ -174,7 +164,7 @@ class UserServiceImpl(
         }
 
         val storedRoles = usersRepository.getUserRoles(userId)
-        val normalizedRequestedRole = role.lowercase()
+        val normalizedRequestedRole = selectedRole.lowercase()
 
         if (normalizedRequestedRole !in storedRoles) {
             return@run failure(UserError.InvalidRoleSelection)

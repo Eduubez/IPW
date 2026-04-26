@@ -49,6 +49,7 @@ class HistoryController(
             }
         }
     }
+
     @RolesAllowed(Roles.SUPERVISOR,Roles.MANAGER)
     @GetMapping("/area/{areaId}")
     fun getAreaHistory(
