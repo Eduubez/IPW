@@ -111,6 +111,7 @@ class UserController(
     }
 
     @PostMapping
+    @RolesAllowed(Roles.ADMIN)
     fun createUser(@RequestBody body: CreateUserRequest): ResponseEntity<*> {
         val result = userService.createUser(
             body.name,

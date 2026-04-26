@@ -20,6 +20,7 @@ import pt.isel.ipw.services.interfaces.AreaService
 class AreaController(private val areaService: AreaService) {
 
     @GetMapping("/")
+    @RolesAllowed(Roles.TRIATOR)
     fun getAllAreas(): ResponseEntity<*> {
         val result = areaService.getAllAreas()
         return when (result) {

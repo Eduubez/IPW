@@ -29,6 +29,7 @@ class SecurityConfig {
                     .requestMatchers("/users/**").permitAll()
                     .anyRequest().authenticated()
             }
+
             .addFilterBefore(
                 jwtAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter::class.java

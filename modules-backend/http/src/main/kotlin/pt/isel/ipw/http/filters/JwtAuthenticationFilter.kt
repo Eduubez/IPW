@@ -26,7 +26,6 @@ class JwtAuthenticationFilter(
         val path = request.servletPath
 
         return path in setOf(
-            ApiRoutes.Users.BASE,
             ApiRoutes.Users.LOGIN_FULL,
             ApiRoutes.Users.SELECT_ROLE_FULL,
             ApiRoutes.Users.REFRESH_TOKEN_FULL,
