@@ -45,14 +45,15 @@ class AreaServiceImpl(
         return transactionManager.run {
             val area = areasRepository.getAreaById(id) ?: return@run failure(AreaError.AreaNotFound)
             val user = usersRepository.getUserById(bossId) ?: return@run failure(AreaError.UserNotFound)
-            val alreadySupervisor = usersRepository.getUserRoles(bossId).none { it === Roles.SUPERVISOR }
+            val alreadySupervisor = usersRepository.getUserRoles(bossId)
+                .any { it.equals(Roles.SUPERVISOR, ignoreCase = true) }
 
             val updatedArea = area.copy(bossId = bossId, bossName = user.name)
             areasRepository.updateBoss(area.id, bossId)
 
             // If the new boss is not already a supervisor, assign them the supervisor role
             if (!alreadySupervisor) {
-                usersRepository.addUserRole(bossId, Roles.SUPERVISOR)
+                usersRepository.addUserRoles(bossId, listOf(Roles.SUPERVISOR.lowercase()))
             }
 
 

@@ -13,9 +13,9 @@ class AreaServiceTest {
     companion object {
         val jdbi = Jdbi.create(
             PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5432/ipw")
+                setUrl("jdbc:postgresql://localhost:5434/ipw_test")
                 user = "postgres"
-                password = "123456789"
+                password = "1234"
             }
         ).configureWithAppRequirements()
         private val areaService = AreaServiceImpl(

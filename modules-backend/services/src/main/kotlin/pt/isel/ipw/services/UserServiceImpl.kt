@@ -138,7 +138,7 @@ class UserServiceImpl(
 
         usersRepository.addUserRoles(userId, normalizedRoles)
 
-        if (normalizedRoles.any { it.uppercase() == Roles.SUPERVISOR }) {
+        if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
             areasRepository.updateBoss(areaId!!, userId)
         }
 
@@ -217,8 +217,8 @@ class UserServiceImpl(
         areaId: Int?,
         roles: List<String>
     ): UserError? {
-        val hasAreaRole = roles.any { it.uppercase() in Roles.AREA_ROLES }
-        val onlyArealessRoles = roles.all { it.uppercase() in Roles.AREALESS_ROLES }
+        val hasAreaRole = roles.any { it in Roles.AREA_ROLES }
+        val onlyArealessRoles = roles.all { it in Roles.AREALESS_ROLES }
 
         return when {
             usersRepository.isUserStoredByEmail(email) -> UserError.UserAlreadyExists
@@ -230,7 +230,7 @@ class UserServiceImpl(
 
             areaId != null && !areasRepository.isAreaStoredById(areaId) -> UserError.AreaNotFound
 
-            roles.any { it.uppercase() == Roles.SUPERVISOR } &&
+            roles.any { it == Roles.SUPERVISOR } &&
                     areasRepository.hasBoss(areaId!!) -> UserError.AreaAlreadyHasSupervisor
 
             else -> null
