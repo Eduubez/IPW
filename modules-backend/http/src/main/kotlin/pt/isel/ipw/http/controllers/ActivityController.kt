@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import pt.isel.ipw.domain.output.toResponse
+import pt.isel.ipw.domain.DTO.output.toResponse
 import pt.isel.ipw.http.errors.handler
 import pt.isel.ipw.http.errors.toHttp
 import pt.isel.ipw.services.errors.mapSuccess

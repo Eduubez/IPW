@@ -1,11 +1,12 @@
 @baseUrl = http://localhost:8080
-@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlcyI6WyJhZG1pbiIsInRyaWF0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzc3MjE1OTM4LCJleHAiOjE3NzcyMTYyMzh9.5s_LrUHA0pQO4a_B25Spa49GtgQlZO8mnwHs6yz0SFv15Yl4dUtfonmphXHbF5L9MN2OKE8q6VvQeBpDPVc-Xg
-@accessToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc3MjE1OTY3LCJleHAiOjE3NzcyMjMxNjd9.CbVxo-O1xfJTgc5QvaVpt5xTRLo9MeoV7iWSwKqFLXgV70q-udewSKGTL6pPVgLP1RGWsIv2O0QZDjDTD4WSTA
-@refreshToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc3NzA0NDUxOSwiZXhwIjoxNzc3NjQ5MzE5fQ._PdxqiNI2OSbRWrXCLTxeogsLQFxxe_xh_OPG3phWWUcxjrp795wxymk5nsJl8zcxGYa6XJpLJK1fJJjjwxZ7Q
+@loginToken =
+@accessToken =
+@refreshToken =
 
-### Create User - admin + triator (areaId pode ser null)
+### Create User - requires admin access token
 POST {{baseUrl}}/users
 Content-Type: application/json
+Authorization: Bearer {{accessToken}}
 
 {
   "name": "Chico",
@@ -24,7 +25,7 @@ Content-Type: application/json
   "password": "12345"
 }
 
-### Select Role - usar loginToken no Authorization header
+### Select Role
 POST {{baseUrl}}/users/auth/select-role
 Content-Type: application/json
 Authorization: Bearer {{loginToken}}
@@ -33,13 +34,13 @@ Authorization: Bearer {{loginToken}}
   "role": "admin"
 }
 
-### Refresh Access Token - usar refreshToken no Authorization header
+### Refresh Access Token
 POST {{baseUrl}}/users/refresh-token
 Authorization: Bearer {{refreshToken}}
 
 ### Get Roles
 GET {{baseUrl}}/users/roles?email=chico@gmail.com
 
-### Exemplo endpoint protegido
+### Protected endpoint example
 GET {{baseUrl}}/history/6
 Authorization: Bearer {{accessToken}}
