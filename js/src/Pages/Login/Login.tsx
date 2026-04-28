@@ -19,19 +19,17 @@ export default function Login() {
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  //const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
 
-  const isButtonEnabled = email.length > 0 && password.length > 0;
+  const isButtonEnabled =!isLoading && email.length > 0 && password.length > 0;
   
 
   const handleLogin = async () => {
-    //setIsLoading(true);
-
+    setIsLoading(true);
     try {
       const response = await AuthApi.login({ email, password });
       if (response.success) {
-        localStorage.setItem("loggedIn", "true");
         const returnUrl = searchParams.get("returnUrl");
         if (returnUrl) {
           navigate(returnUrl, { replace: true });
@@ -43,9 +41,8 @@ export default function Login() {
           variant: ToastType.ERROR,
         });
       }
-
     } finally {
-      //setIsLoading(false);
+      setIsLoading(false);
     }
   };
 

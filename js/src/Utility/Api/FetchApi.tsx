@@ -1,5 +1,5 @@
 // talvez Colocar num .env
-const API_URL = "http://localhost:8080/"
+const API_URL = "/api/"
 
 export type ResponseApi<T> =
     | { success: true; data: T; status: number }

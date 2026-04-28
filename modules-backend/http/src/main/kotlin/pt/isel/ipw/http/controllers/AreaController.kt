@@ -16,7 +16,7 @@ import pt.isel.ipw.services.errors.Success
 import pt.isel.ipw.services.interfaces.AreaService
 
 @RestController
-@RequestMapping("/area")
+@RequestMapping("/api/area")
 class AreaController(private val areaService: AreaService) {
 
     @GetMapping("/")

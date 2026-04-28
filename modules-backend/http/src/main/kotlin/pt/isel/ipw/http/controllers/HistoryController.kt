@@ -24,7 +24,7 @@ import pt.isel.ipw.services.interfaces.IHistoryService
 
 
 @RestController
-@RequestMapping("/history")
+@RequestMapping("/api/history")
 class HistoryController(
     private val historyService: IHistoryService,
 ) {

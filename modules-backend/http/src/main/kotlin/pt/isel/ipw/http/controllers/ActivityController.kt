@@ -17,7 +17,7 @@ import pt.isel.ipw.services.interfaces.ActivityService
 
 
 @RestController
-@RequestMapping("/activity")
+@RequestMapping("/api/activity")
 class ActivityController(
     private val activityService: ActivityService
 ) {

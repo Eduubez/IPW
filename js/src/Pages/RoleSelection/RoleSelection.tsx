@@ -6,6 +6,8 @@ import { ROLES } from "../../MockData/MockRoles";
 import { useNavigate } from "react-router";
 import { ToastType } from "../../Types/ToastType";
 import { useSnackbar } from "notistack";
+import { userStore } from "../../Utility/Store/UserStore";
+import { UsersApi } from "../../Utility/Api/UsersApi";
 
 export default function RoleSelection() {
   const { t } = useTranslation();
@@ -13,8 +15,8 @@ export default function RoleSelection() {
   const navigate = useNavigate();
 
   const userRoles = useMemo(() => {
-    const roles = localStorage.getItem("roles");
-    return roles ? JSON.parse(roles) : [];
+    const roles = userStore.getRoles();
+    return roles ? roles : [];
   }, []);
 
   const filteredRoles = ROLES.filter((role) => userRoles.includes(role.key));
@@ -33,13 +35,11 @@ export default function RoleSelection() {
     }; // needed cuz ts...
   }, [t]);
 
-  const handleSelectRole = (roleKey: string) => {
-    localStorage.setItem("selectedRole", roleKey);
-    enqueueSnackbar(t("RoleSelection.roleSelected"), {
-      variant: ToastType.SUCCESS,
-    });
-
-    navigate("/dashboard");
+  const handleSelectRole = async (roleKey: string) => {
+    const response = await UsersApi.selectRole(roleKey);
+    if (response.success) {
+      navigate("/", { replace: true });
+    }
   };
 
   return (

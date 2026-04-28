@@ -10,16 +10,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 
-@Configuration
-class PipelineConfigurer : WebMvcConfigurer {
-	override fun addCorsMappings(registry: CorsRegistry) {
-		registry.addMapping("/**")                        // ← era /api/**
-			.allowedOriginPatterns("http://localhost:*")
-			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-			.allowedHeaders("*")
-			.allowCredentials(true)
-	}
-}
+
+
 
 @SpringBootApplication(scanBasePackages = ["pt.isel.ipw"])
 class BackendApplication {
