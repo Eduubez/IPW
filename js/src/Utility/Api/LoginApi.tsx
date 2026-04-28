@@ -1,4 +1,9 @@
 import {fetchApi, type ResponseApi} from "./FetchApi.tsx";
+import { userStore } from "../Store/UserStore.tsx";
+import { ToastType } from "../../Types/ToastType.tsx";
+import { enqueueSnackbar } from "notistack";
+import i18next from 'i18next'
+
 
 type LoginRequest = {
     email: string;
@@ -6,12 +11,12 @@ type LoginRequest = {
 };
 
 export type LoginResponse = {
-    token: TokenResponse;
+    loginToken: TokenResponse;
     userId: number;
     roles: string[];
 };
 
-type TokenResponse = {
+export type TokenResponse = {
     value: string;
     expiresAt: string;
 };
@@ -24,16 +29,27 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
         body: JSON.stringify(input),
     });
     if(response.success) {
-        localStorage.setItem("loggedIn", "true");
-        localStorage.setItem("roles", JSON.stringify(response.data.roles));
+        userStore.setIsLoggedIn();
+        userStore.setRoles(response.data.roles);
+        userStore.setLoginToken(response.data.loginToken.value);
+        enqueueSnackbar(i18next.t("Login.successMessage"), {
+            variant: ToastType.SUCCESS,
+        });
     }
     return response;
 }
 
 async function logout(): Promise<ResponseApi<void>> {
-    return fetchApi<void>("users/logout", {
+    const response =  await fetchApi<void>("users/logout", {
         method: "POST",
     });
+    if(response.success) {
+        userStore.clear();
+        enqueueSnackbar(i18next.t("Login.logout"), {
+            variant: ToastType.SUCCESS,
+        });
+    }
+    return response;
 }
 
 async function refreshToken(): Promise<ResponseApi<void>> {

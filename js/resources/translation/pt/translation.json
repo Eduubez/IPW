@@ -3,7 +3,9 @@
     "appName": "IPW",
     "appSubtitle": "Insurance Process Workflow",
     "welcome": "Olá !",
-    "welcomeText": "Utilize as suas credenciais para acessar a sua conta"
+    "welcomeText": "Utilize as suas credenciais para acessar a sua conta",
+    "successMessage": "Login bem sucedido!",
+    "logout": "Logout bem sucedido!"
   },
   "text": {
     "title": "Bem vindo a IPW "

@@ -23,12 +23,17 @@ class SecurityConfig {
     ): SecurityFilterChain {
 
         http
-            .csrf { it.disable() }
+            .cors { it.disable() }
+            .csrf { it.disable()  }
             .authorizeHttpRequests {
                 it
-                    .requestMatchers("/users/**").permitAll()
+                    .requestMatchers("/api/users/**").permitAll()
                     .anyRequest().authenticated()
+
             }
+
+
+
 
             .addFilterBefore(
                 jwtAuthenticationFilter,
