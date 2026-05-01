@@ -1,5 +1,6 @@
 package pt.isel.ipw.domain.DTO.output
 
+import pt.isel.ipw.domain.process.ProcessView
 
 data class GetProcessResponse(
     val id: Int,
@@ -7,24 +8,17 @@ data class GetProcessResponse(
     val location: LocationResponse,
     val creationDate: String,
     val dueDate: String,
-    val priority: Int,
+    val priority: String,
     val area: String,
     val typification: String,
     val triator: CreateUserResponse,
-    val investigator: CreateUserResponse,
-    val supervisor: CreateUserResponse,
+    val investigator: CreateUserResponse?,
+    val supervisor: CreateUserResponse?,
     val state: String,
-    val proves: ProvesResponse,
-    val report: ReportResponse,
-    val notes: NotesResponse,
-    val activity: ActivityResponse,
-    )
+    val proves: ProvesResponse?,
+    val report: ReportResponse?,
+    val notes: List<NotesResponse>?,
+    val activity: ActivityResponse?,
+)
 
 
-/*
-
-fun Process.toResponse(): ProcessOutputModel = GetProcessResponse()
-
-fun List<Process>.toResponse(): List<ProcessOutputModel> = this.map { it.toResponse() }
-
-*/

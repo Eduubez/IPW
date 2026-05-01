@@ -10,6 +10,7 @@ interface Transaction {
     val areasRepository: AreasRepository
     val activityRepository: ActivityRepository
     val historyRepository: IHistoryRepository
+    val processRepository: ProcessRepository
 
     fun rollback()
 }

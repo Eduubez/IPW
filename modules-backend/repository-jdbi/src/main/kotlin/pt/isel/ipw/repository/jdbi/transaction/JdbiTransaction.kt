@@ -7,6 +7,7 @@ import pt.isel.ipw.repository.jdbi.JdbiActivityRepository
 import pt.isel.ipw.repository.jdbi.JdbiUsersRepository
 import pt.isel.ipw.repository.jdbi.area.JdbiAreasRepository
 import pt.isel.ipw.repository.jdbi.history.JdbiHistoryRepository
+import pt.isel.ipw.repository.jdbi.process.JdbiProcessRepository
 import pt.isel.ipw.repository.jdbi.tokens.JdbiAccessTokensRepository
 import pt.isel.ipw.repository.jdbi.tokens.JdbiLoginTokensRepository
 import pt.isel.ipw.repository.jdbi.tokens.JdbiRefreshTokensRepository
@@ -24,6 +25,10 @@ class JdbiTransaction(
     override val areasRepository by lazy { JdbiAreasRepository(handle) }
     override val activityRepository by lazy { JdbiActivityRepository(handle) }
     override val historyRepository by lazy { JdbiHistoryRepository(handle) }
+
+
+    override val processRepository by lazy { JdbiProcessRepository(handle) }
+
     override fun rollback() {
         handle.rollback()
     }

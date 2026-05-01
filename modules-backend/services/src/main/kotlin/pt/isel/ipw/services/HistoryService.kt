@@ -47,7 +47,7 @@ class HistoryService(
         return transactionManager.run {
             val area = historyRepository.getAreaById(areaId) ?: return@run failure(HistoryError.AreaNotFound)
 
-            if (area.boss_id != subject) {
+            if (area.bossId != subject) {
                 return@run failure(HistoryError.Forbidden)
             }
             val areaHistory = historyRepository.getHistoryByAreaId(areaId)

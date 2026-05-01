@@ -27,4 +27,21 @@ object ApiRoutes {
     object History {
         const val BASE = "$API/history"
     }
+
+    object Process {
+        const val BASE = "$API/process"
+        const val BY_ID = "/{id}"
+        const val END_DATE = "$BY_ID/end-date"
+        const val INVESTIGATOR = "$BY_ID/investigator"
+        const val SUPERVISOR = "$BY_ID/supervisor"
+        const val PRIORITY = "$BY_ID/priority"
+        const val CANCEL = "$BY_ID/cancel"
+
+        const val BY_ID_FULL = "$BASE$BY_ID"
+        const val END_DATE_FULL = "$BASE$END_DATE"
+        const val INVESTIGATOR_FULL = "$BASE$INVESTIGATOR"
+        const val SUPERVISOR_FULL = "$BASE$SUPERVISOR"
+        const val PRIORITY_FULL = "$BASE$PRIORITY"
+        const val CANCEL_FULL = "$BASE$CANCEL"
+    }
 }

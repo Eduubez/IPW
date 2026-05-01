@@ -2,12 +2,11 @@ package pt.isel.ipw.services
 
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.Activity
+import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
-import pt.isel.ipw.services.errors.ActivityError
-import pt.isel.ipw.services.errors.Either
-import pt.isel.ipw.services.errors.failure
-import pt.isel.ipw.services.errors.success
+import pt.isel.ipw.services.errors.*
 import pt.isel.ipw.services.interfaces.ActivityService
+import sun.security.util.KeyUtil.validate
 
 @Service
 class ActivityServiceImpl(
@@ -42,4 +41,44 @@ class ActivityServiceImpl(
             else -> success(activityRepository.getByUserId(userId, offset, limit))
         }
     }
+
+    override fun createActivity(
+        processId: Int,
+        userId: Int,
+        action: String,
+        description: String
+    ): Either<ActivityError, Int> =
+        transactionManager.run{
+            val validation = validateCreationFields(processId, userId, action, description)
+
+            if (validation is Failure) {
+                return@run failure(validation.value)
+            }
+
+            val activityId = activityRepository.createActivity(
+                processId,
+                userId,
+                action,
+                description
+            )
+
+            return@run success(activityId)
+
+        }
+
+
+
+    fun Transaction.validateCreationFields(
+        processId: Int,
+        userId: Int,
+        action: String,
+        description: String?
+    ): Either<ActivityError, Unit>{
+        if(processRepository.getById(processId) == null) return failure(ActivityError.ProcessNotFound)
+        if(userId <= 0) return failure(ActivityError.UserNotFound)
+        if(action.isBlank()) return failure(ActivityError.InvalidAction)
+        if(description != null && description.isBlank()) return failure(ActivityError.InvalidDescription)
+        return success(Unit)
+    }
+
 }

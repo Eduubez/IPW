@@ -5,18 +5,18 @@ import org.jdbi.v3.core.statement.StatementContext
 import pt.isel.ipw.domain.User
 import java.sql.ResultSet
 
-class UserMapper: RowMapper<User> {
+class UserMapper(private val prefix: String = "") : RowMapper<User> {
     override fun map(
         rs: ResultSet,
         ctx: StatementContext
     ): User {
         return User(
-            id = rs.getInt("id"),
-            name = rs.getString("name"),
-            email = rs.getString("email"),
-            passwordHash = rs.getString("password_hash"),
-            area = rs.getString("area"),
-            isActive = rs.getBoolean("is_active")
+            id = rs.getInt("${prefix}id"),
+            name = rs.getString("${prefix}name"),
+            email = rs.getString("${prefix}email"),
+            passwordHash = rs.getString("${prefix}password_hash"),
+            area = rs.getString("${prefix}area"),
+            isActive = rs.getBoolean("${prefix}is_active")
         )
     }
 }

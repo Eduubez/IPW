@@ -4,7 +4,7 @@ package pt.isel.ipw.domain.DTO.output
 data class NotesResponse (
     val id: Int,
     val processId: Int?,
-    val proves: Int?,
+    val provesId: Int?,
     val content: String,
     val authorId: Int,
     val createdAt: String,
