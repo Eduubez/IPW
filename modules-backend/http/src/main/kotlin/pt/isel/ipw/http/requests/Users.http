@@ -3,30 +3,29 @@
 @accessToken =
 @refreshToken =
 
-### Create User - requires admin access token
-POST {{baseUrl}}/users
+### Create User
+POST {{baseUrl}}/api/users
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
 
 {
-  "name": "Chico",
-  "email": "chico@gmail.com",
+  "name": "Sarabuga",
+  "email": "sarabuga@gmail.com",
   "password": "12345",
   "areaId": null,
-  "roles": ["admin", "triator"]
+  "roles": ["triator"]
 }
 
 ### Login
-POST {{baseUrl}}/users/login
+POST {{baseUrl}}/api/users/login
 Content-Type: application/json
 
 {
-  "email": "chico@gmail.com",
-  "password": "12345"
+  "email": "sarabuga@gmail.com",
+  "password": "anime"
 }
 
 ### Select Role
-POST {{baseUrl}}/users/auth/select-role
+POST {{baseUrl}}/api/users/auth/select-role
 Content-Type: application/json
 Authorization: Bearer {{loginToken}}
 
@@ -35,12 +34,16 @@ Authorization: Bearer {{loginToken}}
 }
 
 ### Refresh Access Token
-POST {{baseUrl}}/users/refresh-token
+POST {{baseUrl}}/api/users/refresh-token
 Authorization: Bearer {{refreshToken}}
 
 ### Get Roles
-GET {{baseUrl}}/users/roles?email=chico@gmail.com
+GET {{baseUrl}}/api/users/roles?email=chico@gmail.com
+
+### Get All Users
+GET {{baseUrl}}/api/users?offset=0&limit=10
+Authorization: Bearer {{accessToken}}
 
 ### Protected endpoint example
-GET {{baseUrl}}/history/6
+GET {{baseUrl}}/api/history/6
 Authorization: Bearer {{accessToken}}

@@ -1,4 +1,4 @@
-package pt.isel.ipw.domain
+package pt.isel.ipw.domain.user
 
 data class User(
     val id: Int,

@@ -2,7 +2,8 @@ package pt.isel.ipw.repository.jdbi
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
-import pt.isel.ipw.domain.User
+import pt.isel.ipw.domain.user.User
+import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.repository.UsersRepository
 import pt.isel.ipw.repository.jdbi.mappers.UserMapper
 
@@ -120,7 +121,76 @@ class JdbiUsersRepository(
         """
         )
             .bind("userId", userId)
-            .map(UserMapper())
+            .mapTo<User>()
             .singleOrNull()
     }
+
+    override fun getAllUsers(offset: Int, limit: Int): List<UserWithRoles> {
+        return handle.createQuery(
+            """
+            select
+                u.id,
+                u.name,
+                u.email,
+                u.area_id,
+                a.name as area,
+                u.is_active,
+                coalesce(
+                    array_agg(ur.role_name) filter (where ur.role_name is not null),
+                    '{}'
+                ) as roles
+            from Users u
+            left join Area a on u.area_id = a.id
+            left join User_Role ur on ur.user_id = u.id
+            group by u.id, u.name, u.email, u.area_id, a.name, u.is_active
+            order by u.id
+            offset :offset
+            limit :limit
+        """
+        )
+            .bind("offset", offset)
+            .bind("limit", limit)
+            .mapTo<UserWithRoles>()
+            .list()
+    }
+
+    override fun replaceUserRoles(userId: Int, roles: List<String>) {
+        handle.createUpdate(
+            """
+            delete from User_Role
+            where user_id = :userId
+        """
+        )
+            .bind("userId", userId)
+            .execute()
+
+        addUserRoles(userId, roles)
+    }
+
+    override fun updateUserPassword(userId: Int, newPasswordHash: String) {
+        handle.createUpdate(
+            """
+            update Users
+            set password_hash = :newPasswordHash
+            where id = :userId
+        """
+        )
+            .bind("userId", userId)
+            .bind("newPasswordHash", newPasswordHash)
+            .execute()
+    }
+
+    override fun updateUserArea(userId: Int, areaId: Int?) {
+        handle.createUpdate(
+            """
+            update Users
+            set area_id = :areaId
+            where id = :userId
+        """
+        )
+            .bind("userId", userId)
+            .bind("areaId", areaId)
+            .execute()
+    }
+
 }

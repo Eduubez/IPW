@@ -3,7 +3,7 @@ package pt.isel.ipw.domain.process
 import pt.isel.ipw.domain.DTO.output.ActivityResponse
 import pt.isel.ipw.domain.DTO.output.NotesResponse
 import pt.isel.ipw.domain.Entities.area.AreaEntity
-import pt.isel.ipw.domain.User
+import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.report.Report
 import java.time.LocalDateTime
 

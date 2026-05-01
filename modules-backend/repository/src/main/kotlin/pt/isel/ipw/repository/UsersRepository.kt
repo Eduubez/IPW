@@ -1,6 +1,7 @@
 package pt.isel.ipw.repository
 
-import pt.isel.ipw.domain.User
+import pt.isel.ipw.domain.user.User
+import pt.isel.ipw.domain.user.UserWithRoles
 
 interface UsersRepository {
 
@@ -22,4 +23,12 @@ interface UsersRepository {
     fun addUserRoles(userId: Int, roles: List<String>)
 
     fun getUserById(userId: Int): User?
+
+    fun getAllUsers(offset: Int, limit: Int): List<UserWithRoles>
+
+    fun replaceUserRoles(userId: Int, roles: List<String>)
+
+    fun updateUserPassword(userId: Int, newPasswordHash: String)
+
+    fun updateUserArea(userId: Int, areaId: Int?)
 }

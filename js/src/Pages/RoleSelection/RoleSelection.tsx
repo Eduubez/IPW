@@ -38,7 +38,7 @@ export default function RoleSelection() {
   const handleSelectRole = async (roleKey: string) => {
     const response = await UsersApi.selectRole(roleKey);
     if (response.success) {
-      navigate("/", { replace: true });
+      navigate("/dashboard", { replace: true });
     }
   };
 

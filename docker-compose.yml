@@ -24,5 +24,19 @@ services:
     volumes:
       - ./docker/postgres/init:/docker-entrypoint-initdb.d
 
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ipw-backend
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ipw
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+
 volumes:
   postgres_data:

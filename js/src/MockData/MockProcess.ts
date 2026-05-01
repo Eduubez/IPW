@@ -21,6 +21,8 @@ export const mockProcessResponse: ProcessResponse = {
     name: "Maria Silva",
     email: "maria.silva@company.com",
     areaId: 10,
+    area: "Auto",
+    isActive: true,
     roles: ["TRIATOR"],
   },
   investigator: {
@@ -28,6 +30,8 @@ export const mockProcessResponse: ProcessResponse = {
     name: "Joao Costa",
     email: "joao.costa@company.com",
     areaId: 10,
+    area: "Auto",
+    isActive: true,
     roles: ["INVESTIGATOR"],
   },
   supervisor: {
@@ -35,6 +39,8 @@ export const mockProcessResponse: ProcessResponse = {
     name: "Ana Ribeiro",
     email: "ana.ribeiro@company.com",
     areaId: 10,
+    area: "Auto",
+    isActive: true,
     roles: ["SUPERVISOR"],
   },
   state: "IN_PROGRESS",

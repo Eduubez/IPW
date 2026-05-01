@@ -2,7 +2,7 @@ import ".././i18n";
 import { Routes, Route, BrowserRouter, useLocation } from "react-router-dom";
 import Login from "./Pages/Login/Login";
 import SideBar from "./Components/SideBar/SideBar";
-import Dashboard from "./Pages/Dashboard/DashBoard";
+import { DashboardRoute } from "./Routes/DashboardRoute";
 import Profile from "./Pages/Profile/Profile";
 import RoleSelection from "./Pages/RoleSelection/RoleSelection";
 import NewProcess from "./Pages/NewProcess/NewProcess";
@@ -25,7 +25,7 @@ function AppLayout() {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardRoute />
               </ProtectedRoute>
             }
           />

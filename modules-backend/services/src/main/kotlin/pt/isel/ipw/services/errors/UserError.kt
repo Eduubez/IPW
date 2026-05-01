@@ -12,6 +12,9 @@ sealed class UserError(
     data object InvalidRoles : UserError(400)
     data object InvalidRoleSelection : UserError(400)
 
+    data object InvalidLimit : UserError(400)
+    data object InvalidOffset : UserError(400)
+
     data object InvalidToken : UserError(401)
     data object ExpiredLoginToken : UserError(403)
     data object ExpiredAccessToken : UserError(401)

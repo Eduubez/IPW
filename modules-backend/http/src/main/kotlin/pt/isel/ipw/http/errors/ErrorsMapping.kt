@@ -1,6 +1,5 @@
 package pt.isel.ipw.http.errors
 
-import pt.isel.ipw.domain.User
 import pt.isel.ipw.services.errors.ActivityError
 import pt.isel.ipw.services.errors.UserError
 

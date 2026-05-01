@@ -10,19 +10,15 @@ export type UserResponse = {
   name: string;
   email: string;
   areaId: number | null;
+  area: string | null;
+  isActive: boolean;
   roles: string[];
 };
 
 type UserRequest = {
   name: string;
-  password: string;
-  roles: string[];
-};
-
-type UserUpdateRequest = {
-  id: number;
-  name: string;
   email: string;
+  password: string;
   areaId: number | null;
   roles: string[];
 };
@@ -30,6 +26,7 @@ type UserUpdateRequest = {
 type SelectRoleRequest = {
   role: string;
 };
+
 type SelectRolesResponse = {
   accessToken: TokenResponse;
   refreshToken: TokenResponse;
@@ -45,40 +42,41 @@ export const UsersApi = {
   getUserRoles,
   create,
   getAll,
-  update,
-  getById,
+  changeUserRoles,
+  changeUserPassword,
 };
-
-// selectRole e getUserRoles nao estao no .md mas estao no controller
 
 // choose which role to use in the current session - every user
 async function selectRole(
   role: string,
 ): Promise<ResponseApi<SelectRolesResponse>> {
   const token = userStore.getLoginToken()?.trim();
+
   const response = await fetchApi<SelectRolesResponse>(
     "users/auth/select-role",
     {
-        headers: {
-            "Authorization": "Bearer " + token,
-        },
+      headers: {
+        Authorization: "Bearer " + token,
+      },
       method: "POST",
-      credentials: "include",
       body: JSON.stringify({ role } as SelectRoleRequest),
     },
   );
+
   if (response.success) {
     userStore.setActiveRole(role);
     userStore.setLoginToken(response.data.accessToken.value);
     userStore.setAcessTokenExpirationDate(response.data.accessToken.expiresAt);
+
     enqueueSnackbar(i18next.t("RoleSelection.roleSelected"), {
       variant: ToastType.SUCCESS,
     });
   }
+
   return response;
 }
 
-// see all roles from a user - every user
+// see all roles from a user
 async function getUserRoles(
   email: string,
 ): Promise<ResponseApi<UserRolesResponse>> {
@@ -92,38 +90,63 @@ async function getUserRoles(
 
 // create user - Admin
 async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
+  const token = userStore.getLoginToken()?.trim();
+
   return await fetchApi<UserResponse>("users", {
     method: "POST",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
     body: JSON.stringify(input),
   });
 }
 
-//get by id - Admin
-async function getById(id: number): Promise<ResponseApi<UserResponse>> {
-  return await fetchApi<UserResponse>(`users/${id}`, {
-    method: "GET",
-  });
-}
-
-//update - Admin
-async function update(
-  input: UserUpdateRequest,
-): Promise<ResponseApi<UserResponse>> {
-  return await fetchApi<UserResponse>("users", {
-    method: "PUT",
-    body: JSON.stringify(input),
-  });
-}
-
-//getAll - Admin
+// getAll - Admin
 async function getAll(
-  offset?: number,
-  limit?: number,
-  areaId?: number,
+  offset = 0,
+  limit = 10,
 ): Promise<ResponseApi<UserResponse[]>> {
-  const query = buildQuery({ offset, limit, area_Id: areaId });
+  const query = buildQuery({ offset, limit });
+  const token = userStore.getLoginToken()?.trim();
 
   return await fetchApi<UserResponse[]>(`users${query}`, {
     method: "GET",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+}
+
+// change roles - Admin
+async function changeUserRoles(
+  userId: number,
+  roles: string[],
+  areaId: number | null,
+): Promise<ResponseApi<void>> {
+  const token = userStore.getLoginToken()?.trim();
+
+  return await fetchApi<void>(`users/${userId}/roles`, {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ roles, areaId }),
+  });
+}
+
+
+// change password - Admin
+async function changeUserPassword(
+  userId: number,
+  newPassword: string,
+): Promise<ResponseApi<void>> {
+  const token = userStore.getLoginToken()?.trim();
+
+  return await fetchApi<void>(`users/${userId}/password`, {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ newPassword }),
   });
 }

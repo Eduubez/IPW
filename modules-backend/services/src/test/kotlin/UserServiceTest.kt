@@ -232,6 +232,150 @@ class UserServiceTest {
         assertIs<UserError.InvalidToken>(error)
     }
 
+    @Test
+    fun `get all users with valid pagination should return users`() {
+        val createdUserId = createTestUser()
+
+        val users = assertSuccess(
+            userService.getAllUsers(
+                offset = 0,
+                limit = 100
+            )
+        )
+
+        val createdUser = users.first { it.id == createdUserId }
+
+        assertEquals("Chico", createdUser.name)
+        assertEquals("chico@gmail.com", createdUser.email)
+        assertEquals(listOf("admin"), createdUser.roles)
+    }
+
+    @Test
+    fun `get all users with invalid offset should return invalid offset`() {
+        val error = assertFailure(
+            userService.getAllUsers(
+                offset = -1,
+                limit = 10
+            )
+        )
+
+        assertIs<UserError.InvalidOffset>(error)
+    }
+
+    @Test
+    fun `get all users with invalid limit should return invalid limit`() {
+        val error = assertFailure(
+            userService.getAllUsers(
+                offset = 0,
+                limit = 0
+            )
+        )
+
+        assertIs<UserError.InvalidLimit>(error)
+    }
+
+    @Test
+    fun `change user roles with valid roles should replace old roles`() {
+        val createdUserId = createTestUser()
+
+        assertSuccess(
+            userService.changeUserRoles(
+                userId = createdUserId,
+                roles = listOf("admin", "triator"),
+                areaId = null
+            )
+        )
+
+        val roles = assertSuccess(
+            userService.getUserRoles("chico@gmail.com")
+        )
+
+        assertEquals(setOf("admin", "triator"), roles.toSet())
+    }
+
+    @Test
+    fun `change user roles with unknown user should return user not found`() {
+        val error = assertFailure(
+            userService.changeUserRoles(
+                userId = -1,
+                roles = listOf("admin"),
+                areaId = null
+            )
+        )
+
+        assertIs<UserError.UserNotFound>(error)
+    }
+
+    @Test
+    fun `change user roles with invalid roles should return invalid roles`() {
+        val createdUserId = createTestUser()
+
+        val error = assertFailure(
+            userService.changeUserRoles(
+                userId = createdUserId,
+                roles = listOf("not-a-role"),
+                areaId = null
+            )
+        )
+
+        assertIs<UserError.InvalidRoles>(error)
+    }
+
+    @Test
+    fun `change user password with valid password should update password`() {
+        val createdUserId = createTestUser()
+
+        assertSuccess(
+            userService.changeUserPassword(
+                userId = createdUserId,
+                newPassword = "new-password"
+            )
+        )
+
+        val oldPasswordError = assertFailure(
+            userService.login(
+                email = "chico@gmail.com",
+                password = "12345"
+            )
+        )
+
+        val loginResult = assertSuccess(
+            userService.login(
+                email = "chico@gmail.com",
+                password = "new-password"
+            )
+        )
+
+        assertIs<UserError.InvalidCredentials>(oldPasswordError)
+        assertEquals(createdUserId, loginResult.userId)
+    }
+
+    @Test
+    fun `change user password with unknown user should return user not found`() {
+        val error = assertFailure(
+            userService.changeUserPassword(
+                userId = -1,
+                newPassword = "new-password"
+            )
+        )
+
+        assertIs<UserError.UserNotFound>(error)
+    }
+
+    @Test
+    fun `change user password with insecure password should return insecure password`() {
+        val createdUserId = createTestUser()
+
+        val error = assertFailure(
+            userService.changeUserPassword(
+                userId = createdUserId,
+                newPassword = "1234"
+            )
+        )
+
+        assertIs<UserError.InsecurePassword>(error)
+    }
+
     private fun createTestUser(): Int =
         assertSuccess(
             userService.createUser(

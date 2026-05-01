@@ -60,8 +60,9 @@ class AreaServiceTest {
                 val areas = result.value.areas
                 // seed_static_data assigns Root User (id=1) as boss of all areas
                 areas.forEach { area ->
-                    assert(area.bossId > 0) { "Expected area '${area.name}' to have a valid bossId but got: ${area.bossId}" }
-                    assert(area.bossName.isNotBlank()) { "Expected area '${area.name}' to have a boss name but got blank" }
+                    val bossId = area.bossId
+                    assert(bossId != null && bossId > 0) { "Expected area '${area.name}' to have a valid bossId but got: ${area.bossId}" }
+                    assert(area.bossName?.isNotBlank() == true) { "Expected area '${area.name}' to have a boss name but got blank" }
                 }
             }
         }

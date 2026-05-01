@@ -2,7 +2,7 @@ package pt.isel.ipw.repository.jdbi.mappers
 
 import org.jdbi.v3.core.mapper.RowMapper
 import org.jdbi.v3.core.statement.StatementContext
-import pt.isel.ipw.domain.User
+import pt.isel.ipw.domain.user.User
 import java.sql.ResultSet
 
 class UserMapper: RowMapper<User> {

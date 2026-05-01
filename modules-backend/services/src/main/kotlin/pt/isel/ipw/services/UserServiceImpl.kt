@@ -2,7 +2,8 @@ package pt.isel.ipw.services
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import pt.isel.ipw.domain.User
+import pt.isel.ipw.domain.user.User
+import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
@@ -25,6 +26,38 @@ class UserServiceImpl(
 ) : UserService {
 
     private val validRoles = Roles.ALL.map { it.lowercase() }.toSet()
+
+    override fun createUser(
+        name: String,
+        email: String,
+        password: String,
+        areaId: Int?,
+        roles: List<String>
+    ): Either<UserError, Int> = transactionManager.run {
+
+        val normalizedRoles = roles.map { it.lowercase() }
+
+        val error: UserError? = validateUserCreation(email, password, areaId, normalizedRoles)
+        error?.let { return@run failure(it) }
+
+        // salt é gerado automaticamente
+        val passwordHash = passwordEncoder.encode(password)!!
+
+        val userId = usersRepository.createUser(
+            name = name,
+            email = email,
+            passwordHash = passwordHash,
+            areaId = areaId
+        )
+
+        usersRepository.addUserRoles(userId, normalizedRoles)
+
+        if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
+            areasRepository.updateBoss(areaId!!, userId)
+        }
+
+        success(userId)
+    }
 
     override fun login(
         email: String,
@@ -113,37 +146,66 @@ class UserServiceImpl(
         success(usersRepository.getUserRoles(user.id))
     }
 
-    override fun createUser(
-        name: String,
-        email: String,
-        password: String,
-        areaId: Int?,
-        roles: List<String>
-    ): Either<UserError, Int> = transactionManager.run {
+    override fun getAllUsers(
+        offset: Int,
+        limit: Int
+    ): Either<UserError, List<UserWithRoles>> = transactionManager.run {
+        when {
+            offset < 0 -> failure(UserError.InvalidOffset)
+            limit <= 0 -> failure(UserError.InvalidLimit)
+            else -> success(usersRepository.getAllUsers(offset, limit))
+        }
+    }
+
+    override fun changeUserRoles(
+        userId: Int,
+        roles: List<String>,
+        areaId: Int?
+    ): Either<UserError, Unit> = transactionManager.run {
+        usersRepository.getUserById(userId)
+            ?: return@run failure(UserError.UserNotFound)
 
         val normalizedRoles = roles.map { it.lowercase() }
 
-        val error: UserError? = validateUserCreation(email, password, areaId, normalizedRoles)
-        error?.let { return@run failure(it) }
+        val rolesError = validateRoles(normalizedRoles)
+        rolesError?.let { return@run failure(it) }
 
-        // salt é gerado automaticamente
-        val passwordHash = passwordEncoder.encode(password)!!
-
-        val userId = usersRepository.createUser(
-            name = name,
-            email = email,
-            passwordHash = passwordHash,
-            areaId = areaId
+        val areaError = validateAreaForRoles(
+            areaId = areaId,
+            roles = normalizedRoles,
+            userId = userId
         )
+        areaError?.let { return@run failure(it) }
 
-        usersRepository.addUserRoles(userId, normalizedRoles)
+        usersRepository.replaceUserRoles(userId, normalizedRoles)
+        usersRepository.updateUserArea(userId, areaId)
+
+        areasRepository.clearBossByUserId(userId)
 
         if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
             areasRepository.updateBoss(areaId!!, userId)
         }
 
-        success(userId)
+        success(Unit)
     }
+
+    override fun changeUserPassword(
+        userId: Int,
+        newPassword: String
+    ): Either<UserError, Unit> = transactionManager.run {
+        usersRepository.getUserById(userId)
+            ?: return@run failure(UserError.UserNotFound)
+
+        val error = validatePassword(newPassword)
+        error?.let { return@run failure(it) }
+
+        val passwordHash = passwordEncoder.encode(newPassword)!!
+
+        usersRepository.updateUserPassword(userId, passwordHash)
+
+        success(Unit)
+    }
+
     override fun selectRole(
         loginToken: String,
         userId: Int,
@@ -217,22 +279,56 @@ class UserServiceImpl(
         areaId: Int?,
         roles: List<String>
     ): UserError? {
+        val passwordError = validatePassword(password)
+        val rolesError = validateRoles(roles)
+        val areaError = validateAreaForRoles(
+            areaId = areaId,
+            roles = roles
+        )
+
+        return when {
+            usersRepository.isUserStoredByEmail(email) -> UserError.UserAlreadyExists
+            passwordError != null -> passwordError
+            rolesError != null -> rolesError
+            areaError != null -> areaError
+            else -> null
+        }
+    }
+
+    private fun Transaction.validateAreaForRoles(
+        areaId: Int?,
+        roles: List<String>,
+        userId: Int? = null
+    ): UserError? {
         val hasAreaRole = roles.any { it in Roles.AREA_ROLES }
         val onlyArealessRoles = roles.all { it in Roles.AREALESS_ROLES }
 
         return when {
-            usersRepository.isUserStoredByEmail(email) -> UserError.UserAlreadyExists
-            password.length < 5 -> UserError.InsecurePassword
-            roles.isEmpty() || roles.size > 5 || roles.any { it !in validRoles } -> UserError.InvalidRoles
-
             hasAreaRole && areaId == null -> UserError.AreaRequired
             areaId == null && !onlyArealessRoles -> UserError.AreaRequired
 
             areaId != null && !areasRepository.isAreaStoredById(areaId) -> UserError.AreaNotFound
 
             roles.any { it == Roles.SUPERVISOR } &&
-                    areasRepository.hasBoss(areaId!!) -> UserError.AreaAlreadyHasSupervisor
+                    areaId != null &&
+                    areasRepository.getBossId(areaId)
+                        ?.let { bossId -> userId == null || bossId != userId } == true ->
+                UserError.AreaAlreadyHasSupervisor
 
+            else -> null
+        }
+    }
+
+    private fun validatePassword(password: String): UserError? {
+        return when {
+            password.length < 5 -> UserError.InsecurePassword
+            else -> null
+        }
+    }
+
+    private fun validateRoles(roles: List<String>): UserError? {
+        return when {
+            roles.isEmpty() || roles.size > 5 || roles.any { it !in validRoles } -> UserError.InvalidRoles
             else -> null
         }
     }

@@ -7,10 +7,11 @@ import java.sql.ResultSet
 
 class AreaViewMapper : RowMapper<AreaView> {
     override fun map(rs: ResultSet, ctx: StatementContext): AreaView {
+        val bossId = rs.getInt("boss_id")
         return AreaView(
             id = rs.getInt("id"),
             name = rs.getString("name"),
-            bossId = rs.getInt("boss_id"),
+            bossId = if (rs.wasNull()) null else bossId,
             bossName = rs.getString("boss_name")
         )
     }

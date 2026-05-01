@@ -1,5 +1,6 @@
 package pt.isel.ipw.services.interfaces
 
+import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.services.auth.LoginResult
 import pt.isel.ipw.services.auth.RefreshAccessToken
 import pt.isel.ipw.services.auth.SelectRoleResult
@@ -18,6 +19,16 @@ interface UserService {
     fun login(email: String, password: String): Either<UserError, LoginResult>
 
     fun getUserRoles(email: String): Either<UserError, List<String>>
+
+    fun getAllUsers(offset: Int, limit: Int): Either<UserError, List<UserWithRoles>>
+
+    fun changeUserRoles(
+        userId: Int,
+        roles: List<String>,
+        areaId: Int?,
+    ): Either<UserError, Unit>
+
+    fun changeUserPassword(userId: Int, newPassword: String): Either<UserError, Unit>
 
     fun refreshAccessToken(
         refreshToken: String,

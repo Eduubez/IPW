@@ -37,6 +37,22 @@ class JdbiAreasRepository(
             .one() > 0
     }
 
+    override fun getBossId(areaId: Int): Int? {
+        return handle.createQuery(
+            """
+                select boss_id
+                from Area
+                where id = :areaId
+            """
+        )
+            .bind("areaId", areaId)
+            .map { rs, _ ->
+                val bossId = rs.getInt("boss_id")
+                if (rs.wasNull()) null else bossId
+            }
+            .singleOrNull()
+    }
+
     override fun updateBoss(areaId: Int, userId: Int) {
         handle.createUpdate(
             """
@@ -50,10 +66,22 @@ class JdbiAreasRepository(
             .execute()
     }
 
+    override fun clearBossByUserId(userId: Int) {
+        handle.createUpdate(
+            """
+                update Area
+                set boss_id = null
+                where boss_id = :userId
+            """
+        )
+            .bind("userId", userId)
+            .execute()
+    }
+
     override fun getAllAreas(): List<AreaView> {
         val query = """
             SELECT area.id, area.name, area.boss_id, Users.name as boss_name
-            FROM area JOIN Users ON area.boss_id = Users.id
+            FROM area LEFT JOIN Users ON area.boss_id = Users.id
         """.trimIndent()
         return handle.createQuery(query)
             .map(AreaViewMapper())
@@ -63,7 +91,7 @@ class JdbiAreasRepository(
     override fun getAreaById(areaId: Int): AreaView? {
         val query = """
             SELECT area.id, area.name, area.boss_id, Users.name as boss_name
-            FROM area JOIN Users ON area.boss_id = Users.id
+            FROM area LEFT JOIN Users ON area.boss_id = Users.id
             WHERE area.id = :areaId
         """.trimIndent()
         return handle.createQuery(query)

@@ -1,0 +1,9 @@
+.git
+.gradle
+.idea
+.kotlin
+**/build
+**/node_modules
+js/dist
+js/.vite
+*.iml
