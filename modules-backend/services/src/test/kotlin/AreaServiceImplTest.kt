@@ -9,7 +9,7 @@ import pt.isel.ipw.services.errors.Success
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-class AreaServiceTest {
+class AreaServiceImplTest {
     companion object {
         val jdbi = Jdbi.create(
             PGSimpleDataSource().apply {

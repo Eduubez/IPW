@@ -4,12 +4,12 @@ import org.jdbi.v3.core.Handle
 import pt.isel.ipw.domain.Entities.area.AreaEntity
 import pt.isel.ipw.domain.HistoryEntryEntity
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.repository.IHistoryRepository
+import pt.isel.ipw.repository.HistoryRepository
 
 class JdbiHistoryRepository
     (
     private val handle: Handle
-) : IHistoryRepository {
+) : HistoryRepository {
     override fun getHistoryByUserId(userId: Int, role: String): List<HistoryEntryEntity> {
         val userColumn = roleToColumnMapper(role)
         val query = """

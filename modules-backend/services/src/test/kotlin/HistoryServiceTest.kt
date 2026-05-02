@@ -5,7 +5,7 @@ import pt.isel.ipw.repository.jdbi.configureWithAppRequirements
 import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
 
 
-import pt.isel.ipw.services.HistoryService
+import pt.isel.ipw.services.HistoryServiceImpl
 import pt.isel.ipw.services.errors.Failure
 
 import pt.isel.ipw.services.errors.HistoryError
@@ -25,7 +25,7 @@ class HistoryServiceTest {
                 password = "1234"
             }
         ).configureWithAppRequirements()
-        private val historyService = HistoryService(
+        private val historyService = HistoryServiceImpl(
             JdbiTransactionManager(jdbi)
         )
     }

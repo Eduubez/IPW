@@ -10,15 +10,15 @@ import pt.isel.ipw.services.errors.Either
 import pt.isel.ipw.services.errors.HistoryError
 import pt.isel.ipw.services.errors.failure
 import pt.isel.ipw.services.errors.success
-import pt.isel.ipw.services.interfaces.IHistoryService
+import pt.isel.ipw.services.interfaces.HistoryService
 
 typealias HistoryResponse = Either<HistoryError, UserProcessHistory>
 
 @Service
-class HistoryService(
+class HistoryServiceImpl(
     private val transactionManager: TransactionManager,
 
-    ) : IHistoryService {
+    ) : HistoryService {
     override fun getUserHistory(userId: Int,userRole:String): HistoryResponse {
         val canBeUser = validateUserId(userId)
         val possibleRoles = listOf(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.TRIATOR)
