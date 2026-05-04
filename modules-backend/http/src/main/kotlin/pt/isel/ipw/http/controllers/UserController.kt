@@ -99,7 +99,14 @@ class UserController(
                     roles = it.roles,
                 )
             }
+        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+    }
 
+    @PostMapping("/login")
+    fun logout(
+        @AuthenticatedLogin loginToken: LoginTokenPrincipal
+    ): ResponseEntity<*> {
+        val result = userService.logout(loginToken.claims.userId)
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
@@ -119,7 +126,6 @@ class UserController(
                 )
             )
         }
-
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
@@ -145,7 +151,6 @@ class UserController(
                 role = it.role
             )
         }
-
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
@@ -175,7 +180,6 @@ class UserController(
             .mapSuccess { roles ->
                 UserRolesResponse(roles)
             }
-
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 

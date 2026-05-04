@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import PrimaryButton from "../../../Components/Buttons/PrimaryButton/PrimaryButton";
+import TextBox from "../../../Components/Inputs/TextBox/TextBox";
 import { useSnackbar } from "notistack";
 import { ToastType } from "../../../Types/ToastType";
 import { UsersApi, type UserResponse } from "../../../Utility/Api/UsersApi";
@@ -31,9 +33,7 @@ export default function ChangePasswordModal({
 
   if (!open || user === null) return null;
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     if (newPassword.length < 5) {
       enqueueSnackbar("A palavra passe deve ter pelo menos 5 caracteres.", {
         variant: ToastType.ERROR,
@@ -66,7 +66,13 @@ export default function ChangePasswordModal({
 
   return (
     <div className={styles["modal-backdrop"]} role="presentation">
-      <form className={styles["modal-card"]} onSubmit={handleSubmit}>
+      <form
+        className={styles["modal-card"]}
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSubmit();
+        }}
+      >
         <button
           type="button"
           className={styles["close-button"]}
@@ -81,33 +87,35 @@ export default function ChangePasswordModal({
           <p>{user.name}</p>
         </div>
 
-        <label className={styles["form-field"]}>
-          <span>Nova palavra passe</span>
-          <input
+        <div className={styles["text-field"]}>
+          <TextBox
+            label="Nova palavra passe"
             type="password"
             value={newPassword}
-            onChange={(event) => setNewPassword(event.target.value)}
-            placeholder="Palavra passe"
+            onChange={setNewPassword}
+            mandatory={true}
           />
-        </label>
+        </div>
 
-        <label className={styles["form-field"]}>
-          <span>Repita a palavra passe</span>
-          <input
+        <div className={styles["text-field"]}>
+          <TextBox
+            label="Repita a palavra passe"
             type="password"
             value={confirmPassword}
-            onChange={(event) => setConfirmPassword(event.target.value)}
-            placeholder="Palavra passe"
+            onChange={setConfirmPassword}
+            mandatory={true}
           />
-        </label>
+        </div>
 
-        <button
-          type="submit"
-          className={styles["primary-action"]}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "A trocar..." : "Trocar"}
-        </button>
+        <div className={styles["primary-action"]}>
+          <PrimaryButton
+            text={isSubmitting ? "A trocar..." : "Trocar"}
+            onClick={() => {
+              if (!isSubmitting) void handleSubmit();
+            }}
+            enabled={!isSubmitting}
+          />
+        </div>
       </form>
     </div>
   );

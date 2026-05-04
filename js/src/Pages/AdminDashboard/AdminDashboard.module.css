@@ -30,25 +30,12 @@
   gap: 0.75rem;
 }
 
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.stats-grid > div {
+  width: auto;
   min-height: 6.75rem;
+  justify-content: space-between;
   padding: 1rem;
-  border: 1px solid #364153;
   border-radius: 0.5rem;
-  background: #1e2939;
-}
-
-.stat-card span {
-  color: #99a1af;
-  font-size: 0.75rem;
-}
-
-.stat-card strong {
-  color: #ffffff;
-  font-size: 1.1rem;
 }
 
 .filters-bar {
@@ -133,14 +120,14 @@
 }
 
 .primary-action {
+  width: 10rem;
+  min-height: 2.75rem;
+}
+
+.primary-action > div {
   min-width: 10rem;
-  border: none;
-  border-radius: 0.5rem;
   background: #1c398e;
-  color: #ffffff;
-  padding: 0.65rem 1rem;
   font-weight: 600;
-  cursor: pointer;
 }
 
 .users-table {

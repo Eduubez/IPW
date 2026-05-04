@@ -1,4 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
+import { StatCard as SummaryStatCard } from "../../Components/Cards/StatCard/StatCard";
+import { Icon } from "../../Components/Icons/Icons";
+import { Header } from "../../Components/Layouts/Header/Header";
 import { UsersApi, type UserResponse } from "../../Utility/Api/UsersApi";
 import ChangePasswordModal from "./Modals/ChangePasswordModal";
 import ChangeRolesModal from "./Modals/ChangeRolesModal";
@@ -14,6 +18,14 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const USERS_PER_PAGE = 7;
+
+const STAT_ICONS = {
+  total: Icon.Group,
+  triators: Icon.Visibility,
+  investigators: Icon.Search,
+  supervisors: Icon.Shield,
+  managers: Icon.Crown,
+};
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserResponse[]>([]);
@@ -128,17 +140,44 @@ export default function AdminDashboard() {
 
   return (
     <div className={styles["admin-dashboard-container"]}>
-      <header className={styles["page-header"]}>
-        <h1>Gestão de utilizadores</h1>
-        <p>Controla todos os utilizadores</p>
-      </header>
+      <div className={styles["page-header"]}>
+        <Header
+          title="Gestão de utilizadores"
+          description="Controla todos os utilizadores"
+        />
+      </div>
 
       <section className={styles["stats-grid"]}>
-        <StatCard label="Nº Total de utilizadores" value={stats.total} />
-        <StatCard label="Nº de Triadores" value={stats.triators} />
-        <StatCard label="Nº de Averiguadores" value={stats.investigators} />
-        <StatCard label="Nº de Supervisores" value={stats.supervisors} />
-        <StatCard label="Nº de Gestores" value={stats.managers} />
+        <SummaryStatCard
+          icon={{ name: STAT_ICONS.total }}
+          text="Nº Total de utilizadores"
+          value={stats.total}
+          loading={isLoading}
+        />
+        <SummaryStatCard
+          icon={{ name: STAT_ICONS.triators }}
+          text="Nº de Triadores"
+          value={stats.triators}
+          loading={isLoading}
+        />
+        <SummaryStatCard
+          icon={{ name: STAT_ICONS.investigators }}
+          text="Nº de Averiguadores"
+          value={stats.investigators}
+          loading={isLoading}
+        />
+        <SummaryStatCard
+          icon={{ name: STAT_ICONS.supervisors }}
+          text="Nº de Supervisores"
+          value={stats.supervisors}
+          loading={isLoading}
+        />
+        <SummaryStatCard
+          icon={{ name: STAT_ICONS.managers }}
+          text="Nº de Gestores"
+          value={stats.managers}
+          loading={isLoading}
+        />
       </section>
 
       <section className={styles["filters-bar"]}>
@@ -178,12 +217,13 @@ export default function AdminDashboard() {
       <section className={styles["users-panel"]}>
         <div className={styles["users-panel-header"]}>
           <h2>Utilizadores</h2>
-          <button
-            className={styles["primary-action"]}
-            onClick={() => setIsCreateUserModalOpen(true)}
-          >
-            Criar novo utilizador
-          </button>
+          <div className={styles["primary-action"]}>
+            <PrimaryButton
+              text="Criar novo utilizador"
+              onClick={() => setIsCreateUserModalOpen(true)}
+              enabled={true}
+            />
+          </div>
         </div>
 
         {isLoading ? (
@@ -316,15 +356,6 @@ export default function AdminDashboard() {
         onSuccess={loadUsers}
       />
     </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: number }) {
-  return (
-    <article className={styles["stat-card"]}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-    </article>
   );
 }
 

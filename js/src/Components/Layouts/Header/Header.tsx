@@ -4,11 +4,11 @@ import { CircularProgress } from "@mui/material";
 export function Header({
   title,
   description,
-  loading,
+  loading = false,
 }: {
   title: string;
   description: string;
-  loading: boolean;
+  loading?: boolean;
 }) {
   return (
 

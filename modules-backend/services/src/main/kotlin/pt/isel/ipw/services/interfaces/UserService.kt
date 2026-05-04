@@ -18,6 +18,8 @@ interface UserService {
 
     fun login(email: String, password: String): Either<UserError, LoginResult>
 
+    fun logout(userId: Int): Either<UserError, Unit>
+
     fun getUserRoles(email: String): Either<UserError, List<String>>
 
     fun getAllUsers(offset: Int, limit: Int): Either<UserError, List<UserWithRoles>>

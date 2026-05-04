@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import PrimaryButton from "../../../Components/Buttons/PrimaryButton/PrimaryButton";
+import TextBox from "../../../Components/Inputs/TextBox/TextBox";
 import { useSnackbar } from "notistack";
 import { ToastType } from "../../../Types/ToastType";
 import { AreasApi, type AreaResponse } from "../../../Utility/Api/AreasApi";
@@ -102,9 +104,7 @@ export default function CreateUserModal({
     );
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     if (name.trim().length === 0 || email.trim().length === 0) {
       enqueueSnackbar("Preenche o nome e o email.", {
         variant: ToastType.ERROR,
@@ -157,7 +157,13 @@ export default function CreateUserModal({
 
   return (
     <div className={styles["modal-backdrop"]} role="presentation">
-      <form className={styles["modal-card"]} onSubmit={handleSubmit}>
+      <form
+        className={styles["modal-card"]}
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSubmit();
+        }}
+      >
         <button
           type="button"
           className={styles["close-button"]}
@@ -172,34 +178,35 @@ export default function CreateUserModal({
           <p>Crie um novo utilizador</p>
         </div>
 
-        <label className={styles["form-field"]}>
-          <span>Nome</span>
-          <input
+        <div className={styles["text-field"]}>
+          <TextBox
+            label="Nome"
+            type="text"
             value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="John Doe"
+            onChange={setName}
+            mandatory={true}
           />
-        </label>
+        </div>
 
-        <label className={styles["form-field"]}>
-          <span>Email</span>
-          <input
+        <div className={styles["text-field"]}>
+          <TextBox
+            label="Email"
             type="email"
             value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="john@example.com"
+            onChange={setEmail}
+            mandatory={true}
           />
-        </label>
+        </div>
 
-        <label className={styles["form-field"]}>
-          <span>Palavra passe</span>
-          <input
+        <div className={styles["text-field"]}>
+          <TextBox
+            label="Palavra passe"
             type="password"
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Palavra passe"
+            onChange={setPassword}
+            mandatory={true}
           />
-        </label>
+        </div>
 
         <div className={styles["roles-list"]}>
           {AVAILABLE_ROLES.map((role) => (
@@ -236,13 +243,15 @@ export default function CreateUserModal({
           </label>
         )}
 
-        <button
-          type="submit"
-          className={styles["primary-action"]}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "A criar..." : "Criar"}
-        </button>
+        <div className={styles["primary-action"]}>
+          <PrimaryButton
+            text={isSubmitting ? "A criar..." : "Criar"}
+            onClick={() => {
+              if (!isSubmitting) void handleSubmit();
+            }}
+            enabled={!isSubmitting}
+          />
+        </div>
       </form>
     </div>
   );

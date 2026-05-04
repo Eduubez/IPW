@@ -94,6 +94,19 @@ class UserServiceImpl(
         )
     }
 
+    override fun logout(
+        userId: Int
+    ): Either<UserError, Unit> = transactionManager.run {
+        val user = usersRepository.getUserById(userId)
+            ?: return@run failure(UserError.UserNotFound)
+        
+        accessTokensRepository.deleteByUserId(user.id)
+        refreshTokensRepository.deleteByUserId(user.id)
+        loginTokensRepository.deleteByUserId(user.id)
+
+        success(Unit)
+    }
+
     override fun refreshAccessToken(
         refreshToken: String,
         userId: Int,

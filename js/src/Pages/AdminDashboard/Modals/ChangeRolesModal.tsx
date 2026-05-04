@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import PrimaryButton from "../../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { useSnackbar } from "notistack";
 import { ToastType } from "../../../Types/ToastType";
 import { AreasApi, type AreaResponse } from "../../../Utility/Api/AreasApi";
@@ -100,9 +101,7 @@ export default function ChangeRolesModal({
     );
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     if (selectedRoles.length === 0) {
       enqueueSnackbar("Escolhe pelo menos um papel.", {
         variant: ToastType.ERROR,
@@ -139,7 +138,13 @@ export default function ChangeRolesModal({
 
   return (
     <div className={styles["modal-backdrop"]} role="presentation">
-      <form className={styles["modal-card"]} onSubmit={handleSubmit}>
+      <form
+        className={styles["modal-card"]}
+        onSubmit={(event) => {
+          event.preventDefault();
+          void handleSubmit();
+        }}
+      >
         <button
           type="button"
           className={styles["close-button"]}
@@ -189,13 +194,15 @@ export default function ChangeRolesModal({
           </label>
         )}
 
-        <button
-          type="submit"
-          className={styles["primary-action"]}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "A guardar..." : "Guardar papéis"}
-        </button>
+        <div className={styles["primary-action"]}>
+          <PrimaryButton
+            text={isSubmitting ? "A guardar..." : "Guardar papéis"}
+            onClick={() => {
+              if (!isSubmitting) void handleSubmit();
+            }}
+            enabled={!isSubmitting}
+          />
+        </div>
       </form>
     </div>
   );
