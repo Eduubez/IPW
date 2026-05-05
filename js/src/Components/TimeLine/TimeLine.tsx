@@ -7,8 +7,9 @@ import TimelineDot from "@mui/lab/TimelineDot";
 import { Icon } from "../Icons/Icons";
 import styles from "./timeline.module.css";
 import { TimeLineActivityItem } from "./TimeLineActivityItem/TimeLineActivityItem";
+import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
-export function TimeLine() {
+export function TimeLine({ loading }: { loading?: boolean }) {
   const items = [
     {
       done: true,
@@ -31,6 +32,7 @@ export function TimeLine() {
   ];
 
   return (
+    loading ? <LoadingComponent /> :
     <Timeline position="right">
       {items.map((item, index) => (
         <TimelineItem key={index}>

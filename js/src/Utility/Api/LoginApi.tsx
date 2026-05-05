@@ -29,6 +29,7 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
         body: JSON.stringify(input),
     });
     if(response.success) {
+        userStore.setUserId(response.data.userId);
         userStore.setIsLoggedIn();
         userStore.setRoles(response.data.roles);
         userStore.setLoginToken(response.data.loginToken.value);
