@@ -17,7 +17,7 @@ export const AreasApi = {
 };
 
 async function getAll(): Promise<ResponseApi<AreaListResponse>> {
-  const token = userStore.getLoginToken()?.trim();
+  const token = userStore.getAccessToken()?.trim();
 
   return await fetchApi<AreaListResponse>("area/", {
     method: "GET",

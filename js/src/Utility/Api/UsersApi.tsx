@@ -89,7 +89,7 @@ async function getUserRoles(
 
 // create user - Admin
 async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
-  const token = userStore.getLoginToken()?.trim();
+  const token = userStore.getAccessToken()?.trim();
 
   return await fetchApi<UserResponse>("users", {
     method: "POST",
@@ -106,7 +106,7 @@ async function getAll(
   limit = 10,
 ): Promise<ResponseApi<UserResponse[]>> {
   const query = buildQuery({ offset, limit });
-  const token = userStore.getLoginToken()?.trim();
+  const token = userStore.getAccessToken()?.trim();
 
   return await fetchApi<UserResponse[]>(`users${query}`, {
     method: "GET",
@@ -122,7 +122,7 @@ async function changeUserRoles(
   roles: string[],
   areaId: number | null,
 ): Promise<ResponseApi<void>> {
-  const token = userStore.getLoginToken()?.trim();
+  const token = userStore.getAccessToken()?.trim();
 
   return await fetchApi<void>(`users/${userId}/roles`, {
     method: "PUT",
@@ -139,7 +139,7 @@ async function changeUserPassword(
   userId: number,
   newPassword: string,
 ): Promise<ResponseApi<void>> {
-  const token = userStore.getLoginToken()?.trim();
+  const token = userStore.getAccessToken()?.trim();
 
   return await fetchApi<void>(`users/${userId}/password`, {
     method: "PUT",
