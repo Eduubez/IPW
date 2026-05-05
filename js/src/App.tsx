@@ -9,6 +9,7 @@ import NewProcess from "./Pages/NewProcess/NewProcess";
 import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
 import { SnackbarProvider } from "notistack";
 import ProcessPage from "./Pages/ProcessPage/ProcessPage";
+import HistoryPage from "./Pages/History/HistoryPage";
 function AppLayout() {
   const location = useLocation();
   const pathsWithoutSidebar = ["/login", "/role-selection"];
@@ -58,6 +59,14 @@ function AppLayout() {
             element={
               <ProtectedRoute>
                 <ProcessPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+          path="/user/history"
+            element={
+              <ProtectedRoute>
+                <HistoryPage />
               </ProtectedRoute>
             }
           />

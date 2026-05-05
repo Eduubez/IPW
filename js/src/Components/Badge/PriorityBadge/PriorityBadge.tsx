@@ -12,18 +12,18 @@ const LowStyle = {
     background: Color.GreenPrimary,
 }
 
-type PriorityType = "Urgent" | "Medium" | "Low";
+export type PriorityType = "NORMAL" | "WITH_PRIORITY" | "URGENT";
 
-export default function PriorityBadge( { priority}: { priority: PriorityType} ) {
+export function PriorityBadge( { priority}: { priority: PriorityType} ) {
     const { t } = useTranslation();
     
     const getStyle = () => {
         switch (priority) {
-            case "Urgent":
+            case "URGENT":
                 return UrgentStyle;
-            case "Medium":
+            case "WITH_PRIORITY":
                 return MediumStyle;
-            case "Low":
+            case "NORMAL":
                 return LowStyle;
             default:
                 return {};

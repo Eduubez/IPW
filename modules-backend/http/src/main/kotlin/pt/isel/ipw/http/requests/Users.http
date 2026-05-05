@@ -1,6 +1,6 @@
-@baseUrl = http://localhost:8080
+@baseUrl = http://localhost:8080/api
 @loginToken =
-@accessToken =
+@accessToken =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI3IiwidXNlcklkIjo3LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzc3NzE4OTMxLCJleHAiOjE3Nzc3MjYxMzF9.Imh7UMNEfAkp8C7H6PJ02RARiaCwga17zYiS18MBVcSofaMWUmiUkiF1vfsmRFIN0o4SxjVO58wanz5Fe9dtww
 @refreshToken =
 
 ### Create User - requires admin access token
@@ -9,11 +9,11 @@ Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "name": "Chico",
-  "email": "chico@gmail.com",
+  "name": "Chico1",
+  "email": "chico1@gmail.com",
   "password": "12345",
   "areaId": null,
-  "roles": ["admin", "triator"]
+  "roles": ["triator"]
 }
 
 ### Login

@@ -25,23 +25,38 @@ export const userStore = {
   setActiveRole: (role: string) => {
     localStorage.setItem("activeRole", role);
   },
-  getAcessTokenExpirationDate: () => {
-    return localStorage.getItem("acessTokenExpirationDate");
+  getAccessTokenExpirationDate: () => {
+    return localStorage.getItem("accessTokenExpirationDate");
   },
-  setAcessTokenExpirationDate: (date: string) => {
-    localStorage.setItem("acessTokenExpirationDate", date);
+  setAccessTokenExpirationDate: (date: string) => {
+    localStorage.setItem("accessTokenExpirationDate", date);
   },
   hasTokenExpired: () => {
-    const date = userStore.getAcessTokenExpirationDate();
+    const date = userStore.getAccessTokenExpirationDate();
     const expirationDate = date ? new Date(date) : null;
     if (!expirationDate) return true;
     return new Date() > expirationDate;
+  },
+  setUserId: (userId: number) => {
+    localStorage.setItem("userId", userId.toString());
+  },
+  getUserId: () => {
+    const userId = localStorage.getItem("userId");
+    return userId ? parseInt(userId) : null;
+  },
+  getAccessToken: () => {
+    return localStorage.getItem("accessToken");
+  },
+  setAccessToken: (token: string) => {
+    localStorage.setItem("accessToken", token);
   },
   clear: () => {
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("roles");
     localStorage.removeItem("loginToken");
     localStorage.removeItem("activeRole");
-    localStorage.removeItem("acessTokenExpirationDate");
+    localStorage.removeItem("accessTokenExpirationDate");
+    localStorage.removeItem("userId");
+    localStorage.removeItem("accessToken");
   },
 };

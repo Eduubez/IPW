@@ -32,9 +32,9 @@
     "supervisor": "Supervisor"
   },
   "Priority": {
-    "Urgent": "High",
-    "Medium": "Medium",
-    "Low": "Low"
+    "URGENT": "High",
+    "WITH_PRIORITY": "Medium",
+    "NORMAL": "Low"
   },
   "Permissions": {
     "ManageUsers": "Manage users",

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const navigationItems = [
   { name: "Inicio", path: "/dashboard", icon: "dashboard" },
-  { name: "Historico", path: "/history", icon: "assignment" },
+  { name: "Historico", path: "/user/history", icon: "assignment" },
   { name: "Mudar de papel", path: "/role-selection", icon: "bar_chart" },
 ];
 
@@ -29,14 +29,14 @@ export default function SideBar() {
       <div className={styles["navigation-container"]}>
         {navigationItems.map((item) => (
           <div key={item.path} className={styles["navigation-item"]}>
-            <div className={styles["nav-icon-container"]}>
-            <a key={item.name} onClick={() => handleNavigation(item.path)}>
-              <span className="material-symbols-outlined">{item.icon}</span>
+            <a onClick={() => handleNavigation(item.path)} className={styles["nav-link"]}>
+              <div className={styles["nav-icon-container"]}>
+                <span className="material-symbols-outlined">{item.icon}</span>
+              </div>
+              {isExpanded && (
+                <span className={styles["navigation-text"]}>{item.name}</span>
+              )}
             </a>
-            </div>
-            {isExpanded && (
-              <span className={styles["navigation-text"]}>{item.name}</span>
-            )}
           </div>
         ))}
       </div>
