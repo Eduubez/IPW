@@ -102,7 +102,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping("/login")
+    @PostMapping(ApiRoutes.Users.LOGOUT)
     fun logout(
         @AuthenticatedLogin loginToken: LoginTokenPrincipal
     ): ResponseEntity<*> {
