@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
 
-class UserServiceTest {
+class UserServiceImplTest {
 
     companion object {
         private val jdbi = Jdbi.create(

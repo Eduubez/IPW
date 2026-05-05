@@ -11,4 +11,3 @@ data class LocationResponse(
 
 
 
-//fun Location.toResponse():LocationResponse

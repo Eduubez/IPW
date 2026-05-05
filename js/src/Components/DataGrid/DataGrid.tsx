@@ -5,9 +5,10 @@ import PrimaryButton from "../Buttons/PrimaryButton/PrimaryButton";
 import { Icon } from "../Icons/Icons";
 import { useTranslation } from "react-i18next";
 import dataGridConfiguration from "./DataGridConfiguration";
+import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
 type CellValue = string | number | React.ReactNode;
-type DataGridRow = Record<string, CellValue>;
+type DataGridRow = Record<string, CellValue> & { onClick?: () => void };
 
 type DataGridAction = {
   label: string;
@@ -21,6 +22,7 @@ type DataGridProps = {
   columns: string[];
   rows: DataGridRow[];
   searchTerm?: string;
+  loading?: boolean;
 };
 
 const captitalizeFirstLetter = (text: string) =>
@@ -29,16 +31,26 @@ const captitalizeFirstLetter = (text: string) =>
 
 
 export function DataGrid({
-  searchTerm,
   title,
   actions,
   columns,
   rows,
+  loading,
 }: DataGridProps) {
   const gridId = useId();
   const { t } = useTranslation();
-  const [search, setSearch] = useState(searchTerm || "");
+  const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const translatedColumns = useMemo(
+    () =>
+      columns.map((column) =>
+        t(`GridColumnsProps.${column}`, {
+          defaultValue: captitalizeFirstLetter(column),
+        }),
+      ),
+    [columns, t],
+  );
 
     const getCellText = (value: CellValue): string => {
     const badgeSearchFields = dataGridConfiguration.jsxSearchableFields;
@@ -106,8 +118,6 @@ export function DataGrid({
       setCurrentPage(currentPage + 1);
     }
   };
-  //const hasNextPage = currentPage < pageSettings.totalPages;
-  //const hasPreviousPage = currentPage > 1;
   const handlePreviousPage = () => {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1);
@@ -148,47 +158,52 @@ export function DataGrid({
               </div>
             )}
             <div className={styles["grid-content"]}>
-              <div className={styles["columns"]}>
-                {columns.map((column) => (
-                  <div key={column} className={styles["cell"]}>
-                    <span>{column}</span>
-                  </div>
-                ))}
-              </div>
-              <div className={styles["rows"]}>
-                {paginatedRows.map((row, rowIndex) => (
-                  <div
-                    key={`${gridId}-row-${rowIndex}`}
-                    className={styles["row"]}>
-                    {columns.map((column) => (
-                      <span key={column} className={styles["cell"]}>
-                        {row[column]}
-                      </span>
+              {loading ? (
+                <LoadingComponent />
+              ) : (
+                <>
+                  <div className={styles["columns"]}>
+                    {translatedColumns.map((column) => (
+                      <div key={column} className={styles["cell"]}>
+                        <span>{column}</span>
+                      </div>
                     ))}
                   </div>
-                ))}
-              </div>
-              <div className={styles["pagination"]}>
-                  <button
-                    onClick={handlePreviousPage}
-                    className={styles["pagination-button"]}>
-                    <span className="material-symbols-outlined">
-                      {Icon.ArrowBack}
-                    </span>
-                  </button>
-                
-                <div className={styles["pagination-info"]}>
-                  <span >{currentPage}/{pageSettings.totalPages}</span>
-                </div>
-                  <button
-                    onClick={handleNextPage}
-                    className={styles["pagination-button"]}>
-                    <span className="material-symbols-outlined">
-                      {Icon.ArrowForward}
-                    </span>
-                  </button>
-                
-              </div>
+                  <div className={styles["rows"]}>
+                    {paginatedRows.map((row, rowIndex) => (
+                      <div
+                        key={`${gridId}-row-${rowIndex}`}
+                        className={styles["row"]}
+                        onClick={row.onClick}>
+                        {columns.map((column, columnIndex) => (
+                          <span key={`${gridId}-row-${rowIndex}-col-${columnIndex}`} className={styles["cell"]}>
+                            {row[column]}
+                          </span>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                  <div className={styles["pagination"]}>
+                    <button
+                      onClick={handlePreviousPage}
+                      className={styles["pagination-button"]}>
+                      <span className="material-symbols-outlined">
+                        {Icon.ArrowBack}
+                      </span>
+                    </button>
+                    <div className={styles["pagination-info"]}>
+                      <span>{currentPage}/{pageSettings.totalPages}</span>
+                    </div>
+                    <button
+                      onClick={handleNextPage}
+                      className={styles["pagination-button"]}>
+                      <span className="material-symbols-outlined">
+                        {Icon.ArrowForward}
+                      </span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </WithBackground>

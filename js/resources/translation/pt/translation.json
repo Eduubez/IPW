@@ -35,9 +35,9 @@
     "roleSelected": "Papel selecionado com sucesso!"
   },
   "Priority": {
-    "Urgent": "Alta",
-    "Medium": "Média",
-    "Low": "Baixa"
+    "URGENT": "Alta",
+    "WITH_PRIORITY": "Média",
+    "NORMAL": "Baixa"
   },
   "Permissions": {
     "ManageUsers": "Gerenciar Utilizadores",
@@ -53,5 +53,23 @@
     "UpdateEveryProcess": "Atualizar todos os processos",
     "ValidateAllProcess": "Validar todos os processos",
     "AllHistory": "Ver todo o histórico"
+  },
+  "GridColumnsProps": {
+    "name": "Nome",
+    "creationDate": "Data de Criação",
+    "area": "Área",
+    "dueDate": "Expira em",
+    "priority": "Prioridade",
+    "state": "Estado"
+  },
+  "HistoryPage": {
+    "Title": "O meu Histórico",
+    "Description": "Veja o histórico dos seus processos",
+    "noProcesses": "Nenhum processo encontrado.",
+    "TotalProcesses": "Total de Processos",
+    "ProcessesInProgress": "Processos a decorrer",
+    "CompletedProcesses": "Processos concluídos",
+    "CanceledProcesses": "Processos cancelados",
+    "FetchError": "Falha encontrar histórico"
   }
 }

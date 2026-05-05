@@ -1,22 +1,22 @@
-@baseUrl = http://localhost:8080
+@baseUrl = http://localhost:8080/api
 @loginToken =
 @accessToken =
 @refreshToken =
 
 ### Create User
-POST {{baseUrl}}/api/users
+POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "Sarabuga",
-  "email": "sarabuga@gmail.com",
+  "name": "Chico1",
+  "email": "chico1@gmail.com",
   "password": "12345",
   "areaId": null,
   "roles": ["triator"]
 }
 
 ### Login
-POST {{baseUrl}}/api/users/login
+POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
@@ -25,7 +25,7 @@ Content-Type: application/json
 }
 
 ### Select Role
-POST {{baseUrl}}/api/users/auth/select-role
+POST {{baseUrl}}/users/auth/select-role
 Content-Type: application/json
 Authorization: Bearer {{loginToken}}
 
@@ -34,16 +34,16 @@ Authorization: Bearer {{loginToken}}
 }
 
 ### Refresh Access Token
-POST {{baseUrl}}/api/users/refresh-token
+POST {{baseUrl}}/users/refresh-token
 Authorization: Bearer {{refreshToken}}
 
 ### Get Roles
-GET {{baseUrl}}/api/users/roles?email=chico@gmail.com
+GET {{baseUrl}}/users/roles?email=chico@gmail.com
 
 ### Get All Users
-GET {{baseUrl}}/api/users?offset=0&limit=10
+GET {{baseUrl}}/users?offset=0&limit=10
 Authorization: Bearer {{accessToken}}
 
 ### Protected endpoint example
-GET {{baseUrl}}/api/history/6
+GET {{baseUrl}}/history/6
 Authorization: Bearer {{accessToken}}

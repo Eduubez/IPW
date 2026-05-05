@@ -2,7 +2,7 @@ package pt.isel.ipw.domain.process
 
 import java.time.LocalDateTime
 
-data class Proves(
+data class Prove(
     val id: Int,
     val processId: Int,
     val fileName: String,

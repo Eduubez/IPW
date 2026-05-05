@@ -129,5 +129,80 @@ class Problem(
             message = "Process not found",
             errorCode = ErrorCode.PROCESS_NOT_FOUND
         )
+
+        val invalidProcessName = Problem(
+            type = "problems/invalid-process-name",
+            message = "Process name must have at least 3 characters",
+            errorCode = ErrorCode.INVALID_PROCESS_NAME
+        )
+
+        val invalidLocation = Problem(
+            type = "problems/invalid-location",
+            message = "Location must have all fields filled and valid",
+            errorCode = ErrorCode.INVALID_LOCATION
+        )
+
+        val invalidExpirationDate = Problem(
+            type = "problems/invalid-expiration-date",
+            message = "The expiration date is not valid",
+            errorCode = ErrorCode.INVALID_EXPIRATION_DATE
+        )
+
+        val invalidPriority = Problem(
+            type = "problems/invalid-priority",
+            message = "The priority is not valid",
+            errorCode = ErrorCode.INVALID_PRIORITY
+        )
+
+        val invalidInvestigator = Problem(
+            type = "problems/invalid-investigator",
+            message = "Investigator does not exist or does not belong to the same area",
+            errorCode = ErrorCode.INVALID_INVESTIGATOR
+        )
+
+        val invalidSupervisor = Problem(
+            type = "problems/invalid-supervisor",
+            message = "Supervisor does not exist or does not belong to the same area",
+            errorCode = ErrorCode.INVALID_SUPERVISOR
+        )
+
+        val invalidTriator = Problem(
+            type = "problems/invalid-triator",
+            message = "Triator is not allowed to create a new process",
+            errorCode = ErrorCode.INVALID_TRIATOR
+        )
+
+        val invalidInsurance = Problem(
+            type = "problems/invalid-insurance",
+            message = "Insurance does not exist.",
+            errorCode = ErrorCode.INVALID_INSURANCE
+        )
+
+        val invalidTypification = Problem(
+            type = "problems/invalid-typification",
+            message = "Typification does not exist.",
+            errorCode = ErrorCode.INVALID_TYPIFICATION
+        )
+
+        val updateNotAllowed = Problem(
+            type = "problems/update-not-allowed",
+            message = "Update is not allowed.",
+            errorCode = ErrorCode.UPDATE_NOT_ALLOWED
+        )
+
+        val invalidUserId = Problem(
+            type = "problems/invalid-user-id",
+            message = "Invalid userId.",
+            errorCode = ErrorCode.INVALID_USER_ID
+        )
+
+        val invalidAreaId = Problem(
+            type = "problems/invalid-area-id",
+            message = "Area id must be positive.",
+            errorCode = ErrorCode.INVALID_AREA_ID
+        )
+
+
+
     }
 }

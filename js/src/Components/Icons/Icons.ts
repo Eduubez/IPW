@@ -19,4 +19,5 @@ export const Icon = {
     Circle: "circle",
     Clock: "schedule",
     CarCrash: "car_crash",
+    History: "history",
 }

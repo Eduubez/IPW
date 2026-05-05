@@ -12,6 +12,8 @@ data class CreateProcessRequest (
     val expiresAt: String,
     val investigatorId: Int,
     val supervisorId: Int,
+    val insuranceId: Int? =null,
+    val typificationId: Int? = null,
     val canBeFraud: Boolean,
     val note: String? = null,
 )

@@ -3,6 +3,7 @@ import styles from "./rolecard.module.css";
 import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
 import { Icon } from "../../Icons/Icons";
 import { useTranslation } from "react-i18next";
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 export default function RoleCard({
   icon,
@@ -10,13 +11,16 @@ export default function RoleCard({
   permissions,
   style,
   onClick,
+  loading,
 }: {
   icon: { name: string; style?: React.CSSProperties };
   title: string;
   permissions: string[];
   style?: React.CSSProperties;
   onClick: () => void;
+  loading?: boolean;
 }) {
+  if (loading) return <LoadingComponent />;
   const { t } = useTranslation();
   return (
     <div className={styles["role-card"]} style={style}>

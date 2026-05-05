@@ -1,32 +1,25 @@
 package pt.isel.ipw.http.controllers
 
 import jakarta.annotation.security.RolesAllowed
-import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.access.annotation.Secured
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.http.Cookies
 import pt.isel.ipw.http.errors.Problem
-import pt.isel.ipw.http.errors.handler
-import pt.isel.ipw.services.auth.TokenService
-import pt.isel.ipw.services.errors.Either
 import pt.isel.ipw.services.errors.Failure
 import pt.isel.ipw.services.errors.HistoryError
 import pt.isel.ipw.services.errors.Success
-import pt.isel.ipw.services.errors.mapSuccess
-import pt.isel.ipw.services.interfaces.IHistoryService
+import pt.isel.ipw.services.interfaces.HistoryService
 
 
 @RestController
 @RequestMapping("/api/history")
 class HistoryController(
-    private val historyService: IHistoryService,
+    private val historyService: HistoryService,
 ) {
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.TRIATOR, Roles.MANAGER)

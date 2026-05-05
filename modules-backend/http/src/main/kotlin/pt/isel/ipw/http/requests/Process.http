@@ -1,0 +1,156 @@
+@baseUrl = http://localhost:8080/api
+@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcklkIjozLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzc3NjI1ODIwLCJleHAiOjE3Nzc2MjYxMjB9.RAy93mArCDwdY8D8wgsDPydFGays0MZIn4vKCdVgcnVQgcximOZqInQh5UtESM2dZOF3XCyVQpz8ECP8ur3s1A
+@accessTokenTriator  =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoidHJpYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Nzc2MjU0NzcsImV4cCI6MTc3NzYzMjY3N30.UpRVdoeZkTL_Io8Qka_QZVv0U8c8XpzXjYZfF2o6KjDo3f67I9zUh1Ytjt4WlOnUeUX2NVHEzx-zx4Wo7suxfw
+@refreshTokenTriator =
+
+@accessTokenInvestigator  =   eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcklkIjozLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3NzYyNTg0NywiZXhwIjoxNzc3NjMzMDQ3fQ.j3ZhzAmPZlPE6JMjxXygOQxMTDozcArnfP587tqOX4xZ0QLqwCKgQ3z6G3fp0ZKgls3ZsWl6xxq6pVCkWt_2dg
+@refreshTokenInvestigator =
+
+@accessTokenSupervisor  =
+@refreshTokenSupervisor =
+
+
+### Create User - Triador
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Chico Triator",
+  "email": "chicoT@gmail.com",
+  "password": "12345",
+  "areaId": null,
+  "roles": ["triator"]
+}
+
+### Create User - Supervisor
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Chico Supervisor",
+  "email": "chicoS@gmail.com",
+  "password": "12345",
+  "areaId": 4,
+  "roles": ["supervisor"]
+}
+
+### Create User - Investigator
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "name": "Chico Investigator",
+  "email": "chicoI@gmail.com",
+  "password": "12345",
+  "areaId": null,
+  "roles": ["investigator"]
+}
+
+### Login - Triator
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "alice@ipw.pt",
+  "password": "12345"
+}
+
+### Login - Investigator
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "bob@ipw.pt",
+  "password": "12345"
+}
+
+### Login - Supervisor
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "chicoS@gmail.com",
+  "password": "12345"
+}
+
+
+### Select Role - usar loginToken no Authorization header
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginToken}}
+
+{
+  "role": "triator"
+}
+
+### Select Role - usar loginToken no Authorization header
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginToken}}
+
+{
+  "role": "investigator"
+}
+
+### Select Role - usar loginToken no Authorization header
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginToken}}
+
+{
+  "role": "supervisor"
+}
+
+### Create Process - triator
+POST {{baseUrl}}/process
+Content-Type: application/json
+Authorization: Bearer {{accessTokenTriator}}
+
+{
+  "name": "Processo Teste 6",
+  "street": "Rua Augusta 1",
+  "county": "Lisboa",
+  "district": "Lisboa",
+  "latitude": null,
+  "longitude": null,
+  "area": "Car Accident",
+  "priority": "normal",
+  "expiresAt": "2026-12-31T23:59:59",
+  "investigatorId": 3,
+  "supervisorId": 4,
+  "canBeFraud": false,
+  "insuranceId": null,
+  "typificationId": null,
+  "note": "Nota inicial do processo"
+}
+
+
+
+
+
+### Get by id processes - Investigator
+GET {{baseUrl}}/process/1
+Authorization: Bearer {{accessTokenInvestigator}}
+
+
+
+### Get All Processes - investigator (sem filtros)
+GET {{baseUrl}}/process?area_id=1
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Get All Processes - supervisor (com paginação)
+GET {{baseUrl}}/process?offset=0&limit=5
+Authorization: Bearer {{accessTokenSupervisor}}
+
+### Get All Processes - investigator (filtrar por área)
+GET {{baseUrl}}/process?offset=0&limit=2&area_id=1
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Get Activities by Process - investigator (sem filtros)
+GET {{baseUrl}}/activity/process/12
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Get Activities by Process - investigator (com paginação)
+GET {{baseUrl}}/activity/process/1?offset=0&limit=5
+Authorization: Bearer {{accessTokenInvestigator}}
+

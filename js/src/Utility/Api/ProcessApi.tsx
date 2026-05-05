@@ -1,5 +1,7 @@
 import type {UserResponse} from "./UsersApi.tsx";
 import {buildQuery, fetchApi, type ResponseApi} from "./FetchApi.tsx";
+import { userStore } from "../Store/UserStore.tsx";
+import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge.tsx";
 
 export type ProcessResponse = {
     id: number;
@@ -7,7 +9,7 @@ export type ProcessResponse = {
     location: LocationType;
     creationDate: string;
     dueDate: string;
-    priority: number;
+    priority: PriorityType;
     area: string;
     typification: string;
     triator: UserResponse;
@@ -28,7 +30,7 @@ export type ProcessRequest = {
     latitude: number | null,
     longitude: number | null,
     area: string,
-    priority: string,
+    priority: PriorityType,
     expiresAt: string,
     investigatorId: number,
     supervisorId: number,
@@ -104,8 +106,11 @@ async function create(process: ProcessRequest): Promise<ResponseApi<ProcessRespo
 
 // get a process by id - Investigator, Supervisor, Manager
 async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
-    return await fetchApi<ProcessResponse>(`processes/${id}`, {
+    return await fetchApi<ProcessResponse>(`process/${id}`, {
         method: "GET",
+        headers: {
+            "Authorization": `Bearer ${userStore.getAccessToken()}`,
+        },
     });
 }
 
@@ -135,7 +140,7 @@ async function assignInvestigator(processId: number, investigatorId: number): Pr
 }
 
 // Change the priority of a process - Supervisor, Manager
-async function changePriority(processId: number, priority: string): Promise<ResponseApi<void>> {
+async function changePriority(processId: number, priority: PriorityType): Promise<ResponseApi<void>> {
     return await fetchApi<void>(`processes/${processId}/priority`, {
         method: "PUT",
         body: JSON.stringify({priority}),

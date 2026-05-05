@@ -5,14 +5,14 @@ import org.jdbi.v3.core.statement.StatementContext
 import pt.isel.ipw.domain.Entities.area.AreaView
 import java.sql.ResultSet
 
-class AreaViewMapper : RowMapper<AreaView> {
+class AreaViewMapper(private val prefix: String = "") : RowMapper<AreaView> {
     override fun map(rs: ResultSet, ctx: StatementContext): AreaView {
-        val bossId = rs.getInt("boss_id")
+        val bossId = rs.getInt("${prefix}boss_id")
         return AreaView(
-            id = rs.getInt("id"),
-            name = rs.getString("name"),
+            id = rs.getInt("${prefix}id"),
+            name = rs.getString("${prefix}name"),
             bossId = if (rs.wasNull()) null else bossId,
-            bossName = rs.getString("boss_name")
+            bossName = rs.getString("${prefix}boss_name")
         )
     }
 }

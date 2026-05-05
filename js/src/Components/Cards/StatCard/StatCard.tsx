@@ -1,5 +1,5 @@
-import CircularProgress from "@mui/material/CircularProgress";
 import styles from "./statcard.module.css";
+import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 
 export function StatCard({
   icon,
@@ -15,7 +15,7 @@ export function StatCard({
   return (
     <div className={styles["stat-card"]}>
       {loading ? (
-        <CircularProgress aria-label="Loading…" />
+        <LoadingComponent />
       ) : (
         <>
           <div className={styles["icon-container"]}>
