@@ -2,9 +2,9 @@ package pt.isel.ipw.repository.jdbi.area
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
+import pt.isel.ipw.domain.Entities.area.AreaInfo
 import pt.isel.ipw.domain.Entities.area.AreaView
 import pt.isel.ipw.repository.AreasRepository
-import pt.isel.ipw.repository.jdbi.mappers.AreaViewMapper
 
 class JdbiAreasRepository(
     private val handle: Handle
@@ -84,7 +84,7 @@ class JdbiAreasRepository(
             FROM area LEFT JOIN Users ON area.boss_id = Users.id
         """.trimIndent()
         return handle.createQuery(query)
-            .map(AreaViewMapper())
+            .mapTo<AreaView>()
             .list()
     }
 
@@ -96,7 +96,22 @@ class JdbiAreasRepository(
         """.trimIndent()
         return handle.createQuery(query)
             .bind("areaId", areaId)
-            .map(AreaViewMapper())
+            .mapTo<AreaView>()
+            .findOne()
+            .orElse(null)
+    }
+
+    override fun getAreaByUserId(userId: Int): AreaInfo? {
+        val query = """
+            SELECT area.id as area_id, area.name as area
+            FROM Users
+            JOIN Area ON Users.area_id = Area.id
+            WHERE Users.id = :userId
+        """.trimIndent()
+
+        return handle.createQuery(query)
+            .bind("userId", userId)
+            .mapTo<AreaInfo>()
             .findOne()
             .orElse(null)
     }

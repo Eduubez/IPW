@@ -1,5 +1,6 @@
 package pt.isel.ipw.repository
 
+import pt.isel.ipw.domain.Entities.area.AreaInfo
 import pt.isel.ipw.domain.Entities.area.AreaView
 
 interface AreasRepository {
@@ -10,4 +11,5 @@ interface AreasRepository {
     fun clearBossByUserId(userId: Int)
     fun getAllAreas(): List<AreaView>
     fun getAreaById(areaId: Int): AreaView?
+    fun getAreaByUserId(userId: Int): AreaInfo?
 }

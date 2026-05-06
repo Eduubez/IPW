@@ -5,6 +5,7 @@ import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.postgres.PostgresPlugin
 import pt.isel.ipw.domain.AccessToken
 import pt.isel.ipw.domain.Activity
+import pt.isel.ipw.domain.Entities.area.AreaInfo
 import pt.isel.ipw.domain.Entities.area.AreaView
 import pt.isel.ipw.domain.LoginToken
 import pt.isel.ipw.domain.RefreshToken
@@ -12,6 +13,7 @@ import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.repository.jdbi.mappers.AccessTokenMapper
 import pt.isel.ipw.repository.jdbi.mappers.ActivityMapper
+import pt.isel.ipw.repository.jdbi.mappers.AreaInfoMapper
 import pt.isel.ipw.repository.jdbi.mappers.AreaViewMapper
 import pt.isel.ipw.repository.jdbi.mappers.LoginTokenMapper
 import pt.isel.ipw.repository.jdbi.mappers.RefreshTokenMapper
@@ -29,6 +31,7 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
     registerRowMapper(AccessToken::class.java, AccessTokenMapper())
     registerRowMapper(LoginToken::class.java, LoginTokenMapper())
     registerRowMapper(Activity::class.java, ActivityMapper())
+    registerRowMapper(AreaInfo::class.java, AreaInfoMapper())
     registerRowMapper(AreaView::class.java, AreaViewMapper())
 
     return this

@@ -244,8 +244,13 @@ class UserServiceImpl(
             return@run failure(UserError.InvalidRoleSelection)
         }
 
-        loginTokensRepository.deleteByToken(loginToken)
+        val areaInfo = if(normalizedRequestedRole in Roles.AREA_ROLES) {
+            areasRepository.getAreaByUserId(userId)
+        } else {
+            null
+        }
 
+        loginTokensRepository.deleteByToken(loginToken)
         accessTokensRepository.deleteByUserId(userId)
         refreshTokensRepository.deleteByUserId(userId)
 
@@ -272,7 +277,9 @@ class UserServiceImpl(
                 accessTokenExpiresAt = createdAccessToken.expiresAt,
                 refreshToken = createdRefreshToken.token,
                 refreshTokenExpiresAt = createdRefreshToken.expiresAt,
-                role = normalizedRequestedRole
+                role = normalizedRequestedRole,
+                areaId = areaInfo?.areaId,
+                area = areaInfo?.area
             )
         )
     }

@@ -13,7 +13,7 @@ begin
     insert into Users(name, email, password_hash, area_id)
     values ('Root User', 'root@example.com', '$2b$10$placeholderhashroot', null);
 
-    insert into Area(name,boss_id)
+    insert into Area(name, boss_id)
     values ('Car Accident', 1),
            ('Floods', 1),
            ('Fire', 1),

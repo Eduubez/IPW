@@ -148,7 +148,9 @@ class UserController(
                     value = it.refreshToken,
                     expiresAt = it.refreshTokenExpiresAt.toString()
                 ),
-                role = it.role
+                role = it.role,
+                areaId = it.areaId,
+                area = it.area
             )
         }
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
