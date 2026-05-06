@@ -130,21 +130,19 @@ values ('Sinistro automovel - Jose Silva',
         7);
 
 -- STATE
--- insert into State first (without process_id), then link via Process_State
-insert into State (name, start_date, end_date)
-values ('assigned',                    current_timestamp - interval '2 days',  current_timestamp - interval '1 day'),   -- id 1
-       ('on_going',                    current_timestamp - interval '1 day',   null),                                   -- id 2
-       ('assigned',                    current_timestamp - interval '1 day',   current_timestamp - interval '12 hours'),-- id 3
-       ('waiting_approval_supervisor', current_timestamp - interval '12 hours', null);                                  -- id 4
+insert into State (name)
+values ('assigned'),                     -- id 1
+       ('on_going'),                     -- id 2
+       ('assigned'),                     -- id 3
+       ('waiting_approval_supervisor');  -- id 4
 
--- =========================
 -- PROCESS_STATE
--- =========================
-insert into Process_State (process_id, state_id)
-values (1, 1),
-       (1, 2),
-       (2, 3),
-       (2, 4);
+insert into Process_State (process_id, state_id, start_date, end_date)
+values (1, 1, current_timestamp - interval '2 days',  current_timestamp - interval '1 day'),
+       (1, 2, current_timestamp - interval '1 day',   null),
+       (2, 3, current_timestamp - interval '1 day',   current_timestamp - interval '12 hours'),
+       (2, 4, current_timestamp - interval '12 hours', null);
+
 
 -- =========================
 -- REPORT

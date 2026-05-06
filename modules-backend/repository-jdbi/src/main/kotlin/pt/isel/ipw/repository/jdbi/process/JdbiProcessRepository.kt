@@ -30,9 +30,9 @@ class JdbiProcessRepository(
     ): Int {
         val locationId = handle.createUpdate(
             """
-        insert into Location(district, county, street, latitude, longitude)
-        values (:district, :county, :street, :latitude, :longitude)
-        """
+            insert into Location(district, county, street, latitude, longitude)
+            values (:district, :county, :street, :latitude, :longitude)
+            """
         )
             .bind("district", district)
             .bind("county", county)
@@ -43,20 +43,16 @@ class JdbiProcessRepository(
             .mapTo(Int::class.java)
             .one()
 
-        val areaId = handle.createQuery(
-            """
-        select id from Area where name = :area
-        """
-        )
+        val areaId = handle.createQuery("select id from Area where name = :area")
             .bind("area", area)
             .mapTo(Int::class.java)
             .one()
 
         val processId = handle.createUpdate(
             """
-        insert into Process(name, insurance_id, location, due_date, is_suspect_fraud, priority, area_id, typification_id, triator_id, investigator_id, supervisor_id)
-        values (:name, :insuranceId, :locationId, :expiresAt::timestamp, :canBeFraud, :priority, :areaId, :typificationId, :triatorId, :investigatorId, :supervisorId)
-        """
+            insert into Process(name, insurance_id, location, due_date, is_suspect_fraud, priority, area_id, typification_id, triator_id, investigator_id, supervisor_id)
+            values (:name, :insuranceId, :locationId, :expiresAt::timestamp, :canBeFraud, :priority, :areaId, :typificationId, :triatorId, :investigatorId, :supervisorId)
+            """
         )
             .bind("name", name)
             .bind("insuranceId", insuranceId)
@@ -73,23 +69,14 @@ class JdbiProcessRepository(
             .mapTo(Int::class.java)
             .one()
 
-
-        handle.createUpdate(
-            """
-                insert into State(process_id, name)
-                values (:processId, 'not_assigned')
-                """
-        )
-            .bind("processId", processId)
-            .execute()
-
+        // Estado inicial criado automaticamente pelo trigger create_initial_state_for_process
 
         if (!note.isNullOrBlank()) {
             handle.createUpdate(
                 """
-            insert into Notes(process_id, content, author_id)
-            values (:processId, :content, :authorId)
-            """
+                insert into Notes(process_id, content, author_id)
+                values (:processId, :content, :authorId)
+                """
             )
                 .bind("processId", processId)
                 .bind("content", note)
@@ -100,18 +87,16 @@ class JdbiProcessRepository(
         return processId
     }
 
-
     override fun getById(id: Int): ProcessView? {
-
         val notes = handle.createQuery(
             """
         select
-            n.id          as id,
-            n.process_id  as process_id,
-            n.proves_id   as proves_id,
-            n.content     as content,
-            n.author_id   as author_id,
-            n.created_at  as created_at
+            n.id         as id,
+            n.process_id as process_id,
+            n.proves_id  as proves_id,
+            n.content    as content,
+            n.author_id  as author_id,
+            n.created_at as created_at
         from Notes n
         where n.process_id = :id
         """
@@ -120,101 +105,94 @@ class JdbiProcessRepository(
             .map(NoteMapper())
             .list()
 
-        // query principal
         return handle.createQuery(
             """
         select
-            -- process
             p.id,
             p.name,
             p.creation_date,
             p.due_date,
             p.priority,
 
-            -- location
-            l.id            as location_id,
-            l.district      as location_district,
-            l.county        as location_county,
-            l.street        as location_street,
-            l.latitude      as location_latitude,
-            l.longitude     as location_longitude,
+            l.id             as location_id,
+            l.district       as location_district,
+            l.county         as location_county,
+            l.street         as location_street,
+            l.latitude       as location_latitude,
+            l.longitude      as location_longitude,
 
-            -- area
-            a.id            as area_id,
-            a.name          as area_name,
-            a.boss_id       as area_boss_id,
-            ub.name         as area_boss_name,
+            a.id             as area_id,
+            a.name           as area_name,
+            a.boss_id        as area_boss_id,
+            ub.name          as area_boss_name,
 
-            -- typification
-            t.id            as typification_id,
-            t.name          as typification_name,
-            t.honorary      as typification_honorary,
+            t.id             as typification_id,
+            t.name           as typification_name,
+            t.honorary       as typification_honorary,
 
-            -- triator
-            ut.id           as triator_id,
-            ut.name         as triator_name,
-            ut.email        as triator_email,
+            ut.id            as triator_id,
+            ut.name          as triator_name,
+            ut.email         as triator_email,
             ut.password_hash as triator_password_hash,
-            ut.is_active    as triator_is_active,
-            at.name         as triator_area,
+            ut.is_active     as triator_is_active,
+            at.name          as triator_area,
 
-            -- investigator
-            ui.id           as investigator_id,
-            ui.name         as investigator_name,
-            ui.email        as investigator_email,
+            ui.id            as investigator_id,
+            ui.name          as investigator_name,
+            ui.email         as investigator_email,
             ui.password_hash as investigator_password_hash,
-            ui.is_active    as investigator_is_active,
-            ai.name         as investigator_area,
+            ui.is_active     as investigator_is_active,
+            ai.name          as investigator_area,
 
-            -- supervisor
-            us.id           as supervisor_id,
-            us.name         as supervisor_name,
-            us.email        as supervisor_email,
+            us.id            as supervisor_id,
+            us.name          as supervisor_name,
+            us.email         as supervisor_email,
             us.password_hash as supervisor_password_hash,
-            us.is_active    as supervisor_is_active,
-            asuper.name     as supervisor_area,
+            us.is_active     as supervisor_is_active,
+            asuper.name      as supervisor_area,
 
-            -- state (estado ativo, sem end_date)
-            st.name         as state_,
+            cur_state.name   as state_,
 
-            -- proves (primeiro registo)
-            pv.id           as proves_id,
-            pv.process_id   as proves_process_id,
-            pv.file_name    as proves_file_name,
-            pv.file_type    as proves_file_type,
-            pv.file_url     as proves_file_url,
-            pv.created_at   as proves_created_at,
+            pv.id            as proves_id,
+            pv.process_id    as proves_process_id,
+            pv.file_name     as proves_file_name,
+            pv.file_type     as proves_file_type,
+            pv.file_url      as proves_file_url,
+            pv.created_at    as proves_created_at,
 
-            -- report
-            r.id            as report_id,
-            r.process_id    as report_process_id,
-            r.content       as report_content,
-            r.created_at    as report_created_at,
-            r.updated_at    as report_updated_at,
+            r.id             as report_id,
+            r.process_id     as report_process_id,
+            r.content        as report_content,
+            r.created_at     as report_created_at,
+            r.updated_at     as report_updated_at,
 
-            -- activity (mais recente)
-            act.id          as activity_id,
-            act.process_id  as activity_process_id,
-            act.user_id     as activity_user_id,
-            act.action      as activity_action,
-            act.description as activity_description,
-            act.created_at  as activity_created_at
+            act.id           as activity_id,
+            act.process_id   as activity_process_id,
+            act.user_id      as activity_user_id,
+            act.action       as activity_action,
+            act.description  as activity_description,
+            act.created_at   as activity_created_at
 
         from Process p
-        join Location l             on p.location        = l.id
-        join Area a                 on p.area_id         = a.id
-        left join Users ub          on a.boss_id         = ub.id
-        join Typification t         on p.typification_id = t.id
-        join Users ut               on p.triator_id      = ut.id
-        left join Area at           on ut.area_id        = at.id
-        left join Users ui          on p.investigator_id = ui.id
-        left join Area ai           on ui.area_id        = ai.id
-        left join Users us          on p.supervisor_id   = us.id
-        left join Area asuper       on us.area_id        = asuper.id
-        left join State st          on st.process_id     = p.id and st.end_date is null
-        left join Proves pv         on pv.process_id     = p.id
-        left join Report r          on r.process_id      = p.id
-        left join Activity act      on act.process_id    = p.id
+        join Location l         on p.location        = l.id
+        join Area a             on p.area_id         = a.id
+        left join Users ub      on a.boss_id         = ub.id
+        join Typification t     on p.typification_id = t.id
+        join Users ut           on p.triator_id      = ut.id
+        left join Area at       on ut.area_id        = at.id
+        left join Users ui      on p.investigator_id = ui.id
+        left join Area ai       on ui.area_id        = ai.id
+        left join Users us      on p.supervisor_id   = us.id
+        left join Area asuper   on us.area_id        = asuper.id
+        left join (
+            select ps.process_id, st.name
+            from Process_State ps
+            join State st on st.id = ps.state_id
+            where ps.end_date is null
+        ) cur_state             on cur_state.process_id = p.id
+        left join Proves pv     on pv.process_id     = p.id
+        left join Report r      on r.process_id      = p.id
+        left join Activity act  on act.process_id    = p.id
         where p.id = :id
         limit 1
         """
@@ -230,18 +208,15 @@ class JdbiProcessRepository(
         limit: Int,
         userId: Int?,
     ): List<ProcessView> {
-
-        // Verify all process matching
         val processIds = handle.createQuery(
             """
         select p.id
         from Process p
-        join Area a on p.area_id = a.id
-        where(:userId::int is null or (
-              p.triator_id = :userId or
-              p.investigator_id = :userId or
-              p.supervisor_id = :userId
-          ))
+        where (:userId::int is null or (
+            p.triator_id      = :userId or
+            p.investigator_id = :userId or
+            p.supervisor_id   = :userId
+        ))
         order by p.creation_date desc
         limit :limit offset :offset
         """
@@ -254,16 +229,15 @@ class JdbiProcessRepository(
 
         if (processIds.isEmpty()) return emptyList()
 
-        // All notes from this process
         val allNotes = handle.createQuery(
             """
         select
-            n.id          as id,
-            n.process_id  as process_id,
-            n.proves_id   as proves_id,
-            n.content     as content,
-            n.author_id   as author_id,
-            n.created_at  as created_at
+            n.id         as id,
+            n.process_id as process_id,
+            n.proves_id  as proves_id,
+            n.content    as content,
+            n.author_id  as author_id,
+            n.created_at as created_at
         from Notes n
         where n.process_id = any(:ids)
         """
@@ -271,7 +245,7 @@ class JdbiProcessRepository(
             .bind("ids", processIds.toTypedArray())
             .map(NoteMapper())
             .list()
-            .groupBy { it.processId }  // Map<processId, List<Note>>
+            .groupBy { it.processId }
 
         return handle.createQuery(
             """
@@ -282,80 +256,85 @@ class JdbiProcessRepository(
             p.due_date,
             p.priority,
 
-            l.id            as location_id,
-            l.district      as location_district,
-            l.county        as location_county,
-            l.street        as location_street,
-            l.latitude      as location_latitude,
-            l.longitude     as location_longitude,
+            l.id             as location_id,
+            l.district       as location_district,
+            l.county         as location_county,
+            l.street         as location_street,
+            l.latitude       as location_latitude,
+            l.longitude      as location_longitude,
 
-            a.id            as area_id,
-            a.name          as area_name,
-            a.boss_id       as area_boss_id,
-            ub.name         as area_boss_name,
+            a.id             as area_id,
+            a.name           as area_name,
+            a.boss_id        as area_boss_id,
+            ub.name          as area_boss_name,
 
-            t.id            as typification_id,
-            t.name          as typification_name,
-            t.honorary      as typification_honorary,
+            t.id             as typification_id,
+            t.name           as typification_name,
+            t.honorary       as typification_honorary,
 
-            ut.id           as triator_id,
-            ut.name         as triator_name,
-            ut.email        as triator_email,
+            ut.id            as triator_id,
+            ut.name          as triator_name,
+            ut.email         as triator_email,
             ut.password_hash as triator_password_hash,
-            ut.is_active    as triator_is_active,
-            at.name         as triator_area,
+            ut.is_active     as triator_is_active,
+            at.name          as triator_area,
 
-            ui.id           as investigator_id,
-            ui.name         as investigator_name,
-            ui.email        as investigator_email,
+            ui.id            as investigator_id,
+            ui.name          as investigator_name,
+            ui.email         as investigator_email,
             ui.password_hash as investigator_password_hash,
-            ui.is_active    as investigator_is_active,
-            ai.name         as investigator_area,
+            ui.is_active     as investigator_is_active,
+            ai.name          as investigator_area,
 
-            us.id           as supervisor_id,
-            us.name         as supervisor_name,
-            us.email        as supervisor_email,
+            us.id            as supervisor_id,
+            us.name          as supervisor_name,
+            us.email         as supervisor_email,
             us.password_hash as supervisor_password_hash,
-            us.is_active    as supervisor_is_active,
-            asuper.name     as supervisor_area,
+            us.is_active     as supervisor_is_active,
+            asuper.name      as supervisor_area,
 
-            st.name         as state_,
+            cur_state.name   as state_,
 
-            pv.id           as proves_id,
-            pv.process_id   as proves_process_id,
-            pv.file_name    as proves_file_name,
-            pv.file_type    as proves_file_type,
-            pv.file_url     as proves_file_url,
-            pv.created_at   as proves_created_at,
+            pv.id            as proves_id,
+            pv.process_id    as proves_process_id,
+            pv.file_name     as proves_file_name,
+            pv.file_type     as proves_file_type,
+            pv.file_url      as proves_file_url,
+            pv.created_at    as proves_created_at,
 
-            r.id            as report_id,
-            r.process_id    as report_process_id,
-            r.content       as report_content,
-            r.created_at    as report_created_at,
-            r.updated_at    as report_updated_at,
+            r.id             as report_id,
+            r.process_id     as report_process_id,
+            r.content        as report_content,
+            r.created_at     as report_created_at,
+            r.updated_at     as report_updated_at,
 
-            act.id          as activity_id,
-            act.process_id  as activity_process_id,
-            act.user_id     as activity_user_id,
-            act.action      as activity_action,
-            act.description as activity_description,
-            act.created_at  as activity_created_at
+            act.id           as activity_id,
+            act.process_id   as activity_process_id,
+            act.user_id      as activity_user_id,
+            act.action       as activity_action,
+            act.description  as activity_description,
+            act.created_at   as activity_created_at
 
         from Process p
-        join Location l             on p.location        = l.id
-        join Area a                 on p.area_id         = a.id
-        left join Users ub          on a.boss_id         = ub.id
-        join Typification t         on p.typification_id = t.id
-        join Users ut               on p.triator_id      = ut.id
-        left join Area at           on ut.area_id        = at.id
-        left join Users ui          on p.investigator_id = ui.id
-        left join Area ai           on ui.area_id        = ai.id
-        left join Users us          on p.supervisor_id   = us.id
-        left join Area asuper       on us.area_id        = asuper.id
-        left join State st          on st.process_id     = p.id and st.end_date is null
-        left join Proves pv         on pv.process_id     = p.id
-        left join Report r          on r.process_id      = p.id
-        left join Activity act      on act.process_id    = p.id
+        join Location l         on p.location        = l.id
+        join Area a             on p.area_id         = a.id
+        left join Users ub      on a.boss_id         = ub.id
+        join Typification t     on p.typification_id = t.id
+        join Users ut           on p.triator_id      = ut.id
+        left join Area at       on ut.area_id        = at.id
+        left join Users ui      on p.investigator_id = ui.id
+        left join Area ai       on ui.area_id        = ai.id
+        left join Users us      on p.supervisor_id   = us.id
+        left join Area asuper   on us.area_id        = asuper.id
+        left join (
+            select ps.process_id, st.name
+            from Process_State ps
+            join State st on st.id = ps.state_id
+            where ps.end_date is null
+        ) cur_state             on cur_state.process_id = p.id
+        left join Proves pv     on pv.process_id     = p.id
+        left join Report r      on r.process_id      = p.id
+        left join Activity act  on act.process_id    = p.id
         where p.id = any(:ids)
         order by p.creation_date desc
         """
@@ -368,13 +347,14 @@ class JdbiProcessRepository(
             .list()
     }
 
+
     override fun updateEndDate(processId: Int, endDate: String) {
         handle.createUpdate(
             """
-        update Process
-        set due_date = :endDate::timestamp
-        where id = :processId 
-        """
+            update Process
+            set due_date = :endDate::timestamp
+            where id = :processId
+            """
         )
             .bind("endDate", endDate)
             .bind("processId", processId)
@@ -382,34 +362,27 @@ class JdbiProcessRepository(
     }
 
     override fun updateProcessInvestigator(processId: Int, investigatorId: Int) {
+        // O trigger set_process_assigned_state_when_fully_assigned trata do estado automaticamente
         handle.createUpdate(
             """
-        update Process
-        set investigator_id = :investigatorId
-        where id = :processId 
-        """
+            update Process
+            set investigator_id = :investigatorId
+            where id = :processId
+            """
         )
             .bind("investigatorId", investigatorId)
-            .bind("processId", processId)
-            .execute()
-
-        handle.createUpdate(
-            """
-        insert into State(process_id, name)
-        values (:processId, 'assigned')
-        """
-        )
             .bind("processId", processId)
             .execute()
     }
 
     override fun updateProcessSupervisor(processId: Int, supervisorId: Int) {
+        // O trigger set_process_assigned_state_when_fully_assigned trata do estado automaticamente
         handle.createUpdate(
             """
-        update Process
-        set supervisor_id = :supervisorId
-        where id = :processId 
-        """
+            update Process
+            set supervisor_id = :supervisorId
+            where id = :processId
+            """
         )
             .bind("supervisorId", supervisorId)
             .bind("processId", processId)
@@ -419,10 +392,10 @@ class JdbiProcessRepository(
     override fun updateProcessPriority(processId: Int, newPriority: String) {
         handle.createUpdate(
             """
-        update Process
-        set priority = :newPriority
-        where id = :processId 
-        """
+            update Process
+            set priority = :newPriority
+            where id = :processId
+            """
         )
             .bind("newPriority", newPriority)
             .bind("processId", processId)
@@ -430,15 +403,24 @@ class JdbiProcessRepository(
     }
 
     override fun cancelProcess(processId: Int) {
+        val stateId = handle.createUpdate(
+            """
+        insert into State(name)
+        values ('canceled')
+        """
+        )
+            .executeAndReturnGeneratedKeys()
+            .mapTo(Int::class.java)
+            .one()
+
         handle.createUpdate(
             """
-                insert into State (process_id, name)
-                values (:processId, 'canceled')
-            """.trimIndent()
+        insert into Process_State(process_id, state_id, start_date)
+        values (:processId, :stateId, current_timestamp)
+        """
         )
             .bind("processId", processId)
+            .bind("stateId", stateId)
             .execute()
     }
-
-
 }
