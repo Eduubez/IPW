@@ -32,7 +32,7 @@ begin
 
     -- Insert 5 Users (password_hash is a bcrypt placeholder) - all passwords -> '12345'
     insert into Users(name, email, password_hash, area_id) values
-        ('Alice Triator',     'alice@ipw.pt',      '$2a$10$E8Rg/TrDsbjQnr2QY/cbreSuzOl0iQizuGzDoSs6h24StXCHgza7a', v_area_car)
+        ('Alice Triator',     'alice@ipw.pt',      '$2a$10$E8Rg/TrDsbjQnr2QY/cbreSuzOl0iQizuGzDoSs6h24StXCHgza7a', null)
         returning id into v_triator_id;
 
     insert into Users(name, email, password_hash, area_id) values
@@ -44,12 +44,12 @@ begin
         returning id into v_supervisor_id;
 
     insert into Users(name, email, password_hash, area_id) values
-        ('David Manager',     'david@ipw.pt',       '$2a$10$sDiI5XyQcOvvAbdCiA0cKu6OFJFjA.vP1sEaPHAJCw1AiBwyGakpS', v_area_car)
+        ('David Manager',     'david@ipw.pt',       '$2a$10$sDiI5XyQcOvvAbdCiA0cKu6OFJFjA.vP1sEaPHAJCw1AiBwyGakpS', null)
         returning id into v_manager_id;
 
     -- 5th user has NO processes at all
     insert into Users(name, email, password_hash, area_id) values
-        ('Eve NoProcess',     'eve@ipw.pt',         '$2a$10$OOJLQvwls4eECyUz11clh.dXkwQrNAB6ILaEV.s5n68dpeMQ4D1Pi', v_area_fire)
+        ('Eve NoProcess',     'eve@ipw.pt',         '$2a$10$OOJLQvwls4eECyUz11clh.dXkwQrNAB6ILaEV.s5n68dpeMQ4D1Pi', null)
         returning id into v_admin_id;
 
     -- Assign roles
@@ -87,11 +87,11 @@ begin
 
     -- Process 4
     insert into Process(name, insurance_id, location, creation_date, due_date, is_suspect_fraud, priority, area_id, typification_id, triator_id, investigator_id, supervisor_id)
-    values ('Process Delta',   v_insurance_id, v_location_id, now(), now() + interval '45 days', false, 'normal',        v_area_fire, v_type_id, v_triator_id, v_investigator_id, v_supervisor_id);
+    values ('Process Delta',   v_insurance_id, v_location_id, now(), now() + interval '45 days', false, 'normal',        v_area_car,  v_type_id, v_triator_id, v_investigator_id, v_supervisor_id);
 
     -- Process 5
     insert into Process(name, insurance_id, location, creation_date, due_date, is_suspect_fraud, priority, area_id, typification_id, triator_id, investigator_id, supervisor_id)
-    values ('Process Epsilon', v_insurance_id, v_location_id, now(), now() + interval '10 days', true,  'urgent',        v_area_fire, v_type_id, v_triator_id, v_investigator_id, v_supervisor_id);
+    values ('Process Epsilon', v_insurance_id, v_location_id, now(), now() + interval '10 days', true,  'urgent',        v_area_car,  v_type_id, v_triator_id, v_investigator_id, v_supervisor_id);
 
     -- Process 6 (not assigned — no investigator/supervisor)
     insert into Process(name, insurance_id, location, creation_date, due_date, is_suspect_fraud, priority, area_id, typification_id, triator_id, investigator_id, supervisor_id)

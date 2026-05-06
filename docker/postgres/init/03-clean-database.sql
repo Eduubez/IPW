@@ -5,6 +5,7 @@ begin
     truncate table
         Role_Permission,
         User_Role,
+        Process_State,
         RefreshToken,
         AccessToken,
         LoginToken,

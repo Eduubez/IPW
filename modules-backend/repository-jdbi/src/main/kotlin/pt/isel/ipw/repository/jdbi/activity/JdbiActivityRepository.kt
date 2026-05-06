@@ -1,9 +1,9 @@
-package pt.isel.ipw.repository.jdbi
+package pt.isel.ipw.repository.jdbi.activity
 
 import org.jdbi.v3.core.Handle
+import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.ipw.domain.Activity
 import pt.isel.ipw.repository.ActivityRepository
-import org.jdbi.v3.core.kotlin.mapTo
 
 class JdbiActivityRepository(
     private val handle: Handle
@@ -74,10 +74,3 @@ class JdbiActivityRepository(
     }
 
 }
-
-
-
-
-
-
-

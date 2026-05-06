@@ -7,6 +7,8 @@ data class SelectRoleResult(
     val accessTokenExpiresAt: Instant,
     val refreshToken: String,
     val refreshTokenExpiresAt: Instant,
-    val role: String
+    val role: String,
+    val areaId: Int?,
+    val area: String?,
 ){
 }

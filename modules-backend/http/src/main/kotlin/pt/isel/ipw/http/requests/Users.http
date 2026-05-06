@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8080/api
-@loginToken =
+@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6W10sInR5cGUiOiJsb2dpbiIsImlhdCI6MTc3ODA2Njc2MCwiZXhwIjoxNzc4MDY3MDYwfQ.MsF9Ujqu47l0pth7KrueoAgZyJPFT7dLXvtfihQYacZphXIM_UoRb_MFNmidDlN3sM9u5z0B3MNBZfqwRLhakA
 @accessToken =
 @refreshToken =
 
@@ -8,11 +8,11 @@ POST {{baseUrl}}/users
 Content-Type: application/json
 
 {
-  "name": "Chico1",
-  "email": "chico1@gmail.com",
+  "name": "Chico",
+  "email": "chico@gmail.com",
   "password": "12345",
   "areaId": null,
-  "roles": ["triator"]
+  "roles": ["admin"]
 }
 
 ### Login
@@ -20,8 +20,8 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "sarabuga@gmail.com",
-  "password": "anime"
+  "email": "root@example.com",
+  "password": "12345"
 }
 
 ### Select Role
@@ -30,7 +30,7 @@ Content-Type: application/json
 Authorization: Bearer {{loginToken}}
 
 {
-  "role": "admin"
+  "role": "supervisor"
 }
 
 ### Refresh Access Token
