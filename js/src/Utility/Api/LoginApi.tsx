@@ -33,6 +33,7 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
         userStore.setIsLoggedIn();
         userStore.setRoles(response.data.roles);
         userStore.setLoginToken(response.data.loginToken.value);
+        userStore.setAccessTokenExpirationDate(response.data.loginToken.expiresAt);
         enqueueSnackbar(i18next.t("Login.successMessage"), {
             variant: ToastType.SUCCESS,
         });

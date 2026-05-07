@@ -17,7 +17,7 @@ export const userStore = {
   },
   getActiveRole: () => {
     const activeRole = localStorage.getItem("activeRole");
-    return activeRole ? activeRole : null;
+    return activeRole
   },
   setRoles: (roles: string[]) => {
     localStorage.setItem("roles", JSON.stringify(roles));
