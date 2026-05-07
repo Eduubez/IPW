@@ -71,5 +71,12 @@
     "CompletedProcesses": "Processos concluídos",
     "CanceledProcesses": "Processos cancelados",
     "FetchError": "Falha encontrar histórico"
+  },
+    "Roles": {
+    "admin": "Administrator",
+    "triator": "Triator",
+    "manager": "Manager",
+    "investigator": "Investigator",
+    "supervisor": "Supervisor"
   }
 }

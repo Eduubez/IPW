@@ -3,7 +3,9 @@
     "appName": "IPW",
     "appSubtitle": "Insurance Process Workflow",
     "welcome": "Hello!",
-    "welcomeText": "Use your credentials to access your account"
+    "welcomeText": "Use your credentials to access your account",
+    "successMessage": "Login successful!",
+    "logout": "Logout successful!"
   },
   "text": {
     "title": "Welcome to IPW"
@@ -29,7 +31,8 @@
     "triator": "Triator",
     "manager": "Manager",
     "investigator": "Investigator",
-    "supervisor": "Supervisor"
+    "supervisor": "Supervisor",
+    "roleSelected": "Role selected successfully!"
   },
   "Priority": {
     "URGENT": "High",
@@ -50,5 +53,30 @@
     "UpdateEveryProcess": "Update all processes",
     "ValidateAllProcess": "Validate all processes",
     "AllHistory": "View all history"
+  },
+  "GridColumnsProps": {
+    "name": "Name",
+    "creationDate": "Creation Date",
+    "area": "Area",
+    "dueDate": "Expires on",
+    "priority": "Priority",
+    "state": "State"
+  },
+  "HistoryPage": {
+    "Title": "My History",
+    "Description": "View your process history",
+    "noProcesses": "No processes found.",
+    "TotalProcesses": "Total Processes",
+    "ProcessesInProgress": "Processes in Progress",
+    "CompletedProcesses": "Completed Processes",
+    "CanceledProcesses": "Canceled Processes",
+    "FetchError": "Failed to fetch history"
+  },
+  "Roles": {
+    "admin": "Administrator",
+    "triator": "Triator",
+    "manager": "Manager",
+    "investigator": "Investigator",
+    "supervisor": "Supervisor"
   }
 }
