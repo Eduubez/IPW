@@ -24,6 +24,8 @@ interface UsersRepository {
 
     fun getUserById(userId: Int): User?
 
+    fun getUserWithRolesById(userId: Int): UserWithRoles?
+
     fun getAllUsers(offset: Int, limit: Int): List<UserWithRoles>
 
     fun replaceUserRoles(userId: Int, roles: List<String>)

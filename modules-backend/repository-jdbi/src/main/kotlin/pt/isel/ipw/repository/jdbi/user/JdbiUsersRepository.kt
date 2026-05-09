@@ -11,6 +11,27 @@ class JdbiUsersRepository(
     private val handle: Handle
 ) : UsersRepository {
 
+    override fun createUser(
+        name: String,
+        email: String,
+        passwordHash: String,
+        areaId: Int?
+    ): Int {
+        return handle.createUpdate(
+            """
+                insert into Users(name, email, password_hash, area_id)
+                values (:name, :email, :passwordHash, :areaId)
+            """
+        )
+            .bind("name", name)
+            .bind("email", email)
+            .bind("passwordHash", passwordHash)
+            .bind("areaId", areaId)
+            .executeAndReturnGeneratedKeys()
+            .mapTo(Int::class.java)
+            .one()
+    }
+
     override fun getUserByEmail(email: String): User? {
         return handle.createQuery(
             """
@@ -84,27 +105,6 @@ class JdbiUsersRepository(
         batch.execute()
     }
 
-    override fun createUser(
-        name: String,
-        email: String,
-        passwordHash: String,
-        areaId: Int?
-    ): Int {
-        return handle.createUpdate(
-            """
-                insert into Users(name, email, password_hash, area_id)
-                values (:name, :email, :passwordHash, :areaId)
-            """
-        )
-            .bind("name", name)
-            .bind("email", email)
-            .bind("passwordHash", passwordHash)
-            .bind("areaId", areaId)
-            .executeAndReturnGeneratedKeys()
-            .mapTo(Int::class.java)
-            .one()
-    }
-
     override fun getUserById(userId: Int): User? {
         return handle.createQuery(
             """
@@ -122,6 +122,32 @@ class JdbiUsersRepository(
         )
             .bind("userId", userId)
             .mapTo<User>()
+            .singleOrNull()
+    }
+
+    override fun getUserWithRolesById(userId: Int): UserWithRoles? {
+        return handle.createQuery(
+            """
+            select
+                u.id,
+                u.name,
+                u.email,
+                u.area_id,
+                a.name as area,
+                u.is_active,
+                coalesce(
+                    array_agg(ur.role_name) filter (where ur.role_name is not null),
+                    '{}'
+                ) as roles
+            from Users u
+            left join Area a on u.area_id = a.id
+            left join User_Role ur on ur.user_id = u.id
+            where u.id = :userId
+            group by u.id, u.name, u.email, u.area_id, a.name, u.is_active
+        """
+        )
+            .bind("userId", userId)
+            .mapTo<UserWithRoles>()
             .singleOrNull()
     }
 
