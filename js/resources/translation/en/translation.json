@@ -78,5 +78,58 @@
     "manager": "Manager",
     "investigator": "Investigator",
     "supervisor": "Supervisor"
+  },
+  "DashboardAdmin": {
+    "title": "User Management",
+    "description": "Manage all users",
+    "gridTitle": "Users",
+    "createUserButton": "Create user",
+    "stats": {
+      "total": "Total users",
+      "triators": "No. of Triators",
+      "investigators": "No. of Investigators",
+      "supervisors": "No. of Supervisors",
+      "managers": "No. of Managers"
+    },
+    "userModal": {
+      "title": "Edit user",
+      "changePassword": "Change Password",
+      "changeRoles": "Change Roles"
+    },
+    "createUser": {
+      "title": "New user",
+      "description": "Create a new user",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "area": "Area",
+      "chooseArea": "Choose area",
+      "supervisorLabel": "Supervisor",
+      "creating": "Creating...",
+      "create": "Create",
+      "successMessage": "User created successfully!"
+    },
+    "changePasswordModal": {
+      "title": "Change password",
+      "newPassword": "New password",
+      "confirmPassword": "Repeat password",
+      "saving": "Changing...",
+      "save": "Change",
+      "errorMinLength": "Password must be at least 5 characters.",
+      "errorMismatch": "Passwords do not match.",
+      "success": "Password changed successfully."
+    },
+    "changeRolesModal": {
+      "title": "Change roles",
+      "area": "Area",
+      "chooseArea": "Choose area",
+      "supervisorLabel": "Supervisor",
+      "saving": "Saving...",
+      "save": "Save roles",
+      "close": "Close",
+      "errorNoRoles": "Choose at least one role.",
+      "errorNoArea": "Choose an area for this user.",
+      "success": "Roles changed successfully."
+    }
   }
 }

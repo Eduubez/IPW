@@ -1,21 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import PrimaryButton from "../../../Components/Buttons/PrimaryButton/PrimaryButton";
-import TextBox from "../../../Components/Inputs/TextBox/TextBox";
-import { useSnackbar } from "notistack";
-import { ToastType } from "../../../Types/ToastType";
-import { AreasApi, type AreaResponse } from "../../../Utility/Api/AreasApi";
-import { UsersApi } from "../../../Utility/Api/UsersApi";
+import { useTranslation } from "react-i18next";
+import PrimaryButton from "../../../../Components/Buttons/PrimaryButton/PrimaryButton";
+import TextBox from "../../../../Components/Inputs/TextBox/TextBox";
+import { AreasApi, type AreaResponse } from "../../../../Utility/Api/AreasApi";
+import { UsersApi } from "../../../../Utility/Api/UsersApi";
+import { ROLES } from "../../../../MockData/MockRoles";
 import styles from "./CreateUserModal.module.css";
 
-const AVAILABLE_ROLES = [
-  { key: "admin", label: "Admin" },
-  { key: "triator", label: "Triador" },
-  { key: "investigator", label: "Averiguador" },
-  { key: "supervisor", label: "Supervisor" },
-  { key: "manager", label: "Gestor" },
-];
-
-const AREA_ROLES = new Set(["investigator", "supervisor"]);
+const AREA_ROLES = ["investigator", "supervisor"];
 
 type CreateUserModalProps = {
   open: boolean;
@@ -28,7 +20,6 @@ export default function CreateUserModal({
   onClose,
   onSuccess,
 }: CreateUserModalProps) {
-  const { enqueueSnackbar } = useSnackbar();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -36,9 +27,10 @@ export default function CreateUserModal({
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null);
   const [areas, setAreas] = useState<AreaResponse[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { t } = useTranslation();
 
   const needsArea = useMemo(
-    () => selectedRoles.some((role) => AREA_ROLES.has(role)),
+    () => selectedRoles.some((role) => AREA_ROLES.includes(role)),
     [selectedRoles],
   );
 
@@ -104,35 +96,15 @@ export default function CreateUserModal({
     );
   };
 
+  const isSubmitButtonEnabled = () => {
+    if(isSubmitting) return false;
+    if (name.trim().length === 0 || email.trim().length === 0) return false;
+    if (password.length < 5) return false;
+    if (selectedRoles.length === 0) return false;
+    if (needsArea && selectedAreaId === null) return false;
+    return true;
+  }
   const handleSubmit = async () => {
-    if (name.trim().length === 0 || email.trim().length === 0) {
-      enqueueSnackbar("Preenche o nome e o email.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
-    if (password.length < 5) {
-      enqueueSnackbar("A palavra passe deve ter pelo menos 5 caracteres.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
-    if (selectedRoles.length === 0) {
-      enqueueSnackbar("Escolhe pelo menos um papel.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
-    if (needsArea && selectedAreaId === null) {
-      enqueueSnackbar("Escolhe uma área para este utilizador.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     const response = await UsersApi.create({
       name: name.trim(),
@@ -143,14 +115,6 @@ export default function CreateUserModal({
     });
     setIsSubmitting(false);
 
-    if (!response.success) {
-      enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-      return;
-    }
-
-    enqueueSnackbar("Utilizador criado com sucesso.", {
-      variant: ToastType.SUCCESS,
-    });
     onSuccess();
     onClose();
   };
@@ -161,26 +125,25 @@ export default function CreateUserModal({
         className={styles["modal-card"]}
         onSubmit={(event) => {
           event.preventDefault();
-          void handleSubmit();
+          handleSubmit();
         }}
       >
         <button
           type="button"
           className={styles["close-button"]}
           onClick={onClose}
-          aria-label="Fechar"
         >
-          ×
+          <span className="material-symbols-outlined">close</span>
         </button>
 
         <div className={styles["modal-header"]}>
-          <h2>Novo utilizador</h2>
-          <p>Crie um novo utilizador</p>
+          <h2>{t("DashboardAdmin.createUser.title")}</h2>
+          <p>{t("DashboardAdmin.createUser.description")}</p>
         </div>
 
         <div className={styles["text-field"]}>
           <TextBox
-            label="Nome"
+            label={t("DashboardAdmin.createUser.name")}
             type="text"
             value={name}
             onChange={setName}
@@ -190,7 +153,7 @@ export default function CreateUserModal({
 
         <div className={styles["text-field"]}>
           <TextBox
-            label="Email"
+            label={t("DashboardAdmin.createUser.email")}
             type="email"
             value={email}
             onChange={setEmail}
@@ -200,7 +163,7 @@ export default function CreateUserModal({
 
         <div className={styles["text-field"]}>
           <TextBox
-            label="Palavra passe"
+            label={t("DashboardAdmin.createUser.password")}
             type="password"
             value={password}
             onChange={setPassword}
@@ -209,21 +172,21 @@ export default function CreateUserModal({
         </div>
 
         <div className={styles["roles-list"]}>
-          {AVAILABLE_ROLES.map((role) => (
+          {ROLES.map((role) => (
             <label key={role.key} className={styles["role-option"]}>
               <input
                 type="checkbox"
                 checked={selectedRoles.includes(role.key)}
                 onChange={() => toggleRole(role.key)}
               />
-              <span>{role.label}</span>
+              <span>{t(`Roles.${role.key}`)}</span>
             </label>
           ))}
         </div>
 
         {needsArea && (
           <label className={styles["form-field"]}>
-            <span>Área</span>
+            <span>{t("DashboardAdmin.createUser.area")}</span>
             <select
               value={selectedAreaId ?? ""}
               onChange={(event) =>
@@ -232,11 +195,11 @@ export default function CreateUserModal({
                 )
               }
             >
-              <option value="">Escolher área</option>
+              <option value="">{t("DashboardAdmin.createUser.chooseArea")}</option>
               {availableAreas.map((area) => (
                 <option key={area.id} value={area.id}>
                   {area.name}
-                  {area.bossName ? ` · Supervisor: ${area.bossName}` : ""}
+                  {area.bossName ? ` · ${t("DashboardAdmin.createUser.supervisorLabel")}: ${area.bossName}` : ""}
                 </option>
               ))}
             </select>
@@ -245,11 +208,11 @@ export default function CreateUserModal({
 
         <div className={styles["primary-action"]}>
           <PrimaryButton
-            text={isSubmitting ? "A criar..." : "Criar"}
+            text={isSubmitting ? t("DashboardAdmin.createUser.creating") : t("DashboardAdmin.createUser.create")}
             onClick={() => {
-              if (!isSubmitting) void handleSubmit();
+              handleSubmit();
             }}
-            enabled={!isSubmitting}
+            enabled={isSubmitButtonEnabled()}
           />
         </div>
       </form>

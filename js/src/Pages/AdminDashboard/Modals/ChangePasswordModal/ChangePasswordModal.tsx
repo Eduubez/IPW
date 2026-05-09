@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import PrimaryButton from "../../../Components/Buttons/PrimaryButton/PrimaryButton";
-import TextBox from "../../../Components/Inputs/TextBox/TextBox";
-import { useSnackbar } from "notistack";
-import { ToastType } from "../../../Types/ToastType";
-import { UsersApi, type UserResponse } from "../../../Utility/Api/UsersApi";
+import { useTranslation } from "react-i18next";
+import PrimaryButton from "../../../../Components/Buttons/PrimaryButton/PrimaryButton";
+import TextBox from "../../../../Components/Inputs/TextBox/TextBox";
+import { UsersApi, type UserResponse } from "../../../../Utility/Api/UsersApi";
 import styles from "./ChangePasswordModal.module.css";
 
 type ChangePasswordModalProps = {
@@ -19,7 +18,7 @@ export default function ChangePasswordModal({
   onClose,
   onSuccess,
 }: ChangePasswordModalProps) {
-  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,33 +32,20 @@ export default function ChangePasswordModal({
 
   if (!open || user === null) return null;
 
+  const isSubmitButtonEnabled = () => {
+    if (isSubmitting) return false;
+    if (newPassword.length < 5) return false;
+    if (newPassword !== confirmPassword) return false;
+    return true;
+  };
+
   const handleSubmit = async () => {
-    if (newPassword.length < 5) {
-      enqueueSnackbar("A palavra passe deve ter pelo menos 5 caracteres.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      enqueueSnackbar("As palavras passe não coincidem.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     const response = await UsersApi.changeUserPassword(user.id, newPassword);
     setIsSubmitting(false);
 
-    if (!response.success) {
-      enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-      return;
-    }
+    if (!response.success) return;
 
-    enqueueSnackbar("Palavra passe alterada com sucesso.", {
-      variant: ToastType.SUCCESS,
-    });
     onSuccess();
     onClose();
   };
@@ -77,19 +63,19 @@ export default function ChangePasswordModal({
           type="button"
           className={styles["close-button"]}
           onClick={onClose}
-          aria-label="Fechar"
         >
-          ×
+          <span className="material-icons">close</span>
+
         </button>
 
         <div className={styles["modal-header"]}>
-          <h2>Trocar palavra passe</h2>
+          <h2>{t("DashboardAdmin.changePasswordModal.title")}</h2>
           <p>{user.name}</p>
         </div>
 
         <div className={styles["text-field"]}>
           <TextBox
-            label="Nova palavra passe"
+            label={t("DashboardAdmin.changePasswordModal.newPassword")}
             type="password"
             value={newPassword}
             onChange={setNewPassword}
@@ -99,7 +85,7 @@ export default function ChangePasswordModal({
 
         <div className={styles["text-field"]}>
           <TextBox
-            label="Repita a palavra passe"
+            label={t("DashboardAdmin.changePasswordModal.confirmPassword")}
             type="password"
             value={confirmPassword}
             onChange={setConfirmPassword}
@@ -109,11 +95,11 @@ export default function ChangePasswordModal({
 
         <div className={styles["primary-action"]}>
           <PrimaryButton
-            text={isSubmitting ? "A trocar..." : "Trocar"}
+            text={isSubmitting ? t("DashboardAdmin.changePasswordModal.saving") : t("DashboardAdmin.changePasswordModal.save")}
             onClick={() => {
-              if (!isSubmitting) void handleSubmit();
+              void handleSubmit();
             }}
-            enabled={!isSubmitting}
+            enabled={isSubmitButtonEnabled()}
           />
         </div>
       </form>

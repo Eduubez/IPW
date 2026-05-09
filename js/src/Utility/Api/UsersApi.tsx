@@ -91,13 +91,20 @@ async function getUserRoles(
 async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
   const token = userStore.getAccessToken()?.trim();
 
-  return await fetchApi<UserResponse>("users", {
+  const response =  await fetchApi<UserResponse>("users", {
     method: "POST",
     headers: {
       Authorization: "Bearer " + token,
     },
     body: JSON.stringify(input),
   });
+  if(!response.success){
+    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
+  } else{
+    enqueueSnackbar(i18next.t("DashboardAdmin.createUser.successMessage"), { variant: ToastType.SUCCESS });
+  }
+
+  return response;
 }
 
 // getAll - Admin
@@ -108,12 +115,13 @@ async function getAll(
   const query = buildQuery({ offset, limit });
   const token = userStore.getAccessToken()?.trim();
 
-  return await fetchApi<UserResponse[]>(`users${query}`, {
+  const response = await fetchApi<UserResponse[]>(`users${query}`, {
     method: "GET",
     headers: {
       Authorization: "Bearer " + token,
     },
   });
+  return response;
 }
 
 // change roles - Admin
@@ -124,13 +132,21 @@ async function changeUserRoles(
 ): Promise<ResponseApi<void>> {
   const token = userStore.getAccessToken()?.trim();
 
-  return await fetchApi<void>(`users/${userId}/roles`, {
+  const response = await fetchApi<void>(`users/${userId}/roles`, {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ roles, areaId }),
   });
+
+  if (!response.success) {
+    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
+  } else {
+    enqueueSnackbar(i18next.t("DashboardAdmin.changeRolesModal.success"), { variant: ToastType.SUCCESS });
+  }
+
+  return response;
 }
 
 
@@ -141,11 +157,19 @@ async function changeUserPassword(
 ): Promise<ResponseApi<void>> {
   const token = userStore.getAccessToken()?.trim();
 
-  return await fetchApi<void>(`users/${userId}/password`, {
+  const response = await fetchApi<void>(`users/${userId}/password`, {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + token,
     },
     body: JSON.stringify({ newPassword }),
   });
+
+  if (!response.success) {
+    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
+  } else {
+    enqueueSnackbar(i18next.t("DashboardAdmin.changePasswordModal.success"), { variant: ToastType.SUCCESS });
+  }
+
+  return response;
 }

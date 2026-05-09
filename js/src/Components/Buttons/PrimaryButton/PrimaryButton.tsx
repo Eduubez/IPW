@@ -3,7 +3,7 @@ export default function PrimaryButton({ text, onClick, enabled , style}: { text:
 
     return(
         <>
-        <div className={enabled  ? styles["primary-button"] : styles["primary-button-disabled"] } onClick={onClick} style={style}>
+        <div className={enabled  ? styles["primary-button"] : styles["primary-button-disabled"] } onClick={enabled ? onClick : undefined} style={style}>
             <span className={styles["primary-button-text"]}>{text}</span>
         </div>
         </>
