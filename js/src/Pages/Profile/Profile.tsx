@@ -6,7 +6,6 @@ import { WithBackground } from "../../Components/Layouts/WithBackground/WithBack
 import { InformationCard } from "../../Components/Cards/InformationCard/InformationCard";
 import { Icon } from "../../Components/Icons/Icons";
 import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
-import { Color } from "../../StyleGuide/colors";
 import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 import { userStore } from "../../Utility/Store/UserStore";
 import { useEffect, useState } from "react";
@@ -14,6 +13,7 @@ import { ActivityApi } from "../../Utility/Api/ActivityApi";
 import { type ActivityResponse } from "../../Utility/Api/ActivityApi";
 import LoadingComponent from "../../Components/LoadingComponent/LoadingComponent";
 import { ActivityCard } from "../../Components/Cards/ActivityCard/ActivityCard";
+import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
 const mockUser = {
   name: "João Bezerra",
   email: "example@email.com",
@@ -59,51 +59,13 @@ export default function Profile() {
   ).slice(0, 5); // Get the 5 most recent activities
 
   const userBadge = () => {
-    const normalizedRole = role?.toLowerCase(); //  "?" to satisfy TypeScript, at this point user ALWAYS has a role.
-    switch (normalizedRole) {
-      case "admin":
-        return (
-          <PrimaryBadge
-            text={t("Roles.admin")}
-            style={{ background: Color.Purple }}
-          />
-        );
-      case "investigator":
-        return (
-          <PrimaryBadge
-            text={t("Roles.investigator")}
-            style={{ background: Color.DarkBlue }}
-          />
-        );
-      case "triator":
-        return (
-          <PrimaryBadge
-            text={t("Roles.triator")}
-            style={{ background: Color.DarkRed }}
-          />
-        );
-      case "supervisor":
-        return (
-          <PrimaryBadge
-            text={t("Roles.supervisor")}
-            style={{ background: Color.YellowPrimary }}
-          />
-        );
-      case "manager":
-        return (
-          <PrimaryBadge
-            text={t("Roles.manager")}
-            style={{ background: Color.GreenPrimary }}
-          />
-        );
-      default:
-        return (
-          <PrimaryBadge
-            text={t("Roles.user")}
-            style={{ background: Color.Gray }}
-          />
-        ); // Will never be shown
-    }
+    const normalizedRole = role?.toLowerCase();
+    return (
+      <PrimaryBadge
+        text={t(`Roles.${normalizedRole ?? "user"}`)}
+        style={getRoleStyle(normalizedRole ?? "")}
+      />
+    );
   };
 
   return (

@@ -4,366 +4,190 @@ import { StatCard as SummaryStatCard } from "../../Components/Cards/StatCard/Sta
 import { Icon } from "../../Components/Icons/Icons";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { UsersApi, type UserResponse } from "../../Utility/Api/UsersApi";
-import ChangePasswordModal from "./Modals/ChangePasswordModal";
-import ChangeRolesModal from "./Modals/ChangeRolesModal";
-import CreateUserModal from "./Modals/CreateUserModal";
+import ChangePasswordModal from "./Modals/ChangePasswordModal/ChangePasswordModal";
+import ChangeRolesModal from "./Modals/ChangeRolesModal/ChangeRolesModal";
+import CreateUserModal from "./Modals/CreateUserModal/CreateUserModal";
 import styles from "./AdminDashboard.module.css";
-
-const ROLE_LABELS: Record<string, string> = {
-  admin: "Admin",
-  triator: "Triador",
-  investigator: "Averiguador",
-  supervisor: "Supervisor",
-  manager: "Gestor",
-};
-
-const USERS_PER_PAGE = 7;
-
-const STAT_ICONS = {
-  total: Icon.Group,
-  triators: Icon.Visibility,
-  investigators: Icon.Search,
-  supervisors: Icon.Shield,
-  managers: Icon.Crown,
-};
+import { DataGrid } from "../../Components/DataGrid/DataGrid";
+import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
+import { useTranslation } from "react-i18next";
+import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
+import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
 
 export default function AdminDashboard() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
-  const [openMenuUserId, setOpenMenuUserId] = useState<number | null>(null);
-  const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
-  const [passwordUser, setPasswordUser] = useState<UserResponse | null>(null);
-  const [rolesUser, setRolesUser] = useState<UserResponse | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const loadUsers = useCallback(async () => {
-    setIsLoading(true);
+    try {
+      setIsLoading(true);
 
-    const response = await UsersApi.getAll(0, 100);
+      const response = await UsersApi.getAll(0, 100);
 
-    if (response.success) {
-      setUsers(response.data);
+      if (response.success) {
+        setUsers(response.data);
+      }
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   }, []);
+  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isChangeRolesOpen, setIsChangeRolesOpen] = useState(false);
+  const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
 
   useEffect(() => {
     loadUsers();
   }, [loadUsers]);
 
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setDebouncedSearch(search);
-    }, 300);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [search]);
-
   const stats = useMemo(() => {
     return {
       total: users.length,
       triators: users.filter((user) => user.roles.includes("triator")).length,
-      investigators: users.filter((user) =>
-        user.roles.includes("investigator"),
-      ).length,
-      supervisors: users.filter((user) =>
-        user.roles.includes("supervisor"),
-      ).length,
+      investigators: users.filter((user) => user.roles.includes("investigator"))
+        .length,
+      supervisors: users.filter((user) => user.roles.includes("supervisor"))
+        .length,
       managers: users.filter((user) => user.roles.includes("manager")).length,
     };
   }, [users]);
 
-  const filteredUsers = useMemo(() => {
-    const normalizedSearch = debouncedSearch.trim().toLowerCase();
+  const statCards = [
+    {
+      icon: { name: Icon.Group },
+      text: t("DashboardAdmin.stats.total"),
+      value: stats.total,
+      loading: isLoading,
+    },
+    {
+      icon: { name: Icon.Visibility },
+      text: t("DashboardAdmin.stats.triators"),
+      value: stats.triators,
+      loading: isLoading,
+    },
+    {
+      icon: { name: Icon.Search },
+      text: t("DashboardAdmin.stats.investigators"),
+      value: stats.investigators,
+      loading: isLoading,
+    },
+    {
+      icon: { name: Icon.Shield },
+      text: t("DashboardAdmin.stats.supervisors"),
+      value: stats.supervisors,
+      loading: isLoading,
+    },
+    {
+      icon: { name: Icon.Crown },
+      text: t("DashboardAdmin.stats.managers"),
+      value: stats.managers,
+      loading: isLoading,
+    },
+  ];
+  const gridColumns = ["name", "roles", "email", "area"];
 
-    return users.filter((user) => {
-      const matchesRole =
-        selectedRole === null || user.roles.includes(selectedRole);
-
-      const matchesSearch =
-        normalizedSearch.length === 0 ||
-        user.name.toLowerCase().includes(normalizedSearch) ||
-        user.email.toLowerCase().includes(normalizedSearch) ||
-        (user.area?.toLowerCase().includes(normalizedSearch) ?? false) ||
-        user.roles.some((role) =>
-          role.toLowerCase().includes(normalizedSearch),
+  const cleanRows = useMemo(() => {
+    return users.map((user) => ({
+      ...user,
+      onClick: () => {
+        setSelectedUser(user);
+        setIsModalOpen(true);
+      },
+      roles: user.roles.map((role) => {
+        return (
+          <PrimaryBadge
+            key={role}
+            text={t(`Roles.${role}`)}
+            style={getRoleStyle(role)}
+          />
         );
+      }),
+    }));
+  }, [users, t]);
 
-      return matchesRole && matchesSearch;
-    });
-  }, [users, debouncedSearch, selectedRole]);
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedSearch, selectedRole]);
-
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredUsers.length / USERS_PER_PAGE),
-  );
-
-  useEffect(() => {
-    setCurrentPage((page) => Math.min(page, totalPages));
-  }, [totalPages]);
-
-  const paginatedUsers = useMemo(() => {
-    const startIndex = (currentPage - 1) * USERS_PER_PAGE;
-    return filteredUsers.slice(startIndex, startIndex + USERS_PER_PAGE);
-  }, [filteredUsers, currentPage]);
-
-  const firstVisibleUser =
-    filteredUsers.length === 0 ? 0 : (currentPage - 1) * USERS_PER_PAGE + 1;
-  const lastVisibleUser = Math.min(
-    currentPage * USERS_PER_PAGE,
-    filteredUsers.length,
-  );
-
-  const toggleUserMenu = (userId: number) => {
-    setOpenMenuUserId((currentUserId) =>
-      currentUserId === userId ? null : userId,
+  const modalContent = () => {
+    return (
+      <div className={styles["modal-content"]}>
+        <PrimaryButton
+          text={t("DashboardAdmin.userModal.changePassword")}
+          onClick={() => {
+            setIsChangePasswordOpen(true);
+            setIsModalOpen(false);
+          }}
+          enabled={true}
+        />
+        <PrimaryButton
+          text={t("DashboardAdmin.userModal.changeRoles")}
+          onClick={() => {
+            setIsChangeRolesOpen(true);
+            setIsModalOpen(false);
+          }}
+          enabled={true}
+        />
+      </div>
     );
   };
-
-  const handleChangePassword = (user: UserResponse) => {
-    setOpenMenuUserId(null);
-    setPasswordUser(user);
-  };
-
-  const handleChangeRoles = (user: UserResponse) => {
-    setOpenMenuUserId(null);
-    setRolesUser(user);
-  };
+  const gridActions = [
+    {
+      label: t("DashboardAdmin.createUserButton"),
+      onClick: () => setIsCreateUserOpen(true),
+    },
+  ]
 
   return (
     <div className={styles["admin-dashboard-container"]}>
       <div className={styles["page-header"]}>
         <Header
-          title="Gestão de utilizadores"
-          description="Controla todos os utilizadores"
+          title={t("DashboardAdmin.title")}
+          description={t("DashboardAdmin.description")}
         />
       </div>
 
-      <section className={styles["stats-grid"]}>
-        <SummaryStatCard
-          icon={{ name: STAT_ICONS.total }}
-          text="Nº Total de utilizadores"
-          value={stats.total}
-          loading={isLoading}
-        />
-        <SummaryStatCard
-          icon={{ name: STAT_ICONS.triators }}
-          text="Nº de Triadores"
-          value={stats.triators}
-          loading={isLoading}
-        />
-        <SummaryStatCard
-          icon={{ name: STAT_ICONS.investigators }}
-          text="Nº de Averiguadores"
-          value={stats.investigators}
-          loading={isLoading}
-        />
-        <SummaryStatCard
-          icon={{ name: STAT_ICONS.supervisors }}
-          text="Nº de Supervisores"
-          value={stats.supervisors}
-          loading={isLoading}
-        />
-        <SummaryStatCard
-          icon={{ name: STAT_ICONS.managers }}
-          text="Nº de Gestores"
-          value={stats.managers}
-          loading={isLoading}
-        />
-      </section>
-
-      <section className={styles["filters-bar"]}>
-        <div className={styles["search-input-wrapper"]}>
-          <span className="material-symbols-outlined">search</span>
-          <input
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Procurar por nome, papéis, área..."
+      <div className={styles["stats-grid"]}>
+        {statCards.map((card, index) => (
+          <SummaryStatCard
+            key={index}
+            icon={card.icon}
+            text={card.text}
+            value={card.value}
+            loading={card.loading}
           />
-        </div>
-
-        <div className={styles["role-filters"]}>
-          <button
-            className={`${styles["filter-chip"]} ${
-              selectedRole === null ? styles["active-filter-chip"] : ""
-            }`}
-            onClick={() => setSelectedRole(null)}
-          >
-            Todos
-          </button>
-
-          {Object.entries(ROLE_LABELS).map(([role, label]) => (
-            <button
-              key={role}
-              className={`${styles["filter-chip"]} ${
-                selectedRole === role ? styles["active-filter-chip"] : ""
-              }`}
-              onClick={() => setSelectedRole(role)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className={styles["users-panel"]}>
-        <div className={styles["users-panel-header"]}>
-          <h2>Utilizadores</h2>
-          <div className={styles["primary-action"]}>
-            <PrimaryButton
-              text="Criar novo utilizador"
-              onClick={() => setIsCreateUserModalOpen(true)}
-              enabled={true}
-            />
-          </div>
-        </div>
-
-        {isLoading ? (
-          <p>A carregar utilizadores...</p>
-        ) : (
-          <table className={styles["users-table"]}>
-            <thead>
-              <tr>
-                <th>Utilizador</th>
-                <th>Papéis</th>
-                <th>Área</th>
-                <th>Estado</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedUsers.length === 0 && (
-                <tr>
-                  <td colSpan={5} className={styles["empty-state"]}>
-                    Nenhum utilizador encontrado
-                  </td>
-                </tr>
-              )}
-
-              {paginatedUsers.map((user, index) => (
-                <tr
-                  key={`${user.id}-${selectedRole ?? "all"}-${debouncedSearch}-${currentPage}`}
-                  className={styles["animated-row"]}
-                  style={{ animationDelay: `${Math.min(index * 35, 180)}ms` }}
-                >
-                  <td>
-                    <div className={styles["user-cell"]}>
-                      <div className={styles["avatar"]}>
-                        {getInitials(user.name)}
-                      </div>
-                      <div>
-                        <strong>{user.name}</strong>
-                        <span>ID: {user.id}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className={styles["roles"]}>
-                      {user.roles.length === 0 ? (
-                        <span className={styles["empty-role"]}>Sem papéis</span>
-                      ) : (
-                        user.roles.map((role) => (
-                          <span key={role} className={styles["role-badge"]}>
-                            {ROLE_LABELS[role] ?? role}
-                          </span>
-                        ))
-                      )}
-                    </div>
-                  </td>
-                  <td>{user.area ?? "-"}</td>
-                  <td>{user.isActive ? "Ativo" : "Inativo"}</td>
-                  <td className={styles["actions-cell"]}>
-                    <button
-                      className={styles["row-action"]}
-                      aria-label={`Abrir ações de ${user.name}`}
-                      onClick={() => toggleUserMenu(user.id)}
-                    >
-                      ⋮
-                    </button>
-
-                    {openMenuUserId === user.id && (
-                      <div className={styles["row-menu"]}>
-                        <button onClick={() => handleChangePassword(user)}>
-                          Trocar password
-                        </button>
-                        <button onClick={() => handleChangeRoles(user)}>
-                          Trocar papéis
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        {!isLoading && (
-          <div className={styles["pagination"]}>
-            <span>
-              {firstVisibleUser}-{lastVisibleUser} de {filteredUsers.length}
-            </span>
-            <button
-              type="button"
-              className={styles["pagination-button"]}
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-            >
-              Anterior
-            </button>
-            <span>
-              Página {currentPage} de {totalPages}
-            </span>
-            <button
-              type="button"
-              className={styles["pagination-button"]}
-              disabled={currentPage === totalPages}
-              onClick={() =>
-                setCurrentPage((page) => Math.min(totalPages, page + 1))
-              }
-            >
-              Próxima
-            </button>
-          </div>
-        )}
-      </section>
-
-      <CreateUserModal
-        open={isCreateUserModalOpen}
-        onClose={() => setIsCreateUserModalOpen(false)}
-        onSuccess={loadUsers}
-      />
-
-      <ChangePasswordModal
-        open={passwordUser !== null}
-        user={passwordUser}
-        onClose={() => setPasswordUser(null)}
-        onSuccess={loadUsers}
-      />
-
-      <ChangeRolesModal
-        open={rolesUser !== null}
-        user={rolesUser}
-        onClose={() => setRolesUser(null)}
-        onSuccess={loadUsers}
-      />
+        ))}
+      </div>
+      <DataGrid title={t("DashboardAdmin.gridTitle")} columns={gridColumns} rows={cleanRows}  actions={gridActions}/>
+      {isModalOpen && (
+        <PrimaryModal
+          open={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          header={t("DashboardAdmin.userModal.title")}
+          body={modalContent()}
+        />
+      )}
+      {isChangePasswordOpen && selectedUser && (
+        <ChangePasswordModal
+          open={isChangePasswordOpen}
+          user={selectedUser}
+          onClose={() => setIsChangePasswordOpen(false)}
+          onSuccess={() => setIsChangePasswordOpen(false)}
+        />
+      )}
+      {isChangeRolesOpen && selectedUser && (
+        <ChangeRolesModal
+          open={isChangeRolesOpen}
+          user={selectedUser}
+          onClose={() => setIsChangeRolesOpen(false)}
+          onSuccess={() => setIsChangeRolesOpen(false)}
+        />
+      )}
+      {isCreateUserOpen && (
+        <CreateUserModal
+          open={isCreateUserOpen}
+          onClose={() => setIsCreateUserOpen(false)}
+          onSuccess={() => setIsCreateUserOpen(false)}
+        />
+       )
+      }
     </div>
   );
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }

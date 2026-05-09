@@ -113,15 +113,7 @@
   font-size: 0.9rem;
 }
 
-.primary-action {
-  margin-top: 0.25rem;
-  min-height: 2.9rem;
-}
 
-.primary-action > div {
-  background: #155dfc;
-  font-weight: 600;
-}
 
 @keyframes backdrop-enter {
   from {
