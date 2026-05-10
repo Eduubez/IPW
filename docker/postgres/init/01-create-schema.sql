@@ -157,7 +157,7 @@ create table Diligence
 create table State
 (
     id         serial primary key,
-    name       varchar(100) not null
+    name       varchar(100) primary key
         check ( name in
                 (
                  'not_assigned',
@@ -171,17 +171,18 @@ create table State
                  'rejected_by_manager',
                  'canceled'
                     )
-            ),
-    start_date timestamp    not null default current_timestamp,
-    end_date   timestamp
-        constraint state_end_date_after_start_date
-            check (end_date is null or end_date >= start_date)
+            )
+
 );
 
 create table Process_State
 (
     process_id int not null references Process (id),
-    state_id   int not null references State (id)
+    state_id   int not null references State (id),
+    start_date timestamp    not null default current_timestamp,
+    end_date   timestamp
+        constraint state_end_date_after_start_date
+            check (end_date is null or end_date >= start_date)
 );
 
 create table Report
@@ -228,9 +229,3 @@ create table Activity
     created_at  timestamp    not null default current_timestamp
 );
 
-select *
-from Users;
-select *
-from Activity;
-select *
-from State join Process_State PS on State.id = PS.state_id;

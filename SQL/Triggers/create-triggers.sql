@@ -15,7 +15,7 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trigger_close_previous_state
+create or replace trigger trigger_close_previous_state
     after insert on Process_State
     for each row
 execute function close_previous_state();
@@ -31,7 +31,7 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trigger_set_report_updated_at
+create or replace trigger trigger_set_report_updated_at
     before update on Report
     for each row
 execute function set_report_updated_at();
@@ -63,7 +63,7 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trigger_create_initial_state_for_process
+create or replace trigger trigger_create_initial_state_for_process
     after insert on Process
     for each row
 execute function create_initial_state_for_process();
@@ -92,7 +92,7 @@ begin
 end;
 $$ language plpgsql;
 
-create trigger trigger_set_process_assigned_state_when_fully_assigned
+create or replace trigger trigger_set_process_assigned_state_when_fully_assigned
     after update on Process
     for each row
 execute function set_process_assigned_state_when_fully_assigned();
