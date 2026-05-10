@@ -24,6 +24,8 @@ interface UserService {
 
     fun getAllUsers(offset: Int, limit: Int): Either<UserError, List<UserWithRoles>>
 
+    fun getUserProfileInfo(userId: Int): Either<UserError, UserWithRoles>
+
     fun changeUserRoles(
         userId: Int,
         roles: List<String>,

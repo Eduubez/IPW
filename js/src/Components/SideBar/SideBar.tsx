@@ -1,6 +1,7 @@
 import { useState } from "react";
-import styles from "./sideBar.module.css";
+import styles from "./sidebar.module.css";
 import { useNavigate } from "react-router-dom";
+import { AuthApi } from "../../Utility/Api/LoginApi";
 
 const navigationItems = [
   { name: "Inicio", path: "/dashboard", icon: "dashboard" },
@@ -11,7 +12,6 @@ const navigationItems = [
 export default function SideBar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
-
   const handleNavigation = (path: string) => {
     navigate(path);
   };
@@ -19,6 +19,12 @@ export default function SideBar() {
   const handleExpand = () => {
     setIsExpanded(!isExpanded);
   };
+  const handleLogout = async () => {
+    const response = await AuthApi.logout();
+    if(response.success) {
+      navigate("/login");
+    }
+  }
 
   return (
     <div
@@ -39,6 +45,11 @@ export default function SideBar() {
             </a>
           </div>
         ))}
+      </div>
+      <div className={styles["logout-container"]}>
+        <a onClick={() => handleLogout()}>
+          <span className="material-symbols-outlined">logout</span>
+        </a>
       </div>
       <div className={styles["profile-container"]}>
         <a onClick={() => handleNavigation("/profile")}>

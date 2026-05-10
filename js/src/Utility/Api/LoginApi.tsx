@@ -33,6 +33,7 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
         userStore.setIsLoggedIn();
         userStore.setRoles(response.data.roles);
         userStore.setLoginToken(response.data.loginToken.value);
+        userStore.setAccessTokenExpirationDate(response.data.loginToken.expiresAt);
         enqueueSnackbar(i18next.t("Login.successMessage"), {
             variant: ToastType.SUCCESS,
         });
@@ -43,6 +44,9 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
 async function logout(): Promise<ResponseApi<void>> {
     const response =  await fetchApi<void>("users/logout", {
         method: "POST",
+        headers: {
+            "Authorization": `Bearer ${userStore.getAccessToken()}`
+        },
     });
     if(response.success) {
         userStore.clear();

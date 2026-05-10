@@ -1,18 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import PrimaryButton from "../../../Components/Buttons/PrimaryButton/PrimaryButton";
-import { useSnackbar } from "notistack";
-import { ToastType } from "../../../Types/ToastType";
-import { AreasApi, type AreaResponse } from "../../../Utility/Api/AreasApi";
-import { UsersApi, type UserResponse } from "../../../Utility/Api/UsersApi";
+import { useTranslation } from "react-i18next";
+import PrimaryButton from "../../../../Components/Buttons/PrimaryButton/PrimaryButton";
+import { AreasApi, type AreaResponse } from "../../../../Utility/Api/AreasApi";
+import { UsersApi, type UserResponse } from "../../../../Utility/Api/UsersApi";
+import { ROLES } from "../../../../MockData/MockRoles";
 import styles from "./ChangeRolesModal.module.css";
-
-const AVAILABLE_ROLES = [
-  { key: "admin", label: "Admin" },
-  { key: "triator", label: "Triador" },
-  { key: "investigator", label: "Averiguador" },
-  { key: "supervisor", label: "Supervisor" },
-  { key: "manager", label: "Gestor" },
-];
 
 const AREA_ROLES = new Set(["investigator", "supervisor"]);
 
@@ -29,7 +21,7 @@ export default function ChangeRolesModal({
   onClose,
   onSuccess,
 }: ChangeRolesModalProps) {
-  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedAreaId, setSelectedAreaId] = useState<number | null>(null);
   const [areas, setAreas] = useState<AreaResponse[]>([]);
@@ -101,21 +93,14 @@ export default function ChangeRolesModal({
     );
   };
 
+  const isSubmitButtonEnabled = () => {
+    if (isSubmitting) return false;
+    if (selectedRoles.length === 0) return false;
+    if (needsArea && selectedAreaId === null) return false;
+    return true;
+  };
+
   const handleSubmit = async () => {
-    if (selectedRoles.length === 0) {
-      enqueueSnackbar("Escolhe pelo menos um papel.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
-    if (needsArea && selectedAreaId === null) {
-      enqueueSnackbar("Escolhe uma área para este utilizador.", {
-        variant: ToastType.ERROR,
-      });
-      return;
-    }
-
     setIsSubmitting(true);
     const response = await UsersApi.changeUserRoles(
       user.id,
@@ -124,14 +109,8 @@ export default function ChangeRolesModal({
     );
     setIsSubmitting(false);
 
-    if (!response.success) {
-      enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-      return;
-    }
+    if (!response.success) return;
 
-    enqueueSnackbar("Papéis alterados com sucesso.", {
-      variant: ToastType.SUCCESS,
-    });
     onSuccess();
     onClose();
   };
@@ -149,32 +128,32 @@ export default function ChangeRolesModal({
           type="button"
           className={styles["close-button"]}
           onClick={onClose}
-          aria-label="Fechar"
+          aria-label={t("DashboardAdmin.changeRolesModal.close")}
         >
           ×
         </button>
 
         <div className={styles["modal-header"]}>
-          <h2>Trocar papéis</h2>
+          <h2>{t("DashboardAdmin.changeRolesModal.title")}</h2>
           <p>{user.name}</p>
         </div>
 
         <div className={styles["roles-list"]}>
-          {AVAILABLE_ROLES.map((role) => (
+          {ROLES.map((role) => (
             <label key={role.key} className={styles["role-option"]}>
               <input
                 type="checkbox"
                 checked={selectedRoles.includes(role.key)}
                 onChange={() => toggleRole(role.key)}
               />
-              <span>{role.label}</span>
+              <span>{t(`Roles.${role.key}`)}</span>
             </label>
           ))}
         </div>
 
         {needsArea && (
           <label className={styles["form-field"]}>
-            <span>Área</span>
+            <span>{t("DashboardAdmin.changeRolesModal.area")}</span>
             <select
               value={selectedAreaId ?? ""}
               onChange={(event) =>
@@ -183,11 +162,11 @@ export default function ChangeRolesModal({
                 )
               }
             >
-              <option value="">Escolher área</option>
+              <option value="">{t("DashboardAdmin.changeRolesModal.chooseArea")}</option>
               {availableAreas.map((area) => (
                 <option key={area.id} value={area.id}>
                   {area.name}
-                  {area.bossName ? ` · Supervisor: ${area.bossName}` : ""}
+                  {area.bossName ? ` · ${t("DashboardAdmin.changeRolesModal.supervisorLabel")}: ${area.bossName}` : ""}
                 </option>
               ))}
             </select>
@@ -196,11 +175,11 @@ export default function ChangeRolesModal({
 
         <div className={styles["primary-action"]}>
           <PrimaryButton
-            text={isSubmitting ? "A guardar..." : "Guardar papéis"}
+            text={isSubmitting ? t("DashboardAdmin.changeRolesModal.saving") : t("DashboardAdmin.changeRolesModal.save")}
             onClick={() => {
               if (!isSubmitting) void handleSubmit();
             }}
-            enabled={!isSubmitting}
+            enabled={isSubmitButtonEnabled()}
           />
         </div>
       </form>

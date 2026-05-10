@@ -3,7 +3,9 @@
     "appName": "IPW",
     "appSubtitle": "Insurance Process Workflow",
     "welcome": "Hello!",
-    "welcomeText": "Use your credentials to access your account"
+    "welcomeText": "Use your credentials to access your account",
+    "successMessage": "Login successful!",
+    "logout": "Logout successful!"
   },
   "text": {
     "title": "Welcome to IPW"
@@ -29,7 +31,8 @@
     "triator": "Triator",
     "manager": "Manager",
     "investigator": "Investigator",
-    "supervisor": "Supervisor"
+    "supervisor": "Supervisor",
+    "roleSelected": "Role selected successfully!"
   },
   "Priority": {
     "URGENT": "High",
@@ -50,5 +53,83 @@
     "UpdateEveryProcess": "Update all processes",
     "ValidateAllProcess": "Validate all processes",
     "AllHistory": "View all history"
+  },
+  "GridColumnsProps": {
+    "name": "Name",
+    "creationDate": "Creation Date",
+    "area": "Area",
+    "dueDate": "Expires on",
+    "priority": "Priority",
+    "state": "State"
+  },
+  "HistoryPage": {
+    "Title": "My History",
+    "Description": "View your process history",
+    "noProcesses": "No processes found.",
+    "TotalProcesses": "Total Processes",
+    "ProcessesInProgress": "Processes in Progress",
+    "CompletedProcesses": "Completed Processes",
+    "CanceledProcesses": "Canceled Processes",
+    "FetchError": "Failed to fetch history"
+  },
+  "Roles": {
+    "admin": "Administrator",
+    "triator": "Triator",
+    "manager": "Manager",
+    "investigator": "Investigator",
+    "supervisor": "Supervisor"
+  },
+  "DashboardAdmin": {
+    "title": "User Management",
+    "description": "Manage all users",
+    "gridTitle": "Users",
+    "createUserButton": "Create user",
+    "stats": {
+      "total": "Total users",
+      "triators": "No. of Triators",
+      "investigators": "No. of Investigators",
+      "supervisors": "No. of Supervisors",
+      "managers": "No. of Managers"
+    },
+    "userModal": {
+      "title": "Edit user",
+      "changePassword": "Change Password",
+      "changeRoles": "Change Roles"
+    },
+    "createUser": {
+      "title": "New user",
+      "description": "Create a new user",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "area": "Area",
+      "chooseArea": "Choose area",
+      "supervisorLabel": "Supervisor",
+      "creating": "Creating...",
+      "create": "Create",
+      "successMessage": "User created successfully!"
+    },
+    "changePasswordModal": {
+      "title": "Change password",
+      "newPassword": "New password",
+      "confirmPassword": "Repeat password",
+      "saving": "Changing...",
+      "save": "Change",
+      "errorMinLength": "Password must be at least 5 characters.",
+      "errorMismatch": "Passwords do not match.",
+      "success": "Password changed successfully."
+    },
+    "changeRolesModal": {
+      "title": "Change roles",
+      "area": "Area",
+      "chooseArea": "Choose area",
+      "supervisorLabel": "Supervisor",
+      "saving": "Saving...",
+      "save": "Save roles",
+      "close": "Close",
+      "errorNoRoles": "Choose at least one role.",
+      "errorNoArea": "Choose an area for this user.",
+      "success": "Roles changed successfully."
+    }
   }
 }

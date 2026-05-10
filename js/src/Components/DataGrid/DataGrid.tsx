@@ -7,9 +7,11 @@ import { useTranslation } from "react-i18next";
 import dataGridConfiguration from "./DataGridConfiguration";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
-type CellValue = string | number | React.ReactNode;
-type DataGridRow = Record<string, CellValue> & { onClick?: () => void };
-
+type CellValue = string[] | string | number | React.ReactNode;
+type DataGridRow = {
+  onClick?: () => void;
+  [key: string]: CellValue | (() => void) | undefined;
+};
 type DataGridAction = {
   label: string;
   onClick: () => void;
@@ -28,8 +30,6 @@ type DataGridProps = {
 const captitalizeFirstLetter = (text: string) =>
   text.charAt(0).toUpperCase() + text.slice(1);
 
-
-
 export function DataGrid({
   title,
   actions,
@@ -41,7 +41,6 @@ export function DataGrid({
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-
   const translatedColumns = useMemo(
     () =>
       columns.map((column) =>
@@ -52,8 +51,12 @@ export function DataGrid({
     [columns, t],
   );
 
-    const getCellText = (value: CellValue): string => {
+  const getCellText = (value: CellValue): string => {
     const badgeSearchFields = dataGridConfiguration.jsxSearchableFields;
+
+    if (Array.isArray(value)) {
+      return value.map((item) => getCellText(item as CellValue)).join(" ");
+    }
 
     if (React.isValidElement(value)) {
       const props = (value.props ?? {}) as Record<string, unknown>;
@@ -85,7 +88,9 @@ export function DataGrid({
     () =>
       rows.filter((row) =>
         columns.some((column) =>
-          getCellText(row[column]).toLowerCase().includes(normalizedSearch),
+          getCellText(row[column] as CellValue)
+            .toLowerCase()
+            .includes(normalizedSearch),
         ),
       ),
     [columns, normalizedSearch, rows],
@@ -123,6 +128,7 @@ export function DataGrid({
       setCurrentPage(currentPage - 1);
     }
   };
+
   return (
     <>
       <div className={styles["container"]}>
@@ -176,8 +182,14 @@ export function DataGrid({
                         className={styles["row"]}
                         onClick={row.onClick}>
                         {columns.map((column, columnIndex) => (
-                          <span key={`${gridId}-row-${rowIndex}-col-${columnIndex}`} className={styles["cell"]}>
-                            {row[column]}
+                          <span
+                            key={`${gridId}-row-${rowIndex}-col-${columnIndex}`}
+                            className={styles["cell"]}>
+                            {Array.isArray(row[column])
+                              ? (row[column] as CellValue[]).map((item, i) => (
+                                  <span key={i}>{item}</span>
+                                ))
+                              : (row[column] as CellValue)}
                           </span>
                         ))}
                       </div>
@@ -192,7 +204,9 @@ export function DataGrid({
                       </span>
                     </button>
                     <div className={styles["pagination-info"]}>
-                      <span>{currentPage}/{pageSettings.totalPages}</span>
+                      <span>
+                        {currentPage}/{pageSettings.totalPages}
+                      </span>
                     </div>
                     <button
                       onClick={handleNextPage}

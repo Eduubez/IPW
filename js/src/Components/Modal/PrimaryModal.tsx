@@ -6,34 +6,40 @@ import { Color } from "../../StyleGuide/colors";
 export function PrimaryModal({
   open,
   onClose,
-  onConfirm,
+  header,
+  body,
+  footer,
 }: {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => void;
+  header?: React.ReactNode;
+  body?: React.ReactNode;
+  footer?: React.ReactNode;
 }) {
   return (
-    <Modal
-      open={open}
-      onClose={onClose}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}>
-      <div className={styles.box}>
-        <h2>Are u sure ?</h2>
-        <div className={styles.buttons}>
-          <PrimaryButton
-            text={"Confirm"}
-            onClick={() => onConfirm()}
-            enabled={true}
-            style={{backgroundColor:Color.DarkBlue}}
-            
-          />
-          <PrimaryButton text={"Cancel"} onClick={onClose} enabled={true} style={{backgroundColor:Color.DarkRed}} />
+    <>
+      <Modal
+        open={open}
+        onClose={onClose}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}>
+        <div className={styles.box}>
+          {header && <h2>{header}</h2>}
+          {body && <div style={{display:"flex", height: "100%", width: "100%"}}>{body}</div>}
+          {footer && <div>{footer}</div>}
+          <div className={styles["modal-actions"]}>
+            <PrimaryButton
+              text={"Cancel"}
+              onClick={onClose}
+              enabled={true}
+              style={{ backgroundColor: Color.DarkRed }}
+            />
+          </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </>
   );
 }

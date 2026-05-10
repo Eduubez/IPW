@@ -1,5 +1,4 @@
 .title-large {
-    text-align: center;
     font-family: Inter;
     font-size: 1.875rem;
     font-style: normal;
@@ -9,7 +8,6 @@
 }
 
 .subtitle-medium {
-    text-align: center;
     font-family: Inter;
     font-size: 1rem;
     font-style: normal;

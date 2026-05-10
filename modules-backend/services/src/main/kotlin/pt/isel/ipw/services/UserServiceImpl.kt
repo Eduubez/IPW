@@ -159,6 +159,15 @@ class UserServiceImpl(
         success(usersRepository.getUserRoles(user.id))
     }
 
+    override fun getUserProfileInfo(
+        userId: Int
+    ): Either<UserError, UserWithRoles> = transactionManager.run {
+        val user = usersRepository.getUserWithRolesById(userId)
+            ?: return@run failure(UserError.UserNotFound)
+
+        success(user)
+    }
+
     override fun getAllUsers(
         offset: Int,
         limit: Int

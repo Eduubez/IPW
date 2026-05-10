@@ -15,7 +15,8 @@
     "description": "Veja e gerencie as informações do seu perfil",
     "activeProcess": "Nº de Processos Ativos",
     "completedProcessWeekly": "Nº de Processos Concluídos esta Semana",
-    "waitingApproval": "Nº de Processos a aguardar Aprovação"
+    "waitingApproval": "Nº de Processos a aguardar Aprovação",
+    "recentActivities": "Atividades Recentes"
   },
   "Label": {
     "createNewProcess": "Criar processo",
@@ -60,7 +61,8 @@
     "area": "Área",
     "dueDate": "Expira em",
     "priority": "Prioridade",
-    "state": "Estado"
+    "state": "Estado",
+    "roles": "Papeis"
   },
   "HistoryPage": {
     "Title": "O meu Histórico",
@@ -71,5 +73,65 @@
     "CompletedProcesses": "Processos concluídos",
     "CanceledProcesses": "Processos cancelados",
     "FetchError": "Falha encontrar histórico"
+  },
+    "Roles": {
+    "admin": "Administrador",
+    "triator": "Triador",
+    "manager": "Gestor",
+    "investigator": "Averiguador",
+    "supervisor": "Supervisor"
+  },
+  "DashboardAdmin": {
+    "title": "Gestão de utilizadores",
+    "description": "Controla todos os utilizadores",
+    "gridTitle": "Utilizadores",
+    "createUserButton": "Criar utilizador",
+    "stats": {
+      "total": "Nº Total de utilizadores",
+      "triators": "Nº de Triadores",
+      "investigators": "Nº de Averiguadores",
+      "supervisors": "Nº de Supervisores",
+      "managers": "Nº de Gestores"
+    },
+    "userModal": {
+      "title": "Alterar utilizador",
+      "changePassword": "Alterar Palavra-passe",
+      "changeRoles": "Alterar Papéis"
+    },
+    "createUser": {
+      "title": "Novo utilizador",
+      "description": "Crie um novo utilizador",
+      "name": "Nome",
+      "email": "Email",
+      "password": "Palavra passe",
+      "area": "Área",
+      "chooseArea": "Escolher área",
+      "supervisorLabel": "Supervisor",
+      "creating": "A criar...",
+      "create": "Criar",
+      "successMessage": "Utilizador criado com sucesso!"
+    },
+    "changePasswordModal": {
+      "title": "Trocar palavra passe",
+      "newPassword": "Nova palavra passe",
+      "confirmPassword": "Repita a palavra passe",
+      "saving": "A trocar...",
+      "save": "Trocar",
+      "errorMinLength": "A palavra passe deve ter pelo menos 5 caracteres.",
+      "errorMismatch": "As palavras passe não coincidem.",
+      "success": "Palavra passe alterada com sucesso."
+    },
+    "changeRolesModal": {
+      "title": "Trocar papéis",
+      "area": "Área",
+      "chooseArea": "Escolher área",
+      "supervisorLabel": "Supervisor",
+      "saving": "A guardar...",
+      "save": "Guardar papéis",
+      "close": "Fechar",
+      "errorNoRoles": "Escolhe pelo menos um papel.",
+      "errorNoArea": "Escolhe uma área para este utilizador.",
+      "success": "Papéis alterados com sucesso."
+    }
   }
 }
