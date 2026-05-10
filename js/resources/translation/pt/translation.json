@@ -15,7 +15,8 @@
     "description": "Veja e gerencie as informações do seu perfil",
     "activeProcess": "Nº de Processos Ativos",
     "completedProcessWeekly": "Nº de Processos Concluídos esta Semana",
-    "waitingApproval": "Nº de Processos a aguardar Aprovação"
+    "waitingApproval": "Nº de Processos a aguardar Aprovação",
+    "recentActivities": "Atividades Recentes"
   },
   "Label": {
     "createNewProcess": "Criar processo",

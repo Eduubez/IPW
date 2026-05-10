@@ -20,4 +20,5 @@ export const Icon = {
     Clock: "schedule",
     CarCrash: "car_crash",
     History: "history",
+    Email: "mail",
 }
