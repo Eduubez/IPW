@@ -44,6 +44,9 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
 async function logout(): Promise<ResponseApi<void>> {
     const response =  await fetchApi<void>("users/logout", {
         method: "POST",
+        headers: {
+            "Authorization": `Bearer ${userStore.getAccessToken()}`
+        },
     });
     if(response.success) {
         userStore.clear();

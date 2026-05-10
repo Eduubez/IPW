@@ -36,6 +36,14 @@ type SelectRolesResponse = {
 type UserRolesResponse = {
   roles: string[];
 };
+export type UserProfileResponse = {
+  id: number;
+  name: string;
+  email: string;
+  areaId: number | null;
+  area: string | null;
+  roles: string[];
+}
 
 export const UsersApi = {
   selectRole,
@@ -44,6 +52,7 @@ export const UsersApi = {
   getAll,
   changeUserRoles,
   changeUserPassword,
+  getUserInformation,
 };
 
 // choose which role to use in the current session - every user
@@ -172,4 +181,12 @@ async function changeUserPassword(
   }
 
   return response;
+}
+async function getUserInformation() {
+  return await fetchApi<UserProfileResponse>("users/me", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
+  });
 }

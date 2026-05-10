@@ -8,21 +8,13 @@ import { Icon } from "../../Components/Icons/Icons";
 import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 import { userStore } from "../../Utility/Store/UserStore";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityApi } from "../../Utility/Api/ActivityApi";
 import { type ActivityResponse } from "../../Utility/Api/ActivityApi";
 import LoadingComponent from "../../Components/LoadingComponent/LoadingComponent";
 import { ActivityCard } from "../../Components/Cards/ActivityCard/ActivityCard";
 import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
-const mockUser = {
-  name: "João Bezerra",
-  email: "example@email.com",
-  location: "Lisboa, Portugal",
-  joinDate: new Date("2022-01-15"),
-  role: "Admin",
-};
-
-
+import { UsersApi, type UserProfileResponse } from "../../Utility/Api/UsersApi";
 
 const shortName = (name: string) => {
   const names = name.split(" ");
@@ -34,8 +26,10 @@ export default function Profile() {
   const { t } = useTranslation();
   const role = userStore.getActiveRole();
   const userId = userStore.getUserId();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [activity, setActivity] = useState<ActivityResponse[]>([]);
+  const [userInfo, setUserInfo] = useState<UserProfileResponse>();
+
   // Fetch user Activity
   const fetchUserActivity = async () => {
     if (!userId) return;
@@ -43,20 +37,32 @@ export default function Profile() {
       setIsLoading(true);
       const response = await ActivityApi.getActivityByUser(userId, 0, 10);
       if (response.success) {
-      setActivity(response.data);
+        setActivity(response.data);
       }
     } finally {
       setIsLoading(false);
     }
   };
+  const fetchUserInformation = async () => {
+    const response = await UsersApi.getUserInformation();
+    if (response.success) {
+      setUserInfo(response.data);
+    }
+  };
 
   useEffect(() => {
+    setIsLoading(true);
     fetchUserActivity();
+    fetchUserInformation();
+    setIsLoading(false);
   }, [userId]);
 
-  const sortedActivity = [...activity].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  ).slice(0, 5); // Get the 5 most recent activities
+  const sortedActivity = [...activity]
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )
+    .slice(0, 5); // Get the 5 most recent activities
 
   const userBadge = () => {
     const normalizedRole = role?.toLowerCase();
@@ -68,6 +74,18 @@ export default function Profile() {
     );
   };
 
+  const informationItems = useMemo(
+    () => [
+      { icon: Icon.Email, title: "Email", description: userInfo?.email ?? "" },
+      {
+        icon: Icon.Group,
+        title: "Area",
+        description: userInfo?.area ?? "Not specified",
+      },
+    ],
+    [userInfo],
+  );
+
   return (
     <div className={styles["profile-container"]}>
       <Header
@@ -77,42 +95,34 @@ export default function Profile() {
       />
       <div className={styles["divider"]}>
         <WithBackground>
-          <div className={styles["content-container"]}>
-            <div className={styles["icon-container"]}>
-              <div className={styles["profile-icon"]}>
-                <span className={styles["profile-initials"]}>
-                  {shortName(mockUser.name)}
-                </span>
+          {userInfo && (
+            <div className={styles["content-container"]}>
+              <div className={styles["icon-container"]}>
+                <div className={styles["profile-icon"]} style={{ backgroundColor: getRoleStyle(role ?? "").background as string }}>
+                  <span className={styles["profile-initials"]} >
+                    {shortName(userInfo.name)}
+                  </span>
+                </div>
+              </div>
+              <div className={styles["information-container"]}>
+                <p className={styles["user-name"]}>{userInfo.name}</p>
+                {userBadge()}
+                {informationItems.map((item) => (
+                  <InformationCard
+                    key={item.title}
+                    icon={item.icon}
+                    title={item.title}
+                    description={item.description}
+                  />
+                ))}
+              </div>
+              <div className={styles["actions-container"]}>
+                <div className={styles["action-item"]}>
+                  <LanguageSwitcher />
+                </div>
               </div>
             </div>
-            <div className={styles["information-container"]}>
-              <p className={styles["user-name"]}>{mockUser.name}</p>
-              {userBadge()}
-
-              <InformationCard
-                icon={Icon.Location}
-                title={"Location"}
-                description={mockUser.location}
-              />
-              <InformationCard
-                icon={Icon.Calendar}
-                title={"Join Date"}
-                description={mockUser.joinDate.toDateString()}
-              />
-            </div>
-            <div className={styles["actions-container"]}>
-              <div className={styles["action-item"]}>
-                <PrimaryButton
-                  text={"Change Password"}
-                  onClick={() => alert("Clicked")}
-                  enabled={true}
-                />
-              </div>
-              <div className={styles["action-item"]}>
-                <LanguageSwitcher />
-              </div>
-            </div>
-          </div>
+          )}
         </WithBackground>
       </div>
       <div className={styles["divider"]}>
@@ -123,7 +133,9 @@ export default function Profile() {
             ) : (
               <>
                 <div className={styles["activity-header"]}>
-                  <p className="subtitle-medium">Atividades Recentes</p>
+                  <p className="subtitle-medium">
+                    {t("Profile.recentActivities")}
+                  </p>
                 </div>
                 <div className={styles["activity-list"]}>
                   {sortedActivity.map((item) => (
