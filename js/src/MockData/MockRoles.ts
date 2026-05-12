@@ -1,5 +1,6 @@
 import { Icon } from "../Components/Icons/Icons";
 import { Color } from "../StyleGuide/colors";
+import i18next from 'i18next'
 
 export const ROLES = [
   {
@@ -8,6 +9,9 @@ export const ROLES = [
     title: "admin",
     permissions: ["ManageUsers", "CreateUsers"],
     style: { border: `2px solid ${Color.Purple}` },
+    navigationItems : [
+      { name: i18next.t("Dashboard"), path: "/dashboard", icon: "dashboard" },
+    ]
   },
   {
     key: "triator",
@@ -15,6 +19,11 @@ export const ROLES = [
     title: "triator",
     permissions: ["AddReport", "MyHistory"],
     style: { border: `2px solid ${Color.DarkRed}` },
+    navigationItems : [
+      { name: i18next.t("NavigationItems.Dashboard"), path: "/dashboard", icon: "dashboard" },
+      { name: i18next.t("NavigationItems.NewProcess"), path: "/processes/new", icon: "add" },
+      { name: i18next.t("NavigationItems.History"), path: "/user/history", icon: "history" },
+    ]
   },
   {
     key: "investigator",
@@ -22,6 +31,10 @@ export const ROLES = [
     title: "investigator",
     permissions: ["ViewOwnProcess", "SubmitProcess", "MyHistory"],
     style: { border: `2px solid ${Color.DarkBlue}` },
+    navigationItems : [
+      { name: i18next.t("NavigationItems.Dashboard"), path: "/dashboard", icon: "dashboard" },
+      { name: i18next.t("NavigationItems.History"), path: "/user/history", icon: "history" },
+    ]
   },
   {
     key: "supervisor",
@@ -29,6 +42,10 @@ export const ROLES = [
     title: "supervisor",
     permissions: ["ViewAreaProcess", "ValidateAreaProcess", "AreaHistory"],
     style: { border: `2px solid ${Color.YellowDark}` },
+    navigationItems : [
+      { name: i18next.t("NavigationItems.Dashboard"), path: "/dashboard", icon: "dashboard" },
+      { name: i18next.t("NavigationItems.History"), path: "/user/history", icon: "history" },
+    ]
   },
   {
     key: "manager",
@@ -36,5 +53,9 @@ export const ROLES = [
     title: "manager",
     permissions: ["UpdateEveryProcess", "ValidateAllProcess", "AllHistory"],
     style: { border: `2px solid ${Color.GreenPrimary}` },
+    navigationItems : [
+      { name: i18next.t("NavigationItems.Dashboard"), path: "/dashboard", icon: "dashboard" },
+      { name: i18next.t("NavigationItems.History"), path: "/user/history", icon: "history" },
+    ]
   },
 ];

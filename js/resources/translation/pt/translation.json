@@ -62,7 +62,9 @@
     "dueDate": "Expira em",
     "priority": "Prioridade",
     "state": "Estado",
-    "roles": "Papeis"
+    "roles": "Papeis",
+    "expirationDate": "Expira em",
+    "location": "Localização"
   },
   "HistoryPage": {
     "Title": "O meu Histórico",
@@ -74,7 +76,7 @@
     "CanceledProcesses": "Processos cancelados",
     "FetchError": "Falha encontrar histórico"
   },
-    "Roles": {
+  "Roles": {
     "admin": "Administrador",
     "triator": "Triador",
     "manager": "Gestor",
@@ -133,5 +135,10 @@
       "errorNoArea": "Escolhe uma área para este utilizador.",
       "success": "Papéis alterados com sucesso."
     }
+  },
+  "NavigationItems": {
+    "Dashboard": "Dashboard",
+    "NewProcess": "Novo Processo",
+    "History": "Histórico"
   }
 }
