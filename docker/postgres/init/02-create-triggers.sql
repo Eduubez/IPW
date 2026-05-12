@@ -5,6 +5,7 @@ Garante que apenas existe um estado ativo (end_date = null) por processo.
 create or replace function close_previous_state()
     returns trigger as $$
 begin
+
     update Process_State
     set end_date = NEW.start_date
     where process_id = NEW.process_id
