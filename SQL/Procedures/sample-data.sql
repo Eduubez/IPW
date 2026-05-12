@@ -116,6 +116,3 @@ begin
 end;
 $$;
 
-
-select * from users;
-call sample_data();

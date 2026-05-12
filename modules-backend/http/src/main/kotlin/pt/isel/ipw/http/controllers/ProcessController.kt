@@ -1,6 +1,5 @@
 package pt.isel.ipw.http.controllers
 
-import com.sun.org.slf4j.internal.LoggerFactory
 import jakarta.annotation.security.RolesAllowed
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -9,9 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import pt.isel.ipw.domain.DTO.input.CreateProcessRequest
 import pt.isel.ipw.domain.DTO.input.UpdatePriorityRequest
-import pt.isel.ipw.domain.DTO.input.UpdateProcessRequest
-import pt.isel.ipw.domain.output.CreateProcessResponse
-import pt.isel.ipw.domain.process.Priority
+import pt.isel.ipw.domain.DTO.output.CreateProcessResponse
 import pt.isel.ipw.domain.process.toResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.ApiRoutes
@@ -27,16 +24,11 @@ class ProcessController(
 ) {
 
 
-    //@RolesAllowed(Roles.TRIATOR)
+    @RolesAllowed(Roles.TRIATOR)
     @PostMapping
     fun createProcess(@RequestBody process: CreateProcessRequest, request: HttpServletRequest): ResponseEntity<*> {
-        println("Create Process")
-
         val auth = SecurityContextHolder.getContext().authentication
-
         val userId = auth?.principal as Int
-
-        println("Auth user id: $userId")
 
         val result = processService.createProcess(
             userId = userId,
@@ -62,11 +54,10 @@ class ProcessController(
         }
 
         return handler(result, HttpStatus.CREATED) { error -> error.toHttp() }
-
     }
 
-    //@RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
-    @GetMapping(ApiRoutes.Process.BY_ID)
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @GetMapping(ApiRoutes.Process.BY_ID_FULL)
     fun getProcessById(@PathVariable id: Int): ResponseEntity<*> {
         val auth = SecurityContextHolder.getContext().authentication
         val userId = auth?.principal as Int
@@ -81,11 +72,11 @@ class ProcessController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    //@RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @RolesAllowed(Roles.TRIATOR, Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @GetMapping
     fun getAllProcesses(
-        @RequestParam(required = false) offset: Int,
-        @RequestParam(required = false) limit: Int,
+        @RequestParam(required = false) offset: Int?,
+        @RequestParam(required = false) limit: Int?,
     ): ResponseEntity<*> {
         println("BEFORE PARSE TOKEN TO USER ID")
         val auth = SecurityContextHolder.getContext().authentication

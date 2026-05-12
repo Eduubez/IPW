@@ -157,7 +157,7 @@ create table Diligence
 create table State
 (
     id         serial primary key,
-    name       varchar(100) not null
+    name       varchar(100)
         check ( name in
                 (
                  'not_assigned',
