@@ -1,12 +1,14 @@
 package pt.isel.ipw.services
 
 import org.springframework.stereotype.Service
-import pt.isel.ipw.domain.Activity
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.*
 import pt.isel.ipw.services.interfaces.ActivityService
-import sun.security.util.KeyUtil.validate
+import pt.isel.ipw.services.results.ActivityValidationResult
+import pt.isel.ipw.services.results.CreateActivityResult
+import pt.isel.ipw.services.results.GetActivitiesByProcessResult
+import pt.isel.ipw.services.results.GetActivitiesByUserResult
 
 @Service
 class ActivityServiceImpl(
@@ -17,7 +19,7 @@ class ActivityServiceImpl(
         processId: Int,
         offset: Int,
         limit: Int
-    ): Either<ActivityError, List<Activity>> = transactionManager.run {
+    ): GetActivitiesByProcessResult = transactionManager.run {
         when {
             offset < 0 -> failure(ActivityError.InvalidOffset)
             limit <= 0 -> failure(ActivityError.InvalidLimit)
@@ -33,7 +35,7 @@ class ActivityServiceImpl(
         userId: Int,
         offset: Int,
         limit: Int
-    ): Either<ActivityError, List<Activity>> = transactionManager.run {
+    ): GetActivitiesByUserResult = transactionManager.run {
         when {
             offset < 0 -> failure(ActivityError.InvalidOffset)
             limit <= 0 -> failure(ActivityError.InvalidLimit)
@@ -47,7 +49,7 @@ class ActivityServiceImpl(
         userId: Int,
         action: String,
         description: String
-    ): Either<ActivityError, Int> =
+    ): CreateActivityResult =
         transactionManager.run{
             val validation = validateCreationFields(processId, userId, action, description)
 
@@ -73,7 +75,7 @@ class ActivityServiceImpl(
         userId: Int,
         action: String,
         description: String?
-    ): Either<ActivityError, Unit>{
+    ): ActivityValidationResult {
         if(processRepository.getById(processId) == null) return failure(ActivityError.ProcessNotFound)
         if(userId <= 0) return failure(ActivityError.UserNotFound)
         if(action.isBlank()) return failure(ActivityError.InvalidAction)

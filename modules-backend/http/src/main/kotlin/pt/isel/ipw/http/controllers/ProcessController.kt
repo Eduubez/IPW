@@ -4,14 +4,16 @@ import jakarta.annotation.security.RolesAllowed
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.*
 import pt.isel.ipw.domain.DTO.input.CreateProcessRequest
 import pt.isel.ipw.domain.DTO.input.UpdatePriorityRequest
 import pt.isel.ipw.domain.DTO.output.CreateProcessResponse
+import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.process.toResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.ApiRoutes
+import pt.isel.ipw.http.auth.AuthenticatedUser
+import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
 import pt.isel.ipw.http.errors.toHttp
 import pt.isel.ipw.services.errors.mapSuccess
@@ -27,8 +29,8 @@ class ProcessController(
     @RolesAllowed(Roles.TRIATOR)
     @PostMapping
     fun createProcess(@RequestBody process: CreateProcessRequest, request: HttpServletRequest): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = processService.createProcess(
             userId = userId,
@@ -59,12 +61,13 @@ class ProcessController(
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @GetMapping(ApiRoutes.Process.BY_ID_FULL)
     fun getProcessById(@PathVariable id: Int): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidToken)
 
 
-        val result = processService.getProcessById(id, userId, role!!)
+        val result = processService.getProcessById(id, userId, role)
             .mapSuccess {
                 it.toResponse()
             }
@@ -79,15 +82,18 @@ class ProcessController(
         @RequestParam(required = false) limit: Int?,
     ): ResponseEntity<*> {
         println("BEFORE PARSE TOKEN TO USER ID")
-        val auth = SecurityContextHolder.getContext().authentication
         println("GETTING USER ID")
 
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = processService.getAllProcesses(offset, limit, userId, role!!)
-            .mapSuccess {
-                it.map { it.toResponse() }
+        val result = processService.getAllProcesses(offset, limit, userId, role)
+            .mapSuccess { processes ->
+                ListResponse(
+                    results = processes.map { it.toResponse() }
+                )
             }
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
@@ -100,12 +106,13 @@ class ProcessController(
         @PathVariable id: Int,
         @RequestBody endDate: String
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidToken)
 
 
-        val result = processService.changeEndDate(id, endDate, userId, role!!)
+        val result = processService.changeEndDate(id, endDate, userId, role)
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
@@ -116,8 +123,8 @@ class ProcessController(
         @PathVariable id: Int,
         @RequestBody investigatorId: Int
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val triatorId = auth?.principal as Int
+        val triatorId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = processService.assignInvestigator(id, triatorId, investigatorId)
 
@@ -131,8 +138,8 @@ class ProcessController(
         @PathVariable id: Int,
         @RequestBody supervisorId: Int
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val triatorId = auth?.principal as Int
+        val triatorId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = processService.assignSupervisor(id, triatorId, supervisorId)
 
@@ -144,8 +151,8 @@ class ProcessController(
     @RolesAllowed(Roles.SUPERVISOR, Roles.MANAGER)
     @PatchMapping(ApiRoutes.Process.PRIORITY_FULL)
     fun changePriority(@PathVariable id: Int, @RequestBody priority: UpdatePriorityRequest): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = processService.changePriority(id, priority.priority, userId)
 
@@ -156,8 +163,8 @@ class ProcessController(
     @RolesAllowed(Roles.MANAGER)
     @PatchMapping(ApiRoutes.Process.CANCEL_FULL)
     fun cancelProcess(@PathVariable id: Int): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = processService.cancelProcess(id, userId)
 

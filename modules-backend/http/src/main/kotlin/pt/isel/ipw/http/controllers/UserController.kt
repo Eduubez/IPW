@@ -3,7 +3,6 @@ package pt.isel.ipw.http.controllers
 import jakarta.annotation.security.RolesAllowed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,7 +16,9 @@ import pt.isel.ipw.domain.DTO.input.ChangeUserRolesRequest
 import pt.isel.ipw.domain.DTO.input.CreateUserRequest
 import pt.isel.ipw.domain.DTO.input.LoginRequest
 import pt.isel.ipw.domain.DTO.input.SelectRoleRequest
+import pt.isel.ipw.domain.DTO.output.AssignableUserResponse
 import pt.isel.ipw.domain.DTO.output.CreateUserResponse
+import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.DTO.output.LoginResponse
 import pt.isel.ipw.domain.DTO.output.RefreshTokenResponse
 import pt.isel.ipw.domain.DTO.output.SelectRoleResponse
@@ -27,6 +28,7 @@ import pt.isel.ipw.domain.DTO.output.user.AdminUserResponse
 import pt.isel.ipw.domain.DTO.output.user.UserProfileResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.ApiRoutes
+import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.auth.AuthenticatedLogin
 import pt.isel.ipw.http.auth.AuthenticatedRefresh
 import pt.isel.ipw.http.auth.LoginTokenPrincipal
@@ -68,7 +70,7 @@ class UserController(
     @GetMapping("/me")
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.TRIATOR, Roles.MANAGER, Roles.ADMIN)
     fun getMe(): ResponseEntity<*> {
-        val userId = authenticatedUserId()
+        val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
 
         val result = userService.getUserProfileInfo(userId)
@@ -94,17 +96,19 @@ class UserController(
     ): ResponseEntity<*> {
         val result = userService.getAllUsers(offset, limit)
             .mapSuccess { users ->
-                users.map {
-                    AdminUserResponse(
-                        id = it.id,
-                        name = it.name,
-                        email = it.email,
-                        areaId = it.areaId,
-                        area = it.area,
-                        isActive = it.isActive,
-                        roles = it.roles
-                    )
-                }
+                ListResponse(
+                    results = users.map {
+                        AdminUserResponse(
+                            id = it.id,
+                            name = it.name,
+                            email = it.email,
+                            areaId = it.areaId,
+                            area = it.area,
+                            isActive = it.isActive,
+                            roles = it.roles
+                        )
+                    }
+                )
             }
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
@@ -129,7 +133,7 @@ class UserController(
 
     @PostMapping(ApiRoutes.Users.LOGOUT)
     fun logout(): ResponseEntity<*> {
-        val userId = authenticatedUserId()
+        val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
 
         val result = userService.logout(userId)
@@ -212,9 +216,48 @@ class UserController(
     }
 
 
-    private fun authenticatedUserId(): Int? =
-        SecurityContextHolder
-            .getContext()
-            .authentication
-            ?.principal as? Int
+    @GetMapping(ApiRoutes.Users.INVESTIGATORS)
+    @RolesAllowed(Roles.TRIATOR)
+    fun getAllInvestigators(
+        @RequestParam(required = false) areaId: Int?
+    ): ResponseEntity<*> {
+        val result = userService.getAllInvestigators(areaId)
+            .mapSuccess { users ->
+                ListResponse(
+                    results = users.map {
+                        AssignableUserResponse(
+                            id = it.id,
+                            name = it.name,
+                            areaId = it.areaId,
+                            area = it.area
+                        )
+                    }
+                )
+            }
+
+        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+    }
+
+    @GetMapping(ApiRoutes.Users.SUPERVISORS)
+    @RolesAllowed(Roles.TRIATOR)
+    fun getAllSupervisors(
+        @RequestParam(required = false) areaId: Int?
+    ): ResponseEntity<*> {
+        val result = userService.getAllSupervisors(areaId)
+            .mapSuccess { users ->
+                ListResponse(
+                    results = users.map {
+                        AssignableUserResponse(
+                            id = it.id,
+                            name = it.name,
+                            areaId = it.areaId,
+                            area = it.area
+                        )
+                    }
+                )
+            }
+
+        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+    }
+
 }

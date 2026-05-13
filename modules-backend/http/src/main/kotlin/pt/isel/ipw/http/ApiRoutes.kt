@@ -10,12 +10,16 @@ object ApiRoutes {
         const val REFRESH_TOKEN = "/refresh-token"
         const val SELECT_ROLE = "/auth/select-role"
         const val ROLES = "/roles"
+        const val INVESTIGATORS = "/investigators"
+        const val SUPERVISORS = "/supervisors"
 
         const val LOGIN_FULL = "$BASE$LOGIN"
         const val LOGOUT_FULL = "$BASE$LOGOUT"
         const val REFRESH_TOKEN_FULL = "$BASE$REFRESH_TOKEN"
         const val SELECT_ROLE_FULL = "$BASE$SELECT_ROLE"
         const val ROLES_FULL = "$BASE$ROLES"
+        const val INVESTIGATORS_FULL = "$BASE$INVESTIGATORS"
+        const val SUPERVISORS_FULL = "$BASE$SUPERVISORS"
     }
 
     object Activity {

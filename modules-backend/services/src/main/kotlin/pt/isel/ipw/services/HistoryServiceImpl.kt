@@ -6,20 +6,19 @@ import pt.isel.ipw.domain.DTO.output.history.AreaProcessHistory
 import pt.isel.ipw.domain.DTO.output.history.UserProcessHistory
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.TransactionManager
-import pt.isel.ipw.services.errors.Either
 import pt.isel.ipw.services.errors.HistoryError
 import pt.isel.ipw.services.errors.failure
 import pt.isel.ipw.services.errors.success
 import pt.isel.ipw.services.interfaces.HistoryService
-
-typealias HistoryResponse = Either<HistoryError, UserProcessHistory>
+import pt.isel.ipw.services.results.GetAreaHistoryResult
+import pt.isel.ipw.services.results.GetUserHistoryResult
 
 @Service
 class HistoryServiceImpl(
     private val transactionManager: TransactionManager,
 
     ) : HistoryService {
-    override fun getUserHistory(userId: Int,userRole:String): HistoryResponse {
+    override fun getUserHistory(userId: Int,userRole:String): GetUserHistoryResult {
         val canBeUser = validateUserId(userId)
         val possibleRoles = listOf(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.TRIATOR)
 
@@ -38,7 +37,7 @@ class HistoryServiceImpl(
         }
     }
 
-    override fun getAreaHistory(subject:Int,areaId: Int): Either<HistoryError, AreaProcessHistory> {
+    override fun getAreaHistory(subject:Int,areaId: Int): GetAreaHistoryResult {
         val canBeArea = validateAreaId(areaId)
         if (!canBeArea) {
             return failure(HistoryError.InvalidAreaId)

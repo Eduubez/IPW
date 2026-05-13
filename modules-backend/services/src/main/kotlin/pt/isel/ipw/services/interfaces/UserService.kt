@@ -1,11 +1,16 @@
 package pt.isel.ipw.services.interfaces
 
-import pt.isel.ipw.domain.user.UserWithRoles
-import pt.isel.ipw.services.auth.LoginResult
-import pt.isel.ipw.services.auth.RefreshAccessToken
-import pt.isel.ipw.services.auth.SelectRoleResult
-import pt.isel.ipw.services.errors.Either
-import pt.isel.ipw.services.errors.UserError
+import pt.isel.ipw.services.results.ChangeUserPasswordResult
+import pt.isel.ipw.services.results.ChangeUserRolesResult
+import pt.isel.ipw.services.results.CreateUserResult
+import pt.isel.ipw.services.results.GetAllUsersResult
+import pt.isel.ipw.services.results.GetAssignableUsersResult
+import pt.isel.ipw.services.results.GetUserProfileInfoResult
+import pt.isel.ipw.services.results.GetUserRolesResult
+import pt.isel.ipw.services.results.LoginResultResponse
+import pt.isel.ipw.services.results.LogoutResult
+import pt.isel.ipw.services.results.RefreshAccessTokenResult
+import pt.isel.ipw.services.results.SelectRoleServiceResult
 
 interface UserService {
     fun createUser(
@@ -14,35 +19,39 @@ interface UserService {
         password: String,
         areaId: Int?,
         roles: List<String>
-    ): Either<UserError, Int>
+    ): CreateUserResult
 
-    fun login(email: String, password: String): Either<UserError, LoginResult>
+    fun login(email: String, password: String): LoginResultResponse
 
-    fun logout(userId: Int): Either<UserError, Unit>
+    fun logout(userId: Int): LogoutResult
 
-    fun getUserRoles(email: String): Either<UserError, List<String>>
+    fun getUserRoles(email: String): GetUserRolesResult
 
-    fun getAllUsers(offset: Int, limit: Int): Either<UserError, List<UserWithRoles>>
+    fun getAllUsers(offset: Int, limit: Int): GetAllUsersResult
 
-    fun getUserProfileInfo(userId: Int): Either<UserError, UserWithRoles>
+    fun getUserProfileInfo(userId: Int): GetUserProfileInfoResult
+
+    fun getAllInvestigators(areaId: Int?): GetAssignableUsersResult
+
+    fun getAllSupervisors(areaId: Int?): GetAssignableUsersResult
 
     fun changeUserRoles(
         userId: Int,
         roles: List<String>,
         areaId: Int?,
-    ): Either<UserError, Unit>
+    ): ChangeUserRolesResult
 
-    fun changeUserPassword(userId: Int, newPassword: String): Either<UserError, Unit>
+    fun changeUserPassword(userId: Int, newPassword: String): ChangeUserPasswordResult
 
     fun refreshAccessToken(
         refreshToken: String,
         userId: Int,
         role: String
-    ): Either<UserError, RefreshAccessToken>
+    ): RefreshAccessTokenResult
 
     fun selectRole(
         loginToken: String,
         userId: Int,
         selectedRole: String
-    ): Either<UserError, SelectRoleResult>
+    ): SelectRoleServiceResult
 }

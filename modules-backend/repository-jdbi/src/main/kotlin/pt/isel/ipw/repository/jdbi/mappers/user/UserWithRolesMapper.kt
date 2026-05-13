@@ -1,4 +1,4 @@
-package pt.isel.ipw.repository.jdbi.mappers
+package pt.isel.ipw.repository.jdbi.mappers.user
 
 import org.jdbi.v3.core.mapper.RowMapper
 import org.jdbi.v3.core.statement.StatementContext

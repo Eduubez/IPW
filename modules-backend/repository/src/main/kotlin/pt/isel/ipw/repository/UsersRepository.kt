@@ -1,5 +1,7 @@
 package pt.isel.ipw.repository
 
+import pt.isel.ipw.domain.DTO.output.user.AssignableUser
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 
@@ -28,9 +30,13 @@ interface UsersRepository {
 
     fun getAllUsers(offset: Int, limit: Int): List<UserWithRoles>
 
+    fun getAssignableUsersByRole(role: String, areaId: Int?): List<AssignableUser>
+
     fun replaceUserRoles(userId: Int, roles: List<String>)
 
     fun updateUserPassword(userId: Int, newPasswordHash: String)
 
     fun updateUserArea(userId: Int, areaId: Int?)
+
+    fun removeUserRole(userId: Int, role: String)
 }

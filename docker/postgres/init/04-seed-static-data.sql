@@ -3,6 +3,7 @@ create or replace procedure seed_static_data()
 as
 $$
 begin
+
     insert into Role(name)
     values ('admin'),
            ('triator'),
@@ -31,10 +32,5 @@ begin
            ('rejected_by_manager'),
            ('canceled');
 
-
-
 end;
 $$;
-
-call seed_static_data();
-call sample_data();
