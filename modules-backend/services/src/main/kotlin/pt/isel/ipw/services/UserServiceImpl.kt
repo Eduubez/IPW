@@ -19,6 +19,7 @@ import pt.isel.ipw.services.results.ChangeUserPasswordResult
 import pt.isel.ipw.services.results.ChangeUserRolesResult
 import pt.isel.ipw.services.results.CreateUserResult
 import pt.isel.ipw.services.results.GetAllUsersResult
+import pt.isel.ipw.services.results.GetAssignableUsersResult
 import pt.isel.ipw.services.results.GetUserProfileInfoResult
 import pt.isel.ipw.services.results.GetUserRolesResult
 import pt.isel.ipw.services.results.LoginResultResponse
@@ -177,6 +178,12 @@ class UserServiceImpl(
         success(user)
     }
 
+    override fun getAllInvestigators(areaId: Int?): GetAssignableUsersResult =
+        getAssignableUsersByRole(Roles.INVESTIGATOR, areaId)
+
+    override fun getAllSupervisors(areaId: Int?): GetAssignableUsersResult =
+        getAssignableUsersByRole(Roles.SUPERVISOR, areaId)
+
     override fun getAllUsers(
         offset: Int,
         limit: Int
@@ -300,6 +307,18 @@ class UserServiceImpl(
                 area = areaInfo?.area
             )
         )
+    }
+
+
+    private fun getAssignableUsersByRole(
+        role: String,
+        areaId: Int?
+    ): GetAssignableUsersResult = transactionManager.run {
+        if (areaId != null && !areasRepository.isAreaStoredById(areaId)) {
+            return@run failure(UserError.AreaNotFound)
+        }
+
+        success(usersRepository.getAssignableUsersByRole(role, areaId))
     }
 
     private fun validateLogin(user: User?, password: String): UserError? {

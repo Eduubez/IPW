@@ -2,10 +2,10 @@ package pt.isel.ipw.repository.jdbi.user
 
 import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
+import pt.isel.ipw.domain.DTO.output.user.AssignableUser
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.repository.UsersRepository
-import pt.isel.ipw.repository.jdbi.mappers.UserMapper
 
 class JdbiUsersRepository(
     private val handle: Handle
@@ -48,7 +48,7 @@ class JdbiUsersRepository(
             """
         )
             .bind("email", email)
-            .map(UserMapper())
+            .mapTo<User>()
             .singleOrNull()
     }
 
@@ -177,6 +177,32 @@ class JdbiUsersRepository(
             .bind("offset", offset)
             .bind("limit", limit)
             .mapTo<UserWithRoles>()
+            .list()
+    }
+
+    override fun getAssignableUsersByRole(
+        role: String,
+        areaId: Int?
+    ): List<AssignableUser> {
+        val query = """
+        select
+            u.id,
+            u.name,
+            a.id as area_id,
+            a.name as area
+        from Users u
+        join User_Role ur on ur.user_id = u.id
+        join Area a on a.id = u.area_id
+        where ur.role_name = :role
+          and u.is_active = true
+          and (:areaId::int is null or a.id = :areaId)
+        order by u.name
+    """.trimIndent()
+
+        return handle.createQuery(query)
+            .bind("role", role)
+            .bind("areaId", areaId)
+            .mapTo<AssignableUser>()
             .list()
     }
 

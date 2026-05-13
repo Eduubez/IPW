@@ -4,6 +4,7 @@ import pt.isel.ipw.services.results.ChangeUserPasswordResult
 import pt.isel.ipw.services.results.ChangeUserRolesResult
 import pt.isel.ipw.services.results.CreateUserResult
 import pt.isel.ipw.services.results.GetAllUsersResult
+import pt.isel.ipw.services.results.GetAssignableUsersResult
 import pt.isel.ipw.services.results.GetUserProfileInfoResult
 import pt.isel.ipw.services.results.GetUserRolesResult
 import pt.isel.ipw.services.results.LoginResultResponse
@@ -29,6 +30,10 @@ interface UserService {
     fun getAllUsers(offset: Int, limit: Int): GetAllUsersResult
 
     fun getUserProfileInfo(userId: Int): GetUserProfileInfoResult
+
+    fun getAllInvestigators(areaId: Int?): GetAssignableUsersResult
+
+    fun getAllSupervisors(areaId: Int?): GetAssignableUsersResult
 
     fun changeUserRoles(
         userId: Int,

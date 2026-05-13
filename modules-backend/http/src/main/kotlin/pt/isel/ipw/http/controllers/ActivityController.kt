@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.DTO.output.toResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.errors.handler
@@ -30,7 +31,11 @@ class ActivityController(
         @RequestParam(defaultValue = "10") limit: Int
     ): ResponseEntity<*> {
         val result = activityService.getActivitiesByProcess(id, offset, limit)
-            .mapSuccess { list -> list.toResponse() }
+            .mapSuccess { list ->
+                ListResponse(
+                    results = list.toResponse()
+                )
+            }
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
@@ -41,7 +46,11 @@ class ActivityController(
         @RequestParam(defaultValue = "10") limit: Int
     ): ResponseEntity<*> {
         val result = activityService.getActivitiesByUser(id, offset, limit)
-            .mapSuccess { list -> list.toResponse() }
+            .mapSuccess { list ->
+                ListResponse(
+                    results = list.toResponse()
+                )
+            }
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 

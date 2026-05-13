@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.ipw.domain.DTO.input.CreateProcessRequest
 import pt.isel.ipw.domain.DTO.input.UpdatePriorityRequest
 import pt.isel.ipw.domain.DTO.output.CreateProcessResponse
+import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.process.toResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.ApiRoutes
@@ -86,8 +87,10 @@ class ProcessController(
         val role = auth.authorities.first().authority?.removePrefix("ROLE_")
 
         val result = processService.getAllProcesses(offset, limit, userId, role!!)
-            .mapSuccess {
-                it.map { it.toResponse() }
+            .mapSuccess { processes ->
+                ListResponse(
+                    results = processes.map { it.toResponse() }
+                )
             }
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }

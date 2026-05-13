@@ -2,13 +2,14 @@ package pt.isel.ipw.repository.jdbi.mappers.process
 
 import org.jdbi.v3.core.mapper.RowMapper
 import org.jdbi.v3.core.statement.StatementContext
-import pt.isel.ipw.domain.Entities.area.AreaEntity
 import pt.isel.ipw.domain.notes.Note
 import pt.isel.ipw.domain.process.*
 import pt.isel.ipw.repository.jdbi.mappers.ActivityMapper
 import pt.isel.ipw.repository.jdbi.mappers.AreaViewMapper
-import pt.isel.ipw.repository.jdbi.mappers.UserMapper
+import pt.isel.ipw.repository.jdbi.mappers.user.UserMapper
 import java.sql.ResultSet
+
+
 class ProcessMapper(private val notes: List<Note>) : RowMapper<ProcessView> {
     override fun map(rs: ResultSet, ctx: StatementContext): ProcessView =
         ProcessView(

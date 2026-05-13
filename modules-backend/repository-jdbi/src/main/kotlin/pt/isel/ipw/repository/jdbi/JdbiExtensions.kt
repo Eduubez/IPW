@@ -5,6 +5,7 @@ import org.jdbi.v3.core.kotlin.KotlinPlugin
 import org.jdbi.v3.postgres.PostgresPlugin
 import pt.isel.ipw.domain.AccessToken
 import pt.isel.ipw.domain.Activity
+import pt.isel.ipw.domain.DTO.output.user.AssignableUser
 import pt.isel.ipw.domain.Entities.area.AreaInfo
 import pt.isel.ipw.domain.Entities.area.AreaView
 import pt.isel.ipw.domain.LoginToken
@@ -17,8 +18,9 @@ import pt.isel.ipw.repository.jdbi.mappers.AreaInfoMapper
 import pt.isel.ipw.repository.jdbi.mappers.AreaViewMapper
 import pt.isel.ipw.repository.jdbi.mappers.LoginTokenMapper
 import pt.isel.ipw.repository.jdbi.mappers.RefreshTokenMapper
-import pt.isel.ipw.repository.jdbi.mappers.UserMapper
-import pt.isel.ipw.repository.jdbi.mappers.UserWithRolesMapper
+import pt.isel.ipw.repository.jdbi.mappers.user.AssignableUserMapper
+import pt.isel.ipw.repository.jdbi.mappers.user.UserMapper
+import pt.isel.ipw.repository.jdbi.mappers.user.UserWithRolesMapper
 
 fun Jdbi.configureWithAppRequirements(): Jdbi {
 
@@ -27,6 +29,7 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
 
     registerRowMapper(User::class.java, UserMapper())
     registerRowMapper(UserWithRoles::class.java, UserWithRolesMapper())
+    registerRowMapper(AssignableUser::class.java, AssignableUserMapper())
     registerRowMapper(RefreshToken::class.java, RefreshTokenMapper())
     registerRowMapper(AccessToken::class.java, AccessTokenMapper())
     registerRowMapper(LoginToken::class.java, LoginTokenMapper())
