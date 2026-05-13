@@ -2,23 +2,23 @@ package pt.isel.ipw.services
 
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.ActivityActions
-import pt.isel.ipw.domain.DTO.output.GetProcessResponse
 import pt.isel.ipw.domain.mapToString
-import pt.isel.ipw.domain.output.CreateProcessResponse
 import pt.isel.ipw.domain.process.ProcessView
-import pt.isel.ipw.domain.process.toResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.*
 import pt.isel.ipw.services.interfaces.ProcessService
+import pt.isel.ipw.services.results.AssignInvestigatorResult
+import pt.isel.ipw.services.results.AssignSupervisorResult
+import pt.isel.ipw.services.results.CancelProcessResult
+import pt.isel.ipw.services.results.ChangeEndDateResult
+import pt.isel.ipw.services.results.ChangePriorityResult
+import pt.isel.ipw.services.results.CreateProcessResult
+import pt.isel.ipw.services.results.GetAllProcessesResult
+import pt.isel.ipw.services.results.GetProcessResult
+import pt.isel.ipw.services.results.ProcessValidationResult
 import java.time.LocalDateTime
-
-
-typealias CreateProcessResult = Either<ProcessError, Int>
-typealias ProcessValidationResult = Either<ProcessError, Unit>
-typealias GetProcessResult = Either<ProcessError, ProcessView>
-typealias GetAllProcessesResult = Either<ProcessError, List<ProcessView>>
 
 @Service
 class ProcessServiceImpl(
@@ -146,7 +146,7 @@ class ProcessServiceImpl(
 
         }
 
-    override fun changeEndDate(processId: Int, endDate: String, userId: Int, role: String): Either<ProcessError, Unit> =
+    override fun changeEndDate(processId: Int, endDate: String, userId: Int, role: String): ChangeEndDateResult =
         transactionManager.run {
             val user = usersRepository.getUserById(userId) ?: return@run failure(ProcessError.InvalidUserId)
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
@@ -168,7 +168,7 @@ class ProcessServiceImpl(
 
 
     // mudar process state para assign-to-Ivs
-    override fun assignInvestigator(processId: Int, triatorId: Int, investigatorId: Int): Either<ProcessError, Unit> =
+    override fun assignInvestigator(processId: Int, triatorId: Int, investigatorId: Int): AssignInvestigatorResult =
         transactionManager.run {
             val triator =
                 usersRepository.getUserById(triatorId) ?: return@run failure(ProcessError.InvalidTriator)
@@ -194,7 +194,7 @@ class ProcessServiceImpl(
         }
 
     // mudar process state para assign-to-Sup
-    override fun assignSupervisor(processId: Int, triatorId: Int, supervisorId: Int): Either<ProcessError, Unit> =
+    override fun assignSupervisor(processId: Int, triatorId: Int, supervisorId: Int): AssignSupervisorResult =
         transactionManager.run {
             // mudar o state do process
             val triator = usersRepository.getUserById(triatorId) ?: return@run failure(ProcessError.InvalidTriator)
@@ -218,7 +218,7 @@ class ProcessServiceImpl(
         }
 
 
-    override fun changePriority(processId: Int, newPriority: String, userId: Int): Either<ProcessError, Unit> =
+    override fun changePriority(processId: Int, newPriority: String, userId: Int): ChangePriorityResult =
         transactionManager.run {
             val user = usersRepository.getUserById(userId) ?: return@run failure(ProcessError.InvalidUserId)
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
@@ -239,7 +239,7 @@ class ProcessServiceImpl(
         }
 
     //apenas o manager
-    override fun cancelProcess(processId: Int, userId: Int): Either<ProcessError, Unit> =
+    override fun cancelProcess(processId: Int, userId: Int): CancelProcessResult =
         transactionManager.run {
 
             if (!validateProcess(processId)) return@run failure(ProcessError.ProcessNotFound)
@@ -320,7 +320,7 @@ class ProcessServiceImpl(
         return user.area == area
     }
 
-    private fun validateFilters(limit: Int?, offset: Int?): Either<ProcessError, Unit> {
+    private fun validateFilters(limit: Int?, offset: Int?): ProcessValidationResult {
         if (limit != null && limit <= 0) return failure(ProcessError.InvalidLimit)
         if (offset != null && offset < 0) return failure(ProcessError.InvalidOffset)
         return success(Unit)
@@ -337,7 +337,7 @@ class ProcessServiceImpl(
         process: ProcessView,
         userId: Int,
         role: String
-    ): Either<ProcessError, Unit> {
+    ): ProcessValidationResult {
         if (process.investigator?.id == userId || process.supervisor?.id == userId || role == "manager") {
             return success(Unit)
         }

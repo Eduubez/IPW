@@ -6,10 +6,12 @@ import pt.isel.ipw.domain.DTO.output.area.AreaViewResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.AreaError
-import pt.isel.ipw.services.errors.Either
 import pt.isel.ipw.services.errors.failure
 import pt.isel.ipw.services.errors.success
 import pt.isel.ipw.services.interfaces.AreaService
+import pt.isel.ipw.services.results.GetAllAreasResult
+import pt.isel.ipw.services.results.GetAreaByIdResult
+import pt.isel.ipw.services.results.UpdateAreaBossResult
 
 
 
@@ -17,7 +19,7 @@ import pt.isel.ipw.services.interfaces.AreaService
 class AreaServiceImpl(
     private val transactionManager: TransactionManager,
 ) : AreaService {
-    override fun getAllAreas(): Either<AreaError, AreaListResponse> {
+    override fun getAllAreas(): GetAllAreasResult {
 
         return transactionManager.run {
             val areas = areasRepository.getAllAreas()
@@ -25,7 +27,7 @@ class AreaServiceImpl(
         }
     }
 
-    override fun getAreaById(id: Int): Either<AreaError, AreaViewResponse> {
+    override fun getAreaById(id: Int): GetAreaByIdResult {
         if (!canBeArea(id)) {
             return failure(AreaError.InvalidAreaId)
         }
@@ -35,7 +37,7 @@ class AreaServiceImpl(
         }
     }
 
-    override fun updateAreaBoss(id: Int, bossId: Int): Either<AreaError, AreaViewResponse> {
+    override fun updateAreaBoss(id: Int, bossId: Int): UpdateAreaBossResult {
         if(!canBeArea(id)){
             return failure(AreaError.InvalidAreaId)
         }

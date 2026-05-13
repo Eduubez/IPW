@@ -11,11 +11,20 @@ import pt.isel.ipw.services.auth.LoginResult
 import pt.isel.ipw.services.auth.RefreshAccessToken
 import pt.isel.ipw.services.auth.SelectRoleResult
 import pt.isel.ipw.services.auth.TokenService
-import pt.isel.ipw.services.errors.Either
 import pt.isel.ipw.services.errors.UserError
 import pt.isel.ipw.services.errors.failure
 import pt.isel.ipw.services.errors.success
 import pt.isel.ipw.services.interfaces.UserService
+import pt.isel.ipw.services.results.ChangeUserPasswordResult
+import pt.isel.ipw.services.results.ChangeUserRolesResult
+import pt.isel.ipw.services.results.CreateUserResult
+import pt.isel.ipw.services.results.GetAllUsersResult
+import pt.isel.ipw.services.results.GetUserProfileInfoResult
+import pt.isel.ipw.services.results.GetUserRolesResult
+import pt.isel.ipw.services.results.LoginResultResponse
+import pt.isel.ipw.services.results.LogoutResult
+import pt.isel.ipw.services.results.RefreshAccessTokenResult
+import pt.isel.ipw.services.results.SelectRoleServiceResult
 import java.time.Instant
 
 @Service
@@ -33,7 +42,7 @@ class UserServiceImpl(
         password: String,
         areaId: Int?,
         roles: List<String>
-    ): Either<UserError, Int> = transactionManager.run {
+    ): CreateUserResult = transactionManager.run {
 
         val normalizedRoles = roles.map { it.lowercase() }
 
@@ -62,7 +71,7 @@ class UserServiceImpl(
     override fun login(
         email: String,
         password: String
-    ): Either<UserError, LoginResult> = transactionManager.run {
+    ): LoginResultResponse = transactionManager.run {
         val user: User? = usersRepository.getUserByEmail(email)
 
         val error: UserError? = validateLogin(user, password)
@@ -96,7 +105,7 @@ class UserServiceImpl(
 
     override fun logout(
         userId: Int
-    ): Either<UserError, Unit> = transactionManager.run {
+    ): LogoutResult = transactionManager.run {
         val user = usersRepository.getUserById(userId)
             ?: return@run failure(UserError.UserNotFound)
         
@@ -111,7 +120,7 @@ class UserServiceImpl(
         refreshToken: String,
         userId: Int,
         role: String
-    ): Either<UserError, RefreshAccessToken> = transactionManager.run {
+    ): RefreshAccessTokenResult = transactionManager.run {
 
         val storedRefreshToken = refreshTokensRepository.getByToken(refreshToken)
             ?: return@run failure(UserError.RefreshTokenNotFound)
@@ -152,7 +161,7 @@ class UserServiceImpl(
 
     override fun getUserRoles(
         email: String
-    ): Either<UserError, List<String>> = transactionManager.run {
+    ): GetUserRolesResult = transactionManager.run {
         val user = usersRepository.getUserByEmail(email)
             ?: return@run failure(UserError.UserNotFound)
 
@@ -161,7 +170,7 @@ class UserServiceImpl(
 
     override fun getUserProfileInfo(
         userId: Int
-    ): Either<UserError, UserWithRoles> = transactionManager.run {
+    ): GetUserProfileInfoResult = transactionManager.run {
         val user = usersRepository.getUserWithRolesById(userId)
             ?: return@run failure(UserError.UserNotFound)
 
@@ -171,7 +180,7 @@ class UserServiceImpl(
     override fun getAllUsers(
         offset: Int,
         limit: Int
-    ): Either<UserError, List<UserWithRoles>> = transactionManager.run {
+    ): GetAllUsersResult = transactionManager.run {
         when {
             offset < 0 -> failure(UserError.InvalidOffset)
             limit <= 0 -> failure(UserError.InvalidLimit)
@@ -183,7 +192,7 @@ class UserServiceImpl(
         userId: Int,
         roles: List<String>,
         areaId: Int?
-    ): Either<UserError, Unit> = transactionManager.run {
+    ): ChangeUserRolesResult = transactionManager.run {
         usersRepository.getUserById(userId)
             ?: return@run failure(UserError.UserNotFound)
 
@@ -214,7 +223,7 @@ class UserServiceImpl(
     override fun changeUserPassword(
         userId: Int,
         newPassword: String
-    ): Either<UserError, Unit> = transactionManager.run {
+    ): ChangeUserPasswordResult = transactionManager.run {
         usersRepository.getUserById(userId)
             ?: return@run failure(UserError.UserNotFound)
 
@@ -232,7 +241,7 @@ class UserServiceImpl(
         loginToken: String,
         userId: Int,
         selectedRole: String
-    ): Either<UserError, SelectRoleResult> = transactionManager.run {
+    ): SelectRoleServiceResult = transactionManager.run {
 
         val storedLoginToken = loginTokensRepository.getByToken(loginToken)
             ?: return@run failure(UserError.InvalidToken)
