@@ -37,4 +37,6 @@ interface UsersRepository {
     fun updateUserPassword(userId: Int, newPasswordHash: String)
 
     fun updateUserArea(userId: Int, areaId: Int?)
+
+    fun removeUserRole(userId: Int, role: String)
 }

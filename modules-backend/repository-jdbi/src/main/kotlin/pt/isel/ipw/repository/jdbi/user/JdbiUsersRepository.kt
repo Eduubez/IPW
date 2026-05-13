@@ -245,4 +245,16 @@ class JdbiUsersRepository(
             .execute()
     }
 
+    override fun removeUserRole(userId: Int, role: String) {
+        handle.createUpdate(
+            """
+            delete from User_Role
+            where user_id = :userId
+              and role_name = :role
+        """
+        )
+            .bind("userId", userId)
+            .bind("role", role)
+            .execute()
+    }
 }

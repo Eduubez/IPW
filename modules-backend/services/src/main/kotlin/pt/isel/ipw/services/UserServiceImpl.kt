@@ -63,7 +63,7 @@ class UserServiceImpl(
         usersRepository.addUserRoles(userId, normalizedRoles)
 
         if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
-            areasRepository.updateBoss(areaId!!, userId)
+            assignAreaBoss(areaId!!, userId)
         }
 
         success(userId)
@@ -221,7 +221,7 @@ class UserServiceImpl(
         areasRepository.clearBossByUserId(userId)
 
         if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
-            areasRepository.updateBoss(areaId!!, userId)
+            assignAreaBoss(areaId!!, userId)
         }
 
         success(Unit)
@@ -321,6 +321,22 @@ class UserServiceImpl(
         success(usersRepository.getAssignableUsersByRole(role, areaId))
     }
 
+    private fun Transaction.assignAreaBoss(areaId: Int, newBossId: Int) {
+        val oldBossId = areasRepository.getBossId(areaId)
+
+        if (oldBossId != null && oldBossId != newBossId) {
+            usersRepository.removeUserRole(oldBossId, Roles.SUPERVISOR)
+
+            val oldBossRoles = usersRepository.getUserRoles(oldBossId)
+            if (Roles.INVESTIGATOR !in oldBossRoles) {
+                usersRepository.updateUserArea(oldBossId, null)
+            }
+        }
+
+        areasRepository.updateBoss(areaId, newBossId)
+    }
+
+
     private fun validateLogin(user: User?, password: String): UserError? {
         return when {
             user == null -> UserError.InvalidCredentials
@@ -365,12 +381,6 @@ class UserServiceImpl(
             areaId == null && !onlyArealessRoles -> UserError.AreaRequired
 
             areaId != null && !areasRepository.isAreaStoredById(areaId) -> UserError.AreaNotFound
-
-            roles.any { it == Roles.SUPERVISOR } &&
-                    areaId != null &&
-                    areasRepository.getBossId(areaId)
-                        ?.let { bossId -> userId == null || bossId != userId } == true ->
-                UserError.AreaAlreadyHasSupervisor
 
             else -> null
         }
