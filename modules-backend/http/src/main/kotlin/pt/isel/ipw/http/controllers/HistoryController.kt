@@ -3,12 +3,12 @@ package pt.isel.ipw.http.controllers
 import jakarta.annotation.security.RolesAllowed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import pt.isel.ipw.domain.roles.Roles
+import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.services.errors.Failure
 import pt.isel.ipw.services.errors.HistoryError
@@ -27,8 +27,8 @@ class HistoryController(
     fun getUserHistory(
         @PathVariable userId: Int,
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userRole = auth?.authorities?.last()?.authority?.removePrefix("ROLE_")?.lowercase() ?: "" // takin the last at this point , while we dont have active role implemented
+        val userRole = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = historyService.getUserHistory(userId, userRole)
 
@@ -48,10 +48,10 @@ class HistoryController(
     fun getAreaHistory(
         @PathVariable areaId: Int,
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val subject = auth?.principal as? Int
+        val subject = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = historyService.getAreaHistory(subject!!,areaId)
+        val result = historyService.getAreaHistory(subject,areaId)
         return when(result) {
             is Success -> ResponseEntity.ok(result.value)
             is Failure -> {
