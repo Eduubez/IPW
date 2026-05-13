@@ -47,7 +47,7 @@ export function InvestigatorDashboard() {
 
   const fetchProcess = async () => {
     try {
-      const response = await ProcessApi.getAll();
+      const response = await ProcessApi.getAll(0,100);
       if (response.success) {
         console.log(response.data)
         setProcess(cleanProcess(response.data, navigate));
