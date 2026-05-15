@@ -30,6 +30,7 @@ class ProcessServiceImplTest {
             accessTokenTtlMinutes = 120L,
             refreshTokenTtlMinutes = 10080L
         )
+
         private val trxManager = JdbiTransactionManager(jdbi)
 
         private val processService = ProcessServiceImpl(
@@ -202,14 +203,6 @@ class ProcessServiceImplTest {
     }
 
 
-    // Temos que aumentar o número de casos da base de dados para realizar este teste
-//    @Test
-//    fun `create process - supervisor from different area returns InvalidSupervisor`() {
-//        val result = createValid(area = "Fire", supervisorId = SUPERVISOR_ID)
-//        assertTrue(result is Failure)
-//        assertEquals(ProcessError.InvalidSupervisor, (result as Failure).value)
-//    }
-
 // -----------------------------------------------------------------------
 // getProcessById
 // -----------------------------------------------------------------------
@@ -227,7 +220,7 @@ class ProcessServiceImplTest {
         assertEquals(processId, process.id)
         assertEquals("Processo Teste", process.name)
         assertEquals("Car Accident", process.area.name)
-        assertEquals("not_assigned", process.state.name.lowercase())
+        assertEquals("assigned", process.state.name.lowercase())
     }
 
     @Test

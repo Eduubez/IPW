@@ -43,5 +43,7 @@ interface ProcessRepository {
 
     fun cancelProcess(processId: Int)
 
+    fun changeState(processId: Int, newState: String)
+
 
 }

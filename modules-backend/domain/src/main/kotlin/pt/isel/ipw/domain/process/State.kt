@@ -7,24 +7,42 @@ enum class State {
     WAITING_APPROVAL_SUPERVISOR,
     APPROVED_BY_SUPERVISOR,
     REJECTED_BY_SUPERVISOR,
-    WAITING_FOR_APPROVAL_MANAGER,
+    WAITING_APPROVAL_MANAGER,
     APPROVED_BY_MANAGER,
     REJECTED_BY_MANAGER,
-    CANCELED
-}
+    CANCELED;
 
-fun String.toState(): State {
-    return when (this.lowercase()) {
-        "not_assigned" -> State.NOT_ASSIGNED
-        "assigned" -> State.ASSIGNED
-        "on_going" -> State.ON_GOING
-        "waiting_approval_supervisor" -> State.WAITING_APPROVAL_SUPERVISOR
-        "approved_by_supervisor" -> State.APPROVED_BY_SUPERVISOR
-        "rejected_by_supervisor" -> State.REJECTED_BY_SUPERVISOR
-        "waiting_for_approval_manager" -> State.WAITING_FOR_APPROVAL_MANAGER
-        "approved_by_manager" -> State.APPROVED_BY_MANAGER
-        "rejected_by_manager" -> State.REJECTED_BY_MANAGER
-        "canceled" -> State.CANCELED
-        else -> throw IllegalArgumentException("Unknown state: $this")
+
+    override fun toString(): String =
+        when (this) {
+            NOT_ASSIGNED -> "not_assigned"
+            ASSIGNED -> "assigned"
+            ON_GOING -> "on_going"
+            WAITING_APPROVAL_SUPERVISOR -> "waiting_approval_supervisor"
+            APPROVED_BY_SUPERVISOR -> "approved_by_supervisor"
+            REJECTED_BY_SUPERVISOR -> "rejected_by_supervisor"
+            WAITING_APPROVAL_MANAGER -> "waiting_approval_manager"
+            APPROVED_BY_MANAGER -> "approved_by_manager"
+            REJECTED_BY_MANAGER -> "rejected_by_manager"
+            CANCELED -> "canceled"
+        }
+
+    companion object {
+        fun mapStringToState(value: String): State =
+            when (value.lowercase()) {
+                "not_assigned" -> NOT_ASSIGNED
+                "assigned" -> ASSIGNED
+                "on_going" -> ON_GOING
+                "waiting_approval_supervisor" -> WAITING_APPROVAL_SUPERVISOR
+                "approved_by_supervisor" -> APPROVED_BY_SUPERVISOR
+                "rejected_by_supervisor" -> REJECTED_BY_SUPERVISOR
+                "waiting_approval_manager" -> WAITING_APPROVAL_MANAGER
+                "approved_by_manager" -> APPROVED_BY_MANAGER
+                "rejected_by_manager" -> REJECTED_BY_MANAGER
+                "canceled" -> CANCELED
+                else -> throw IllegalArgumentException("Unknown state: $value")
+            }
     }
+
+
 }

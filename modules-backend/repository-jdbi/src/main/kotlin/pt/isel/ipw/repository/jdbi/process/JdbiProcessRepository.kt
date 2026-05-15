@@ -403,13 +403,9 @@ class JdbiProcessRepository(
     }
 
     override fun cancelProcess(processId: Int) {
-        val stateId = handle.createUpdate(
-            """
-        insert into State(name)
-        values ('canceled')
-        """
+        val stateId = handle.createQuery(
+            "select id from State where name = 'canceled'"
         )
-            .executeAndReturnGeneratedKeys()
             .mapTo(Int::class.java)
             .one()
 
@@ -423,4 +419,27 @@ class JdbiProcessRepository(
             .bind("stateId", stateId)
             .execute()
     }
+
+
+    override fun changeState(processId: Int, newState: String) {
+        val stateId = handle.createQuery(
+            """
+        select id from State where name = :state
+        """
+        )
+            .bind("state", newState)
+            .mapTo(Int::class.java)
+            .one()
+
+        handle.createUpdate(
+            """
+        insert into Process_State(process_id, state_id, start_date)
+        values (:processId, :stateId, current_timestamp)
+        """
+        )
+            .bind("processId", processId)
+            .bind("stateId", stateId)
+            .execute()
+    }
+
 }
