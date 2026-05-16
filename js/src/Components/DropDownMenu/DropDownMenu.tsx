@@ -8,7 +8,7 @@ import styles from './dropdownmenu.module.css';
   
 
 
-export function DropDownMenu({label, options,onSelect,mandatory}: {label: string, options: string[], onSelect: (value: any) => void, mandatory?: boolean}) {
+export function DropDownMenu({label, options,onSelect,mandatory}: {label: string, options: any[], onSelect: (value: any) => void, mandatory?: boolean}) {
     const [selectedOption, setSelectedOption] = useState('');
     const formId = useId();
 
@@ -35,8 +35,8 @@ export function DropDownMenu({label, options,onSelect,mandatory}: {label: string
           }}
         >
           {options.map((option, index) => (
-            <MenuItem key={index} className={styles.item} value={option}>
-              <span>{option}</span>
+            <MenuItem key={index} className={styles.item} value={option.id}>
+              <span>{option.name}</span>
             </MenuItem>
           ))}
         </Select>

@@ -55,6 +55,9 @@ export const UsersApi = {
   getUserInformation,
 };
 
+type UserResponseList = {
+  results: UserResponse[];
+}
 // choose which role to use in the current session - every user
 async function selectRole(
   role: string,
@@ -120,11 +123,11 @@ async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
 async function getAll(
   offset = 0,
   limit = 10,
-): Promise<ResponseApi<UserResponse[]>> {
+): Promise<ResponseApi<UserResponseList>> {
   const query = buildQuery({ offset, limit });
   const token = userStore.getAccessToken()?.trim();
 
-  const response = await fetchApi<UserResponse[]>(`users${query}`, {
+  const response = await fetchApi<UserResponseList>(`users${query}`, {
     method: "GET",
     headers: {
       Authorization: "Bearer " + token,

@@ -2,16 +2,15 @@ import { useState } from "react";
 import styles from "./sidebar.module.css";
 import { useNavigate } from "react-router-dom";
 import { AuthApi } from "../../Utility/Api/LoginApi";
-
-const navigationItems = [
-  { name: "Inicio", path: "/dashboard", icon: "dashboard" },
-  { name: "Historico", path: "/user/history", icon: "assignment" },
-  { name: "Mudar de papel", path: "/role-selection", icon: "bar_chart" },
-];
+import { userStore } from "../../Utility/Store/UserStore";
+import { ROLES } from "../../MockData/MockRoles";
 
 export default function SideBar() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const activeRole = userStore.getActiveRole();
   const navigate = useNavigate();
+
+  const navigationItems = activeRole ? ROLES.find(role => role.key === activeRole)!.navigationItems : [];
   const handleNavigation = (path: string) => {
     navigate(path);
   };

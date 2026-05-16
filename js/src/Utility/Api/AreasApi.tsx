@@ -8,7 +8,7 @@ export type AreaResponse = {
   bossName: string | null;
 };
 
-type AreaListResponse = {
+export type AreaListResponse = {
   areas: AreaResponse[];
 };
 

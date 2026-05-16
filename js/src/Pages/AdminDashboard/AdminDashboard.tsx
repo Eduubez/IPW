@@ -26,7 +26,7 @@ export default function AdminDashboard() {
       const response = await UsersApi.getAll(0, 100);
 
       if (response.success) {
-        setUsers(response.data);
+        setUsers(response.data.results);
       }
     } finally {
       setIsLoading(false);
