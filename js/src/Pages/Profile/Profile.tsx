@@ -37,7 +37,7 @@ export default function Profile() {
       setIsLoading(true);
       const response = await ActivityApi.getActivityByUser(userId, 0, 10);
       if (response.success) {
-        setActivity(response.data);
+        setActivity(response.data.results);
       }
     } finally {
       setIsLoading(false);
