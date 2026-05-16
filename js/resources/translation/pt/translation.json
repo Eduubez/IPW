@@ -152,5 +152,10 @@
       "APPROVED_BY_MANAGER": "Aprovado pelo Gestor",
       "REJECTED_BY_MANAGER": "Rejeitado pelo Gestor",
       "CANCELED": "Cancelado"
+  },
+  "NotAuthorizedPage": {
+    "title": "Acesso Negado",
+    "description": "Não tem permissão para aceder ao conteúdo desta página.",
+    "goBack": "Voltar"
   }
 }

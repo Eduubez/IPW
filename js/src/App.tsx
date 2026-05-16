@@ -6,10 +6,12 @@ import { DashboardRoute } from "./Routes/DashboardRoute";
 import Profile from "./Pages/Profile/Profile";
 import RoleSelection from "./Pages/RoleSelection/RoleSelection";
 import NewProcess from "./Pages/NewProcess/NewProcess";
-import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
+import { AuthenticatedRoute } from "./Components/AuthenticatedRoute/AuthenticatedRoute";
 import { SnackbarProvider } from "notistack";
 import ProcessPage from "./Pages/ProcessPage/ProcessPage";
 import HistoryPage from "./Pages/History/HistoryPage";
+import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
+import { NotAuthorizedPage } from "./Pages/NotAuthorized/NotAuthorizedPage";
 function AppLayout() {
   const location = useLocation();
   const pathsWithoutSidebar = ["/login", "/role-selection"];
@@ -25,51 +27,65 @@ function AppLayout() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <AuthenticatedRoute>
                 <DashboardRoute />
-              </ProtectedRoute>
+              </AuthenticatedRoute>
             }
           />
           <Route
             path="/profile"
             element={
-              <ProtectedRoute>
+              <AuthenticatedRoute>
                 <Profile />
-              </ProtectedRoute>
+              </AuthenticatedRoute>
             }
           />
           <Route
             path="/role-selection"
             element={
-              <ProtectedRoute>
+              <AuthenticatedRoute>
                 <RoleSelection />
-              </ProtectedRoute>
+              </AuthenticatedRoute>
             }
           />
           <Route
             path="/processes/new"
             element={
-              <ProtectedRoute>
-                <NewProcess />
-              </ProtectedRoute>
+              <AuthenticatedRoute>
+                <ProtectedRoute requiredRole={["triator"]}>
+                  <NewProcess />
+                </ProtectedRoute>
+              </AuthenticatedRoute>
             }
           />
           <Route
             path="/processes/:id"
             element={
-              <ProtectedRoute>
-                <ProcessPage />
-              </ProtectedRoute>
+              <AuthenticatedRoute>
+                <ProtectedRoute
+                  requiredRole={["investigator", "supervisor", "manager"]}>
+                  <ProcessPage />
+                </ProtectedRoute>
+              </AuthenticatedRoute>
             }
           />
           <Route
-          path="/user/history"
+            path="/user/history"
             element={
-              <ProtectedRoute>
-                <HistoryPage />
-              </ProtectedRoute>
+              <AuthenticatedRoute>
+                <ProtectedRoute
+                  requiredRole={[
+                    "investigator",
+                    "supervisor",
+                    "manager",
+                    "triator",
+                  ]}>
+                  <HistoryPage />
+                </ProtectedRoute>
+              </AuthenticatedRoute>
             }
           />
+          <Route path="/not-authorized" element={<NotAuthorizedPage />} />
         </Routes>
       </div>
     </div>

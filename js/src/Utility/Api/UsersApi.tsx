@@ -76,9 +76,7 @@ async function selectRole(
   );
 
   if (response.success) {
-    userStore.setActiveRole(role);
     userStore.setAccessToken(response.data.accessToken.value);
-    userStore.setAccessTokenExpirationDate(response.data.accessToken.expiresAt);
     enqueueSnackbar(i18next.t("RoleSelection.roleSelected"), {
       variant: ToastType.SUCCESS,
     });
