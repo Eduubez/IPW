@@ -1,7 +1,9 @@
 package pt.isel.ipw.http.errors
 
+import pt.isel.ipw.domain.report.Report
 import pt.isel.ipw.services.errors.ActivityError
 import pt.isel.ipw.services.errors.ProcessError
+import pt.isel.ipw.services.errors.ReportError
 import pt.isel.ipw.services.errors.UserError
 
 private val userErrorMap = mapOf(
@@ -57,3 +59,19 @@ private val processErrorMap = mapOf(
 
 fun ProcessError.toHttp(): Pair<Int, Problem> =
     this.status to (processErrorMap[this] ?: Problem.internalServerError)
+
+private val reportErrorMap = mapOf(
+    ReportError.InvalidContent to Problem.invalidContent,
+    ReportError.ProcessNotFound to Problem.processNotFound,
+    ReportError.ReportNotFound to Problem.reportNotFound,
+    ReportError.NotAssociated to Problem.notAssociated,
+    ReportError.UnauthorizedInvestigator to Problem.unauthorizedInvestigator,
+    ReportError.Unauthorized to Problem.unauthorized,
+    ReportError.AlreadyRejected to Problem.alreadyRejected,
+    ReportError.NotApprovedBySupervisor to Problem.notApprovedBySupervisor,
+    ReportError.AlreadyApproved to Problem.alreadyApproved
+)
+
+
+fun ReportError.toHttp(): Pair<Int, Problem> =
+    this.status to (reportErrorMap[this] ?: Problem.internalServerError)

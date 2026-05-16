@@ -50,4 +50,14 @@ object ApiRoutes {
         const val PRIORITY_FULL = "$BASE$PRIORITY"
         const val CANCEL_FULL = "$BASE$CANCEL"
     }
+
+    object Report {
+
+        const val BASE = "${Process.BASE}/{processId}/report"
+
+        const val APPROVE = "/approve"
+        const val REJECT = "/reject"
+
+    }
+
 }

@@ -2,6 +2,7 @@ package pt.isel.ipw.repository.jdbi.transaction
 
 import org.jdbi.v3.core.Handle
 import pt.isel.ipw.repository.Transaction
+import pt.isel.ipw.repository.jdbi.JdbiReportRepository
 import pt.isel.ipw.repository.jdbi.activity.JdbiActivityRepository
 import pt.isel.ipw.repository.jdbi.area.JdbiAreasRepository
 import pt.isel.ipw.repository.jdbi.history.JdbiHistoryRepository
@@ -27,6 +28,8 @@ class JdbiTransaction(
 
 
     override val processRepository by lazy { JdbiProcessRepository(handle) }
+    override val reportRepository by lazy { JdbiReportRepository(handle) }
+
 
     override fun rollback() {
         handle.rollback()

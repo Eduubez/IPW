@@ -3,6 +3,7 @@ package pt.isel.ipw.services
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.ActivityActions
 import pt.isel.ipw.domain.mapToString
+import pt.isel.ipw.domain.process.Priority
 import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.Transaction
@@ -72,9 +73,6 @@ class ProcessServiceImpl(
 
             if (note != null) { /*noteServices.createNote(note)*/
             }
-
-            // INSURANCE AND TYPIFICATIONS
-
             // Deveria estar a utilizar o NoteServices para escrever as notas
 
             val processId = processRepository.createProcess(
@@ -99,7 +97,7 @@ class ProcessServiceImpl(
             activityServices.createActivity(
                 processId,
                 userId,
-                ActivityActions.CREATED.mapToString(),
+                ActivityActions.CREATED_PROCESS.mapToString(),
                 "Process created by ${triator.name}"
             )
 
@@ -129,9 +127,6 @@ class ProcessServiceImpl(
         role: String
     ): GetAllProcessesResult =
         transactionManager.run {
-            // so pode ver os processos associados a si - Investigador
-            // so pode ver os processos da sua area - Supervisor
-            // ao passar apenas o userId e não a area, como o processos possui sempre quem é o Investigador e Supervisor, basta filtrar pelos seus ids
 
             val validation = validateFilters(limit, offset)
 
@@ -248,7 +243,7 @@ class ProcessServiceImpl(
             activityServices.createActivity(
                 processId,
                 userId,
-                ActivityActions.CANCELLED.mapToString(),
+                ActivityActions.CANCELLED_PROCESS.mapToString(),
                 "Process cancelled by manager"
             )
 
@@ -280,7 +275,7 @@ class ProcessServiceImpl(
 
 
     private fun validatePriority(priority: String): Boolean =
-        priority.lowercase() in listOf("normal", "with_priority", "urgent")
+        Priority.mapStringToPriority(priority) != null
 
 
     private fun Transaction.validateInvestigator(investigatorId: Int?, area: String): Boolean {
@@ -300,7 +295,7 @@ class ProcessServiceImpl(
 
     private fun resolvedUserId(userId: Int, role: String): Int? =
         when (role) {
-            "manager" -> null
+            Roles.MANAGER -> null
             else -> userId
         }
 

@@ -4,7 +4,14 @@ import jakarta.annotation.security.RolesAllowed
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.RequestMapping
 import pt.isel.ipw.domain.DTO.input.CreateProcessRequest
 import pt.isel.ipw.domain.DTO.input.UpdatePriorityRequest
 import pt.isel.ipw.domain.DTO.output.CreateProcessResponse
@@ -114,7 +121,7 @@ class ProcessController(
 
         val result = processService.changeEndDate(id, endDate, userId, role)
 
-        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
     }
 
     @RolesAllowed(Roles.TRIATOR)
@@ -128,8 +135,7 @@ class ProcessController(
 
         val result = processService.assignInvestigator(id, triatorId, investigatorId)
 
-        // talvez retornar mensagem de sucesso 204 - No Content
-        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
     }
 
     @RolesAllowed(Roles.TRIATOR)
@@ -143,8 +149,7 @@ class ProcessController(
 
         val result = processService.assignSupervisor(id, triatorId, supervisorId)
 
-        // talvez retornar mensagem de sucesso 204 - No Content
-        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
     }
 
 
@@ -156,7 +161,7 @@ class ProcessController(
 
         val result = processService.changePriority(id, priority.priority, userId)
 
-        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
 
     }
 
@@ -168,7 +173,7 @@ class ProcessController(
 
         val result = processService.cancelProcess(id, userId)
 
-        return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
 
     }
 

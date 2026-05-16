@@ -203,6 +203,62 @@ class Problem(
         )
 
 
+        val invalidContent =
+            Problem(
+                type = "problems/invalid-content",
+                message = "Report content must be between 10 and 1000 characters",
+                errorCode = ErrorCode.INVALID_CONTENT
+            )
 
+        val notAssociated =
+            Problem(
+                type = "problems/not-associated",
+                message = "Not associated.",
+                errorCode = ErrorCode.NOT_ASSOCIATED
+            )
+
+        val unauthorizedInvestigator =
+            Problem(
+                type = "problems/unauthorized-investigator",
+                message = "Investigator does not belongs to this process",
+                errorCode = ErrorCode.UNAUTHORIZED_INVESTIGATOR
+            )
+
+
+        val unauthorized =
+            Problem(
+                type = "problems/unauthorized",
+                message = "User does not have permission to perform this action",
+                errorCode = ErrorCode.UNAUTHORIZED
+            )
+
+        val reportNotFound =
+            Problem(
+                type = "problems/report-not-found",
+                message = "Report not found for the given process",
+                errorCode = ErrorCode.REPORT_NOT_FOUND
+            )
+
+
+        val alreadyRejected =
+            Problem(
+                type = "problems/already-rejected",
+                message = "The process was already rejected",
+                errorCode = ErrorCode.ALREADY_REJECTED
+            )
+
+        val notApprovedBySupervisor =
+            Problem(
+                type = "problems/not-approved-by-supervisor",
+                message = "The process was not approved by a supervisor",
+                errorCode = ErrorCode.NOT_APPROVED_BY_SUPERVISOR
+            )
+
+        val alreadyApproved =
+            Problem(
+                type = "problems/already-approved",
+                message = "The process was already approved",
+                errorCode = ErrorCode.ALREADY_APPROVED
+            )
     }
 }

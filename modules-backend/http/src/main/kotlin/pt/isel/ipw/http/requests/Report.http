@@ -1,0 +1,278 @@
+@baseUrl = http://localhost:8080/api
+
+@loginTokenTriator = ..hfv8FXhemFa3t8MYJrTMY8sY-Dn6WYjEqf0PFI0EMLkajuTYfDgMY0FzFKWH9DvmJJI6z2RjxPrp4DWPe6kLxQ
+
+@loginTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcklkIjozLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzc4ODUxODI1LCJleHAiOjE3Nzg4NTIxMjV9.FeGiUUz_dMJLPkSkIS6xfvmC1WFQlWpqTPvvPqkGBUMxxhMvndmeTfcGDMhCvoAt_UMp_4HEeLACmnApaFjWLA
+
+@loginTokenSupervisor = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwidXNlcklkIjo0LCJyb2xlcyI6WyJzdXBlcnZpc29yIl0sInR5cGUiOiJsb2dpbiIsImlhdCI6MTc3ODg0ODI2MiwiZXhwIjoxNzc4ODQ4NTYyfQ.PJb4zjbiU27zWuVwiv23O2S1SE9b8DUCftnIVtbnfhwcggPIKqOiRUKbfTzSvoV7TouP-OefDQztTJ-klRm-Rg
+
+@loginTokenManager = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1IiwidXNlcklkIjo1LCJyb2xlcyI6WyJtYW5hZ2VyIl0sInR5cGUiOiJsb2dpbiIsImlhdCI6MTc3ODg0ODQwNywiZXhwIjoxNzc4ODQ4NzA3fQ.yZP6qt9ACOHKtOc-fMrTh1qK5KlgEGmZXUylrYCMglys5xZ9Oj4AAP1SifOmf15cT7askBqOi39c_tIGmXL3FQ
+
+# Access tokens - Update these with valid tokens from login
+@accessTokenTriator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoidHJpYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Nzg4NDgyMjUsImV4cCI6MTc3ODg1NTQyNX0.oViqDwWPmn681VMGF_WhJxYewBk8fMEElxYUcMjHckLJjihNR3Ex9ygsRmtFwpi9tp9i2reMiukerLqffHZr5w
+
+@accessTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcklkIjozLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3ODg1MTg0MiwiZXhwIjoxNzc4ODU5MDQyfQ.VYz1ROwAwHFh7Kcr-QZRO19_2_ucml7kdWndWAbtUNBDtMGCzBveg95yvfvCXwmrn0vKIKlieBC7VWYmDRm48g
+
+@accessTokenSupervisor = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwidXNlcklkIjo0LCJyb2xlIjoic3VwZXJ2aXNvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Nzg4NDgyODMsImV4cCI6MTc3ODg1NTQ4M30.0_gAqPXMzISugfheaHZ23PUQkm21tv49QqbYDq7aAJ9UN26FEcPRHEPnr6RgZvqwjuEJcizlprTS6WTvl7-Ucw
+
+@accessTokenManager =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1IiwidXNlcklkIjo1LCJyb2xlIjoibWFuYWdlciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Nzg4NDg0MjQsImV4cCI6MTc3ODg1NTYyNH0.UCIuYxXa9j8gXT38gGr26ZzFpgU3JmDpZKCqiNgXCb5V_PD0J0OgIlmIEacC42homHGdzq9YcOX_ucg-ZTr7cA
+
+# Process ID (update this after creating a process)
+@processId = 1
+
+# Report ID (update this after creating a report)
+@reportId = 1
+
+
+
+### Login - Investigator
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "bob@ipw.pt",
+  "password": "12345"
+}
+
+### Select Role
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginTokenInvestigator}}
+
+{
+  "role": "investigator"
+}
+
+
+### Create Report - Success (Investigator)
+POST {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": "Veiculo com danos frontais compatíveis com embate em objeto fixo. Foram recolhidas fotografias do local e do veiculo."
+}
+
+### Create Report - Empty content (should fail)
+POST {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": ""
+}
+
+### Create Report - Blank content (should fail)
+POST {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": "   "
+}
+
+
+
+### Login - Triator
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "alice@ipw.pt",
+  "password": "12345"
+}
+
+### Select Role
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginTokenTriator}}
+
+{
+  "role": "triator"
+}
+
+### Create Report - Unauthorized (Triator cannot create)
+POST {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenTriator}}
+
+{
+  "content": "Conteúdo do relatório"
+}
+
+
+### Login - Supervisor
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "carol@ipw.pt",
+  "password": "12345"
+}
+
+### Select Role
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginTokenSupervisor}}
+
+{
+  "role": "supervisor"
+}
+
+
+### Create Report - Unauthorized (Supervisor cannot create)
+POST {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenSupervisor}}
+
+{
+  "content": "Conteúdo do relatório"
+}
+
+### Create Report - Invalid Process ID
+POST {{baseUrl}}/process/9999/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": "Conteúdo do relatório válido"
+}
+
+### Login - Manager
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "david@ipw.pt",
+  "password": "12345"
+}
+
+### Select Role
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginTokenManager}}
+
+{
+  "role": "manager"
+}
+
+
+### Get Report by Process ID - Success (Investigator)
+GET {{baseUrl}}/process/{{processId}}/report
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Get Report by Process ID - Success (Supervisor)
+GET {{baseUrl}}/process/{{processId}}/report
+Authorization: Bearer {{accessTokenSupervisor}}
+
+### Get Report by Process ID - Success (Manager)
+GET {{baseUrl}}/process/{{processId}}/report
+Authorization: Bearer {{accessTokenManager}}
+
+### Get Report by Process ID - Process Not Found
+GET {{baseUrl}}/process/9999/report
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Get Report by Process ID - No Report Found
+GET {{baseUrl}}/process/2/report
+Authorization: Bearer {{accessTokenInvestigator}}
+
+
+### Update Report - Success (Investigator who created it)
+PUT {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": "Relatório atualizado com informações adicionais após inspeção no local."
+}
+
+### Update Report - Empty content (should fail)
+PUT {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": ""
+}
+
+### Update Report - Unauthorized (Different investigator)
+PUT {{baseUrl}}/process/{{processId}}/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenTriator}}
+
+{
+  "content": "Tentativa de atualização não autorizada"
+}
+
+### Update Report - Process Not Found
+PUT {{baseUrl}}/process/9999/report
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": "Conteúdo válido"
+}
+
+
+### Approve Report - Success (Supervisor on ongoing process)
+POST {{baseUrl}}/process/{{processId}}/report/approve
+Authorization: Bearer {{accessTokenSupervisor}}
+
+### Approve Report - Success (Manager on waiting for approval manager)
+POST {{baseUrl}}/process/{{processId}}/report/approve
+Authorization: Bearer {{accessTokenManager}}
+
+### Approve Report - Unauthorized (Investigator cannot approve)
+POST {{baseUrl}}/process/{{processId}}/report/approve
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Approve Report - Unauthorized (Triator cannot approve)
+POST {{baseUrl}}/process/{{processId}}/report/approve
+Authorization: Bearer {{accessTokenTriator}}
+
+### Approve Report - Invalid State
+POST {{baseUrl}}/process/{{processId}}/report/approve
+Authorization: Bearer {{accessTokenSupervisor}}
+
+### Approve Report - Report Not Found
+POST {{baseUrl}}/process/9999/report/approve
+Authorization: Bearer {{accessTokenSupervisor}}
+
+
+### Reject Report - Success (Supervisor on ongoing process)
+POST {{baseUrl}}/process/{{processId}}/report/reject
+Content-Type: application/json
+Authorization: Bearer {{accessTokenSupervisor}}
+
+
+### Reject Report - Success (Manager on waiting for approval manager)
+POST {{baseUrl}}/process/{{processId}}/report/reject
+Content-Type: application/json
+Authorization: Bearer {{accessTokenManager}}
+
+### Reject Report - Unauthorized (Investigator cannot reject)
+POST {{baseUrl}}/process/{{processId}}/report/reject
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+
+### Reject Report - Unauthorized (Triator cannot reject)
+POST {{baseUrl}}/process/{{processId}}/report/reject
+Content-Type: application/json
+Authorization: Bearer {{accessTokenTriator}}
+
+
+### Reject Report - Invalid State
+POST {{baseUrl}}/process/{{processId}}/report/reject
+Content-Type: application/json
+Authorization: Bearer {{accessTokenSupervisor}}
+
+
+
+### Reject Report - Report Not Found
+POST {{baseUrl}}/process/9999/report/reject
+Content-Type: application/json
+Authorization: Bearer {{accessTokenSupervisor}}
+
+

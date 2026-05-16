@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:8080/api
-@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcklkIjozLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzc3NjI1ODIwLCJleHAiOjE3Nzc2MjYxMjB9.RAy93mArCDwdY8D8wgsDPydFGays0MZIn4vKCdVgcnVQgcximOZqInQh5UtESM2dZOF3XCyVQpz8ECP8ur3s1A
+@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwidXNlcklkIjo0LCJyb2xlcyI6WyJzdXBlcnZpc29yIl0sInR5cGUiOiJsb2dpbiIsImlhdCI6MTc3ODUyNjQ4MCwiZXhwIjoxNzc4NTI2NzgwfQ.a4bxQ95XyhEbxBq-AK4tgTibx0yt3V1b7Yv7cgu1VVWDVAPIyZbszUbfHy5fIc3RhsncSu9HFGxejgPMJxVXmw
 @accessTokenTriator  =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoidHJpYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Nzc2MjU0NzcsImV4cCI6MTc3NzYzMjY3N30.UpRVdoeZkTL_Io8Qka_QZVv0U8c8XpzXjYZfF2o6KjDo3f67I9zUh1Ytjt4WlOnUeUX2NVHEzx-zx4Wo7suxfw
 @refreshTokenTriator =
 
@@ -42,7 +42,7 @@ Content-Type: application/json
   "name": "Chico Investigator",
   "email": "chicoI@gmail.com",
   "password": "12345",
-  "areaId": null,
+  "areaId": 2,
   "roles": ["investigator"]
 }
 
@@ -69,7 +69,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "chicoS@gmail.com",
+  "email": "carol@ipw.pt",
   "password": "12345"
 }
 
