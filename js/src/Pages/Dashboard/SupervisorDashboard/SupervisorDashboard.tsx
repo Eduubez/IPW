@@ -9,8 +9,8 @@ import {
 import { Header } from "../../../Components/Layouts/Header/Header";
 import { StatContainerLayout } from "../../../Components/StatContainerLayout/StatContainerLayout";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
-import styles from "./investigatordashboard.module.css";
 import { StateBadge, type StateType } from "../../../Components/Badge/StateBadge/StateBadge";
+import styles from "./supervisordashboard.module.css";
 
 type CleanProcess = {
   name: string;
@@ -41,7 +41,7 @@ const cleanProcess = (
   }));
 };
 
-export function InvestigatorDashboard() {
+export function SupervisorDashboard () {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
@@ -73,9 +73,9 @@ export function InvestigatorDashboard() {
   ];
 
   return (
-    <div className={styles["investigator-dashboard-container"]}>
+    <div className={styles["supervisor-dashboard-container"]}>
       <Header
-        title="Triator Dashboard"
+        title="Supervisor Dashboard"
         description="Olá novamente, veja o que tem acontecido ultimamente!"
       />
       <DataGrid

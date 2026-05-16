@@ -3,6 +3,10 @@ import { buildQuery, fetchApi, type ResponseApi } from "./FetchApi.tsx";
 import { userStore } from "../Store/UserStore.tsx";
 import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge.tsx";
 
+export type ProcessResponseApi = {
+  results: ProcessResponse[];
+}
+
 export type ProcessResponse = {
   id: number;
   name: string;
@@ -118,9 +122,9 @@ async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
 async function getAll(
   offset?: number,
   limit?: number,
-): Promise<ResponseApi<ProcessResponse[]>> {
+): Promise<ResponseApi<ProcessResponseApi>> {
   const query = buildQuery({ offset: offset, limit });
-  return await fetchApi<ProcessResponse[]>(`process${query}`, {
+  return await fetchApi<ProcessResponseApi>(`process${query}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${userStore.getAccessToken()}`,

@@ -2,6 +2,7 @@ import { TriatorDashboard } from "../Pages/Dashboard/TriatorDashboard/TriatorDas
 import AdminDashboard from "../Pages/AdminDashboard/AdminDashboard";
 import { userStore } from "../Utility/Store/UserStore";
 import { InvestigatorDashboard } from "../Pages/Dashboard/InvestigatorDashboard/InvestigatorDashboard";
+import { SupervisorDashboard } from "../Pages/Dashboard/SupervisorDashboard/SupervisorDashboard";
 
 export function DashboardRoute() {
   const activeRole = userStore.getActiveRole();
@@ -9,11 +10,12 @@ export function DashboardRoute() {
   switch (activeRole) {
     case "admin":
       return <AdminDashboard />;
-
     case "triator":
       return <TriatorDashboard />;
     case "investigator":
       return <InvestigatorDashboard />;
+    case "supervisor":
+      return <SupervisorDashboard />;
 
     default:
       return <div>Invalid role</div>;

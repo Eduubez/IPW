@@ -45,7 +45,7 @@ export function TriatorDashboard() {
     try {
       const response = await ProcessApi.getAll();
       if (response.success) {
-        setProcess(cleanProcess(response.data));
+        setProcess(cleanProcess(response.data.results));
       }
     } finally {
       setLoading(false);
@@ -75,21 +75,6 @@ export function TriatorDashboard() {
 
   const statArray = [
     {
-      icon: { name: Icon.Warning, style: { color: "red" } },
-      text: "Processos com Prioridade",
-      value: process.filter((p) => p.priorityValue === "WITH_PRIORITY").length,
-    },
-    {
-      icon: { name: Icon.Warning, style: { color: "#4caf50" } },
-      text: "Processos Prioritarios",
-      value: process.filter((p) => p.priorityValue === "URGENT").length,
-    },
-    {
-      icon: { name: Icon.Warning, style: { color: "#2196f3" } },
-      text: "Processos Normais",
-      value: process.filter((p) => p.priorityValue === "NORMAL").length,
-    },
-    {
       icon: { name: Icon.CarCrash, style: { color: "purple" } },
       text: "Acidente de Carro",
       value: process.filter((p) => p.area === "Car Accident").length,
@@ -117,13 +102,6 @@ export function TriatorDashboard() {
         description="Olá novamente, veja o que tem acontecido ultimamente!"
       />
       <StatContainerLayout statArray={statArray} loading={loading} />
-      <DataGrid
-        title="Processos Recentes"
-        columns={gridColumns}
-        rows={process}
-        loading={loading}
-        actions={gridActions}
-      />
     </div>
   );
 }
