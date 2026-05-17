@@ -1,5 +1,8 @@
+
 % Classe do documento e parâmetros gerais.
 \documentclass[a4paper,openright,twoside,11pt]{report}
+
+
 
 % Packages utilizadas e respetivos parâmetros.
 \usepackage[utf8]{inputenc}
@@ -27,32 +30,32 @@
 \setlength{\evensidemargin}{0.25cm}
 
 %\renewcommand{\baselinestretch}{1}
-
+\begin{document}
 % Página inicial (capa)
 \title{
-   \vspace{-50mm}
-   \begin{minipage}[l]{\textwidth}
-      \hspace{-20mm}\resizebox{75mm}{!}{\includegraphics{./figures/logoISELnew2.png}}\\
-   \end{minipage}\\[20mm]
-   {\bf Insurance Portal Workflow}
+  \vspace{-50mm}
+  \begin{minipage}[l]{\textwidth}
+    \hspace{-20mm}\resizebox{75mm}{!}{\includegraphics{./figures/logoISELnew2.png}}\\
+  \end{minipage}\\[20mm]
+  {\bf Insurance Portal Workflow}
 }
 
 % Nome dos autores (um por linha)
 \author{
-\begin{tabular}{ll}
-             &  Eduardo Bezerra \\
-             &  Francisco Tavares \\
-             &  Rafael Reis\\[50mm]
-\end{tabular}}
+  \begin{tabular}{ll}
+     & Eduardo Bezerra   \\
+     & Francisco Tavares \\
+     & Rafael Reis       \\[50mm]
+  \end{tabular}}
 
 \date{
-\begin{tabular}{ll}
-  {Orientadores:} & Pedro Miguens Matutino   \\
-                  & Artur Ferreira \\
-\end{tabular}\\[10mm]
-Relatório do projeto realizado no âmbito de Projecto e Seminário\\
-Licenciatura em Engenharia Informática e de Computadores\\[20mm]
-Junho de 2026}
+  \begin{tabular}{ll}
+                 {Orientadores:} & Pedro Miguens Matutino \\
+                                 & Artur Ferreira                        \\
+  \end{tabular}\\[10mm]
+  Relatório do projeto realizado no âmbito de Projecto e Seminário\\
+  Licenciatura em Engenharia Informática e de Computadores\\[20mm]
+  Junho de 2026}
 
 
 \begin{document}
@@ -70,38 +73,48 @@ Junho de 2026}
 \cleardoublepage
 \setcounter{page}{1}
 \begin{center}
-\textsc{\LARGE Instituto Superior de Engenharia de Lisboa}\\[50mm]
+  \textsc{\LARGE Instituto Superior de Engenharia de Lisboa}\\[50mm]
 
-{\large \bf  Insurance Portal Workflow}\\[15mm]
+  {\large \bf  Insurance Portal Workflow}\\[15mm]
 
-\begin{tabular}{rl}
-  46362  & Eduardo Bezerra\\[10mm]
-           & \rule{75mm}{0.5pt}\\[5mm]
-  51618  & Francisco Tavares\\[10mm]
-           & \rule{75mm}{0.5pt}\\
-  51870  & Rafael Henrique Souza Reis\\[10mm]
-           & \rule{75mm}{0.5pt}\\
-\end{tabular}\\[8mm]
+  \begin{tabular}{rl}
+    46362 & Eduardo Bezerra            \\[10mm]
+          & \rule{75mm}{0.5pt}         \\[5mm]
+    51618 & Francisco Tavares          \\[10mm]
+          & \rule{75mm}{0.5pt}         \\
+    51870 & Rafael Henrique Souza Reis \\[10mm]
+          & \rule{75mm}{0.5pt}         \\
+  \end{tabular}\\[8mm]
 
-\begin{tabular}{rl}
-  Orientadores: & Pedro Miguel Florindo Miguens Matutino\\[10mm]
-                & \rule{75mm}{0.5pt}\\[5mm]
-                & Artur Jorge Ferreira\\[10mm]
-                & \rule{75mm}{0.5pt}\\
-\end{tabular}\\[8mm]
+  \begin{tabular}{rl}
+    Orientadores: & Pedro Miguel Florindo Miguens Matutino \\[10mm]
+                  & \rule{75mm}{0.5pt}                     \\[5mm]
+                  & Artur Jorge Ferreira                   \\[10mm]
+                  & \rule{75mm}{0.5pt}                     \\
+  \end{tabular}\\[8mm]
 
-Relatório do projeto realizado no âmbito de Projecto e Seminário\\
-Licenciatura em Engenharia Informática e de Computadores\\[20mm]
-Junho de 2026\\
+  Relatório do projeto realizado no âmbito de Projecto e Seminário\\
+  Licenciatura em Engenharia Informática e de Computadores\\[20mm]
+  Semestre de Verão de 2025/2026\\
+  Junho de 2026\\
 \end{center}
 
 % Página de resumo em Português
 \cleardoublepage
 \chapter*{Resumo}
-Texto do resumo.
-Breve descrição do projeto, dos resultados importantes e das conclusões: o objetivo é dar ao leitor uma visão global do projeto (não deve exceder uma página).
+\noindent
+No setor dos seguros, a ocorrência de um sinistro origina a abertura de um processo formal de averiguação, com o objetivo de recolher evidências, analisar as circunstâncias e produzir um relatório técnico que suporte a tomada de decisão da seguradora.
 
-%{\bf Palavras-chave:} lista de palavras-chave separadas por ;.
+Neste enquadramento, a \textit{CAPT Consulting}, enquanto empresa especializada na área da averiguação de sinistros e cliente deste projeto, é responsável pela atribuição de averiguadores aos processos em curso, assegurando a recolha de evidências relevantes no local da ocorrência e a elaboração do respetivo relatório técnico.
+
+Na prática, coexistem múltiplos processos ativos em simultâneo, distribuídos por diferentes intervenientes, o que aumenta significativamente a complexidade da gestão operacional e do acompanhamento das averiguações.
+
+Atualmente, o cliente enfrenta dificuldades decorrentes da dispersão da informação por múltiplos sistemas e canais de comunicação. Os pedidos são frequentemente registados de forma não uniforme e comunicados maioritariamente por correio eletrónico ou outros meios informais. O acompanhamento do trabalho é, em muitos casos, suportado por ferramentas genéricas, como folhas de cálculo, inadequadas para \textit{workflows} complexos e ambientes colaborativos. Esta abordagem resulta em dificuldades no controlo de prazos, na uniformização de procedimentos e na obtenção de uma visão global e centralizada dos processos em curso.
+
+Com o objetivo de sistematizar os processos de averiguação de sinistros e fornecer uma solução adaptada às necessidades operacionais da \textit{CAPT Consulting}, foi concebido e desenvolvido o \textit{IPW} (\textit{Insurance Portal Workflow}), uma plataforma que centraliza a gestão de averiguações. A solução é composta por uma base de dados relacional, suportada por uma Web API responsável pela lógica de negócio e persistência de dados, e por uma aplicação Web que disponibiliza uma interface interativa aos diferentes utilizadores.
+
+\bigskip
+\noindent{\bf Palavras-chave:} \textit{workflow}; averiguação de sinistros; seguros; plataforma web; gestão de processos; centralização de informação.
 
 %% Página de agradecimentos
 %\cleardoublepage
@@ -147,4 +160,4 @@ Neste trabalho foram utilizadas ferramentas de inteligência artificial generati
 \appendix
 \include{apendiceex}
 
-\end{document} 
+\end{document}
