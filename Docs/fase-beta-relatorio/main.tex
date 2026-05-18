@@ -9,7 +9,7 @@
 \usepackage[portuguese]{babel}
 \addto{\captionsportuguese}{\renewcommand{\bibname}{Refer\^{e}ncias}}
 \addto{\captionsportuguese}{\renewcommand{\contentsname}{\'{I}ndice}}
-\addto{\captionsportuguese}{\renewcommand{\appendixname}{Ap\^{e}ndice}}\
+\addto{\captionsportuguese}{\renewcommand{\appendixname}{Ap\^{e}ndice}}
 
 \usepackage{lipsum} % gerador de texto
 \usepackage{graphicx}
@@ -30,7 +30,7 @@
 \setlength{\evensidemargin}{0.25cm}
 
 %\renewcommand{\baselinestretch}{1}
-\begin{document}
+
 % Página inicial (capa)
 \title{
   \vspace{-50mm}
@@ -55,7 +55,8 @@
   \end{tabular}\\[10mm]
   Relatório do projeto realizado no âmbito de Projecto e Seminário\\
   Licenciatura em Engenharia Informática e de Computadores\\[20mm]
-  Junho de 2026}
+  Junho de 2026
+}
 
 
 \begin{document}
@@ -115,6 +116,25 @@ Com o objetivo de sistematizar os processos de averiguação de sinistros e forn
 
 \bigskip
 \noindent{\bf Palavras-chave:} \textit{workflow}; averiguação de sinistros; seguros; plataforma web; gestão de processos; centralização de informação.
+
+
+% Página de resumo em Inglês
+\cleardoublepage
+\chapter*{Abstract}
+\noindent
+In the insurance sector, the occurrence of a claim gives rise to the opening of a formal investigation process, with the aim of collecting evidence, analyzing the circumstances, and producing a technical report to support the insurance company’s decision-making process.
+
+In this context, \textit{CAPT Consulting}, as a company specialized in claims investigation and the client of this project, is responsible for assigning investigators to ongoing cases, ensuring the collection of relevant evidence at the scene of the incident and the preparation of the corresponding technical report.
+
+In practice, multiple active cases coexist simultaneously, distributed among different stakeholders, which significantly increases the complexity of operational management and the monitoring of investigations.
+
+Currently, the client faces difficulties resulting from the dispersion of information across multiple systems and communication channels. Requests are frequently registered in a non-standardized manner and communicated mainly through email or other informal means. Work monitoring is often supported by generic tools, such as spreadsheets, which are inadequate for complex \textit{workflows} and collaborative environments. This approach leads to difficulties in deadline control, procedure standardization, and obtaining a centralized and comprehensive view of ongoing cases.
+
+With the objective of systematizing claims investigation processes and providing a solution tailored to the operational needs of \textit{CAPT Consulting}, \textit{IPW} (\textit{Insurance Portal Workflow}) was conceived and developed, a platform that centralizes the management of investigations. The solution consists of a relational database, supported by a Web API responsible for business logic and data persistence, and a Web application that provides an interactive interface for different users.
+
+\bigskip
+\noindent{\bf Keywords:} \textit{workflow}; claims investigation; insurance; web platform; process management; information centralization.
+
 
 %% Página de agradecimentos
 %\cleardoublepage
