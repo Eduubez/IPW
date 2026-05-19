@@ -1,71 +1,53 @@
-\chapter{Exemplos} \label{cap:exemplos}
+\chapter{Demonstra\c{c}\~{a}o da Aplica\c{c}\~{a}o} \label{cap:demonstracao}
 
-A nossa solução é apresentada neste capítulo. A solução consiste em grandes ideias, desenvolvidas e testadas.
+Este cap\'{i}tulo apresenta os principais fluxos da aplica\c{c}\~{a}o desenvolvida, com o objetivo de demonstrar o funcionamento das funcionalidades implementadas at\'{e} \`{a} fase atual do projeto. A demonstra\c{c}\~{a}o encontra-se organizada de acordo com o percurso natural de utiliza\c{c}\~{a}o da plataforma, desde a autentica\c{c}\~{a}o at\'{e} \`{a} gest\~{a}o e acompanhamento dos processos de averigua\c{c}\~{a}o.
 
-Exemplo de indentação do segundo parágrafo.
+\section{Autentica\c{c}\~{a}o e sele\c{c}\~{a}o de papel} \label{sec:demo-auth}
 
-\section{Nome da primeira secção deste capítulo} \label{sec31}
-Texto da secção. Seguem-se exemplos de vários parágrafos.
+O primeiro contacto do utilizador com a aplica\c{c}\~{a}o ocorre atrav\'{e}s da p\'{a}gina de autentica\c{c}\~{a}o. Nesta p\'{a}gina, o utilizador introduz as suas credenciais para iniciar sess\~{a}o. Ap\'{o}s uma autentica\c{c}\~{a}o bem sucedida, a aplica\c{c}\~{a}o apresenta os pap\'{e}is dispon\'{i}veis para esse utilizador.
 
-Esta unidade curricular funciona no semestre de Verão de cada ano letivo. Nos casos de impedimento prolongado justificado (designadamente por doença ou por motivos profissionais no caso dos trabalhadores-estudantes), poderá ser prolongada, havendo lugar à elaboração de outro relatório de progresso
-e a nova inscrição se o prolongamento for além do período de época especial desse semestre. A entrega da justificação e a sua apreciação deverão ocorrer antes do final do prazo estabelecido para a entrega final.
+\textbf{TODO: colocar imagem da p\'{a}gina de login aqui.}
 
-O estudante só poderá frequentar Projecto e Seminário se, em conjunto com as restantes unidades curriculares em que se inscreve nesse semestre isso corresponder, no máximo, a 44 créditos ECTS, tendo acumulado, pelo menos, 138 créditos. No caso de estudantes em regime de tempo parcial, o valor máximo
-está limitado a 30 créditos no ano letivo. Não são admitidas inscrições como unidade curricular isolada.
+A sele\c{c}\~{a}o de papel permite que o mesmo utilizador desempenhe diferentes fun\c{c}\~{o}es no sistema, quando aplic\'{a}vel. Esta decis\~{a}o define o contexto da sess\~{a}o e condiciona as funcionalidades dispon\'{i}veis na interface, bem como os endpoints que podem ser acedidos no backend.
 
-Anualmente é divulgada a lista de ideias para projetos e respetivos orientadores. Os estudantes poderão propor outras ideias identificando os orientadores. A escolha da ideia de projeto é feita no período de
-interrupção letiva após o semestre de Inverno. As propostas de projeto são registadas no início do período letivo do semestre de Verão, verificado que os estudantes reúnem as condições de frequência.
-O projeto deve ser realizado em grupo de dois estudantes (excecionalmente um ou três). Cada elemento do grupo tem tarefas específicas pelas quais é responsável. Esta situação deve ficar clara desde o início do projeto.
+\textbf{TODO: colocar imagem da p\'{a}gina de sele\c{c}\~{a}o de papel aqui.}
 
-A orientação dos projetos é feita por docentes da área departamental onde o curso está ancorado ou por especialistas externos, podendo haver coorientadores, mas sendo obrigatória a coorientação por docente da área departamental no caso de orientação externa. O desenvolvimento do projeto é acompanhado de reuniões periódicas do orientador (ou coorientadores) com o grupo. A informação referente ao projeto é mantida em formato eletrónico em local acessível pelos elementos do grupo, pelos orientadores e pelos docentes de Projecto e Seminário.\\
+\section{Listagem e acompanhamento de processos} \label{sec:demo-processos}
 
-A avaliação de Projecto e Seminário envolve:
-\begin{enumerate}
-	\item proposta do projeto;
-	\item relatório de progresso;
-	\item apresentação individual;
-	\item cartaz e versão beta do projeto;
-	\item relatório de projeto e discussão pública final.
-\end{enumerate}
+Depois da sele\c{c}\~{a}o do papel, o utilizador \'{e} encaminhado para a \'{a}rea principal da aplica\c{c}\~{a}o, cujo conte\'{u}do varia consoante o papel selecionado. Para os pap\'{e}is diretamente envolvidos no acompanhamento de processos, esta \'{a}rea pode apresentar uma vis\~{a}o geral dos processos relevantes, incluindo informa\c{c}\~{a}o resumida como o nome do processo, a localiza\c{c}\~{a}o, a \'{a}rea associada, a data limite e a prioridade.
 
-A avaliação incide sobre o trabalho planeado e desenvolvido pelos estudantes, com constrições de tempo e prazos previamente estabelecidos. Se durante a realização do projeto for considerado que este está em risco, ouvidos os estudantes envolvidos, o orientador e o docente da unidade curricular decidem se o projeto continua. Em caso de desistência do estudante, esta deve ser comunicada ao orientador do projeto e ao regente da unidade curricular.
+\textbf{TODO: colocar imagem da dashboard/listagem de processos aqui.}
 
-\section{A segunda secção deste capítulo} \label{sec32}
-Na segunda secção deste capítulo, vamos abordar o enquadramento,
-o contexto e as funcionalidades.
+Quando dispon\'{i}vel, a tabela de processos serve como ponto de entrada para a consulta detalhada de cada processo. Esta abordagem permite que os utilizadores envolvidos no workflow acompanhem o estado dos processos de forma centralizada, reduzindo a depend\^{e}ncia de informa\c{c}\~{a}o dispersa por diferentes ficheiros ou canais de comunica\c{c}\~{a}o.
 
-\subsection{A primeira sub-secção desta secção} \label{sec321}
-As sub-secções são úteis para mostrar determinados conteúdos de forma
-organizada. Contudo, o seu uso excessivo dificulta a leitura do documento.
+\section{Cria\c{c}\~{a}o de processos} \label{sec:demo-criacao-processos}
 
-\subsection{A segunda sub-secção desta secção} \label{sec322}
-Esta é a segunda sub-secção desta secção, a qual termina aqui.
+A cria\c{c}\~{a}o de processos \'{e} uma funcionalidade associada ao papel de triador. Neste fluxo, o triador preenche a informa\c{c}\~{a}o inicial do processo, incluindo dados como o nome, localiza\c{c}\~{a}o, \'{a}rea, prioridade, data limite, seguradora e tipifica\c{c}\~{a}o. Quando aplic\'{a}vel, o triador pode tamb\'{e}m atribuir manualmente um averiguador e um supervisor ao processo.
 
-\section{Descrição detalhada da solução} \label{sec33}
-A solução proposta assenta nas seguintes ideias. O algoritmo~\ref{alg1}
-apresenta as ações de pesquisa de um elemento $E$ sobre um grafo $G$.
-\begin{algorithm}
-\caption{Algoritmo de pesquisa em grafo.}
-\label{alg1}
-\algorithmicrequire{Grafo G, Elemento E}\\
-\algorithmicensure{Localização de E em G}\\
-\begin{enumerate}
-\item Para todos os vértices $v$ em $G$
-\item Pesquisar e obter a localização de $E$
-\begin{enumerate}
-	\item Iniciar a lista de pontos, $P$
-	\item Ordenar $P$
-\end{enumerate}	
-\end{enumerate}
-\end{algorithm}
+\textbf{TODO: colocar imagem do formul\'{a}rio de cria\c{c}\~{a}o de processo aqui.}
 
-\newpage
-Nalgumas situações, é necessário apresentar excertos de
-código que ilustrem aspetos relevantes da implementação.
+Este fluxo representa uma das funcionalidades centrais da aplica\c{c}\~{a}o, uma vez que formaliza a entrada de novos processos no sistema e permite associar, desde o in\'{i}cio, os intervenientes respons\'{a}veis pelo seu acompanhamento.
 
-\begin{verbatim}
-namespace ps;
-public static void main() {
-		System.out.println(``PS - Projecto e Seminário'');
-}
-\end{verbatim}
+\section{Detalhe do processo} \label{sec:demo-detalhe-processo}
+
+A p\'{a}gina de detalhe do processo disponibiliza informa\c{c}\~{a}o mais completa sobre um processo espec\'{i}fico. Nesta \'{a}rea s\~{a}o apresentados dados como os intervenientes atribu\'{i}dos, a \'{a}rea, datas relevantes, prioridade, estado atual e informa\c{c}\~{a}o associada ao relat\'{o}rio de averigua\c{c}\~{a}o.
+
+\textbf{TODO: colocar imagem da p\'{a}gina de detalhe do processo aqui.}
+
+Esta p\'{a}gina permite concentrar num \'{u}nico local a informa\c{c}\~{a}o operacional do processo, facilitando o acompanhamento por parte dos diferentes pap\'{e}is envolvidos no workflow.
+
+\section{Gest\~{a}o de utilizadores} \label{sec:demo-users}
+
+A aplica\c{c}\~{a}o inclui tamb\'{e}m funcionalidades de administra\c{c}\~{a}o, acess\'{i}veis a utilizadores com o papel de administrador. Atrav\'{e}s desta \'{a}rea, \'{e} poss\'{i}vel consultar utilizadores, criar novos utilizadores, alterar pap\'{e}is e gerir a associa\c{c}\~{a}o de utilizadores a \'{a}reas.
+
+\textbf{TODO: colocar imagem da p\'{a}gina de gest\~{a}o de utilizadores aqui.}
+
+Esta funcionalidade \'{e} relevante para manter o sistema alinhado com a organiza\c{c}\~{a}o interna da CAPT, permitindo refletir altera\c{c}\~{o}es nas equipas, responsabilidades e \'{a}reas de especializa\c{c}\~{a}o.
+
+\section{Perfil e hist\'{o}rico de atividade} \label{sec:demo-perfil-historico}
+
+Por fim, a aplica\c{c}\~{a}o disponibiliza uma \'{a}rea de perfil, onde o utilizador pode consultar informa\c{c}\~{a}o associada \`{a} sua conta e \`{a} sua atividade recente. A exist\^{e}ncia de hist\'{o}rico e registo de intera\c{c}\~{o}es contribui para a rastreabilidade dos processos, permitindo perceber que opera\c{c}\~{o}es foram realizadas ao longo do tempo.
+
+\textbf{TODO: colocar imagem da p\'{a}gina de perfil ou hist\'{o}rico aqui.}
+
+Em conjunto, estes fluxos demonstram a base funcional da plataforma IPW e a forma como a aplica\c{c}\~{a}o suporta a gest\~{a}o estruturada dos processos de averigua\c{c}\~{a}o.
