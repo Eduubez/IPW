@@ -28,3 +28,19 @@ A valida\c{c}\~{a}o dos access tokens \'{e} realizada por um filtro HTTP dedicad
 Nem todas as rotas passam pelo mesmo fluxo de autentica\c{c}\~{a}o. Endpoints como login, sele\c{c}\~{a}o de papel e renova\c{c}\~{a}o de token t\^{e}m um tratamento espec\'{i}fico, uma vez que ainda n\~{a}o utilizam, ou n\~{a}o utilizam exclusivamente, um access token. Por esse motivo, o filtro JWT \'{e} configurado para ignorar estas rotas, permitindo que sejam tratados pelos respetivos mecanismos de autentica\c{c}\~{a}o ou renova\c{c}\~{a}o.
 
 Esta organiza\c{c}\~{a}o permite separar responsabilidades entre autentica\c{c}\~{a}o, autoriza\c{c}\~{a}o e l\'{o}gica de neg\'{o}cio. O filtro \'{e} respons\'{a}vel por identificar o utilizador a partir do token, o Spring Security aplica as regras gerais de acesso e os controladores delegam nos servi\c{c}os a execu\c{c}\~{a}o das opera\c{c}\~{o}es de dom\'{i}nio. Como resultado, a aplica\c{c}\~{a}o consegue controlar o acesso \`{a}s suas funcionalidades de forma consistente com os diferentes pap\'{e}is existentes no workflow.
+
+\section{Servidor Frontend} \label{sec:frontend-server}
+
+A componente de frontend da aplicação foi desenvolvida com recurso ao servidor Vite, utilizando React e TypeScript como principais tecnologias.
+
+A arquitetura do frontend encontra-se organizada em diferentes camadas funcionais, nomeadamente páginas, autenticação, comunicação, componentes e estilos. A camada de páginas é responsável pela organização das diferentes vistas da aplicação, incluindo páginas como autenticação, dashboard, gestão de processos e detalhe de processos. A camada de autenticação centraliza a lógica relacionada com o processo de autenticação, armazenamento de tokens de acesso e controlo de sessões dos utilizadores.
+
+A camada de comunicação é responsável pela interação com a API backend, assegurando o envio e receção de dados entre o cliente e o servidor. Já a camada de componentes contém elementos reutilizáveis da interface gráfica, como tabelas, formulários, botões e modais, promovendo maior reutilização de código e consistência visual entre as diferentes páginas da aplicação. Por fim, a camada de estilos concentra os estilos globais como por exemplo tipografia utilizada, utilizando CSS para definição da identidade visual da plataforma.
+
+De forma a garantir controlo de acesso às diferentes áreas da aplicação, foram implementados mecanismos de proteção de rotas no frontend. As rotas que requerem autenticação encontram-se encapsuladas pelo componente \texttt{AuthenticatedRoute}, responsável por verificar a existência de um token de autenticação válido antes de permitir o acesso à página pretendida. Caso o utilizador não esteja autenticado, este é redirecionado para a página de autenticação.
+
+Adicionalmente, determinadas páginas da plataforma requerem permissões específicas associadas ao perfil do utilizador autenticado. Para este efeito, foi desenvolvido o componente \texttt{ProtectedRoute}, responsável por validar se o utilizador possui o papel necessário para aceder à rota em questão. Caso o utilizador não possua as permissões adequadas, o sistema efetua o redirecionamento para uma página de acesso negado.
+
+Apesar da existência destes mecanismos de proteção no frontend, toda a validação de permissões e autorização é igualmente garantida no backend da aplicação, assegurando que utilizadores sem permissões adequadas não conseguem aceder a recursos protegidos através de manipulação do cliente.
+
+\subsection{Bibliotecas Utilizadas}
