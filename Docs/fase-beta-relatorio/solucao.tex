@@ -153,6 +153,7 @@ Nem todas as rotas passam pelo mesmo fluxo de autentica\c{c}\~{a}o. Endpoints co
 
 Esta organiza\c{c}\~{a}o permite separar responsabilidades entre autentica\c{c}\~{a}o, autoriza\c{c}\~{a}o e l\'{o}gica de neg\'{o}cio. O filtro \'{e} respons\'{a}vel por identificar o utilizador a partir do token, o Spring Security aplica as regras gerais de acesso e os controladores delegam nos servi\c{c}os a execu\c{c}\~{a}o das opera\c{c}\~{o}es de dom\'{i}nio. Como resultado, a aplica\c{c}\~{a}o consegue controlar o acesso \`{a}s suas funcionalidades de forma consistente com os diferentes pap\'{e}is existentes no workflow.
 
+
 \section{Servidor Frontend} \label{sec:frontend-server}
 
 A componente de frontend da aplicação foi desenvolvida com recurso ao servidor Vite, utilizando React e TypeScript como principais tecnologias.
@@ -167,4 +168,17 @@ Adicionalmente, determinadas páginas da plataforma requerem permissões especí
 
 Apesar da existência destes mecanismos de proteção no frontend, toda a validação de permissões e autorização é igualmente garantida no backend da aplicação, assegurando que utilizadores sem permissões adequadas não conseguem aceder a recursos protegidos através de manipulação do cliente.
 
+\textcolor{blue}{TODO: Adicionar imagem estrutura de pastas frontend}
+
 \subsection{Bibliotecas Utilizadas}
+
+Para o desenvolvimento da componente frontend foram utilizadas diversas bibliotecas de terceiros, descritas de seguida.
+
+\begin{itemize}
+    \item \textbf{Material UI} (v7.3.9) --- biblioteca de componentes visuais. Foi utilizada para componentes como \texttt{Modal}, \texttt{DropDownMenu} e \texttt{LoadingComponent}. 
+    \item \textbf{react-i18next} (v16.6.1) --- biblioteca de internacionalização que permite a gestão de traduções na aplicação, suportando múltiplos idiomas de forma dinâmica.
+
+    \item \textbf{jose} (v6.2.3) --- biblioteca utilizada para a descodificação de \textit{JSON Web Tokens} (JWT) no lado do cliente.
+
+    \item \textbf{notistack} (v3.0.2) --- biblioteca para apresentação de notificações do tipo \textit{snackbar} ao utilizador.
+\end{itemize}
