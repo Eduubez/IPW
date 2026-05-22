@@ -36,7 +36,7 @@ A Figura~\ref{fig:modelo_ea_sem_atributos} demonstra o modelo Entidade-Associaç
   \begin{center}
     \includegraphics[width=1.1\textwidth]{./figures/modelo-ea-sem-atributos.png}
   \end{center}
-  \caption{Modelo entidade-associação.}\label{fig:modelo_ea_sem_atributos}
+  \caption{Modelo entidade-associação sem atributos.}\label{fig:modelo_ea_sem_atributos}
 \end{figure}
 \newpage
 
@@ -71,7 +71,7 @@ No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador 
 
 
 
-No que respeita ao conjunto de entidades associado à gestão de processos, destacam-se as entidades \textit{Process}, \textit{Insurance}, \textit{State}, \textit{Location} e \textit{Typification}. Estas entidades são responsáveis por representar a informação principal associada aos processos geridos pela aplicação, bem como o seu enquadramento, estado e classificação.
+No que respeita ao conjunto de entidades associado à gestão de processos, destacam-se as entidades \textit{Process}, \textit{Insurance}, \textit{State} e \textit{Location}. Estas entidades são responsáveis por representar a informação principal associada aos processos geridos pela aplicação, bem como o seu enquadramento, estado e classificação.
 
 Relativamente à entidade \textit{Process}, esta constitui a entidade central do domínio da aplicação. É composta por um identificador único (\textit{id}), um nome (\textit{name}), um nível de prioridade (\textit{priority}), uma data de criação (\textit{creation date}), uma data prevista de conclusão (\textit{due date}).
 
@@ -79,18 +79,23 @@ No que concerne à entidade \textit{Insurance}, esta representa a seguradora ass
 
 Relativamente à entidade \textit{State}, esta é responsável por representar o estado atual de um processo ao longo do seu ciclo de vida. É composta por um identificador único (\textit{id}), um nome (\textit{name}). Os estados possíveis encontram-se limitados a um conjunto predefinido de valores, tais como \textit{Not Assigned}, \textit{Assigned}, \textit{On Going}, \textit{Waiting Approval Supervisor}, \textit{Approved by Supervisor}, \textit{Rejected by Supervisor}, \textit{Waiting Approval Manager}, \textit{Approved by Manager}, \textit{Rejected by Manager} e \textit{Canceled}.
 
-A entidade \textit{Location} representa a localização associada ao processo. Esta é composta por um identificador único (\textit{id}), o distrito (\textit{district}), o concelho (\textit{county}), a rua (\textit{street}), a latitude (\textit{latitude}) e a longitude (\textit{longitude}).
-
-Por fim, a entidade \textit{Typification} corresponde à tipificação associada ao processo, permitindo classificar o tipo de ocorrência ou situação registada. Esta entidade é composta por um identificador único (\textit{id}), um nome (\textit{name}) e um valor honorário (\textit{honorary}).
+Por fim, a entidade \textit{Location} representa a localização associada ao processo. Esta é composta por um identificador único (\textit{id}), o distrito (\textit{district}), o concelho (\textit{county}), a rua (\textit{street}), a latitude (\textit{latitude}) e a longitude (\textit{longitude}).
 
 No que respeita às relações entre estas entidades, um processo encontra-se associado a uma seguradora, podendo a mesma seguradora estar associada a múltiplos processos, caracterizando assim uma relação de um-para-muitos entre \textit{Insurance} e \textit{Process}.
 
 Relativamente à relação entre \textit{Process} e \textit{State}, um processo pode assumir diferentes estados ao longo do seu ciclo de vida, sendo possível que o mesmo estado esteja associado a diferentes processos. A cada relação entre estado e processo são armazenados a data de início (\textit{start date}) e a data de término (\textit{end date}).Esta relação permite representar a evolução e acompanhamento do processo dentro do sistema.
 
-No que concerne à relação entre \textit{Process} e \textit{Location}, cada processo encontra-se associado a uma localização específica, enquanto uma localização pode estar associada a múltiplos processos.
+Por último, no que concerne à relação entre \textit{Process} e \textit{Location}, cada processo encontra-se associado a uma localização específica, enquanto uma localização pode estar associada a múltiplos processos.
 
-Por último, relativamente à relação entre \textit{Process} e \textit{Typification}, cada processo possui uma tipificação associada, podendo a mesma tipificação ser utilizada por diferentes processos. Esta associação permite categorizar e organizar os processos segundo o tipo de ocorrência registada.
 
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=1.1\textwidth]{./figures/entidades-processo-caracteristicas.png}
+  \end{center}
+  \caption{Entidade processo e características.}\label{fig:entidades_processo_caracteristicas}
+\end{figure}
+
+\newpage
 
 \subsubsection{Processos, Relatório e Anexos}
 \textcolor{blue}{Pretendemos manter a estrutura para as restantes entidades e relações}
@@ -119,14 +124,7 @@ Esta abordagem permite deslocar determinadas regras críticas de consistência p
 
 
 
-\begin{figure}[h]
-  \begin{center}
-    \includegraphics[width=1.1\textwidth]{./figures/entidades-processo-caracteristicas.png}
-  \end{center}
-  \caption{Modelo entidade-associação.}\label{fig:entidades_processo_caracteristicas}
-\end{figure}
 
-\newpage
 
 
 
