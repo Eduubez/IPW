@@ -5,6 +5,7 @@ import pt.isel.ipw.domain.ActivityActions
 import pt.isel.ipw.domain.mapToString
 import pt.isel.ipw.domain.process.Priority
 import pt.isel.ipw.domain.process.ProcessView
+import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
@@ -123,12 +124,13 @@ class ProcessServiceImpl(
     override fun getAllProcesses(
         offset: Int?,
         limit: Int?,
+        areaId: Int?,
         userId: Int,
         role: String
     ): GetAllProcessesResult =
         transactionManager.run {
 
-            val validation = validateFilters(limit, offset)
+            val validation = validateFilters(limit, offset, areaId)
 
             val resolvedId = resolvedUserId(userId, role)
 
@@ -136,7 +138,10 @@ class ProcessServiceImpl(
                 return@run failure(validation.value)
             }
 
-            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, resolvedId)
+            // Quando estamos na tela do Averiguador queremos ver um processo que esteja à espera de ser aceito pelo Supervisor? Ou só os recusados ?
+            val targetStates = getTargetStates(role).map{ it.toString()}
+
+            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?:0 , resolvedId, targetStates)
             return@run success(processes)
 
         }
@@ -315,9 +320,10 @@ class ProcessServiceImpl(
         return user.area == area
     }
 
-    private fun validateFilters(limit: Int?, offset: Int?): ProcessValidationResult {
+    private fun validateFilters(limit: Int?, offset: Int?, areaId:Int?): ProcessValidationResult {
         if (limit != null && limit <= 0) return failure(ProcessError.InvalidLimit)
         if (offset != null && offset < 0) return failure(ProcessError.InvalidOffset)
+        if (areaId != null &&  areaId <= 0) return failure(ProcessError.InvalidAreaId)
         return success(Unit)
     }
 
@@ -333,7 +339,7 @@ class ProcessServiceImpl(
         userId: Int,
         role: String
     ): ProcessValidationResult {
-        if (process.investigator?.id == userId || process.supervisor?.id == userId || role == "manager") {
+        if (process.investigator?.id == userId || process.supervisor?.id == userId || role == Roles.MANAGER) {
             return success(Unit)
         }
         return failure(ProcessError.UnauthorizedAccess)
@@ -377,4 +383,27 @@ class ProcessServiceImpl(
     }
 
 
+    private fun getTargetStates(role: String) =
+
+        when (role) {
+            Roles.TRIATOR -> listOf(State.NOT_ASSIGNED)
+            Roles.INVESTIGATOR -> listOf(
+                State.ASSIGNED,
+                State.ON_GOING,
+                State.REJECTED_BY_SUPERVISOR,
+            )
+
+            Roles.SUPERVISOR -> listOf(
+                State.WAITING_APPROVAL_SUPERVISOR,
+                State.REJECTED_BY_MANAGER
+            )
+
+            Roles.MANAGER -> listOf(State.WAITING_APPROVAL_MANAGER)
+            else -> emptyList()
+        }
+
 }
+
+
+
+
