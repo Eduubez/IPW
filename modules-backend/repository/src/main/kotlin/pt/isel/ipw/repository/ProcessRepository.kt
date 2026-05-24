@@ -28,7 +28,9 @@ interface ProcessRepository {
     fun getAll(
         offset: Int,
         limit: Int,
+        areaId: Int,
         userId: Int?,
+        processStates: List<String>
     ): List<ProcessView>
 
 

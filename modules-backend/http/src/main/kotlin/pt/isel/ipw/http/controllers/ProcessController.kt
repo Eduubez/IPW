@@ -73,7 +73,6 @@ class ProcessController(
         val role = AuthenticatedUser.role()
             ?: return Problem.response(401, Problem.invalidToken)
 
-
         val result = processService.getProcessById(id, userId, role)
             .mapSuccess {
                 it.toResponse()
@@ -87,6 +86,8 @@ class ProcessController(
     fun getAllProcesses(
         @RequestParam(required = false) offset: Int?,
         @RequestParam(required = false) limit: Int?,
+        @RequestParam(required = false) areaId: Int?,
+        // @RequestParam(required = false) states: Int?,
     ): ResponseEntity<*> {
         println("BEFORE PARSE TOKEN TO USER ID")
         println("GETTING USER ID")
@@ -96,7 +97,7 @@ class ProcessController(
         val role = AuthenticatedUser.role()
             ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = processService.getAllProcesses(offset, limit, userId, role)
+        val result = processService.getAllProcesses(offset, limit, areaId, userId, role)
             .mapSuccess { processes ->
                 ListResponse(
                     results = processes.map { it.toResponse() }
