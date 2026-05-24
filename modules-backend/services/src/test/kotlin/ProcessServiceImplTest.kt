@@ -41,8 +41,11 @@ class ProcessServiceImplTest {
         //Alice(triator)=2, Bob(investigator)=3, Carol(supervisor)=4
         private const val TRIATOR_ID = 2
         private const val INVESTIGATOR_ID = 3   // Bob - area "Car Accident"
-        private const val SUPERVISOR_ID = 4     // Carol - area "Car Accident"
+        private const val SUPERVISOR_ID = 4
+        // Carol - area "Car Accident"
         private const val MANAGER_ID = 5
+
+        private const val CAR_ACCIDENT_AREA_ID = 1 // ID da área correspondente a "Car Accident"
     }
 
     @BeforeTest
@@ -94,7 +97,7 @@ class ProcessServiceImplTest {
     fun `create process - success`() {
         val result = createValid()
         assertTrue(result is Success)
-        assertTrue((result as Success).value> 0)
+        assertTrue((result as Success).value > 0)
     }
 
     //InvalidTriator (invalid userId/token)
@@ -213,7 +216,7 @@ class ProcessServiceImplTest {
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.getProcessById(processId, MANAGER_ID, "manager" )
+        val result = processService.getProcessById(processId, MANAGER_ID, "manager")
         assertTrue(result is Success)
 
         val process = (result as Success).value
@@ -271,107 +274,150 @@ class ProcessServiceImplTest {
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
-
 // -----------------------------------------------------------------------
 // getAllProcesses
 // -----------------------------------------------------------------------
 
     @Test
     fun `getAllProcesses - returns at least one process for triator`() {
-        // Ensure at least one process exists
-        createValid()
-
+        val created = createValid(investigatorId = null, supervisorId = null)
+        assertTrue(created is Success)
 
         val result = processService.getAllProcesses(
             userId = TRIATOR_ID,
+            areaId = null,
             offset = 0,
             limit = 10,
             role = "triator"
         )
+
         assertTrue(result is Success)
         val processes = (result as Success).value
         assertTrue(processes.isNotEmpty())
-        assertTrue(processes.all { it.triator.id == TRIATOR_ID })
+        assertTrue(processes.all { it.state.name.lowercase() == "not_assigned" })
     }
 
     @Test
-    fun `getAllProcesses - returns only processes from investigator`() {
-        // Create a process assigned to INVESTIGATOR_ID
-        createValid(investigatorId = INVESTIGATOR_ID)
+    fun `getAllProcesses - returns only processes from investigator matching allowed states`() {
+        val created = createValid(investigatorId = INVESTIGATOR_ID)
+        assertTrue(created is Success)
+
         val result = processService.getAllProcesses(
             userId = INVESTIGATOR_ID,
+            areaId = CAR_ACCIDENT_AREA_ID, // Filtra pela área correta do investigador
+            offset = 0,
+            limit = 10,
+            role = "investigator"
+        )
+
+        assertTrue(result is Success)
+        val processes = (result as Success).value
+
+        val allowedStates = listOf("assigned", "on_going", "rejected_by_supervisor")
+        assertTrue(processes.all { it.investigator?.id == INVESTIGATOR_ID })
+        assertTrue(processes.all { allowedStates.contains(it.state.name.lowercase()) })
+    }
+
+    @Test
+    fun `getAllProcesses - returns only processes from supervisor area matching allowed states`() {
+        val created = createValid(area = "Car Accident", supervisorId = SUPERVISOR_ID)
+        assertTrue(created is Success)
+        val processId = (created as Success).value
+
+        jdbi.useHandle<Exception> { handle ->
+            handle.execute("update public.process_state set end_date = now() where process_id = ?", processId)
+            handle.execute(
+                """
+                insert into public.process_state (process_id, state_id, start_date) 
+                values (?, (select id from public.state where lower(name) = 'waiting_approval_supervisor' limit 1), now())
+            """, processId
+            )
+        }
+
+        val result = processService.getAllProcesses(
+            userId = SUPERVISOR_ID,
+            areaId = CAR_ACCIDENT_AREA_ID,
+            offset = 0,
+            limit = 10,
+            role = "supervisor"
+        )
+
+        assertTrue(result is Success)
+        val processes = (result as Success).value
+
+        val allowedStates = listOf("waiting_approval_supervisor", "rejected_by_manager")
+        assertTrue(processes.isNotEmpty())
+        assertTrue(processes.all { allowedStates.contains(it.state.name.lowercase()) })
+    }
+
+    @Test
+    fun `getAllProcesses - returns all processes for manager matching waiting manager state`() {
+        val created = createValid()
+        assertTrue(created is Success)
+        val processId = (created as Success).value
+
+        jdbi.useHandle<Exception> { handle ->
+            handle.execute("update public.process_state set end_date = now() where process_id = ?", processId)
+            handle.execute(
+                """
+                insert into public.process_state (process_id, state_id, start_date) 
+                values (?, (select id from public.state where lower(name) = 'waiting_approval_manager' limit 1), now())
+            """, processId
+            )
+        }
+
+        val result = processService.getAllProcesses(
+            userId = MANAGER_ID,
+            offset = 0,
+            areaId = null,
+            limit = 100,
+            role = "manager"
+        )
+
+        assertTrue(result is Success)
+        val processes = (result as Success).value
+        assertTrue(processes.all { it.state.name.lowercase() == "waiting_approval_manager" })
+    }
+
+    @Test
+    fun `getAllProcesses - with areaId filter returns only that area`() {
+        val created = createValid(area = "Car Accident", investigatorId = INVESTIGATOR_ID)
+        assertTrue(created is Success)
+
+        val result = processService.getAllProcesses(
+            userId = INVESTIGATOR_ID,
+            areaId = CAR_ACCIDENT_AREA_ID,
             offset = 0,
             limit = 10,
             role = "investigator"
         )
         assertTrue(result is Success)
         val processes = (result as Success).value
-        assertTrue(processes.all { it.investigator?.id == INVESTIGATOR_ID })
-    }
-
-    @Test
-    fun `getAllProcesses - returns only processes from supervisor area`() {
-        // Create a process in supervisor's area
-        createValid(area = "Car Accident")
-        val result = processService.getAllProcesses(
-            userId = SUPERVISOR_ID,
-            offset = 0,
-            limit = 10,
-            role = "supervisor"
-        )
-        assertTrue(result is Success)
-        val processes = (result as Success).value
-        assertTrue(processes.all { it.supervisor?.id == SUPERVISOR_ID })
-    }
-
-    @Test
-    fun `getAllProcesses - returns all processes for manager`() {
-        createValid()
-        createValid(name = "Another Process")
-        val result = processService.getAllProcesses(
-            userId = MANAGER_ID,
-            offset = 0,
-            limit = 100,
-            role = "manager"
-        )
-        assertTrue(result is Success)
-        val processes = (result as Success).value
-        assertTrue(processes.size >= 2)
-    }
-
-    @Test
-    fun `getAllProcesses - with areaId filter returns only that area`() {
-        createValid(area = "Car Accident")
-        val result = processService.getAllProcesses(
-            userId = SUPERVISOR_ID,
-            offset = 0,
-            limit = 10,
-            role = "supervisor"
-        )
-        assertTrue(result is Success)
-        val processes = (result as Success).value
-        processes.map{ println("${it.area.name} - ${it.supervisor}")}
-        assertTrue(processes.all { it.supervisor?.id == SUPERVISOR_ID })
+        assertTrue(processes.all { it.area.name == "Car Accident" })
     }
 
     @Test
     fun `getAllProcesses - offset and limit work as pagination`() {
-        // Create multiple processes
-        createValid(name = "Process 1")
-        createValid(name = "Process 2")
-        createValid(name = "Process 3")
+        createValid(name = "Process 1", investigatorId = null, supervisorId = null)
+        createValid(name = "Process 2", investigatorId = null, supervisorId = null)
+        createValid(name = "Process 3", investigatorId = null, supervisorId = null)
+
         val result1 = processService.getAllProcesses(
             userId = TRIATOR_ID,
+            areaId = null,
             offset = 0,
             limit = 2,
             role = "triator"
         )
+
         val result2 = processService.getAllProcesses(
             userId = TRIATOR_ID,
+            areaId = null,
             offset = 2,
             limit = 2,
             role = "triator"
         )
+
         assertTrue(result1 is Success)
         assertTrue(result2 is Success)
         val list1 = (result1 as Success).value
@@ -385,6 +431,7 @@ class ProcessServiceImplTest {
     fun `getAllProcesses - invalid offset returns empty list or error`() {
         val result = processService.getAllProcesses(
             userId = TRIATOR_ID,
+            areaId = 0,
             offset = -1,
             limit = 10,
             role = "triator"
@@ -396,13 +443,13 @@ class ProcessServiceImplTest {
     fun `getAllProcesses - invalid limit returns empty list or error`() {
         val result = processService.getAllProcesses(
             userId = TRIATOR_ID,
+            areaId = 0,
             offset = 0,
             limit = 0,
             role = "triator"
         )
         assertTrue(result is Failure || (result is Success && (result as Success).value.isEmpty()))
     }
-
 // -----------------------------------------------------------------------
 // changeEndDate
 // -----------------------------------------------------------------------
@@ -418,7 +465,7 @@ class ProcessServiceImplTest {
         val result = processService.changeEndDate(processId, newEndDate, SUPERVISOR_ID, "supervisor")
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, MANAGER_ID, "manager" )
+        val updated = processService.getProcessById(processId, MANAGER_ID, "manager")
         assertTrue(updated is Success)
         val process = (updated as Success).value
         assertEquals(newEndDate, process.dueDate.toString())
@@ -499,7 +546,7 @@ class ProcessServiceImplTest {
     }
 
     // -----------------------------------------------------------------------
-// assignSupervisor
+// assignInvestigator
 // -----------------------------------------------------------------------
 
     @Test
@@ -644,7 +691,6 @@ class ProcessServiceImplTest {
         val secondCancel = processService.cancelProcess(processId, SUPERVISOR_ID)
         assertTrue(secondCancel is Failure || secondCancel is Success)
     }
-
 
 
 }

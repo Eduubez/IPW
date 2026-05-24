@@ -34,7 +34,7 @@ interface ProcessService {
 
     fun getProcessById(id: Int, userId: Int, role: String): GetProcessResult
 
-    fun getAllProcesses(offset: Int?, limit: Int?, userId: Int, role: String): GetAllProcessesResult
+    fun getAllProcesses(offset: Int?, limit: Int?, areaId: Int?, userId: Int, role: String): GetAllProcessesResult
 
     fun changeEndDate(processId: Int, endDate: String, userId: Int, role: String): ChangeEndDateResult
 

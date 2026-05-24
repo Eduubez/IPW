@@ -145,9 +145,9 @@ class HistoryServiceTest {
             is Success -> {
                 val areaHistory = result.value
                 assert(areaHistory.areaId == areaId)
-                assert(areaHistory.processes.size == 6) { "Expected 6 processes but got: ${areaHistory.processes.size}" }
+                assert(areaHistory.process.size == 6) { "Expected 6 processes but got: ${areaHistory.process.size}" }
                 assert(
-                    areaHistory.processes.containsAll(
+                    areaHistory.process.containsAll(
                         listOf(
                             1,
                             2,
@@ -156,7 +156,7 @@ class HistoryServiceTest {
                             10
                         )
                     )
-                ) { "Expected processes [1, 2,3, 7,10] but got: ${areaHistory.processes}" }
+                ) { "Expected processes [1, 2,3, 7,10] but got: ${areaHistory.process}" }
             }
         }
     }
@@ -174,7 +174,7 @@ class HistoryServiceTest {
             is Success -> {
                 val areaHistory = result.value
                 assert(areaHistory.areaId == areaId)
-                assert(areaHistory.processes.isEmpty()) { "Expected empty processes list but got: ${areaHistory.processes.size} elements" }
+                assert(areaHistory.process.isEmpty()) { "Expected empty processes list but got: ${areaHistory.process.size} elements" }
             }
         }
     }

@@ -75,7 +75,7 @@ export function InvestigatorDashboard() {
   return (
     <div className={styles["investigator-dashboard-container"]}>
       <Header
-        title="Triator Dashboard"
+        title="Averiguador  Dashboard"
         description="Olá novamente, veja o que tem acontecido ultimamente!"
       />
       <DataGrid

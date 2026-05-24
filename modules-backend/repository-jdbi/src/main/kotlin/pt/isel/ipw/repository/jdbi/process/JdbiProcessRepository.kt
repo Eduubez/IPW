@@ -206,24 +206,33 @@ class JdbiProcessRepository(
     override fun getAll(
         offset: Int,
         limit: Int,
+        areaId: Int,
         userId: Int?,
+        processStates: List<String>
     ): List<ProcessView> {
         val processIds = handle.createQuery(
             """
-        select p.id
-        from Process p
-        where (:userId::int is null or (
-            p.triator_id      = :userId or
-            p.investigator_id = :userId or
-            p.supervisor_id   = :userId
-        ))
-        order by p.creation_date desc
-        limit :limit offset :offset
-        """
+select p.id
+from Process p
+left join Process_State ps on ps.process_id = p.id and ps.end_date is null
+left join State st         on st.id = ps.state_id
+where (:userId::int is null or (
+    p.triator_id      = :userId or
+    p.investigator_id = :userId or
+    p.supervisor_id   = :userId
+))
+and (:areaId = 0 or p.area_id = :areaId)
+and (:hasStates = false or st.name = any(:processStates))
+order by p.creation_date desc
+limit :limit offset :offset
+"""
         )
             .bind("userId", userId)
+            .bind("areaId", areaId)
             .bind("limit", limit)
             .bind("offset", offset)
+            .bind("hasStates", processStates.isNotEmpty())
+            .bind("processStates", processStates.toTypedArray())
             .mapTo(Int::class.java)
             .list()
 
@@ -231,16 +240,16 @@ class JdbiProcessRepository(
 
         val allNotes = handle.createQuery(
             """
-        select
-            n.id         as id,
-            n.process_id as process_id,
-            n.proves_id  as proves_id,
-            n.content    as content,
-            n.author_id  as author_id,
-            n.created_at as created_at
-        from Notes n
-        where n.process_id = any(:ids)
-        """
+select
+    n.id         as id,
+    n.process_id as process_id,
+    n.proves_id  as proves_id,
+    n.content    as content,
+    n.author_id  as author_id,
+    n.created_at as created_at
+from Notes n
+where n.process_id = any(:ids)
+"""
         )
             .bind("ids", processIds.toTypedArray())
             .map(NoteMapper())
@@ -249,95 +258,95 @@ class JdbiProcessRepository(
 
         return handle.createQuery(
             """
-        select
-            p.id,
-            p.name,
-            p.creation_date,
-            p.due_date,
-            p.priority,
+select
+    p.id,
+    p.name,
+    p.creation_date,
+    p.due_date,
+    p.priority,
 
-            l.id             as location_id,
-            l.district       as location_district,
-            l.county         as location_county,
-            l.street         as location_street,
-            l.latitude       as location_latitude,
-            l.longitude      as location_longitude,
+    l.id             as location_id,
+    l.district       as location_district,
+    l.county         as location_county,
+    l.street         as location_street,
+    l.latitude       as location_latitude,
+    l.longitude      as location_longitude,
 
-            a.id             as area_id,
-            a.name           as area_name,
-            a.boss_id        as area_boss_id,
-            ub.name          as area_boss_name,
+    a.id             as area_id,
+    a.name           as area_name,
+    a.boss_id        as area_boss_id,
+    ub.name          as area_boss_name,
 
-            t.id             as typification_id,
-            t.name           as typification_name,
-            t.honorary       as typification_honorary,
+    t.id             as typification_id,
+    t.name           as typification_name,
+    t.honorary       as typification_honorary,
 
-            ut.id            as triator_id,
-            ut.name          as triator_name,
-            ut.email         as triator_email,
-            ut.password_hash as triator_password_hash,
-            ut.is_active     as triator_is_active,
-            at.name          as triator_area,
+    ut.id            as triator_id,
+    ut.name          as triator_name,
+    ut.email         as triator_email,
+    ut.password_hash as triator_password_hash,
+    ut.is_active     as triator_is_active,
+    at.name          as triator_area,
 
-            ui.id            as investigator_id,
-            ui.name          as investigator_name,
-            ui.email         as investigator_email,
-            ui.password_hash as investigator_password_hash,
-            ui.is_active     as investigator_is_active,
-            ai.name          as investigator_area,
+    ui.id            as investigator_id,
+    ui.name          as investigator_name,
+    ui.email         as investigator_email,
+    ui.password_hash as investigator_password_hash,
+    ui.is_active     as investigator_is_active,
+    ai.name          as investigator_area,
 
-            us.id            as supervisor_id,
-            us.name          as supervisor_name,
-            us.email         as supervisor_email,
-            us.password_hash as supervisor_password_hash,
-            us.is_active     as supervisor_is_active,
-            asuper.name      as supervisor_area,
+    us.id            as supervisor_id,
+    us.name          as supervisor_name,
+    us.email         as supervisor_email,
+    us.password_hash as supervisor_password_hash,
+    us.is_active     as supervisor_is_active,
+    asuper.name      as supervisor_area,
 
-            cur_state.name   as state_,
+    cur_state.name   as state_,
 
-            pv.id            as proves_id,
-            pv.process_id    as proves_process_id,
-            pv.file_name     as proves_file_name,
-            pv.file_type     as proves_file_type,
-            pv.file_url      as proves_file_url,
-            pv.created_at    as proves_created_at,
+    pv.id            as proves_id,
+    pv.process_id    as proves_process_id,
+    pv.file_name     as proves_file_name,
+    pv.file_type     as proves_file_type,
+    pv.file_url      as proves_file_url,
+    pv.created_at    as proves_created_at,
 
-            r.id             as report_id,
-            r.process_id     as report_process_id,
-            r.content        as report_content,
-            r.created_at     as report_created_at,
-            r.updated_at     as report_updated_at,
+    r.id             as report_id,
+    r.process_id     as report_process_id,
+    r.content        as report_content,
+    r.created_at     as report_created_at,
+    r.updated_at     as report_updated_at,
 
-            act.id           as activity_id,
-            act.process_id   as activity_process_id,
-            act.user_id      as activity_user_id,
-            act.action       as activity_action,
-            act.description  as activity_description,
-            act.created_at   as activity_created_at
+    act.id           as activity_id,
+    act.process_id   as activity_process_id,
+    act.user_id      as activity_user_id,
+    act.action       as activity_action,
+    act.description  as activity_description,
+    act.created_at   as activity_created_at
 
-        from Process p
-        join Location l         on p.location        = l.id
-        join Area a             on p.area_id         = a.id
-        left join Users ub      on a.boss_id         = ub.id
-        join Typification t     on p.typification_id = t.id
-        join Users ut           on p.triator_id      = ut.id
-        left join Area at       on ut.area_id        = at.id
-        left join Users ui      on p.investigator_id = ui.id
-        left join Area ai       on ui.area_id        = ai.id
-        left join Users us      on p.supervisor_id   = us.id
-        left join Area asuper   on us.area_id        = asuper.id
-        left join (
-            select ps.process_id, st.name
-            from Process_State ps
-            join State st on st.id = ps.state_id
-            where ps.end_date is null
-        ) cur_state             on cur_state.process_id = p.id
-        left join Proves pv     on pv.process_id     = p.id
-        left join Report r      on r.process_id      = p.id
-        left join Activity act  on act.process_id    = p.id
-        where p.id = any(:ids)
-        order by p.creation_date desc
-        """
+from Process p
+join Location l         on p.location        = l.id
+join Area a             on p.area_id         = a.id
+left join Users ub      on a.boss_id         = ub.id
+join Typification t     on p.typification_id = t.id
+join Users ut           on p.triator_id      = ut.id
+left join Area at       on ut.area_id        = at.id
+left join Users ui      on p.investigator_id = ui.id
+left join Area ai       on ui.area_id        = ai.id
+left join Users us      on p.supervisor_id   = us.id
+left join Area asuper   on us.area_id        = asuper.id
+left join (
+    select ps.process_id, st.name
+    from Process_State ps
+    join State st on st.id = ps.state_id
+    where ps.end_date is null
+) cur_state             on cur_state.process_id = p.id
+left join Proves pv     on pv.process_id     = p.id
+left join Report r      on r.process_id      = p.id
+left join Activity act  on act.process_id    = p.id
+where p.id = any(:ids)
+order by p.creation_date desc
+"""
         )
             .bind("ids", processIds.toTypedArray())
             .map { rs, ctx ->
@@ -346,8 +355,6 @@ class JdbiProcessRepository(
             }
             .list()
     }
-
-
     override fun updateEndDate(processId: Int, endDate: String) {
         handle.createUpdate(
             """
