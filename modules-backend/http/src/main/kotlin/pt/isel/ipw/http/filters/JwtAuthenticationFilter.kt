@@ -12,6 +12,7 @@ import pt.isel.ipw.http.TokenExtractor.extractToken
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.toHttp
 import pt.isel.ipw.services.auth.ExpiredAccessTokenException
+import pt.isel.ipw.services.auth.InvalidTokenException
 import pt.isel.ipw.services.auth.JwtTokenService
 import pt.isel.ipw.services.errors.UserError
 import tools.jackson.databind.ObjectMapper
@@ -45,27 +46,28 @@ class JwtAuthenticationFilter(
             return
         }
 
-        try {
-            val tokenClaims = jwtTokenService.parseAccessToken(token)
-
-            val authorities = listOf(
-                SimpleGrantedAuthority("ROLE_${tokenClaims.role}")
-            )
-
-            val auth = UsernamePasswordAuthenticationToken(
-                tokenClaims.userId,
-                null,
-                authorities
-            )
-
-            SecurityContextHolder.getContext().authentication = auth
-            filterChain.doFilter(request, response)
-
+        val tokenClaims = try {
+            jwtTokenService.parseAccessToken(token)
         } catch (_: ExpiredAccessTokenException) {
             writeProblem(response, UserError.ExpiredAccessToken)
-        } catch (_: Exception) {
+            return
+        } catch (_: InvalidTokenException) {
             writeProblem(response, UserError.InvalidToken)
+            return
         }
+
+        val authorities = listOf(
+            SimpleGrantedAuthority("ROLE_${tokenClaims.role}")
+        )
+
+        val auth = UsernamePasswordAuthenticationToken(
+            tokenClaims.userId,
+            null,
+            authorities
+        )
+
+        SecurityContextHolder.getContext().authentication = auth
+        filterChain.doFilter(request, response)
     }
 
     private fun writeProblem(
