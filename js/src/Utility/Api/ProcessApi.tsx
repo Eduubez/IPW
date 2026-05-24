@@ -105,6 +105,9 @@ async function create(
   return await fetchApi<ProcessResponse>("process", {
     method: "POST",
     body: JSON.stringify(process),
+    headers:{
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    }
   });
 }
 

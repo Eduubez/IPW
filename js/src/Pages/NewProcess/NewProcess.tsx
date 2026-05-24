@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
 import styles from "./newprocess.module.css";
@@ -7,18 +8,24 @@ import TextArea from "../../Components/Inputs/TextArea/TextArea";
 import { DropDownMenu } from "../../Components/DropDownMenu/DropDownMenu";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { UsersApi } from "../../Utility/Api/UsersApi";
-import { AreasApi, type AreaListResponse, type AreaResponse } from "../../Utility/Api/AreasApi";
+import {
+  AreasApi,
+  type AreaListResponse,
+  type AreaResponse,
+} from "../../Utility/Api/AreasApi";
+import { useTranslation } from "react-i18next";
+import { ProcessApi } from "../../Utility/Api/ProcessApi";
 
-const investigatorOptions = ["Averiguador 1", "Averiguador 2", "Averiguador 3"];
-const supervisorOptions = ["Supervisor 1", "Supervisor 2", "Supervisor 3"];
-const priorityOptions = ["Baixa", "Média", "Alta"];
+const priorityOptions = ["NORMAL", "WITH_PRIORITY", "URGENT"];
 
 export default function NewProcess() {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [street, setStreet] = useState("");
   const [county, setCounty] = useState("");
   const [district, setDistrict] = useState("");
-  const [area, setArea] = useState("");
+  const [area, setArea] = useState("-1");
   const [priority, setPriority] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [investigatorId, setInvestigatorId] = useState<number | null>(null);
@@ -30,7 +37,7 @@ export default function NewProcess() {
     { id: number; name: string }[]
   >([]);
   const [supervisors, setSupervisors] = useState<
-    { id: number; name: string }[]
+    { id: number; name: string; areaId: number }[]
   >([]);
   const [allAreas, setAllAreas] = useState<AreaResponse[]>([]);
 
@@ -51,24 +58,65 @@ export default function NewProcess() {
     if (response.success) {
       setAllAreas(response.data.areas);
     }
-  }
+  };
 
   const fetchInvestigators = async () => {
-    const response = investigatorOptions;
-    setInvestigators(response.map((name, index) => ({ id: index + 1, name })));
-  };
-  const fetchSupervisors = async () => {
-    const response = supervisorOptions;
-    setSupervisors(response.map((name, index) => ({ id: index + 1, name })));
+    if(area === "") return;
+    const response = await UsersApi.getInvestigators(Number(area));
+    if (response.success) {
+      setInvestigators(response.data.results.map((investigator) => ({ id: investigator.id, name: investigator.name })));
+    }
   };
 
   useEffect(() => {
-    fetchInvestigators();
-    fetchSupervisors();
     fetchAreas();
   }, []);
 
-  const handleSubmit = () => {};
+  useEffect(() => {
+    fetchInvestigators();
+  }, [area]);
+
+  useEffect(() => {
+    if (area !== "" && allAreas.length > 0) {
+      const selected = allAreas.find((a) => a.id === Number(area));
+      if (selected && selected.bossId !== null) {
+        setSupervisors([{ id: selected.bossId, name: selected.bossName!, areaId: selected.id }]);
+      } 
+    }
+  }, [area, allAreas]);
+
+   
+  const handleSubmit = async () => {
+    const response = await ProcessApi.create({
+      name,
+      street,
+      county,
+      district,
+      latitude: null,
+      longitude: null,
+      area,
+      priority: priority as "NORMAL" | "WITH_PRIORITY" | "URGENT",
+      expiresAt: `${expiresAt}T00:00:00`,
+      investigatorId: investigatorId!,
+      supervisorId: supervisorId!,
+      canBeFraud,
+      note,
+    });
+    if (response.success) {
+      // reset form
+      setName("");
+      setStreet("");
+      setCounty("");
+      setDistrict("");
+      setArea("");
+      setPriority("");
+      setExpiresAt("");
+      setInvestigatorId(null);
+      setSupervisorId(null);
+      setCanBeFraud(false);
+      setNote("");
+    }
+  };
 
   const processFields = [
     {
@@ -100,13 +148,6 @@ export default function NewProcess() {
       type: "text",
     },
     {
-      label: "Area",
-      value: area,
-      onChange: setArea,
-      mandatory: true,
-      type: "text",
-    },
-    {
       label: "Expira em",
       value: expiresAt,
       onChange: setExpiresAt,
@@ -116,25 +157,34 @@ export default function NewProcess() {
   ];
   const dropdownFields = [
     {
+      label: "Area",
+      options: allAreas.map((area) => ({ id: area.name, name: area.name })),
+      onSelect: setArea,
+      mandatory: true,
+      disabled: allAreas.length === 0,
+    },
+    {
       label: "Averiguador",
       options: investigators,
       onSelect: setInvestigatorId,
       mandatory: true,
+      disabled: area === "" 
     },
     {
       label: "Supervisor",
       options: supervisors,
       onSelect: setSupervisorId,
       mandatory: true,
+      disabled: area === ""
     },
     {
       label: "Prioridade",
-      options: priorityOptions,
+      options: priorityOptions.map((priority) => ({ id: priority, name: t(`Priority.${priority}`) })),
       onSelect: setPriority,
       mandatory: true,
+      disabled: area === ""
     },
   ];
-
   return (
     <div className={styles["new-process-page"]}>
       <Header
@@ -161,18 +211,18 @@ export default function NewProcess() {
             </div>
             <div className={styles["right-column"]}>
               <div className={styles["dropdown-container"]}>
-
-                  {dropdownFields.map((field, index) => (
-                                    <div className={styles["option"]}>
+                {dropdownFields.map((field, index) => (
+                  <div className={styles["option"]}>
                     <DropDownMenu
                       key={index}
                       label={field.label}
                       options={field.options}
                       onSelect={field.onSelect}
                       mandatory={field.mandatory}
+                      disabled={field.disabled}
                     />
-                    </div>
-                  ))}
+                  </div>
+                ))}
                 <div className={styles["option"]}>
                   <label htmlFor="canBeFraud">
                     <span>Pode ser fraude</span>
