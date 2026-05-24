@@ -43,21 +43,41 @@ export type UserProfileResponse = {
   areaId: number | null;
   area: string | null;
   roles: string[];
-}
-
-export const UsersApi = {
-  selectRole,
-  getUserRoles,
-  create,
-  getAll,
-  changeUserRoles,
-  changeUserPassword,
-  getUserInformation,
 };
 
 type UserResponseList = {
   results: UserResponse[];
+};
+
+type InvestigatorOptionsListResponse = {
+  results: {
+    id: number;
+    name: string;
+    areaId: number | null;
+    area: string | null;
+  }[];
+};
+
+async function getInvestigators(
+  areaId: number,
+): Promise<ResponseApi<InvestigatorOptionsListResponse>> {
+  const token = userStore.getAccessToken()?.trim();
+
+  const response = await fetchApi<InvestigatorOptionsListResponse>(
+    `users/investigators?areaId=${areaId}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    },
+  );
+  if (!response.success) {
+    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
+  }
+  return response;
 }
+
 // choose which role to use in the current session - every user
 async function selectRole(
   role: string,
@@ -101,17 +121,19 @@ async function getUserRoles(
 async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
   const token = userStore.getAccessToken()?.trim();
 
-  const response =  await fetchApi<UserResponse>("users", {
+  const response = await fetchApi<UserResponse>("users", {
     method: "POST",
     headers: {
       Authorization: "Bearer " + token,
     },
     body: JSON.stringify(input),
   });
-  if(!response.success){
+  if (!response.success) {
     enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-  } else{
-    enqueueSnackbar(i18next.t("DashboardAdmin.createUser.successMessage"), { variant: ToastType.SUCCESS });
+  } else {
+    enqueueSnackbar(i18next.t("DashboardAdmin.createUser.successMessage"), {
+      variant: ToastType.SUCCESS,
+    });
   }
 
   return response;
@@ -153,12 +175,13 @@ async function changeUserRoles(
   if (!response.success) {
     enqueueSnackbar(response.message, { variant: ToastType.ERROR });
   } else {
-    enqueueSnackbar(i18next.t("DashboardAdmin.changeRolesModal.success"), { variant: ToastType.SUCCESS });
+    enqueueSnackbar(i18next.t("DashboardAdmin.changeRolesModal.success"), {
+      variant: ToastType.SUCCESS,
+    });
   }
 
   return response;
 }
-
 
 // change password - Admin
 async function changeUserPassword(
@@ -178,7 +201,9 @@ async function changeUserPassword(
   if (!response.success) {
     enqueueSnackbar(response.message, { variant: ToastType.ERROR });
   } else {
-    enqueueSnackbar(i18next.t("DashboardAdmin.changePasswordModal.success"), { variant: ToastType.SUCCESS });
+    enqueueSnackbar(i18next.t("DashboardAdmin.changePasswordModal.success"), {
+      variant: ToastType.SUCCESS,
+    });
   }
 
   return response;
@@ -191,3 +216,14 @@ async function getUserInformation() {
     },
   });
 }
+
+export const UsersApi = {
+  selectRole,
+  getUserRoles,
+  create,
+  getAll,
+  changeUserRoles,
+  changeUserPassword,
+  getUserInformation,
+  getInvestigators,
+};

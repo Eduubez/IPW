@@ -131,5 +131,24 @@
       "errorNoArea": "Choose an area for this user.",
       "success": "Roles changed successfully."
     }
+  },
+  "CreateProcessPage": {
+    "title": "Insurance Portal Workflow",
+    "description": "Proceed to create a new process",
+    "formHeader": "Process Creation",
+    "fields": {
+      "name": "Process Name",
+      "street": "Street",
+      "county": "County",
+      "district": "District",
+      "expiresAt": "Expires on",
+      "area": "Area",
+      "investigator": "Investigator",
+      "supervisor": "Supervisor",
+      "priority": "Priority",
+      "canBeFraud": "Can be fraud",
+      "note": "Note"
+    },
+    "submit": "Create"
   }
 }
