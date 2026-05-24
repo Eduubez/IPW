@@ -23,7 +23,7 @@ export function DropDownMenu({label, options,onSelect,mandatory,disabled }: {lab
         <Select
           labelId={`${formId}-label`}
           id={formId}
-          value={selectedOption}
+          value={disabled ? "" :selectedOption}
           label={label}
           onChange={handleChange}
           MenuProps={{

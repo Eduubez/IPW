@@ -17,21 +17,24 @@ import { useTranslation } from "react-i18next";
 import { ProcessApi } from "../../Utility/Api/ProcessApi";
 
 const priorityOptions = ["NORMAL", "WITH_PRIORITY", "URGENT"];
-
+const normalizePriority = (priority: string) : string => {
+  return priority.toLowerCase()
+}
 export default function NewProcess() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [street, setStreet] = useState("");
   const [county, setCounty] = useState("");
   const [district, setDistrict] = useState("");
-  const [area, setArea] = useState("-1");
+  const [area, setArea] = useState("");
+  const [areaId, setAreaId] = useState<number | null>(null);
   const [priority, setPriority] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
   const [investigatorId, setInvestigatorId] = useState<number | null>(null);
   const [supervisorId, setSupervisorId] = useState<number | null>(null);
   const [canBeFraud, setCanBeFraud] = useState(false);
   const [note, setNote] = useState("");
+  const [resetKey, setResetKey] = useState(0);
 
   const [investigators, setInvestigators] = useState<
     { id: number; name: string }[]
@@ -57,12 +60,12 @@ export default function NewProcess() {
     const response = await AreasApi.getAll();
     if (response.success) {
       setAllAreas(response.data.areas);
+  
     }
   };
 
-  const fetchInvestigators = async () => {
-    if(area === "") return;
-    const response = await UsersApi.getInvestigators(Number(area));
+  const fetchInvestigators = async (id: number) => {
+    const response = await UsersApi.getInvestigators(id);
     if (response.success) {
       setInvestigators(response.data.results.map((investigator) => ({ id: investigator.id, name: investigator.name })));
     }
@@ -73,15 +76,17 @@ export default function NewProcess() {
   }, []);
 
   useEffect(() => {
-    fetchInvestigators();
-  }, [area]);
-
-  useEffect(() => {
     if (area !== "" && allAreas.length > 0) {
-      const selected = allAreas.find((a) => a.id === Number(area));
-      if (selected && selected.bossId !== null) {
-        setSupervisors([{ id: selected.bossId, name: selected.bossName!, areaId: selected.id }]);
-      } 
+      const selected = allAreas.find((a) => a.name === area);
+      if (selected) {
+        setAreaId(selected.id);
+        fetchInvestigators(selected.id);
+        if (selected.bossId !== null) {
+          setSupervisors([{ id: selected.bossId, name: selected.bossName!, areaId: selected.id }]);
+        } else {
+          setSupervisors([]);
+        }
+      }
     }
   }, [area, allAreas]);
 
@@ -95,12 +100,12 @@ export default function NewProcess() {
       latitude: null,
       longitude: null,
       area,
-      priority: priority as "NORMAL" | "WITH_PRIORITY" | "URGENT",
+      priority: normalizePriority(priority) as "normal" | "with_priority" | "urgent",
       expiresAt: `${expiresAt}T00:00:00`,
       investigatorId: investigatorId!,
       supervisorId: supervisorId!,
       canBeFraud,
-      note,
+      note : note ? note : null,
     });
     if (response.success) {
       // reset form
@@ -115,40 +120,41 @@ export default function NewProcess() {
       setSupervisorId(null);
       setCanBeFraud(false);
       setNote("");
+      setResetKey((k) => k + 1); // force reset of dropdowns
     }
   };
 
   const processFields = [
     {
-      label: "Nome do Processo",
+      label: t("CreateProcessPage.fields.name"),
       value: name,
       onChange: setName,
       mandatory: true,
       type: "text",
     },
     {
-      label: "Rua",
+      label: t("CreateProcessPage.fields.street"),
       value: street,
       onChange: setStreet,
       mandatory: true,
       type: "text",
     },
     {
-      label: "Concelho",
+      label: t("CreateProcessPage.fields.county"),
       value: county,
       onChange: setCounty,
       mandatory: true,
       type: "text",
     },
     {
-      label: "Distrito",
+      label: t("CreateProcessPage.fields.district"),
       value: district,
       onChange: setDistrict,
       mandatory: true,
       type: "text",
     },
     {
-      label: "Expira em",
+      label: t("CreateProcessPage.fields.expiresAt"),
       value: expiresAt,
       onChange: setExpiresAt,
       mandatory: true,
@@ -157,28 +163,28 @@ export default function NewProcess() {
   ];
   const dropdownFields = [
     {
-      label: "Area",
+      label: t("CreateProcessPage.fields.area"),
       options: allAreas.map((area) => ({ id: area.name, name: area.name })),
       onSelect: setArea,
       mandatory: true,
       disabled: allAreas.length === 0,
     },
     {
-      label: "Averiguador",
+      label: t("CreateProcessPage.fields.investigator"),
       options: investigators,
       onSelect: setInvestigatorId,
       mandatory: true,
       disabled: area === "" 
     },
     {
-      label: "Supervisor",
+      label: t("CreateProcessPage.fields.supervisor"),
       options: supervisors,
       onSelect: setSupervisorId,
       mandatory: true,
       disabled: area === ""
     },
     {
-      label: "Prioridade",
+      label: t("CreateProcessPage.fields.priority"),
       options: priorityOptions.map((priority) => ({ id: priority, name: t(`Priority.${priority}`) })),
       onSelect: setPriority,
       mandatory: true,
@@ -188,13 +194,13 @@ export default function NewProcess() {
   return (
     <div className={styles["new-process-page"]}>
       <Header
-        title="Insurance portal Worflow"
-        description="Proceda a criação de um novo processo"
+        title={t("CreateProcessPage.title")}
+        description={t("CreateProcessPage.description")}
       />
       <WithBackground>
         <div className={styles["content"]}>
           <div className={styles["header"]}>
-            <p>Criação do processo</p>
+            <p>{t("CreateProcessPage.formHeader")}</p>
           </div>
           <div className={styles["form-container"]}>
             <div className={styles["left-column"]}>
@@ -214,7 +220,7 @@ export default function NewProcess() {
                 {dropdownFields.map((field, index) => (
                   <div className={styles["option"]}>
                     <DropDownMenu
-                      key={index}
+                      key={`${resetKey}-${index}`}
                       label={field.label}
                       options={field.options}
                       onSelect={field.onSelect}
@@ -225,7 +231,7 @@ export default function NewProcess() {
                 ))}
                 <div className={styles["option"]}>
                   <label htmlFor="canBeFraud">
-                    <span>Pode ser fraude</span>
+                    <span>{t("CreateProcessPage.fields.canBeFraud")}</span>
                   </label>
                   <input
                     type="checkbox"
@@ -237,7 +243,7 @@ export default function NewProcess() {
               </div>
               <div className={styles["note-container"]}>
                 <TextArea
-                  label="Nota"
+                  label={t("CreateProcessPage.fields.note")}
                   value={note}
                   onChange={setNote}
                   mandatory={false}
@@ -248,7 +254,7 @@ export default function NewProcess() {
           <div className={styles["submit-container"]}>
             <div className={styles["submit-button"]}>
               <PrimaryButton
-                text="Criar"
+                text={t("CreateProcessPage.submit")}
                 onClick={handleSubmit}
                 enabled={isButtonEnabled}
               />

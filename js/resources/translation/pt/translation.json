@@ -157,5 +157,24 @@
     "title": "Acesso Negado",
     "description": "Não tem permissão para aceder ao conteúdo desta página.",
     "goBack": "Voltar"
+  },
+  "CreateProcessPage": {
+    "title": "Insurance Portal Workflow",
+    "description": "Proceda a criação de um novo processo",
+    "formHeader": "Criação do processo",
+    "fields": {
+      "name": "Nome do Processo",
+      "street": "Rua",
+      "county": "Concelho",
+      "district": "Distrito",
+      "expiresAt": "Expira em",
+      "area": "Área",
+      "investigator": "Averiguador",
+      "supervisor": "Supervisor",
+      "priority": "Prioridade",
+      "canBeFraud": "Pode ser fraude",
+      "note": "Nota"
+    },
+    "submit": "Criar"
   }
 }

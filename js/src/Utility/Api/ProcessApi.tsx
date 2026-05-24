@@ -2,6 +2,7 @@ import type { UserResponse } from "./UsersApi.tsx";
 import { buildQuery, fetchApi, type ResponseApi } from "./FetchApi.tsx";
 import { userStore } from "../Store/UserStore.tsx";
 import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge.tsx";
+import { enqueueSnackbar } from "notistack";
 
 export type ProcessResponseApi = {
   results: ProcessResponse[];
@@ -34,12 +35,12 @@ export type ProcessRequest = {
   latitude: number | null;
   longitude: number | null;
   area: string;
-  priority: PriorityType;
+  priority: "normal" | "with_priority" | "urgent";
   expiresAt: string;
   investigatorId: number;
   supervisorId: number;
   canBeFraud: boolean;
-  note?: string;
+  note: string | null;
 };
 
 type LocationType = {
@@ -102,13 +103,20 @@ export const ProcessApi = {
 async function create(
   process: ProcessRequest,
 ): Promise<ResponseApi<ProcessResponse>> {
-  return await fetchApi<ProcessResponse>("process", {
+  const response  = await fetchApi<ProcessResponse>("process", {
     method: "POST",
     body: JSON.stringify(process),
     headers:{
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     }
   });
+  if(response.success){
+    enqueueSnackbar("Process created successfully", { variant: "success" });
+    
+  }else {
+    enqueueSnackbar("Failed to create process", { variant: "error" });
+  }
+  return response;
 }
 
 // get a process by id - Investigator, Supervisor, Manager
