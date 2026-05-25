@@ -37,7 +37,7 @@ const cleanProcess = (
     state: <StateBadge state={process.state as StateType} />,
     priorityValue: process.priority,
     id: process.id,
-    onClick: () => navigate(`/process/${process.id}`),
+    onClick: () => navigate(`/processes/${process.id}`),
   }));
 };
 

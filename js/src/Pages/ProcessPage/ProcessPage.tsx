@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { mockProcessResponse } from "../../MockData/MockProcess";
 import { useSnackbar } from "notistack";
-import type { ProcessResponse } from "../../Utility/Api/ProcessApi";
+import { ProcessApi, type ProcessResponse } from "../../Utility/Api/ProcessApi";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { Color } from "../../StyleGuide/colors";
@@ -15,6 +15,14 @@ export default function ProcessPage() {
   const { enqueueSnackbar } = useSnackbar();
   const [apiResponse, setApiResponse] = useState<ProcessResponse | null>(null);
   const [loading, setLoading] = useState(true);
+
+const fetchProcessData = async () => {
+  if (!id) return;
+  const response =  await ProcessApi.getById(Number(id))
+  if(response.success){
+    setApiResponse(response.data);
+  }
+}
 
   const {
     supervisorCard,
@@ -122,17 +130,8 @@ export default function ProcessPage() {
 
   useEffect(() => {
     setLoading(true);
-    try {
-      setTimeout(() => {
-        const response = mockProcessResponse;
-        setApiResponse(response);
-        setLoading(false);
-      }, 2000);
-    } catch (error) {
-      enqueueSnackbar("Failed to load process data", { variant: "error" });
-    } finally {
-      //
-    }
+    fetchProcessData()
+    setLoading(false);
   }, [id]);
 
   return (
