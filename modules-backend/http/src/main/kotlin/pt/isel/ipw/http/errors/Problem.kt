@@ -202,7 +202,6 @@ class Problem(
             errorCode = ErrorCode.INVALID_AREA_ID
         )
 
-
         val invalidContent =
             Problem(
                 type = "problems/invalid-content",
