@@ -152,7 +152,7 @@ Esta organiza\c{c}\~{a}o permite separar responsabilidades entre autentica\c{c}\
 
 A componente de \textit{frontend} da aplicação foi desenvolvida com recurso ao servidor \textit{Vite}, utilizando \textit{React} e \textit{TypeScript} como principais tecnologias.
 
-A arquitetura do \textit{frontend} encontra-se organizada em diferentes camadas funcionais, nomeadamente páginas, autenticação, comunicação, componentes e estilos. A camada de páginas é responsável pela organização das diferentes vistas da aplicação, incluindo páginas como autenticação, \textit{dashboard}, gestão de processos e detalhe de processos. A camada de autenticação centraliza a lógica relacionada com o processo de autenticação, armazenamento de tokens de acesso e controlo de sessões dos utilizadores.
+A arquitetura do \textit{frontend} encontra-se organizada em diferentes camadas funcionais, nomeadamente páginas, autenticação, comunicação, componentes e estilos (figura \ref{fig:estrutura_pastas_front}). A camada de páginas é responsável pela organização das diferentes vistas da aplicação, incluindo páginas como autenticação, \textit{dashboard}, gestão de processos e detalhe de processos. A camada de autenticação centraliza a lógica relacionada com o processo de autenticação, armazenamento de tokens de acesso e controlo de sessões dos utilizadores.
 
 A camada de comunicação é responsável pela interação com a \textit{API} \textit{backend}, assegurando o envio e receção de dados entre o cliente e o servidor. Já a camada de componentes contém elementos reutilizáveis da interface gráfica, como tabelas, formulários, botões e modais, promovendo maior reutilização de código e consistência visual entre as diferentes páginas da aplicação. Por fim, a camada de estilos concentra os estilos globais como por exemplo tipografia utilizada, utilizando \textit{CSS} para definição da identidade visual da plataforma.
 
@@ -162,7 +162,7 @@ Adicionalmente, determinadas páginas da plataforma requerem permissões especí
 
 Apesar da existência destes mecanismos de proteção no \textit{frontend}, toda a validação de permissões e autorização é igualmente garantida no \textit{backend} da aplicação, assegurando que utilizadores sem permissões adequadas não conseguem aceder a recursos protegidos através de manipulação do cliente.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \begin{center}
 \resizebox{150mm}{!}{\includegraphics{./figures/estrutura_pastas_front.png}}
 \end{center}
@@ -170,7 +170,7 @@ Apesar da existência destes mecanismos de proteção no \textit{frontend}, toda
 \end{figure}
 \subsection{Bibliotecas Utilizadas}
 
-Para o desenvolvimento da componente \textit{frontend} foram utilizadas diversas bibliotecas de terceiros, descritas de seguida.
+Para o desenvolvimento da componente \textit{frontend} foram utilizadas diversas bibliotecas extensão ao projeto, descritas de seguida.
 
 \begin{itemize}
     \item \textbf{Material UI}~\cite{material-ui} (v7.3.9) --- biblioteca de componentes visuais. Foi utilizada para componentes como \texttt{Modal}, \texttt{DropDownMenu} e \texttt{LoadingComponent}. 
