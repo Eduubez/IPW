@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { mockProcessResponse } from "../../MockData/MockProcess";
-import { useSnackbar } from "notistack";
 import { ProcessApi, type ProcessResponse } from "../../Utility/Api/ProcessApi";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
@@ -10,19 +8,84 @@ import styles from "./processpage.module.css";
 import { StatCard } from "../../Components/Cards/StatCard/StatCard";
 import { Icon } from "../../Components/Icons/Icons";
 import { TimeLine } from "../../Components/TimeLine/TimeLine";
+import { useTranslation } from "react-i18next";
+import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
+
+const normalizeProcessState = (state?: string) => {
+  switch (state) {
+    case "assigned":
+      return "NOT_STARTED";
+    default:
+      return "ON_GOING";
+  }
+};
+
+/*
+{
+    "id": 23,
+    "name": "sdasadasdas",
+    "location": {
+        "id": 25,
+        "district": "sdasadasdas",
+        "county": "sdasadasdas",
+        "street": "sdasadasdassdasadasdas",
+        "latitude": "",
+        "longitude": ""
+    },
+    "creationDate": "2026-05-24T19:18:02.597831",
+    "dueDate": "2026-05-30T00:00",
+    "priority": "WITH_PRIORITY",
+    "area": "Car Accident",
+    "typification": "Collision",
+    "triator": {
+        "id": 2,
+        "name": "Alice Triator",
+        "email": "alice@ipw.pt",
+        "areaId": null,
+        "roles": []
+    },
+    "investigator": {
+        "id": 3,
+        "name": "Bob Investigator",
+        "email": "bob@ipw.pt",
+        "areaId": null,
+        "roles": []
+    },
+    "supervisor": {
+        "id": 4,
+        "name": "Carol Supervisor",
+        "email": "carol@ipw.pt",
+        "areaId": null,
+        "roles": []
+    },
+    "state": "assigned",
+    "proves": null,
+    "report": null,
+    "notes": [],
+    "activity": {
+        "id": 7,
+        "processId": 23,
+        "userId": 2,
+        "action": "created a new process",
+        "description": "Process created by Alice Triator",
+        "createdAt": "2026-05-24T19:18:02.597831"
+    }
+}
+    */
+
 export default function ProcessPage() {
   const { id } = useParams();
-  const { enqueueSnackbar } = useSnackbar();
+  const { t } = useTranslation();
   const [apiResponse, setApiResponse] = useState<ProcessResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-const fetchProcessData = async () => {
-  if (!id) return;
-  const response =  await ProcessApi.getById(Number(id))
-  if(response.success){
-    setApiResponse(response.data);
-  }
-}
+  const fetchProcessData = async () => {
+    if (!id) return;
+    const response = await ProcessApi.getById(Number(id));
+    if (response.success) {
+      setApiResponse(response.data);
+    }
+  };
 
   const {
     supervisorCard,
@@ -36,37 +99,37 @@ const fetchProcessData = async () => {
     if (!apiResponse) {
       return {
         supervisorCard: {
-          value: "Supervisor",
+          value: t("CreateProcessPage.fields.supervisor"),
           text: "N/A",
           icon: { name: Icon.Group, style: { color: Color.LightBlue } },
         },
         averiguadorCard: {
-          value: "Averiguador",
+          value: t("CreateProcessPage.fields.investigator"),
           text: "N/A",
           icon: { name: Icon.Group, style: { color: Color.LightBlue } },
         },
         areaCard: {
-          value: "Area",
+          value: t("CreateProcessPage.fields.area"),
           text: "N/A",
           icon: { name: Icon.CarCrash, style: { color: Color.LightBlue } },
         },
         locationCard: {
-          value: "Location",
+          value: t("CreateProcessPage.fields.location"),
           text: "N/A",
           icon: { name: Icon.Location, style: { color: Color.LightBlue } },
         },
         creationCard: {
-          value: "Creation Date",
+          value: t("CreateProcessPage.fields.creationDate"),
           text: "N/A",
           icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
         },
         dueDateCard: {
-          value: "Due Date",
+          value: t("CreateProcessPage.fields.expiresAt"),
           text: "N/A",
           icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
         },
         priorityCard: {
-          value: "Priority",
+          value: t("CreateProcessPage.fields.priority"),
           text: "N/A",
           icon: { name: Icon.Info, style: { color: Color.LightBlue } },
         },
@@ -75,44 +138,44 @@ const fetchProcessData = async () => {
 
     return {
       supervisorCard: {
-        value: "Supervisor",
+        value: t("CreateProcessPage.fields.supervisor"),
         text: apiResponse.supervisor?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
       },
       averiguadorCard: {
-        value: "Averiguador",
+        value: t("CreateProcessPage.fields.investigator"),
         text: apiResponse.investigator?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
       },
       areaCard: {
-        value: "Area",
-        text: apiResponse.area || "N/A",
+        value: t("CreateProcessPage.fields.area"),
+        text: t(`Areas.${apiResponse.area}`) || "N/A",
         icon: { name: Icon.CarCrash, style: { color: Color.LightBlue } },
       },
       locationCard: {
-        value: "Location",
+        value: t("CreateProcessPage.fields.location"),
         text: apiResponse.location
           ? `${apiResponse.location.street}, ${apiResponse.location.district}`
           : "N/A",
         icon: { name: Icon.Location, style: { color: Color.LightBlue } },
       },
       creationCard: {
-        value: "Creation Date",
+        value: t("CreateProcessPage.fields.creationDate"),
         text: apiResponse.creationDate
           ? new Date(apiResponse.creationDate).toLocaleDateString()
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
       },
       dueDateCard: {
-        value: "Due Date",
+        value: t("CreateProcessPage.fields.expiresAt"),
         text: apiResponse.dueDate
           ? new Date(apiResponse.dueDate).toLocaleDateString()
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
       },
       priorityCard: {
-        value: "Priority",
-        text: apiResponse.priority || "N/A",
+        value: t("CreateProcessPage.fields.priority"),
+        text: t(`Priority.${apiResponse.priority}`) || "N/A",
         icon: { name: Icon.Info, style: { color: Color.LightBlue } },
       },
     };
@@ -130,7 +193,7 @@ const fetchProcessData = async () => {
 
   useEffect(() => {
     setLoading(true);
-    fetchProcessData()
+    fetchProcessData();
     setLoading(false);
   }, [id]);
 
@@ -143,7 +206,7 @@ const fetchProcessData = async () => {
           loading={loading}
         />
         <PrimaryBadge
-          text={apiResponse?.state.replace("_", " ") || "Status"}
+          text={t(`State.${normalizeProcessState(apiResponse?.state)}`)}
           style={{ backgroundColor: Color.DarkBlue }}
           loading={loading}
         />
@@ -164,14 +227,28 @@ const fetchProcessData = async () => {
         ))}
       </div>
       <div className={styles["details-container"]}>
-        <TimeLine />
-        {/* <Report/>
-        *}
-        <div className={`${styles["attachments-activity-container"]} ${loading ? styles["loading"] : ""}`}>
-          </div><AttachmentComponent/>
-          <ActivityComponent/>
+        <div className={styles["d-container"]}>
+          <WithBackground>
+            <TimeLine />
+          </WithBackground>
         </div>
-        */}
+        <div className={styles["d-container"]}>
+          <WithBackground>
+            <span>teste</span>
+          </WithBackground>
+        </div>
+        <div className={styles["d-container"]}>
+          <div className={styles["attachments-container"]}>
+            <WithBackground>
+              <span>teste</span>
+            </WithBackground>
+          </div>
+          <div className={styles["activity-container"]}>
+            <WithBackground>
+              <span>teste</span>
+            </WithBackground>
+          </div>
+        </div>
       </div>
     </div>
   );

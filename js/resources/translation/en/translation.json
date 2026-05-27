@@ -145,6 +145,8 @@
       "area": "Area",
       "investigator": "Investigator",
       "supervisor": "Supervisor",
+      "location": "Location",
+      "creationDate": "Creation Date",
       "priority": "Priority",
       "canBeFraud": "Can be fraud",
       "note": "Note"
