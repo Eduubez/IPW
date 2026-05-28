@@ -31,12 +31,44 @@ services:
     container_name: ipw-backend
     depends_on:
       - db
+      - minio
     ports:
       - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ipw
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: 1234
+      MINIO_INTERNAL_ENDPOINT: http://minio:9000
+      MINIO_PUBLIC_ENDPOINT: http://localhost:9000
+      MINIO_ACCESS_KEY: ipw
+      MINIO_SECRET_KEY: ipw-password
+      MINIO_BUCKET: process-attachments
+
+  minio:
+    image: minio/minio:latest
+    container_name: ipw-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ipw
+      MINIO_ROOT_PASSWORD: ipw-password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: ipw-minio-init
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 ipw ipw-password; do sleep 1; done;
+      mc mb --ignore-existing local/process-attachments;
+      mc anonymous set none local/process-attachments;
+      "
 
 volumes:
   postgres_data:
+  minio_data:

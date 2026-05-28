@@ -4,8 +4,9 @@ data class ProvesResponse (
     val id: Int,
     val processId: Int,
     val fileName: String,
-    val fileType: String,
-    val fileUrl: String,
+    val contentType: String,
+    val fileSize: Long,
+    val createdBy: Int,
     val createdAt: String,
 )
 

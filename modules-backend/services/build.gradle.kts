@@ -26,6 +26,7 @@ dependencies {
     implementation("org.jdbi:jdbi3-core:3.49.6")
     implementation("org.jdbi:jdbi3-kotlin:3.49.6")
     implementation("org.jdbi:jdbi3-postgres:3.49.6")
+    implementation("io.minio:minio:8.5.17")
     implementation("org.postgresql:postgresql:42.7.4")
 }
 

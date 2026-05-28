@@ -105,6 +105,7 @@ class JdbiProcessRepository(
             .map(NoteMapper())
             .list()
 
+
         return handle.createQuery(
             """
         select
@@ -156,8 +157,10 @@ class JdbiProcessRepository(
             pv.id            as proves_id,
             pv.process_id    as proves_process_id,
             pv.file_name     as proves_file_name,
-            pv.file_type     as proves_file_type,
-            pv.file_url      as proves_file_url,
+            pv.content_type  as proves_content_type,
+            pv.file_size     as proves_file_size,
+            pv.storage_key   as proves_storage_key,
+            pv.created_by    as proves_created_by,
             pv.created_at    as proves_created_at,
 
             r.id             as report_id,
@@ -307,8 +310,10 @@ select
     pv.id            as proves_id,
     pv.process_id    as proves_process_id,
     pv.file_name     as proves_file_name,
-    pv.file_type     as proves_file_type,
-    pv.file_url      as proves_file_url,
+    pv.content_type  as proves_content_type,
+    pv.file_size     as proves_file_size,
+    pv.storage_key   as proves_storage_key,
+    pv.created_by    as proves_created_by,
     pv.created_at    as proves_created_at,
 
     r.id             as report_id,
