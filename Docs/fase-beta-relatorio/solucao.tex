@@ -3,12 +3,13 @@
 %
 \chapter{Solu\c{c}\~{a}o Proposta} \label{cap:solucao}
 
-Este capítulo está organizado em quatro secções onde se descreve o trabalho relacionado.
+Este capítulo apresenta detalhadamente a arquitetura, o modelo de dados e os detalhes de implementação da solução tecnológica desenvolvida. 
+O conteúdo encontra-se estruturado em quatro secções principais: a Secção 2.1 descreve a arquitetura geral do sistema baseada num modelo \textit{client-server} em camadas; a Secção 2.2 detalha o modelo de dados conceptual (Entidade-Associação) e as regras de negócio automatizadas na base de dados; a Secção 2.3 aborda a componente de \textit{backend}, focando-se no desenvolvimento com \textit{Spring Boot} e nos mecanismos de segurança e controlo de acessos (RBAC) com \textit{Spring Security}; por fim, a Secção 2.4 expõe a estrutura do servidor \textit{frontend} em \textit{React}, os seus componentes de proteção de rotas e as bibliotecas externas integradas.
 
 \section{Arquitetura}
 
-A Figura~\ref{fig:arquitetura_sistema} apresenta a arquitetura geral da aplicação desenvolvida no âmbito deste projeto. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
-\textcolor{blue}{Deveriamos fazer referencia ao Vite e ao Gradle ?}
+Na Figura~\ref{fig:arquitetura_sistema} representa-se a arquitetura geral da aplicação desenvolvida no âmbito deste projeto. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
+
 
 
 \begin{figure}[h]
@@ -20,7 +21,7 @@ A Figura~\ref{fig:arquitetura_sistema} apresenta a arquitetura geral da aplicaç
 
 
 
-De um modo geral, a arquitetura baseia-se na interação entre três grandes blocos: a camada de apresentação, a camada de lógica de negócio e a camada de persistência de dados. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
+De um modo geral, a arquitetura baseia-se na interação entre três grandes blocos: o \textit{frontend}, o \textit{backend} e a base de dados. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
 
 A comunicação entre os vários componentes é realizada através de uma \textit{API} baseada em serviços \textit{REST}, assegurando um modelo de interação padronizado e independente da tecnologia utilizada no \textit{frontend}. Adicionalmente, foram adotados mecanismos de segurança para controlo de acesso e autenticação de utilizadores, garantindo a proteção dos recursos da aplicação.
 
@@ -29,36 +30,29 @@ Esta abordagem arquitetural favorece a modularidade, escalabilidade e manutenibi
 
 \cleardoublepage
 \section{Modelo de dados}
+\subsection{Autenticação}
 
-A Figura~\ref{fig:modelo_ea_sem_atributos} demonstra o modelo Entidade-Associação desenvolvido de modo representar de forma conceptual a estrutura da base de dados.
+No que respeita ao conjunto de entidades responsável pela autenticação e autorização de utilizadores, existem cinco entidades principais: \textit{User}, \textit{AccessToken}, \textit{RefreshToken}, \textit{LoginToken} e \textit{Role}. O modelo conceptual e a estrutura destas componentes encontram-se ilustrados na Figura~\ref{fig:entidades_auth}.
 
-\begin{figure}[h]
-  \begin{center}
-    \includegraphics[width=1.1\textwidth]{./figures/modelo-ea-sem-atributos.png}
-  \end{center}
-  \caption{Modelo entidade-associação sem atributos.}\label{fig:modelo_ea_sem_atributos}
-\end{figure}
-\newpage
+Relativamente à entidade \textit{User}, esta é composta por um identificador único (\textit{id}), um nome (\textit{name}), uma \textit{string} correspondente ao \textit{hash} da palavra-passe do utilizador (\textit{password validation}) e um indicador responsável por informar se o utilizador se encontra ativo (\textit{isActive}).
 
-\subsection{Entidades sobre autenticação}
+No que concerne à entidade \textit{AccessToken}, esta é composta por um \textit{token}, uma data de expiração (\textit{expiration date}) e um papel ativo associado (\textit{active role}). O propósito fundamental do \textit{AccessToken} consiste em autenticar os pedidos do utilizador e, simultaneamente, identificar o papel específico (\textit{Role}) que este vai desempenhar durante aquela determinada sessão.
 
-No que respeita ao conjunto de entidades responsável pela autenticação e autorização de utilizadores, existem três entidades principais: \textit{User}, \textit{AccessToken} e \textit{Role}.
+A entidade \textit{RefreshToken} apresenta uma estrutura idêntica à do \textit{AccessToken}. No entanto, o seu propósito específico consiste em permitir a obtenção de um novo \textit{AccessToken} assim que este expire, garantindo a continuidade da sessão sem obrigar o utilizador a realizar um novo processo de \textit{login}.
 
-Relativamente à entidade \textit{User}, esta é composta por um identificador único (\textit{id}), um nome (\textit{name}), uma \textit{string} correspondente ao \textit{hash} da palavra-passe do utilizador (\textit{password validation}) e um indicador responsável por informar se o utilizador se encontra ativo.
+Relativamente ao \textit{LoginToken}, este apresenta uma estrutura semelhante à das entidades anteriores, distinguindo-se pelo facto de não possuir qualquer papel associado e de manter o atributo de data de criação (\textit{creation date}). Este atributo é fundamental para conseguir guardar o registo da última sessão do utilizador, permitindo à aplicação saber a última vez que este esteve \textit{online}. Adicionalmente, o \textit{LoginToken} serve exclusivamente para autenticar inicialmente o utilizador no sistema e permitir a verificação de todos os papéis (\textit{Roles}) que este tem disponíveis para assumir.
 
-No que concerne à entidade \textit{AccessToken}, esta é composta por um \textit{token} , uma data de criação (\textit{creation date}), uma data de expiração (\textit{expiration date}) e um papel ativo associado (\textit{active role}).
+A entidade \textit{Role} é constituída apenas por um nome (\textit{name}), o qual está estritamente limitado a cinco valores possíveis: \textit{Admin}, \textit{Triator}, \textit{Investigator}, \textit{Supervisor} e \textit{Manager}. Esta limitação a um conjunto fixo de valores funciona como uma restrição de domínio (semelhante a um tipo enumerado), garantindo a integridade dos dados ao impedir a criação de papéis arbitrários e assegurando que o controlo de acessos no sistema se restringe apenas às funções previstas pelas regras de negócio da aplicação.
 
-Relativamente ao \textit{LoginToken}, este apresenta uma estrutura semelhante à do \textit{AccessToken}, distinguindo-se pelo facto de não possuir qualquer papel associado.
+No que respeita às relações entre estas entidades, um utilizador pode estar associado a diferentes \textit{LoginToken}, \textit{AccessToken} e \textit{RefreshToken}, permitindo a autenticação e a manutenção da sessão do mesmo nas diferentes etapas da aplicação.
 
-A entidade \textit{Role} é constituída apenas por um nome (\textit{name}), limitado a cinco valores possíveis: \textit{Admin}, \textit{Triator}, \textit{Investigator}, \textit{Supervisor} e \textit{Manager}.
+Relativamente à relação entre as entidades de \textit{token} (\textit{AccessToken} e \textit{RefreshToken}) e a entidade \textit{Role}, esta existe devido à necessidade de o \textit{token} de acesso e de renovação transportarem informação acerca do papel desempenhado pelo utilizador durante uma determinada sessão.
 
-No que respeita às relações entre estas entidades, um utilizador pode estar associado a diferentes \textit{LoginToken} e \textit{AccessToken}, permitindo a autenticação do mesmo nas diferentes etapas da aplicação.
+No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador pode possuir múltiplos papéis e, simultaneamente, o mesmo papel pode estar associado a diferentes utilizadores, caracterizando assim uma relação de $N$-para-$N$.\begin{figure}[h]
 
-Relativamente à relação entre \textit{AccessToken} e \textit{Role}, esta existe devido à necessidade de o \textit{token} de acesso transportar informação acerca do papel desempenhado pelo utilizador durante uma determinada sessão.
 
-No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador pode possuir múltiplos papéis e, simultaneamente, o mesmo papel pode estar associado a diferentes utilizadores, caracterizando assim uma relação de muitos-para-muitos.
 
-\begin{figure}[h]
+
   \begin{center}
     \includegraphics[width=1.0\textwidth]{./figures/Entidades-auth.png}
   \end{center}
@@ -66,26 +60,43 @@ No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador 
 \end{figure}
 \newpage
 
-\subsection{Entidade Processo e relações}
-\subsubsection{Processos e características}
-
+\subsection{Gestão de processos}
 
 
 No que respeita ao conjunto de entidades associado à gestão de processos, destacam-se as entidades \textit{Process}, \textit{Insurance}, \textit{State} e \textit{Location}. Estas entidades são responsáveis por representar a informação principal associada aos processos geridos pela aplicação, bem como o seu enquadramento, estado e classificação.
 
-Relativamente à entidade \textit{Process}, esta constitui a entidade central do domínio da aplicação. É composta por um identificador único (\textit{id}), um nome (\textit{name}), um nível de prioridade (\textit{priority}), uma data de criação (\textit{creation date}), uma data prevista de conclusão (\textit{due date}).
+Relativamente à entidade \textit{Process}, esta constitui a entidade central do domínio da aplicação. É composta por um identificador único (\textit{id}), um nome (\textit{name}), um nível de prioridade (\textit{priority}), uma data de inserção no sistema (\textit{creation date}), uma data prevista de conclusão (\textit{due date}).
 
 No que concerne à entidade \textit{Insurance}, esta representa a seguradora associada ao processo. É constituída por um identificador único (\textit{id}) e por um nome (\textit{name}).
 
-Relativamente à entidade \textit{State}, esta é responsável por representar o estado atual de um processo ao longo do seu ciclo de vida. É composta por um identificador único (\textit{id}), um nome (\textit{name}). Os estados possíveis encontram-se limitados a um conjunto predefinido de valores, tais como \textit{Not Assigned}, \textit{Assigned}, \textit{On Going}, \textit{Waiting Approval Supervisor}, \textit{Approved by Supervisor}, \textit{Rejected by Supervisor}, \textit{Waiting Approval Manager}, \textit{Approved by Manager}, \textit{Rejected by Manager} e \textit{Canceled}.
+Recorre-se à entidade \textit{State} para representar o estado atual de um processo ao longo do seu ciclo de vida, sendo esta composta por um identificador único (\textit{id}) e um nome (\textit{name}). Por forma a garantir o cumprimento estrito das regras de negócio, os estados possíveis encontram-se rigidamente delimitados a um conjunto predefinido de valores, cuja sequência operacional e transições lógicas estão ilustradas na Figura~\ref{fig:workflow_process_states}.
 
-Por fim, a entidade \textit{Location} representa a localização associada ao processo. Esta é composta por um identificador único (\textit{id}), o distrito (\textit{district}), o concelho (\textit{county}), a rua (\textit{street}), a latitude (\textit{latitude}) e a longitude (\textit{longitude}).
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{./figures/workflow-process-states.png}
+  \end{center}
+  \caption{Diagrama do \textit{workflow} e ciclo de vida dos estados de um processo.}\label{fig:workflow_process_states}
+\end{figure}
 
-No que respeita às relações entre estas entidades, um processo encontra-se associado a uma seguradora, podendo a mesma seguradora estar associada a múltiplos processos, caracterizando assim uma relação de um-para-muitos entre \textit{Insurance} e \textit{Process}.
+O fluxo inicia-se obrigatoriamente com a criação do processo no estado \textit{Not Assigned}. Assim que a equipa responsável é definida (averiguador e supervisor), o processo evolui para \textit{Assigned}. O ciclo operacional propriamente dito começa quando o averiguador inicia a recolha de provas e criação do relatório, alterando o estado para \textit{On Going}. Após a conclusão da recolha de dados e preenchimento dos relatórios, o averiguador submete o processo, o qual transita automaticamente para \textit{Waiting Approval Supervisor}.
 
-Relativamente à relação entre \textit{Process} e \textit{State}, um processo pode assumir diferentes estados ao longo do seu ciclo de vida, sendo possível que o mesmo estado esteja associado a diferentes processos. A cada relação entre estado e processo são armazenados a data de início (\textit{start date}) e a data de término (\textit{end date}).Esta relação permite representar a evolução e acompanhamento do processo dentro do sistema.
+A partir deste ponto crítico de validação, o \textit{workflow} ramifica-se de acordo com as decisões das hierarquias de supervisão e gestão:
+\begin{itemize}
+    \item \textbf{Fluxo de Supervisão:} O supervisor avalia o trabalho submetido. Caso identifique desconformidades, o processo passa para \textit{Rejected by Supervisor}, sendo forçado a retroceder diretamente para o estado \textit{On Going} de modo a permitir que o averiguador efetue as devidas correções. Se o parecer for positivo, o estado passa a \textit{Approved by Supervisor}, encaminhando o processo de imediato para a fila de verificação seguinte sob o estado \textit{Waiting Approval Manager}.
+    \item \textbf{Fluxo de Gestão:} O gestor (\textit{Manager}) assume a palavra final sobre o processo. Caso detete a necessidade de alterações profundas ou revisão, aplica o estado \textit{Rejected by Manager}, o que aciona um mecanismo de retorno ao estado de execução activa (\textit{On Going}). Havendo total conformidade com os requisitos institucionais, o gestor concede a validação definitiva, culminando no estado terminal de sucesso \textit{Approved by Manager}.
+\end{itemize}
 
-Por último, no que concerne à relação entre \textit{Process} e \textit{Location}, cada processo encontra-se associado a uma localização específica, enquanto uma localização pode estar associada a múltiplos processos.
+Adicionalmente, importa salvaguardar que, independentemente da fase em que se encontre na linha temporal descrita, qualquer processo pode ser cancelado a qualquer momento por decisão exclusiva do \textit{Manager}, assumindo nessa circunstância o estado de encerramento \textit{Canceled}.
+
+
+
+Por fim, a entidade \textit{Location} representa a localização associada ao sinistro. Esta é composta por um identificador único (\textit{id}), o distrito (\textit{district}), o concelho (\textit{county}), a rua (\textit{street}), a latitude (\textit{latitude}) e a longitude (\textit{longitude}).
+
+No que respeita às relações entre estas entidades, um processo encontra-se associado a uma seguradora, podendo a mesma seguradora estar associada a múltiplos processos, caracterizando assim uma relação de 1-para-N entre \textit{Insurance} e \textit{Process}.
+
+Relativamente à relação entre \textit{Process} e \textit{State}, um processo pode assumir diferentes estados ao longo do seu ciclo de vida, sendo possível que o mesmo estado esteja associado a diferentes processos. A cada relação entre estado e processo são armazenados a data de início (\textit{start date}) e a data de término (\textit{end date}), sendo que, caso seja o estado atual, este valor será nulo (\textit{null}).Esta relação permite representar a evolução e acompanhamento do processo dentro do sistema.
+
+Por último, no que concerne à relação entre \textit{Process} e \textit{Location}, cada processo de sinistro encontra-se associado a uma localização específica, enquanto uma localização pode registar várias ocorrências.
 
 
 \begin{figure}[h]
@@ -97,10 +108,77 @@ Por último, no que concerne à relação entre \textit{Process} e \textit{Locat
 
 \newpage
 
-\subsubsection{Processos, Relatório e Anexos}
-\textcolor{blue}{Pretendemos manter a estrutura para as restantes entidades e relações}
+\subsubsection{Documentação e Provas do Processo}
+
+No que respeita ao conjunto de entidades associado à documentação, relatórios e suporte probatório dos sinistros, destacam-se as entidades \textit{Report}, \textit{Prove} e \textit{Note}. Estas componentes são fundamentais para assegurar a recolha de evidências, o registo de observações contínuas e a formalização das conclusões obtidas ao longo da averiguação de um processo. A estrutura e o mapeamento relacional deste módulo encontram-se ilustrados na Figura~\ref{fig:entidades_report_notes}.
+
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=0.95\textwidth]{./figures/entidades-process-report-proves-notes.png}
+  \end{center}
+  \caption{Entidades de documentação, provas e notas do processo.}\label{fig:entidades_report_notes}
+\end{figure}
+
+Relativamente à entidade \textit{Report}, esta representa o relatório final detalhado pelo averiguador. É composta por um identificador único (\textit{id}), o conteudo do relatório (\textit{content}) e uma data de criação (\textit{creation date}) e, para caso seja necessário atualizar após a resposta dos superiores, uma data de modificação (\textit{updated at}). O propósito desta entidade é consolidar formalmente todas as conclusões para posterior apreciação por parte dos supervisores e gestores.
+
+No que concerne à entidade \textit{Prove}, esta destina-se ao armazenamento de evidências e elementos de prova recolhidos em sede de averiguação (tais como fotografias e vídeos). É constituída por um identificador único (\textit{id}), uma designação ou nome do ficheiro (\textit{file name}), o tipo de ficheiro (\textit{file type}), o \textit{url} que aponta para o recurso (\textit{file url}) e a respetiva data de carregamento (\textit{creation date}). Importa salientar que o propósito principal desta entidade consiste em armazenar o \textit{url} que aponta diretamente para o recurso pretendido, o qual se encontra alojado na base de dados documental \textit{MinIO}. Desta forma, assegura-se uma gestão eficiente e isolada de ficheiros de grande volume (\textit{blobs}), mantendo na base de dados relacional apenas a referência e os metadados necessários para a sua localização e associação ao processo.
+
+Por fim, a entidade \textit{Note} funciona como um histórico de anotações internas. Permite que qualquer utilizador associado a um processo deixe um comentário, observações pontuais ou notas de esclarecimento. Esta entidade é composta por um identificador único (\textit{id}), o conteúdo textual da nota (\textit{content}), a data do registo (\textit{creation date}) e o autor (\textit{author}).
+
+No que respeita às relações entre estas entidades e o módulo central do sistema, cada entidade \textit{Report} encontra-se vinculada a um único processo específico, estabelecendo-se uma relação de $1$-para-$1$ ou de $N$-para-$1$ com a entidade \textit{Process}, dependendo da permissão de múltiplos relatórios por sinistro.
+
+Relativamente à relação com a entidade \textit{Prove}, esta possui uma dependência direta com o processo ou com o relatório, garantindo que um \textit{Process} possa conter múltiplos elementos de prova associados, caracterizando uma relação de $1$-para-$N$.
+
+Por último, no que concerne à relação com a entidade \textit{Note}, esta apresenta-se associada de forma hierárquica ao \textit{Process}. Um único processo pode agregar múltiplas notas explicativas ao longo do seu ciclo de vida, definindo uma relação de $1$-para-$N$, o que viabiliza a criação de uma linha temporal auditável de comunicações e observações internas.
+
+
 \subsubsection{Processos, Área e Utilizador}
-\textcolor{blue}{Pretendemos manter a estrutura para as restantes entidades e relações}
+
+No que respeita ao conjunto de entidades responsável pela distribuição de tarefas, pela definição do âmbito de especialidade dos utilizadores e pelo registo de auditoria do sistema, destacam-se as entidades \textit{Process}, \textit{User}, \textit{Area} e \textit{Activity}. Estas componentes são essenciais para operacionalizar a alocação de peritos, segmentar as competências técnicas e manter um histórico imutável de todas as ações realizadas na plataforma. A estrutura destas interligações encontra-se representada na Figura~\ref{fig:entidades_process_user_area}.
+\begin{figure}[htbp]
+  \begin{center}
+    \includegraphics[width=0.85\textwidth]{./figures/Entidades-process-user-area.png}
+  \end{center}
+\caption{Mapeamento relacional incluindo processos, utilizadores, áreas de especialidade e atividades.}\label{fig:entidades_process_user_area}\end{figure}
+
+Relativamente à entidade \textit{Area}, esta destina-se a classificar o ramo ou a tipologia de sinistro sob a qual o processo se enquadra. É composta por um identificador único (\textit{id}), um nome descritivo da área de atuação (\textit{name}) e um código de classificação interna (\textit{area code}). O seu propósito é segmentar os processos de acordo com a natureza do incidente para garantir que são tratados por profissionais qualificados na matéria.
+
+No que concerne à entidade \textit{Activity}, esta funciona como um registo detalhado de auditoria das operações efetuadas no sistema. É composta por um identificador único (\textit{id}), a ação específica realizada sobre um determinado sinistro (\textit{action}), a data e hora do registo (\textit{creation date}) e uma descrição textual detalhada do evento (\textit{description}).
+
+No que concerne às relações entre estas entidades, a associação entre \textit{User} e \textit{Process} materializa a atribuição de responsabilidades dentro da aplicação. Um utilizador, consoante o seu papel, pode estar associado a múltiplos processos em simultâneo, e um processo pode envolver a participação de diferentes utilizadores ao longo do seu ciclo de vida, caracterizando uma relação de muitos-para-muitos ($N$-para-$N$). Nesta associação, são guardados dados como a data de atribuição (\textit{assignment date}) do utilizador ao respetivo caso.
+
+Relativamente à ligação entre as entidades \textit{User} e \textit{Area}, esta desdobra-se em dois relacionamentos distintos com propósitos e cardinalidades diferentes:
+\begin{itemize}
+    \item \textbf{Afetação à Área ($N$-para-$1$):} Determina a área de especialidade técnica e competência profissional à qual cada colaborador está afetado. Sob esta regra, cada utilizador pode estar estritamente associado a apenas uma única área de especialidade (por exemplo, pertencer exclusivamente ao ramo automóvel ou ao ramo de incêndios), enquanto uma mesma área de atuação pode contar com o suporte de múltiplos utilizadores aptos, caracterizando uma relação de muitos-para-um ($N$-para-$1$) da perspetiva do utilizador.
+    \item \textbf{Responsável pela Área ($1$-para-$1$):} Define de forma unívoca o utilizador que assume a chefia ou a responsabilidade máxima por uma determinada área de atuação. Trata-se de uma relação de um-para-um ($1$-para-$1$), garantindo que cada área possui apenas um responsável encarregue da sua coordenação.
+\end{itemize}
+
+Por último, no que concerne às relações associadas à entidade \textit{Activity}, esta interliga-se de forma fulcral com os utilizadores e os processos:
+\begin{itemize}
+    \item \textbf{Relação com \textit{User} ($1$-para-$N$):} Um utilizador pode realizar múltiplas ações ao longo do tempo, gerando várias atividades no sistema, ao passo que cada atividade está associada a apenas um utilizador autor. Esta ligação caracteriza uma relação de $1$-para-$N$, permitindo rastrear o autor de cada modificação.
+    \item \textbf{Relação com \textit{Process} ($1$-para-$N$):} Cada processo centraliza o seu próprio histórico operacional, acumulando múltiplas atividades ao longo do seu ciclo de vida, enquanto cada atividade individual pertence a um único processo. Define-se, assim, uma relação de $1$-para-$N$, o que viabiliza a consulta de uma linha temporal completa de eventos por cada sinistro.
+\end{itemize}
+
+
+\newpage
+
+
+\subsection{Modelo completo}
+
+A abordagem descrita permitiu deslocar determinadas regras críticas de consistência para a própria base de dados, reduzindo a dependência exclusiva da camada aplicacional para a validação de estados e garantindo um comportamento mais robusto e consistente do sistema.
+
+Como síntese de toda a estrutura relacional planeada, a Figura~\ref{fig:modelo_ea_sem_atributos} demonstra, de forma completa e integrada, o modelo Entidade-Associação global desenvolvido para suportar o ecossistema da aplicação.
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=1.0\textwidth]{./figures/modelo-ea-sem-atributos.png}
+  \end{center}
+  \caption{Modelo entidade-associação completo (sem atributos).}\label{fig:modelo_ea_sem_atributos}
+\end{figure}
+
+
+
+
 
 \subsection{Implementação}
 
@@ -110,7 +188,7 @@ A organização da base de dados encontra-se dividida em diferentes ficheiros \t
 
 Existe um ficheiro dedicado à criação da estrutura da base de dados, responsável pela definição das tabelas, relações, restrições de integridade e restantes objetos necessários ao modelo relacional. Para além deste, existem ficheiros específicos para o preenchimento inicial de tabelas contendo informação estática ou previamente conhecida, nomeadamente tabelas como \textit{State}, \textit{Role} e \textit{Area}. Este mecanismo permite garantir que determinados dados essenciais ao funcionamento do sistema se encontram disponíveis desde o momento da inicialização da aplicação.
 
-Adicionalmente, a base de dados integra um conjunto de \textit{triggers} responsáveis por automatizar determinadas regras de negócio diretamente ao nível da persistência de dados. Esta abordagem permite garantir consistência e integridade da informação independentemente da origem das operações efetuadas sobre a base de dados.
+Adicionalmente, a base de dados integra um conjunto de \textit{triggers} (gatilhos) responsáveis por automatizar determinadas regras de negócio diretamente ao nível da persistência de dados. A opção pela utilização de \textit{triggers} fundamenta-se na sua natureza reativa e orientada a eventos. Ao contrário das funções ou procedimentos armazenados tradicionais, que exigem uma invocação explícita através de código na camada aplicacional, os \textit{triggers} reagem de forma automática e imediata aquando da ocorrência de um evento específico na base de dados (como a inserção, modificação ou remoção de registos). Esta execução transparente garante que as regras críticas de integridade e consistência da informação são salvaguardadas de forma autónoma diretamente no motor do \textit{PostgreSQL}, independentemente de qual o serviço ou operação que originou o pedido.
 
 Um dos \textit{triggers} implementados é responsável por fechar automaticamente o estado anterior de um processo quando um novo estado é inserido na tabela de estados do processo. Desta forma, sempre que ocorre uma mudança de estado, o estado anteriormente ativo passa automaticamente a possuir uma data de fim associada.
 
@@ -121,11 +199,7 @@ Foi igualmente implementado um \textit{trigger} responsável por atualizar autom
 Por fim, foi implementado um mecanismo automático associado à criação e atribuição de processos. Após a inserção de um novo processo, é criado automaticamente o estado inicial correspondente. Caso o processo possua simultaneamente um investigador e um supervisor associados, o estado definido é \textit{assigned}; caso contrário, o sistema atribui automaticamente o estado \textit{not\_assigned}. Adicionalmente, quando um processo passa posteriormente a possuir investigador e supervisor definidos, um \textit{trigger} deteta essa alteração e insere automaticamente o estado \textit{assigned}.
 
 Esta abordagem permite deslocar determinadas regras críticas de consistência para a própria base de dados, reduzindo a dependência exclusiva da camada aplicacional para validação de estados e garantindo um comportamento mais robusto e consistente do sistema.
-
-
-
-
-
+\newpage
 
 
 
