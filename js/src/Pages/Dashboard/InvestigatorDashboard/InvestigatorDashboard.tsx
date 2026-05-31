@@ -10,7 +10,10 @@ import { Header } from "../../../Components/Layouts/Header/Header";
 import { StatContainerLayout } from "../../../Components/StatContainerLayout/StatContainerLayout";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import styles from "./investigatordashboard.module.css";
-import { StateBadge, type StateType } from "../../../Components/Badge/StateBadge/StateBadge";
+import {
+  StateBadge,
+  type StateType,
+} from "../../../Components/Badge/StateBadge/StateBadge";
 
 type CleanProcess = {
   name: string;
@@ -23,6 +26,19 @@ type CleanProcess = {
   id: number;
   onClick: () => void;
 };
+
+const investigatorDashboardStatesMapper = (state: string) => {
+  const normalizedState = state.toUpperCase();
+  switch (normalizedState) {
+    case "ASSIGNED":
+      return "NOT_STARTED";
+    case "IN_PROGRESS":
+      return "IN_PROGRESS";
+    case "REJECTED_BY_SUPERVISOR":
+    case "REJECTED_BY_MANAGER":
+      return "REJECTED";
+  }
+};
 const cleanProcess = (
   processes: ProcessResponse[],
   navigate: (path: string) => void,
@@ -34,7 +50,11 @@ const cleanProcess = (
     creationDate: new Date(process.creationDate).toLocaleDateString(),
     expirationDate: new Date(process.dueDate).toLocaleDateString(),
     priority: <PriorityBadge priority={process.priority} />,
-    state: <StateBadge state={process.state as StateType} />,
+    state: (
+      <StateBadge
+        state={investigatorDashboardStatesMapper(process.state) as StateType}
+      />
+    ),
     priorityValue: process.priority,
     id: process.id,
     onClick: () => navigate(`/processes/${process.id}`),

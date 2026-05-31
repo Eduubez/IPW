@@ -10,8 +10,12 @@ import { Icon } from "../../Components/Icons/Icons";
 import { TimeLine } from "../../Components/TimeLine/TimeLine";
 import { useTranslation } from "react-i18next";
 import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
+import { ActivityApi } from "../../Utility/Api/ActivityApi";
+import { normalizeState } from "../../Utility/Helpers/ProcessStateHelpers";
+import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
+import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 
-const normalizeProcessState = (state?: string) => {
+const processPageState = (state?: string) => {
   switch (state) {
     case "assigned":
       return "NOT_STARTED";
@@ -77,6 +81,7 @@ export default function ProcessPage() {
   const { id } = useParams();
   const { t } = useTranslation();
   const [apiResponse, setApiResponse] = useState<ProcessResponse | null>(null);
+  const [activityItems, setActivityItems] = useState<{ done: boolean; label: string; date: Date; user: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProcessData = async () => {
@@ -84,6 +89,19 @@ export default function ProcessPage() {
     const response = await ProcessApi.getById(Number(id));
     if (response.success) {
       setApiResponse(response.data);
+    }
+  };
+  const fetchProcessActivity = async () => {
+    if (!id) return;
+    const response = await ActivityApi.getActivityByProcess(Number(id),0,10);
+    if (response.success) {
+      const items =response.data.results.map(activity => ({
+        done: true,
+        label: activity.action,
+        date: new Date(activity.createdAt),
+        user: activity.userId.toString() // You might want to replace this with the actual user name
+      }))
+      setActivityItems(items);
     }
   };
 
@@ -194,8 +212,22 @@ export default function ProcessPage() {
   useEffect(() => {
     setLoading(true);
     fetchProcessData();
+    fetchProcessActivity();
     setLoading(false);
   }, [id]);
+
+
+// #region handlers
+const handleStartProcess = () => {
+  // At this point we can't start
+}
+
+
+// Variables after fetchin data
+const canStartProcess = apiResponse ? normalizeState(apiResponse?.state) === "ASSIGNED" : false;
+
+
+
 
   return (
     <div className={styles["page-container"]}>
@@ -205,11 +237,15 @@ export default function ProcessPage() {
           description="Veja os detalhes do processo"
           loading={loading}
         />
-        <PrimaryBadge
-          text={t(`State.${normalizeProcessState(apiResponse?.state)}`)}
-          style={{ backgroundColor: Color.DarkBlue }}
-          loading={loading}
+        <PrimaryButton
+        text={"Iniciar Processo"}
+        onClick={handleStartProcess}
+        enabled={canStartProcess}
         />
+        <StateBadge
+          state={processPageState(apiResponse?.state)}
+        />
+        
       </div>
       <div className={styles["stats-container"]}>
         {cards.map((card, index) => (
@@ -229,7 +265,7 @@ export default function ProcessPage() {
       <div className={styles["details-container"]}>
         <div className={styles["d-container"]}>
           <WithBackground>
-            <TimeLine />
+          <TimeLine items={activityItems} loading={loading} />
           </WithBackground>
         </div>
         <div className={styles["d-container"]}>
@@ -253,3 +289,4 @@ export default function ProcessPage() {
     </div>
   );
 }
+
