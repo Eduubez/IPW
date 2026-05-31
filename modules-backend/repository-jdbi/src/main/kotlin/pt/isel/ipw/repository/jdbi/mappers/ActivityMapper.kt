@@ -11,6 +11,7 @@ class ActivityMapper(private val prefix: String = "") : RowMapper<Activity> {
             id = rs.getInt("${prefix}id"),
             processId = rs.getInt("${prefix}process_id"),
             userId = rs.getInt("${prefix}user_id"),
+            userName = rs.getString("${prefix}user_name"),
             action = rs.getString("${prefix}action"),
             description = rs.getString("${prefix}description"),
             createdAt = rs.getTimestamp("${prefix}created_at").toLocalDateTime()

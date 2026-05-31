@@ -172,6 +172,7 @@ class JdbiProcessRepository(
             act.id           as activity_id,
             act.process_id   as activity_process_id,
             act.user_id      as activity_user_id,
+            uact.name        as activity_user_name,
             act.action       as activity_action,
             act.description  as activity_description,
             act.created_at   as activity_created_at
@@ -196,6 +197,7 @@ class JdbiProcessRepository(
         left join Proves pv     on pv.process_id     = p.id
         left join Report r      on r.process_id      = p.id
         left join Activity act  on act.process_id    = p.id
+        left join Users uact    on uact.id           = act.user_id
         where p.id = :id
         limit 1
         """
@@ -325,6 +327,7 @@ select
     act.id           as activity_id,
     act.process_id   as activity_process_id,
     act.user_id      as activity_user_id,
+    uact.name        as activity_user_name,
     act.action       as activity_action,
     act.description  as activity_description,
     act.created_at   as activity_created_at
@@ -349,6 +352,7 @@ left join (
 left join Proves pv     on pv.process_id     = p.id
 left join Report r      on r.process_id      = p.id
 left join Activity act  on act.process_id    = p.id
+left join Users uact    on uact.id           = act.user_id
 where p.id = any(:ids)
 order by p.creation_date desc
 """
