@@ -1,6 +1,8 @@
 package pt.isel.ipw.http.errors
 
 import org.springframework.http.ResponseEntity
+import org.springframework.core.Ordered
+import org.springframework.core.annotation.Order
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import pt.isel.ipw.services.auth.ExpiredAccessTokenException
@@ -10,6 +12,7 @@ import pt.isel.ipw.services.auth.InvalidTokenException
 import pt.isel.ipw.services.errors.UserError
 
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 class TokenExceptionHandler {
 
     @ExceptionHandler(ExpiredLoginTokenException::class)
