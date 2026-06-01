@@ -6,6 +6,7 @@ import pt.isel.ipw.domain.DTO.output.user.AssignableUser
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.repository.UsersRepository
+import kotlin.collections.singleOrNull
 
 class JdbiUsersRepository(
     private val handle: Handle
@@ -256,5 +257,23 @@ class JdbiUsersRepository(
             .bind("userId", userId)
             .bind("role", role)
             .execute()
+    }
+
+    override fun getAdmin(): User? {
+        return handle.createQuery(
+            """SELECT
+                u.id,
+                u.name,
+                u.email,
+                u.password_hash,
+                a.name as area,
+                u.is_active
+                FROM Users u
+                LEFT JOIN Area a ON u.area_id = a.id
+                JOIN User_Role ur ON ur.user_id = u.id
+                WHERE ur.role_name = 'admin'
+
+            """.trimIndent()
+        ).mapTo<User>().singleOrNull()
     }
 }

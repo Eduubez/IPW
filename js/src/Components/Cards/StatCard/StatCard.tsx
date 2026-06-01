@@ -1,16 +1,22 @@
 import styles from "./statcard.module.css";
 import LoadingComponent from "../../LoadingComponent/LoadingComponent";
+import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
 
 export function StatCard({
   icon,
   text,
   value,
   loading,
+  button
 }: {
   icon: { name: string; style?: React.CSSProperties };
   text: string | number;
   value: number | string;
   loading?: boolean;
+  button?:{
+    text: string;
+    onClick: () => void;
+  }
 }) {
   return (
     <div className={styles["stat-card"]}>
@@ -25,6 +31,9 @@ export function StatCard({
           </div>
           <span className={styles["value"]}>{value}</span>
           <span className={styles["text"]}>{text}</span>
+          {button && (
+            <PrimaryButton onClick={button.onClick} text={button.text} enabled={true} />
+          )}
         </>
       )}
     </div>

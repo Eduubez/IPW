@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ProcessApi, type ProcessResponse } from "../../Utility/Api/ProcessApi";
 import { Header } from "../../Components/Layouts/Header/Header";
-import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { Color } from "../../StyleGuide/colors";
 import styles from "./processpage.module.css";
 import { StatCard } from "../../Components/Cards/StatCard/StatCard";
@@ -14,6 +13,7 @@ import { ActivityApi } from "../../Utility/Api/ActivityApi";
 import { normalizeState } from "../../Utility/Helpers/ProcessStateHelpers";
 import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
+import { ReportCard } from "../../Components/ReportCard/ReportCard";
 
 const processPageState = (state?: string) => {
   switch (state) {
@@ -120,36 +120,43 @@ export default function ProcessPage() {
           value: t("CreateProcessPage.fields.supervisor"),
           text: "N/A",
           icon: { name: Icon.Group, style: { color: Color.LightBlue } },
+          button: undefined
         },
         averiguadorCard: {
           value: t("CreateProcessPage.fields.investigator"),
           text: "N/A",
           icon: { name: Icon.Group, style: { color: Color.LightBlue } },
+          button: undefined
         },
         areaCard: {
           value: t("CreateProcessPage.fields.area"),
           text: "N/A",
           icon: { name: Icon.CarCrash, style: { color: Color.LightBlue } },
+          button: undefined
         },
         locationCard: {
           value: t("CreateProcessPage.fields.location"),
           text: "N/A",
           icon: { name: Icon.Location, style: { color: Color.LightBlue } },
+          button: undefined
         },
         creationCard: {
           value: t("CreateProcessPage.fields.creationDate"),
           text: "N/A",
           icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
+          button: undefined
         },
         dueDateCard: {
           value: t("CreateProcessPage.fields.expiresAt"),
           text: "N/A",
           icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
+          button: undefined
         },
         priorityCard: {
           value: t("CreateProcessPage.fields.priority"),
           text: "N/A",
           icon: { name: Icon.Info, style: { color: Color.LightBlue } },
+          button: undefined
         },
       };
     }
@@ -159,16 +166,25 @@ export default function ProcessPage() {
         value: t("CreateProcessPage.fields.supervisor"),
         text: apiResponse.supervisor?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
+        button: apiResponse.supervisor?.email ? {
+          text: "Notificar",
+          onClick: () => window.location.href = `mailto:${apiResponse.supervisor!.email}`
+        } : undefined
       },
       averiguadorCard: {
         value: t("CreateProcessPage.fields.investigator"),
         text: apiResponse.investigator?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
+        button: apiResponse.investigator?.email ? {
+          text: "Notificar",
+          onClick: () => window.location.href = `mailto:${apiResponse.investigator!.email}`
+        } : undefined
       },
       areaCard: {
         value: t("CreateProcessPage.fields.area"),
         text: t(`Areas.${apiResponse.area}`) || "N/A",
         icon: { name: Icon.CarCrash, style: { color: Color.LightBlue } },
+        button: undefined
       },
       locationCard: {
         value: t("CreateProcessPage.fields.location"),
@@ -176,6 +192,7 @@ export default function ProcessPage() {
           ? `${apiResponse.location.street}, ${apiResponse.location.district}`
           : "N/A",
         icon: { name: Icon.Location, style: { color: Color.LightBlue } },
+        button: undefined
       },
       creationCard: {
         value: t("CreateProcessPage.fields.creationDate"),
@@ -183,6 +200,7 @@ export default function ProcessPage() {
           ? new Date(apiResponse.creationDate).toLocaleDateString()
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
+        button: undefined
       },
       dueDateCard: {
         value: t("CreateProcessPage.fields.expiresAt"),
@@ -190,11 +208,13 @@ export default function ProcessPage() {
           ? new Date(apiResponse.dueDate).toLocaleDateString()
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
+        button: undefined
       },
       priorityCard: {
         value: t("CreateProcessPage.fields.priority"),
         text: t(`Priority.${apiResponse.priority}`) || "N/A",
         icon: { name: Icon.Info, style: { color: Color.LightBlue } },
+        button: undefined
       },
     };
   }, [apiResponse]);
@@ -226,8 +246,9 @@ const handleStartProcess = () => {
 // Variables after fetchin data
 const canStartProcess = apiResponse ? normalizeState(apiResponse?.state) === "ASSIGNED" : false;
 
+const report = apiResponse?.report;
 
-
+console.log("The Report is : ", report?.content);
 
   return (
     <div className={styles["page-container"]}>
@@ -237,15 +258,18 @@ const canStartProcess = apiResponse ? normalizeState(apiResponse?.state) === "AS
           description="Veja os detalhes do processo"
           loading={loading}
         />
+        <div className={styles["button-badage-wrapper"]}>
+        <div className={styles["button-container"]}>
         <PrimaryButton
         text={"Iniciar Processo"}
         onClick={handleStartProcess}
         enabled={canStartProcess}
         />
+        </div>
         <StateBadge
           state={processPageState(apiResponse?.state)}
         />
-        
+        </div>
       </div>
       <div className={styles["stats-container"]}>
         {cards.map((card, index) => (
@@ -258,6 +282,7 @@ const canStartProcess = apiResponse ? normalizeState(apiResponse?.state) === "AS
               text={card.text}
               icon={card.icon}
               loading={loading}
+              button={card.button}
             />
           </div>
         ))}
@@ -270,18 +295,18 @@ const canStartProcess = apiResponse ? normalizeState(apiResponse?.state) === "AS
         </div>
         <div className={styles["d-container"]}>
           <WithBackground>
-            <span>teste</span>
+            <ReportCard report={report} processId={Number(id)} />
           </WithBackground>
         </div>
         <div className={styles["d-container"]}>
           <div className={styles["attachments-container"]}>
             <WithBackground>
-              <span>teste</span>
+              <span>Anexos</span>
             </WithBackground>
           </div>
           <div className={styles["activity-container"]}>
             <WithBackground>
-              <span>teste</span>
+              <span>Atividades</span>
             </WithBackground>
           </div>
         </div>

@@ -39,4 +39,6 @@ interface UsersRepository {
     fun updateUserArea(userId: Int, areaId: Int?)
 
     fun removeUserRole(userId: Int, role: String)
+
+    fun getAdmin():User?
 }

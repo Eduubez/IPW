@@ -40,9 +40,10 @@ export default function ChangeRolesModal({
     }
 
     return areas.filter(
-      (area) => area.bossId === null || area.bossId === user?.id,
+      (area) => area.bossId !== user?.id,
     );
   }, [areas, hasSupervisorRole, user?.id]);
+  console.log("Available areas for selection: ", availableAreas);
 
   useEffect(() => {
     if (open && user !== null) {

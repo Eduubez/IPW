@@ -30,7 +30,8 @@ class JwtAuthenticationFilter(
             ApiRoutes.Users.LOGIN_FULL,
             ApiRoutes.Users.SELECT_ROLE_FULL,
             ApiRoutes.Users.REFRESH_TOKEN_FULL,
-            ApiRoutes.Users.ROLES_FULL
+            ApiRoutes.Users.ROLES_FULL,
+            "/api/public/contacts"
         )
     }
 
