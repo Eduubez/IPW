@@ -6,6 +6,7 @@ data class Activity(
     val id: Int,
     val processId: Int,
     val userId: Int,
+    val userName: String,
     val action: String,
     val description: String?,
     val createdAt: LocalDateTime

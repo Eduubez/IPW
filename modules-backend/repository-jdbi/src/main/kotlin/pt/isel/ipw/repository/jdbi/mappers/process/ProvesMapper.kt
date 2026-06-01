@@ -12,8 +12,10 @@ class ProvesMapper(private val prefix: String = "") : RowMapper<Prove> {
             id = rs.getInt("${prefix}id"),
             processId = rs.getInt("${prefix}process_id"),
             fileName = rs.getString("${prefix}file_name"),
-            fileType = rs.getString("${prefix}file_type"),
-            fileUrl = rs.getString("${prefix}file_url"),
+            contentType = rs.getString("${prefix}content_type"),
+            fileSize = rs.getLong("${prefix}file_size"),
+            storageKey = rs.getString("${prefix}storage_key"),
+            createdBy = rs.getInt("${prefix}created_by"),
             createdAt = rs.getTimestamp("${prefix}created_at").toLocalDateTime(),
         )
     }

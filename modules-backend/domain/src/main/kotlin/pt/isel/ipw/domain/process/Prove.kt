@@ -6,7 +6,9 @@ data class Prove(
     val id: Int,
     val processId: Int,
     val fileName: String,
-    val fileType: String,
-    val fileUrl: String,
-    val createdAt: LocalDateTime,
+    val contentType: String,
+    val fileSize: Long,
+    val storageKey: String,
+    val createdBy: Int,
+    val createdAt: LocalDateTime
 )

@@ -1,0 +1,76 @@
+@baseUrl = http://localhost:8080/api
+
+@loginTokenInvestigator =
+@accessTokenInvestigator =
+
+@processId = 1
+
+# Ficheiro local usado no PUT para o MinIO.
+@fileName = flight.jpg
+@contentType = image/jpeg
+@fileSize = 6575
+
+@uploadUrl =
+@storageKey =
+
+@proveId =
+
+### Login - Investigator
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "bob@ipw.pt",
+  "password": "12345"
+}
+
+### Select Role - Investigator
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginTokenInvestigator}}
+
+{
+  "role": "investigator"
+}
+
+### Create upload URL
+POST {{baseUrl}}/process/{{processId}}/proves/upload-url
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "fileName": "{{fileName}}",
+  "contentType": "{{contentType}}",
+  "fileSize": {{fileSize}}
+}
+
+### Upload file bytes to MinIO
+# Nao uses Authorization aqui. A autorizacao ja vai dentro da presigned URL.
+PUT {{uploadUrl}}
+Content-Type: {{contentType}}
+
+< C:\ISEL\flight.jpg
+
+### Create prove metadata
+POST {{baseUrl}}/process/{{processId}}/proves
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "fileName": "{{fileName}}",
+  "contentType": "{{contentType}}",
+  "fileSize": {{fileSize}},
+  "storageKey": "{{storageKey}}"
+}
+
+### Get process proves metadata
+GET {{baseUrl}}/process/{{processId}}/proves
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Get prove access URL
+GET {{baseUrl}}/process/{{processId}}/proves/{{proveId}}/url
+Authorization: Bearer {{accessTokenInvestigator}}
+
+### Delete prove
+DELETE {{baseUrl}}/process/{{processId}}/proves/{{proveId}}
+Authorization: Bearer {{accessTokenInvestigator}}

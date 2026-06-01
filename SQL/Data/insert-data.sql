@@ -160,21 +160,27 @@ values (1,
 -- =========================
 -- PROVES
 -- =========================
-insert into Proves (process_id, file_name, file_type, file_url, created_at)
+insert into Proves (process_id, file_name, content_type, file_size, storage_key, created_by, created_at)
 values (1,
         'foto_frontal_veiculo.jpg',
         'image/jpeg',
-        'https://storage.example.com/process-1/foto_frontal_veiculo.jpg',
+        245760,
+        'processes/1/sample-foto-frontal-veiculo.jpg',
+        3,
         current_timestamp - interval '20 hours'),
        (1,
         'foto_local_acidente.jpg',
         'image/jpeg',
-        'https://storage.example.com/process-1/foto_local_acidente.jpg',
+        198420,
+        'processes/1/sample-foto-local-acidente.jpg',
+        3,
         current_timestamp - interval '19 hours'),
        (2,
         'declaracao_inicial.pdf',
         'application/pdf',
-        'https://storage.example.com/process-2/declaracao_inicial.pdf',
+        524288,
+        'processes/2/sample-declaracao-inicial.pdf',
+        4,
         current_timestamp - interval '8 hours');
 
 -- =========================

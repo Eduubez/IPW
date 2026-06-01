@@ -42,6 +42,10 @@ object ApiRoutes {
         const val SUPERVISOR = "$BY_ID/supervisor"
         const val PRIORITY = "$BY_ID/priority"
         const val CANCEL = "$BY_ID/cancel"
+        const val PROVES = "$BY_ID/proves"
+        const val PROVE_BY_ID = "$PROVES/{proveId}"
+        const val PROVE_UPLOAD_URL = "$PROVES/upload-url"
+        const val PROVE_ACCESS_URL = "$PROVE_BY_ID/url"
 
         const val BY_ID_FULL = "$BASE$BY_ID"
         const val END_DATE_FULL = "$BASE$END_DATE"
@@ -49,6 +53,10 @@ object ApiRoutes {
         const val SUPERVISOR_FULL = "$BASE$SUPERVISOR"
         const val PRIORITY_FULL = "$BASE$PRIORITY"
         const val CANCEL_FULL = "$BASE$CANCEL"
+        const val PROVES_FULL = "$BASE$PROVES"
+        const val PROVE_BY_ID_FULL = "$BASE$PROVE_BY_ID"
+        const val PROVE_UPLOAD_URL_FULL = "$BASE$PROVE_UPLOAD_URL"
+        const val PROVE_ACCESS_URL_FULL = "$BASE$PROVE_ACCESS_URL"
     }
 
     object Report {

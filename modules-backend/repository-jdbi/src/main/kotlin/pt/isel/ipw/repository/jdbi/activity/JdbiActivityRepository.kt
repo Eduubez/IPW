@@ -38,10 +38,18 @@ class JdbiActivityRepository(
     ): List<Activity> {
         return handle.createQuery(
             """
-                select id, process_id, user_id, action, description, created_at
-                from Activity
-                where process_id = :processId
-                order by created_at desc
+                select
+                    a.id,
+                    a.process_id,
+                    a.user_id,
+                    u.name as user_name,
+                    a.action,
+                    a.description,
+                    a.created_at
+                from Activity a
+                join Users u on u.id = a.user_id
+                where a.process_id = :processId
+                order by a.created_at desc
                 limit :limit offset :offset
             """
         )
@@ -59,10 +67,18 @@ class JdbiActivityRepository(
     ): List<Activity> {
         return handle.createQuery(
             """
-                select id, process_id, user_id, action, description, created_at
-                from Activity
-                where user_id = :userId
-                order by created_at desc
+                select
+                    a.id,
+                    a.process_id,
+                    a.user_id,
+                    u.name as user_name,
+                    a.action,
+                    a.description,
+                    a.created_at
+                from Activity a
+                join Users u on u.id = a.user_id
+                where a.user_id = :userId
+                order by a.created_at desc
                 limit :limit offset :offset
             """
         )
