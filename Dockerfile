@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN chmod +x ./gradlew
+RUN sed -i 's/\r$//' ./gradlew && chmod +x ./gradlew
 RUN ./gradlew :app:bootJar --no-daemon
 
 FROM eclipse-temurin:21-jre
