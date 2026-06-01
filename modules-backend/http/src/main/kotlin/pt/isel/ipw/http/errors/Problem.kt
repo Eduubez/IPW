@@ -259,5 +259,41 @@ class Problem(
                 message = "The process was already approved",
                 errorCode = ErrorCode.ALREADY_APPROVED
             )
+
+        val proveNotFound = Problem(
+            type = "problems/prove-not-found",
+            message = "Prove not found",
+            errorCode = ErrorCode.PROVE_NOT_FOUND
+        )
+
+        val invalidFileName = Problem(
+            type = "problems/invalid-file-name",
+            message = "Invalid file name",
+            errorCode = ErrorCode.INVALID_FILE_NAME
+        )
+
+        val invalidContentType = Problem(
+            type = "problems/invalid-content-type",
+            message = "Invalid content type",
+            errorCode = ErrorCode.INVALID_CONTENT_TYPE
+        )
+
+        val invalidFileSize = Problem(
+            type = "problems/invalid-file-size",
+            message = "Invalid file size",
+            errorCode = ErrorCode.INVALID_FILE_SIZE
+        )
+
+        val invalidStorageKey = Problem(
+            type = "problems/invalid-storage-key",
+            message = "Invalid storage key",
+            errorCode = ErrorCode.INVALID_STORAGE_KEY
+        )
+
+        val storageError = Problem(
+            type = "problems/storage-error",
+            message = "Storage operation failed",
+            errorCode = ErrorCode.STORAGE_ERROR
+        )
     }
 }

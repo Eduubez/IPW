@@ -6,6 +6,7 @@ data class ActivityResponse(
     val id: Int,
     val processId: Int,
     val userId: Int,
+    val userName: String,
     val action: String,
     val description: String,
     val createdAt: String,
@@ -15,6 +16,7 @@ fun Activity.toResponse() = ActivityResponse(
     id = id,
     processId = processId,
     userId = userId,
+    userName = userName,
     action = action,
     description = description ?: "No description",
     createdAt = createdAt.toString()

@@ -105,6 +105,7 @@ class JdbiProcessRepository(
             .map(NoteMapper())
             .list()
 
+
         return handle.createQuery(
             """
         select
@@ -156,8 +157,10 @@ class JdbiProcessRepository(
             pv.id            as proves_id,
             pv.process_id    as proves_process_id,
             pv.file_name     as proves_file_name,
-            pv.file_type     as proves_file_type,
-            pv.file_url      as proves_file_url,
+            pv.content_type  as proves_content_type,
+            pv.file_size     as proves_file_size,
+            pv.storage_key   as proves_storage_key,
+            pv.created_by    as proves_created_by,
             pv.created_at    as proves_created_at,
 
             r.id             as report_id,
@@ -169,6 +172,7 @@ class JdbiProcessRepository(
             act.id           as activity_id,
             act.process_id   as activity_process_id,
             act.user_id      as activity_user_id,
+            uact.name        as activity_user_name,
             act.action       as activity_action,
             act.description  as activity_description,
             act.created_at   as activity_created_at
@@ -193,6 +197,7 @@ class JdbiProcessRepository(
         left join Proves pv     on pv.process_id     = p.id
         left join Report r      on r.process_id      = p.id
         left join Activity act  on act.process_id    = p.id
+        left join Users uact    on uact.id           = act.user_id
         where p.id = :id
         limit 1
         """
@@ -307,8 +312,10 @@ select
     pv.id            as proves_id,
     pv.process_id    as proves_process_id,
     pv.file_name     as proves_file_name,
-    pv.file_type     as proves_file_type,
-    pv.file_url      as proves_file_url,
+    pv.content_type  as proves_content_type,
+    pv.file_size     as proves_file_size,
+    pv.storage_key   as proves_storage_key,
+    pv.created_by    as proves_created_by,
     pv.created_at    as proves_created_at,
 
     r.id             as report_id,
@@ -320,6 +327,7 @@ select
     act.id           as activity_id,
     act.process_id   as activity_process_id,
     act.user_id      as activity_user_id,
+    uact.name        as activity_user_name,
     act.action       as activity_action,
     act.description  as activity_description,
     act.created_at   as activity_created_at
@@ -344,6 +352,7 @@ left join (
 left join Proves pv     on pv.process_id     = p.id
 left join Report r      on r.process_id      = p.id
 left join Activity act  on act.process_id    = p.id
+left join Users uact    on uact.id           = act.user_id
 where p.id = any(:ids)
 order by p.creation_date desc
 """

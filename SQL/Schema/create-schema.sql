@@ -196,12 +196,14 @@ create table Report
 
 create table Proves
 (
-    id         serial primary key,
-    process_id int          not null references Process (id),
-    file_name  varchar(255) not null,
-    file_type  varchar(100) not null,
-    file_url   varchar(500) not null,
-    created_at timestamp    not null default current_timestamp
+    id              serial primary key,
+    process_id      int          not null references Process (id),
+    file_name       varchar(255) not null,
+    content_type    varchar(100) not null,
+    file_size       bigint       not null,
+    storage_key     varchar(500) not null unique,
+    created_by      int          not null references Users (id),
+    created_at      timestamp    not null default current_timestamp
 );
 
 create table Notes

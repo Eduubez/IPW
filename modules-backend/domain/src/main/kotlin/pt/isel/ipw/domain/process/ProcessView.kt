@@ -28,8 +28,6 @@ data class ProcessView(
     val activity: Activity?,
 )
 
-
-
 // VERIFICAR MAPEAMENTO DO USER
 fun ProcessView.toResponse(): GetProcessResponse = GetProcessResponse(
     id = id,
@@ -78,8 +76,9 @@ fun ProcessView.toResponse(): GetProcessResponse = GetProcessResponse(
             id = it.id,
             processId = it.processId,
             fileName = it.fileName,
-            fileType = it.fileType,
-            fileUrl = it.fileUrl,
+            contentType = it.contentType,
+            fileSize = it.fileSize,
+            createdBy = it.createdBy,
             createdAt = it.createdAt.toString(),
         )
     },
