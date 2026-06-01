@@ -5,11 +5,13 @@ export default function TextArea({
   value,
   onChange,
   mandatory = false,
+  readOnly = false,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   mandatory?: boolean;
+  readOnly?: boolean;
 }) {
   return (
       <div className={styles["text-area-container"]}>
@@ -18,7 +20,8 @@ export default function TextArea({
         </label>
         <textarea className={styles["text-area-container"]}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => !readOnly && onChange(e.target.value)}
+          readOnly={readOnly}
           rows={4}
           style={{ width: "100%" }}
         />

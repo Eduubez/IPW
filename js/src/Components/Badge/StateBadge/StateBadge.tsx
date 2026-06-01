@@ -32,6 +32,9 @@ const REJECTED_BY_MANAGER_STYLE = {
 const CANCELED_STYLE = {
   background: Color.Gray,
 };
+const NOT_STARTED_STYLE = {
+  background: Color.Gray,
+};
 
 export type StateType =
   | "NOT_ASSIGNED"
@@ -43,7 +46,8 @@ export type StateType =
   | "WAITING_APPROVAL_MANAGER"
   | "APPROVED_BY_MANAGER"
   | "REJECTED_BY_MANAGER"
-  | "CANCELED";
+  | "CANCELED"
+  | "NOT_STARTED";
 
 export function StateBadge({ state }: { state: StateType }) {
   const { t } = useTranslation();
@@ -70,6 +74,8 @@ export function StateBadge({ state }: { state: StateType }) {
         return REJECTED_BY_MANAGER_STYLE;
       case "CANCELED":
         return CANCELED_STYLE;
+        case "NOT_STARTED":
+          return NOT_STARTED_STYLE;
       default:
         return {};
     }

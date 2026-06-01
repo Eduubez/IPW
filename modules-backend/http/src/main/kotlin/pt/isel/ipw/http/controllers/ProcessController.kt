@@ -66,7 +66,7 @@ class ProcessController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
-    @GetMapping(ApiRoutes.Process.BY_ID_FULL)
+    @GetMapping(ApiRoutes.Process.BY_ID)
     fun getProcessById(@PathVariable id: Int): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)

@@ -28,6 +28,7 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/api/users/**").permitAll()
+                    .requestMatchers ("/api/public/**").permitAll()
                     .anyRequest().authenticated()
 
             }

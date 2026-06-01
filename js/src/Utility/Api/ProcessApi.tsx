@@ -79,7 +79,7 @@ type NotesType = {
   createdAt: string;
 };
 
-type ReportType = {
+export type ReportType = {
   id: number;
   processId: number;
   content: string;

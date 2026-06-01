@@ -2,6 +2,7 @@ package pt.isel.ipw.services
 
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import pt.isel.ipw.domain.DTO.output.user.AdminInformationDTO
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.domain.roles.Roles
@@ -18,6 +19,7 @@ import pt.isel.ipw.services.interfaces.UserService
 import pt.isel.ipw.services.results.ChangeUserPasswordResult
 import pt.isel.ipw.services.results.ChangeUserRolesResult
 import pt.isel.ipw.services.results.CreateUserResult
+import pt.isel.ipw.services.results.GetAdminContactResult
 import pt.isel.ipw.services.results.GetAllUsersResult
 import pt.isel.ipw.services.results.GetAssignableUsersResult
 import pt.isel.ipw.services.results.GetUserProfileInfoResult
@@ -305,6 +307,18 @@ class UserServiceImpl(
                 role = normalizedRequestedRole,
                 areaId = areaInfo?.areaId,
                 area = areaInfo?.area
+            )
+        )
+    }
+
+    override fun getAdminInformation(): GetAdminContactResult = transactionManager.run {
+        val admin = usersRepository.getAdmin()
+            ?: return@run failure(UserError.UserNotFound)
+
+        success(
+            AdminInformationDTO(
+                name = admin.name,
+                email = admin.email
             )
         )
     }
