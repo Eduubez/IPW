@@ -1,0 +1,159 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{url}
+\usepackage{xcolor}
+\usepackage{listings}
+
+\lstdefinestyle{command}{
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    framerule=0.3pt,
+    rulecolor=\color{gray!50},
+    xleftmargin=0.8cm,
+    xrightmargin=0.8cm,
+    breaklines=true,
+    columns=fullflexible
+}
+
+\title{Descrição da Organização}
+\author{Grupo 20}
+\date{Junho de 2026}
+
+\begin{document}
+
+    \maketitle
+
+    \section{Identificação do projeto}
+
+    O projeto \textit{Insurance Portal Workflow} foi desenvolvido no âmbito da unidade curricular de Projeto e Seminário da Licenciatura em Engenharia Informática e de Computadores, no Instituto Superior de Engenharia de Lisboa, durante o semestre de verão de 2025/2026.
+
+    O trabalho foi realizado pelo Grupo 20, constituído pelos seguintes elementos:
+
+    \begin{itemize}
+        \item 46362 -- Eduardo Franco Bezerra;
+        \item 51618 -- Francisco Duarte Tavares;
+        \item 51870 -- Rafael Henrique Souza Reis.
+    \end{itemize}
+
+    O projeto foi orientado pelos docentes Pedro Miguel Florindo Miguens Matutino e Artur Jorge Ferreira.
+
+    \section{Repositório do projeto}
+
+    O código-fonte e a documentação do projeto encontram-se disponíveis no repositório GitHub do projeto:
+
+    \begin{center}
+        \url{https://github.com/Eduubez/IPW}
+    \end{center}
+
+    Uma vez que o repositório é privado, o acesso deverá ser solicitado a um dos elementos do grupo, através dos seguintes contactos:
+
+    \begin{itemize}
+        \item Eduardo Franco Bezerra -- a46362@alunos.isel.pt;
+        \item Francisco Duarte Tavares -- a51618@alunos.isel.pt;
+        \item Rafael Henrique Souza Reis -- a51870@alunos.isel.pt.
+    \end{itemize}
+
+    O repositório contém a implementação da aplicação, os scripts de base de dados, a configuração dos \textit{containers} Docker e a documentação produzida ao longo do desenvolvimento.
+
+    Para a versão beta, o desenvolvimento principal da aplicação encontra-se na branch \texttt{develop}.
+
+    \section{Organização do repositório}
+
+    O repositório encontra-se organizado por módulos e diretorias, separando o código da aplicação, os scripts de base de dados, a configuração dos \textit{containers} e a documentação do projeto.
+
+    As principais diretorias são as seguintes:
+
+    \begin{itemize}
+        \item \texttt{modules-backend} -- contém o código do backend da aplicação, desenvolvido em Kotlin com Spring Boot. Este módulo inclui a camada HTTP, os serviços, o domínio, os repositórios e a configuração de acesso à base de dados;
+        \item \texttt{js} -- contém o código do frontend, desenvolvido em React com TypeScript;
+        \item \texttt{docker} -- contém ficheiros de apoio à execução da aplicação em \textit{containers}, incluindo os scripts de inicialização da base de dados PostgreSQL;
+        \item \texttt{SQL} -- contém os scripts SQL utilizados durante o desenvolvimento, incluindo a criação do esquema, limpeza da base de dados e inserção de dados iniciais;
+        \item \texttt{Docs} -- contém a documentação do projeto, incluindo o relatório, imagens e documentos associados às entregas.
+    \end{itemize}
+
+    Na raiz do repositório encontram-se também ficheiros de configuração relevantes, como o \texttt{docker-compose.yml}, utilizado para executar os serviços da aplicação. Existem ainda ficheiros \texttt{Dockerfile} específicos para a construção dos \textit{containers} do backend e do frontend.
+
+    \section{Pré-requisitos}
+
+    Para executar a versão beta da aplicação é necessário ter instalado:
+
+    \begin{itemize}
+        \item \textit{Git}, para obter o código-fonte a partir do repositório;
+        \item \textit{Docker Desktop}, para construir e executar os \textit{containers} da aplicação;
+        \item um navegador web, para aceder à interface da aplicação.
+    \end{itemize}
+
+    Não é necessária a instalação manual de PostgreSQL, Node.js ou Gradle para a execução normal da versão beta, uma vez que estes componentes são utilizados através dos \textit{containers} definidos no ficheiro \texttt{docker-compose.yml}.
+
+    \section{Execução da aplicação}
+
+    Após obter acesso ao repositório, a aplicação pode ser executada localmente recorrendo ao Docker.
+
+    \begin{enumerate}
+        \item Fazer o clone do repositório:
+
+        \begin{lstlisting}[style=command]
+git clone https://github.com/Eduubez/IPW.git
+        \end{lstlisting}
+
+        \item Aceder à diretoria raiz do projeto:
+
+        \begin{lstlisting}[style=command]
+cd IPW
+        \end{lstlisting}
+
+        \item Construir e iniciar todos os serviços necessários à execução da aplicação:
+
+        \begin{lstlisting}[style=command]
+docker compose up -d --build
+        \end{lstlisting}
+    \end{enumerate}
+
+    Este comando inicia os serviços definidos no ficheiro \texttt{docker-compose.yml}, incluindo a base de dados PostgreSQL, o backend, o frontend e o serviço MinIO utilizado para armazenamento de anexos.
+
+    Após a inicialização dos serviços, os principais pontos de acesso são:
+
+    \begin{itemize}
+        \item Interface da aplicação: \url{http://localhost:5173};
+        \item Backend: \url{http://localhost:8080};
+        \item Consola web do MinIO: \url{http://localhost:9001}.
+    \end{itemize}
+
+    Para terminar a execução da aplicação, pode ser usado:
+
+    \begin{lstlisting}[style=command]
+docker compose down
+    \end{lstlisting}
+
+    Caso se pretenda remover também os volumes associados aos serviços, incluindo os dados persistidos localmente, pode ser usado:
+
+    \begin{lstlisting}[style=command]
+docker compose down -v
+    \end{lstlisting}
+
+    \section{Dados iniciais e utilizadores de teste}
+
+    Durante a inicialização da base de dados são executados scripts SQL que criam o esquema da aplicação e inserem dados iniciais para demonstração. Estes dados incluem áreas, utilizadores, papéis e processos de exemplo.
+
+    Todos os utilizadores de teste têm a password \texttt{12345}. Alguns utilizadores disponíveis na versão beta são:
+
+    \begin{itemize}
+        \item \texttt{alice@ipw.pt} -- utilizador com papel de triador;
+        \item \texttt{bob@ipw.pt} -- utilizador com papel de averiguador;
+        \item \texttt{carol@ipw.pt} -- utilizador com papel de supervisor;
+        \item \texttt{david@ipw.pt} -- utilizador com papel de gestor;
+        \item \texttt{eve@ipw.pt} -- utilizador com papel de administrador.
+    \end{itemize}
+
+    Estes utilizadores permitem testar os principais fluxos da aplicação, incluindo autenticação, seleção de papel, consulta de processos e criação ou acompanhamento de processos, de acordo com as permissões associadas a cada papel.
+
+    \section{Notas sobre a versão beta}
+
+    A versão beta disponibilizada tem como objetivo demonstrar os principais fluxos da aplicação, incluindo autenticação, seleção de papel, consulta de processos, criação de processos e acompanhamento do seu estado.
+
+    Algumas funcionalidades encontram-se ainda em desenvolvimento ou poderão sofrer alterações até à versão final.
+
+\end{document}
