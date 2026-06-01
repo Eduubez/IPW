@@ -144,6 +144,7 @@
   "State":{
       "NOT_ASSIGNED": "Não Atribuído",
       "ASSIGNED": "Atribuído",
+      "NOT_STARTED": "Por Começar",
       "ON_GOING": "Em Progresso",
       "WAITING_APPROVAL_SUPERVISOR": "Aguarda Aprovação do Supervisor",
       "APPROVED_BY_SUPERVISOR": "Aprovado pelo Supervisor",
@@ -171,10 +172,16 @@
       "area": "Área",
       "investigator": "Averiguador",
       "supervisor": "Supervisor",
+      "location": "Localização",
+      "creationDate": "Data de Criação",
       "priority": "Prioridade",
       "canBeFraud": "Pode ser fraude",
       "note": "Nota"
     },
     "submit": "Criar"
+  },
+  "Areas":{
+    "Car Accident": "Acidente Automóvel",
+    "Job Accident": "Acidente de Trabalho"
   }
 }

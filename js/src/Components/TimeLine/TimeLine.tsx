@@ -1,5 +1,5 @@
 import Timeline from "@mui/lab/Timeline";
-import TimelineItem from "@mui/lab/TimelineItem";
+import TimelineItem, { timelineItemClasses } from "@mui/lab/TimelineItem";
 import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
@@ -9,41 +9,34 @@ import styles from "./timeline.module.css";
 import { TimeLineActivityItem } from "./TimeLineActivityItem/TimeLineActivityItem";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
-export function TimeLine({ loading }: { loading?: boolean }) {
-  const items = [
-    {
-      done: true,
-      label: "Policy created",
-      date: new Date(),
-      user: "Ana Martins",
-    },
-    {
-      done: true,
-      label: "Policy created",
-      date: new Date(),
-      user: "Ana Martins",
-    },
-    {
-      done: false,
-      label: "Policy created",
-      date: new Date(),
-      user: "Ana Martins",
-    },
-  ];
-
-  return (
-    loading ? <LoadingComponent /> :
-    <Timeline position="right">
+export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: boolean; label: string; date: Date; user: string }[] }) {
+  return loading ? (
+    <LoadingComponent />
+  ) : (
+    <Timeline
+      position="right"
+      sx={{
+        [`& .${timelineItemClasses.root}:before`]: {
+          flex: 0,
+          padding: 0,
+        },
+      }}>
       {items.map((item, index) => (
         <TimelineItem key={index}>
           <TimelineSeparator
-            sx={ item.done ? {  
-              "& .MuiTimelineConnector-root": { backgroundColor: "var(--color-light-green)" },
-              "& .MuiTimelineDot-root": {
-                borderColor: "var(--color-light-green)",
-                color: "var(--color-light-green)",
-              },
-            }: {}}>
+            sx={
+              item.done
+                ? {
+                    "& .MuiTimelineConnector-root": {
+                      backgroundColor: "var(--color-light-green)",
+                    },
+                    "& .MuiTimelineDot-root": {
+                      borderColor: "var(--color-light-green)",
+                      color: "var(--color-light-green)",
+                    },
+                  }
+                : {}
+            }>
             <TimelineDot
               className={`${styles["dot-style"]} ${item.done && styles["done"]}`}
               variant="outlined">

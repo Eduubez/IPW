@@ -19,9 +19,14 @@
 
 .title-icon-wrapper {
     display: flex;
-    gap: 0.5rem;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    flex-direction: column;
+}
+.title-icon-wrapper > img {
+    width: 10rem;
+    height:fit-content;
 }
 
 .body {

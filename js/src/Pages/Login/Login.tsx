@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styles from "./login.module.css";
-import logo from "../../assets/images/logo.svg";
+import logo from "../../assets/Logo.png";
 import TextBox from "../../Components/Inputs/TextBox/TextBox";
 import { useState } from "react";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
@@ -11,7 +11,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import { ToastType } from "../../Types/ToastType";
 
-
 export default function Login() {
   const { t } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -21,9 +20,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-
-  const isButtonEnabled =!isLoading && email.length > 0 && password.length > 0;
-  
+  const isButtonEnabled = !isLoading && email.length > 0 && password.length > 0;
 
   const handleLogin = async () => {
     setIsLoading(true);
@@ -36,7 +33,7 @@ export default function Login() {
         } else {
           navigate("/role-selection", { replace: true });
         }
-      }else{
+      } else {
         enqueueSnackbar(response.message, {
           variant: ToastType.ERROR,
         });
@@ -51,9 +48,9 @@ export default function Login() {
       <div className={styles["header"]}>
         <div className={styles["title-icon-wrapper"]}>
           <img src={logo} alt="logo" className={styles["logo"]} />
-          <span>{t("Login.appName")}</span>
+
+          <span>{t("Login.appSubtitle")}</span>
         </div>
-        <span>{t("Login.appSubtitle")}</span>
       </div>
       <div className={styles["body"]}>
         <div className={styles["body-top"]}>

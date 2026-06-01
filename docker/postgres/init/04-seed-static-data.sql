@@ -11,14 +11,12 @@ begin
            ('supervisor'),
            ('manager');
 
-    insert into Users(name, email, password_hash, area_id)
-    values ('Root User', 'root@example.com', '$2b$10$placeholderhashroot', null);
 
     insert into Area(name, boss_id)
-    values ('Car Accident', 1),
-           ('Floods', 1),
-           ('Fire', 1),
-           ('Earthquake', 1);
+    values ('Car Accident', 3),
+           ('Floods', null),
+           ('Fire', null),
+           ('Earthquake', null);
 
     insert into State(name)
     values ('not_assigned'),

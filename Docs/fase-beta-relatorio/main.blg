@@ -1,0 +1,56 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+A level-1 auxiliary file: introducao.aux
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+A level-1 auxiliary file: solucao.aux
+Reallocating 'name_of_file' (item size: 1) to 17 items.
+A level-1 auxiliary file: demonstracao.aux
+Reallocating 'name_of_file' (item size: 1) to 14 items.
+A level-1 auxiliary file: conclusao.aux
+Reallocating 'name_of_file' (item size: 1) to 6 items.
+The style file: unsrt.bst
+Reallocating 'name_of_file' (item size: 1) to 12 items.
+Database file #1: referencias.bib
+You've used 8 entries,
+            1791 wiz_defined-function locations,
+            484 strings with 4534 characters,
+and the built_in function-call counts, 1186 in all, are:
+= -- 106
+> -- 46
+< -- 0
++ -- 20
+- -- 12
+* -- 20
+:= -- 197
+add.period$ -- 32
+call.type$ -- 8
+change.case$ -- 8
+chr.to.int$ -- 0
+cite$ -- 8
+duplicate$ -- 40
+empty$ -- 145
+format.name$ -- 12
+if$ -- 277
+int.to.chr$ -- 0
+int.to.str$ -- 8
+missing$ -- 0
+newline$ -- 51
+num.names$ -- 8
+pop$ -- 48
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 0
+skip$ -- 16
+stack$ -- 0
+substring$ -- 0
+swap$ -- 8
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 8
+width$ -- 9
+write$ -- 98

@@ -3,6 +3,7 @@ package pt.isel.ipw.services.interfaces
 import pt.isel.ipw.services.results.ChangeUserPasswordResult
 import pt.isel.ipw.services.results.ChangeUserRolesResult
 import pt.isel.ipw.services.results.CreateUserResult
+import pt.isel.ipw.services.results.GetAdminContactResult
 import pt.isel.ipw.services.results.GetAllUsersResult
 import pt.isel.ipw.services.results.GetAssignableUsersResult
 import pt.isel.ipw.services.results.GetUserProfileInfoResult
@@ -54,4 +55,6 @@ interface UserService {
         userId: Int,
         selectedRole: String
     ): SelectRoleServiceResult
+
+    fun getAdminInformation(): GetAdminContactResult
 }
