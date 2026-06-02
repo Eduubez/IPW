@@ -5,7 +5,6 @@ Garante que apenas existe um estado ativo (end_date = null) por processo.
 create or replace function close_previous_state()
     returns trigger as $$
 begin
-
     update Process_State
     set end_date = NEW.start_date
     where process_id = NEW.process_id
@@ -53,10 +52,8 @@ begin
         initial_state := 'not_assigned';
     end if;
 
-    insert into State(name)
-    values (initial_state)
-    returning id into new_state_id;
-
+        select id into new_state_id from State where name = initial_state;
+    
     insert into Process_State(process_id, state_id, start_date)
     values (new.id, new_state_id, current_timestamp);
 
@@ -81,9 +78,8 @@ begin
     if  (old.investigator_id is null or old.supervisor_id is null)
         and (new.investigator_id is not null and new.supervisor_id is not null)
     then
-        insert into State(name)
-        values ('assigned')
-        returning id into new_state_id;
+
+        select id into new_state_id from State where name = 'assigned';
 
         insert into Process_State(process_id, state_id, start_date)
         values (new.id, new_state_id, current_timestamp);
