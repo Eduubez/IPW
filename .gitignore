@@ -9,7 +9,9 @@
 *.aux
 *.toc
 *.gz
-
+*.bbl
+*.lof
+*.out
 
 
 # User-specific stuff
