@@ -14,6 +14,7 @@ import { normalizeState } from "../../Utility/Helpers/ProcessStateHelpers";
 import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { ReportCard } from "../../Components/ReportCard/ReportCard";
+import { userStore } from "../../Utility/Store/UserStore";
 
 const processPageState = (state?: string) => {
   switch (state) {
@@ -23,65 +24,13 @@ const processPageState = (state?: string) => {
       return "ON_GOING";
   }
 };
-
-/*
-{
-    "id": 23,
-    "name": "sdasadasdas",
-    "location": {
-        "id": 25,
-        "district": "sdasadasdas",
-        "county": "sdasadasdas",
-        "street": "sdasadasdassdasadasdas",
-        "latitude": "",
-        "longitude": ""
-    },
-    "creationDate": "2026-05-24T19:18:02.597831",
-    "dueDate": "2026-05-30T00:00",
-    "priority": "WITH_PRIORITY",
-    "area": "Car Accident",
-    "typification": "Collision",
-    "triator": {
-        "id": 2,
-        "name": "Alice Triator",
-        "email": "alice@ipw.pt",
-        "areaId": null,
-        "roles": []
-    },
-    "investigator": {
-        "id": 3,
-        "name": "Bob Investigator",
-        "email": "bob@ipw.pt",
-        "areaId": null,
-        "roles": []
-    },
-    "supervisor": {
-        "id": 4,
-        "name": "Carol Supervisor",
-        "email": "carol@ipw.pt",
-        "areaId": null,
-        "roles": []
-    },
-    "state": "assigned",
-    "proves": null,
-    "report": null,
-    "notes": [],
-    "activity": {
-        "id": 7,
-        "processId": 23,
-        "userId": 2,
-        "action": "created a new process",
-        "description": "Process created by Alice Triator",
-        "createdAt": "2026-05-24T19:18:02.597831"
-    }
-}
-    */
-
 export default function ProcessPage() {
   const { id } = useParams();
   const { t } = useTranslation();
   const [apiResponse, setApiResponse] = useState<ProcessResponse | null>(null);
-  const [activityItems, setActivityItems] = useState<{ done: boolean; label: string; date: Date; user: string }[]>([]);
+  const [activityItems, setActivityItems] = useState<
+    { done: boolean; label: string; date: Date; user: string }[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   const fetchProcessData = async () => {
@@ -93,14 +42,14 @@ export default function ProcessPage() {
   };
   const fetchProcessActivity = async () => {
     if (!id) return;
-    const response = await ActivityApi.getActivityByProcess(Number(id),0,10);
+    const response = await ActivityApi.getActivityByProcess(Number(id), 0, 10);
     if (response.success) {
-      const items =response.data.results.map(activity => ({
+      const items = response.data.results.map((activity) => ({
         done: true,
         label: activity.action,
         date: new Date(activity.createdAt),
-        user: activity.userId.toString() // You might want to replace this with the actual user name
-      }))
+        user: activity.userId.toString(), // You might want to replace this with the actual user name
+      }));
       setActivityItems(items);
     }
   };
@@ -120,43 +69,43 @@ export default function ProcessPage() {
           value: t("CreateProcessPage.fields.supervisor"),
           text: "N/A",
           icon: { name: Icon.Group, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
         averiguadorCard: {
           value: t("CreateProcessPage.fields.investigator"),
           text: "N/A",
           icon: { name: Icon.Group, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
         areaCard: {
           value: t("CreateProcessPage.fields.area"),
           text: "N/A",
           icon: { name: Icon.CarCrash, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
         locationCard: {
           value: t("CreateProcessPage.fields.location"),
           text: "N/A",
           icon: { name: Icon.Location, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
         creationCard: {
           value: t("CreateProcessPage.fields.creationDate"),
           text: "N/A",
           icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
         dueDateCard: {
           value: t("CreateProcessPage.fields.expiresAt"),
           text: "N/A",
           icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
         priorityCard: {
           value: t("CreateProcessPage.fields.priority"),
           text: "N/A",
           icon: { name: Icon.Info, style: { color: Color.LightBlue } },
-          button: undefined
+          button: undefined,
         },
       };
     }
@@ -166,25 +115,31 @@ export default function ProcessPage() {
         value: t("CreateProcessPage.fields.supervisor"),
         text: apiResponse.supervisor?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
-        button: apiResponse.supervisor?.email ? {
-          text: "Notificar",
-          onClick: () => window.location.href = `mailto:${apiResponse.supervisor!.email}`
-        } : undefined
+        button: apiResponse.supervisor?.email
+          ? {
+              text: "Notificar",
+              onClick: () =>
+                (window.location.href = `mailto:${apiResponse.supervisor!.email}`),
+            }
+          : undefined,
       },
       averiguadorCard: {
         value: t("CreateProcessPage.fields.investigator"),
         text: apiResponse.investigator?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
-        button: apiResponse.investigator?.email ? {
-          text: "Notificar",
-          onClick: () => window.location.href = `mailto:${apiResponse.investigator!.email}`
-        } : undefined
+        button: apiResponse.investigator?.email
+          ? {
+              text: "Notificar",
+              onClick: () =>
+                (window.location.href = `mailto:${apiResponse.investigator!.email}`),
+            }
+          : undefined,
       },
       areaCard: {
         value: t("CreateProcessPage.fields.area"),
         text: t(`Areas.${apiResponse.area}`) || "N/A",
         icon: { name: Icon.CarCrash, style: { color: Color.LightBlue } },
-        button: undefined
+        button: undefined,
       },
       locationCard: {
         value: t("CreateProcessPage.fields.location"),
@@ -192,7 +147,7 @@ export default function ProcessPage() {
           ? `${apiResponse.location.street}, ${apiResponse.location.district}`
           : "N/A",
         icon: { name: Icon.Location, style: { color: Color.LightBlue } },
-        button: undefined
+        button: undefined,
       },
       creationCard: {
         value: t("CreateProcessPage.fields.creationDate"),
@@ -200,7 +155,7 @@ export default function ProcessPage() {
           ? new Date(apiResponse.creationDate).toLocaleDateString()
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
-        button: undefined
+        button: undefined,
       },
       dueDateCard: {
         value: t("CreateProcessPage.fields.expiresAt"),
@@ -208,13 +163,13 @@ export default function ProcessPage() {
           ? new Date(apiResponse.dueDate).toLocaleDateString()
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
-        button: undefined
+        button: undefined,
       },
       priorityCard: {
         value: t("CreateProcessPage.fields.priority"),
         text: t(`Priority.${apiResponse.priority}`) || "N/A",
         icon: { name: Icon.Info, style: { color: Color.LightBlue } },
-        button: undefined
+        button: undefined,
       },
     };
   }, [apiResponse]);
@@ -236,19 +191,57 @@ export default function ProcessPage() {
     setLoading(false);
   }, [id]);
 
+  // #region handlers
+  const handleStartProcess = () => {
+    // At this point we can't start
+  };
+  const handleSubmitProcess = () => {
+    // At this point we can't submit
+  };
 
-// #region handlers
-const handleStartProcess = () => {
-  // At this point we can't start
-}
+  // Variables after fetchin data
+  const canStartProcess = apiResponse
+    ? normalizeState(apiResponse?.state) === "ASSIGNED"
+    : false;
+  const canSubmitProcess = apiResponse
+    ? normalizeState(apiResponse?.state) === "ON_GOING"
+    : false;
 
+  const report = apiResponse?.report;
 
-// Variables after fetchin data
-const canStartProcess = apiResponse ? normalizeState(apiResponse?.state) === "ASSIGNED" : false;
+  const investigatorView = {
+    headerButtons: (
+      <PrimaryButton
+        text={canStartProcess ? "Iniciar Processo" : "Submeter Processo"}
+        onClick={canStartProcess ? handleStartProcess : handleSubmitProcess}
+        enabled={canStartProcess || canSubmitProcess}
+      />
+    ),
+    reportView: <ReportCard report={report} processId={Number(id)} viewOnly={false} />
+  };
 
-const report = apiResponse?.report;
+  const supervisorView =  {
+    headerButtons: (
+      <PrimaryButton
+        text={canStartProcess ? "Iniciar Processo" : "Submeter Processo"}
+        onClick={canStartProcess ? handleStartProcess : handleSubmitProcess}
+        enabled={canStartProcess || canSubmitProcess}
+      />
+    ),
+    reportView: <ReportCard report={report} processId={Number(id)} viewOnly={true} />
+  };
 
-console.log("The Report is : ", report?.content);
+  const activeView = () => {
+    const activeRole = userStore.getActiveRole();
+    switch (activeRole) {
+      case "investigator":
+        return investigatorView;
+      case "supervisor":
+        return supervisorView;
+      default:
+        return <div>View not implemented for this role</div>;
+    }
+  };
 
   return (
     <div className={styles["page-container"]}>
@@ -259,16 +252,10 @@ console.log("The Report is : ", report?.content);
           loading={loading}
         />
         <div className={styles["button-badage-wrapper"]}>
-        <div className={styles["button-container"]}>
-        <PrimaryButton
-        text={"Iniciar Processo"}
-        onClick={handleStartProcess}
-        enabled={canStartProcess}
-        />
-        </div>
-        <StateBadge
-          state={processPageState(apiResponse?.state)}
-        />
+          <div className={styles["button-container"]}>
+            {activeView().headerButtons}
+          </div>
+          <StateBadge state={processPageState(apiResponse?.state)} />
         </div>
       </div>
       <div className={styles["stats-container"]}>
@@ -290,13 +277,11 @@ console.log("The Report is : ", report?.content);
       <div className={styles["details-container"]}>
         <div className={styles["d-container"]}>
           <WithBackground>
-          <TimeLine items={activityItems} loading={loading} />
+            <TimeLine items={activityItems} loading={loading} />
           </WithBackground>
         </div>
         <div className={styles["d-container"]}>
-          <WithBackground>
-            <ReportCard report={report} processId={Number(id)} />
-          </WithBackground>
+          <WithBackground>{activeView().reportView}</WithBackground>
         </div>
         <div className={styles["d-container"]}>
           <div className={styles["attachments-container"]}>
@@ -314,4 +299,3 @@ console.log("The Report is : ", report?.content);
     </div>
   );
 }
-

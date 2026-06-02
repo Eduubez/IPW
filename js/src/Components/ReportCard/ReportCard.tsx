@@ -11,9 +11,11 @@ import { ReportApi } from "../../Utility/Api/ReportApi";
 export function ReportCard({
   report,
   processId,
+  viewOnly,
 }: {
   report: ReportType | undefined;
   processId: number;
+  viewOnly: boolean;
 }) {
   const { t } = useTranslation();
   const [editMode, setEditMode] = useState(false);
@@ -36,7 +38,15 @@ export function ReportCard({
     // Lógica para adicionar notas
   };
 
-  const handleSaveReport = () => {};
+  const handleSaveReport = () => {
+    setSubmitting(true);
+    try {
+      const response = ReportApi.updateReport(processId, reportContent!);
+    } finally {
+      setSubmitting(false);
+      setEditMode(false);
+    }
+  };
 
   const handleCreateReport = async () => {
     setSubmitting(true);
@@ -69,18 +79,22 @@ export function ReportCard({
         <>
           {reportTextArea(!editMode)}
           <div className={styles["report-card-actions"]}>
-            <PrimaryButton
-              style={{ width: "120px", height: "fit-content" }}
-              enabled={isSaveEnabled}
-              text={"Salvar"}
-              onClick={handleCreateReport}
-            />
-            <PrimaryButton
-              style={{ width: "120px", height: "fit-content" }}
-              enabled={!isSaveEnabled}
-              text={"Editar"}
-              onClick={handleEditReport}
-            />
+            {!viewOnly && (
+              <>
+                <PrimaryButton
+                  style={{ width: "120px", height: "fit-content" }}
+                  enabled={isSaveEnabled}
+                  text={"Salvar"}
+                  onClick={handleSaveReport}
+                />
+                <PrimaryButton
+                  style={{ width: "120px", height: "fit-content" }}
+                  enabled={!isSaveEnabled}
+                  text={"Editar"}
+                  onClick={handleEditReport}
+                />
+              </>
+            )}
             <PrimaryButton
               style={{ width: "140px", height: "fit-content" }}
               enabled={true}
@@ -134,8 +148,8 @@ export function ReportCard({
                   height: "100%",
                   width: "100%",
                 }}>
-                  <span>Funcionalidade de notas ainda não implementada.</span>
-                
+                <span>Funcionalidade de notas ainda não implementada.</span>
+
                 <div className={styles["report-card-actions"]}>
                   <PrimaryButton
                     style={{ width: "120px", height: "fit-content" }}
