@@ -8,6 +8,7 @@
 # Latex
 *.aux
 *.toc
+*.gz
 
 
 
