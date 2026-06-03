@@ -3,6 +3,7 @@ package pt.isel.ipw.services
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.ActivityActions
 import pt.isel.ipw.domain.mapToString
+import pt.isel.ipw.domain.process.AssignmentStateRole
 import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.report.Report
@@ -34,7 +35,6 @@ class ReportServiceImpl(
 
             val reportId = reportRepository.createReport(processId, content)
 
-            processRepository.changeState(processId, "waiting_approval_supervisor")
 
             activityService.createActivity(
                 processId,
@@ -45,7 +45,6 @@ class ReportServiceImpl(
 
             return@run success(reportId)
         }
-
 
     override fun getByProcessId(processId: Int, userId: Int, role: String): Either<ReportError, Report> =
         transactionManager.run {
@@ -62,13 +61,18 @@ class ReportServiceImpl(
     override fun updateReport(
         processId: Int,
         content: String,
-        userId: Int
+        userId: Int,
+        role: String
     ): Either<ReportError, Unit> = transactionManager.run {
-
-        if (!validateContent(content)) return@run failure(ReportError.InvalidContent)
-
+        // Update deveria apenas deixar dar update aps estados relacionados ao averiguador
         val process = processRepository.getById(processId)
             ?: return@run failure(ReportError.ProcessNotFound)
+
+        val allowedStates = AssignmentStateRole.getStates(role)
+
+        if(process.state !in allowedStates) return@run failure(ReportError.InvalidState)
+
+        if (!validateContent(content)) return@run failure(ReportError.InvalidContent)
 
         val reportId = process.report?.id ?: return@run failure(ReportError.ReportNotFound)
 
@@ -166,7 +170,6 @@ class ReportServiceImpl(
 
             return@run success(Unit)
         }
-
 
     private fun validateContent(content: String): Boolean =
         content.isNotBlank()

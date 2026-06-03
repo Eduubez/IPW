@@ -5,21 +5,14 @@ import pt.isel.ipw.domain.ActivityActions
 import pt.isel.ipw.domain.mapToString
 import pt.isel.ipw.domain.process.Priority
 import pt.isel.ipw.domain.process.ProcessView
+import pt.isel.ipw.domain.process.AssignmentStateRole
 import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.*
 import pt.isel.ipw.services.interfaces.ProcessService
-import pt.isel.ipw.services.results.AssignInvestigatorResult
-import pt.isel.ipw.services.results.AssignSupervisorResult
-import pt.isel.ipw.services.results.CancelProcessResult
-import pt.isel.ipw.services.results.ChangeEndDateResult
-import pt.isel.ipw.services.results.ChangePriorityResult
-import pt.isel.ipw.services.results.CreateProcessResult
-import pt.isel.ipw.services.results.GetAllProcessesResult
-import pt.isel.ipw.services.results.GetProcessResult
-import pt.isel.ipw.services.results.ProcessValidationResult
+import pt.isel.ipw.services.results.*
 import java.time.LocalDateTime
 
 @Service
@@ -107,6 +100,29 @@ class ProcessServiceImpl(
         }
     }
 
+    override fun submitProcess(
+        userId: Int,
+        role: String,
+        processId: Int
+    ): SubmitProcessResult {
+        return transactionManager.run {
+
+            val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
+            val validation = validateProcessRelation(process, userId, role)
+
+            if (validation is Failure) {
+                return@run failure(validation.value)
+            }
+
+            val allowedStates = AssignmentStateRole.getStates(role)
+            if(process.state !in allowedStates) {
+                return@run failure(ProcessError.InvalidState)
+            }
+
+            processRepository.changeState(processId, State.WAITING_APPROVAL_SUPERVISOR.toString())
+            success(Unit)
+        }
+    }
 
     override fun getProcessById(id: Int, userId: Int, role: String): GetProcessResult =
         transactionManager.run {
@@ -138,10 +154,9 @@ class ProcessServiceImpl(
                 return@run failure(validation.value)
             }
 
-            // Quando estamos na tela do Averiguador queremos ver um processo que esteja à espera de ser aceito pelo Supervisor? Ou só os recusados ?
-            val targetStates = getTargetStates(role).map{ it.toString()}
+            val targetStates = AssignmentStateRole.getStates(role).map { it.toString() }
 
-            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?:0 , resolvedId, targetStates)
+            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?: 0, resolvedId, targetStates)
             return@run success(processes)
 
         }
@@ -167,7 +182,6 @@ class ProcessServiceImpl(
         }
 
 
-    // mudar process state para assign-to-Ivs
     override fun assignInvestigator(processId: Int, triatorId: Int, investigatorId: Int): AssignInvestigatorResult =
         transactionManager.run {
             val triator =
@@ -193,10 +207,8 @@ class ProcessServiceImpl(
 
         }
 
-    // mudar process state para assign-to-Sup
     override fun assignSupervisor(processId: Int, triatorId: Int, supervisorId: Int): AssignSupervisorResult =
         transactionManager.run {
-            // mudar o state do process
             val triator = usersRepository.getUserById(triatorId) ?: return@run failure(ProcessError.InvalidTriator)
             val supervisor =
                 usersRepository.getUserById(supervisorId) ?: return@run failure(ProcessError.InvalidSupervisor)
@@ -320,10 +332,10 @@ class ProcessServiceImpl(
         return user.area == area
     }
 
-    private fun validateFilters(limit: Int?, offset: Int?, areaId:Int?): ProcessValidationResult {
+    private fun validateFilters(limit: Int?, offset: Int?, areaId: Int?): ProcessValidationResult {
         if (limit != null && limit <= 0) return failure(ProcessError.InvalidLimit)
         if (offset != null && offset < 0) return failure(ProcessError.InvalidOffset)
-        if (areaId != null &&  areaId <= 0) return failure(ProcessError.InvalidAreaId)
+        if (areaId != null && areaId <= 0) return failure(ProcessError.InvalidAreaId)
         return success(Unit)
     }
 
@@ -382,25 +394,6 @@ class ProcessServiceImpl(
         return success(Unit)
     }
 
-
-    private fun getTargetStates(role: String) =
-
-        when (role) {
-            Roles.TRIATOR -> listOf(State.NOT_ASSIGNED)
-            Roles.INVESTIGATOR -> listOf(
-                State.ASSIGNED,
-                State.ON_GOING,
-                State.REJECTED_BY_SUPERVISOR,
-            )
-
-            Roles.SUPERVISOR -> listOf(
-                State.WAITING_APPROVAL_SUPERVISOR,
-                State.REJECTED_BY_MANAGER
-            )
-
-            Roles.MANAGER -> listOf(State.WAITING_APPROVAL_MANAGER)
-            else -> emptyList()
-        }
 
 }
 

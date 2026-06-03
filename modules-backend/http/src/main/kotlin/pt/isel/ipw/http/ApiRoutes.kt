@@ -46,6 +46,7 @@ object ApiRoutes {
         const val PROVE_BY_ID = "$PROVES/{proveId}"
         const val PROVE_UPLOAD_URL = "$PROVES/upload-url"
         const val PROVE_ACCESS_URL = "$PROVE_BY_ID/url"
+        const val SUBMIT = "$BY_ID/submit"
 
         const val BY_ID_FULL = "$BASE$BY_ID"
         const val END_DATE_FULL = "$BASE$END_DATE"
@@ -57,6 +58,7 @@ object ApiRoutes {
         const val PROVE_BY_ID_FULL = "$BASE$PROVE_BY_ID"
         const val PROVE_UPLOAD_URL_FULL = "$BASE$PROVE_UPLOAD_URL"
         const val PROVE_ACCESS_URL_FULL = "$BASE$PROVE_ACCESS_URL"
+        const val SUBMIT_FULL = "$BASE$SUBMIT"
     }
 
     object Report {

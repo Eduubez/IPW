@@ -20,4 +20,5 @@ sealed class ProcessError(
     data object InvalidOffset: ProcessError( 404)
     data object InvalidAreaId: ProcessError(404)
     data object UnauthorizedAccess: ProcessError(403)
+    data object InvalidState: ProcessError(400)
 }
