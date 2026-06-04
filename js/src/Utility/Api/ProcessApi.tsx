@@ -21,10 +21,10 @@ export type ProcessResponse = {
   investigator: UserResponse;
   supervisor: UserResponse;
   state: string;
-  proves: ProvesType;
+  proves: ProvesType[];
   report: ReportType;
-  notes: NotesType;
-  activity: ActivityType;
+  notes: NotesType[];
+  activity: ActivityType[];
 };
 
 export type ProcessRequest = {
