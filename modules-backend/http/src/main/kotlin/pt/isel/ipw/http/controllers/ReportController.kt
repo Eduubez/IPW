@@ -16,6 +16,8 @@ import pt.isel.ipw.domain.DTO.input.UpdateReportRequest
 import pt.isel.ipw.domain.DTO.output.CreateReportResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.ApiRoutes
+import pt.isel.ipw.http.auth.AuthenticatedUser
+import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
 import pt.isel.ipw.http.errors.toHttp
 import pt.isel.ipw.services.errors.mapSuccess
@@ -33,8 +35,8 @@ class ReportController(
         @PathVariable processId: Int,
         @RequestBody report: CreateReportRequest
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
         val result = reportService.createReport(processId, report.content, userId).mapSuccess {
             CreateReportResponse(it)
@@ -47,11 +49,12 @@ class ReportController(
     fun getByProcessId(
         @PathVariable processId: Int,
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = reportService.getByProcessId(processId, userId, role!!)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidRoles)
+        val result = reportService.getByProcessId(processId, userId, role)
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
@@ -61,10 +64,13 @@ class ReportController(
         @PathVariable processId: Int,
         @RequestBody report: UpdateReportRequest
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
-        val result = reportService.updateReport(processId, report.content, userId, role!!)
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidRoles)
+
+        val result = reportService.updateReport(processId, report.content, userId, role)
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
@@ -73,11 +79,12 @@ class ReportController(
     fun approveReport(
         @PathVariable processId: Int
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidRoles)
 
-        val result = reportService.approveReport(processId, userId, role!!)
+        val result = reportService.approveReport(processId, userId, role)
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
@@ -86,11 +93,11 @@ class ReportController(
     fun rejectReport(
         @PathVariable processId: Int
     ): ResponseEntity<*> {
-        val auth = SecurityContextHolder.getContext().authentication
-        val userId = auth?.principal as Int
-        val role = auth.authorities.first().authority?.removePrefix("ROLE_")
-
-        val result = reportService.rejectReport(processId, userId, role!!)
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidRoles)
+        val result = reportService.rejectReport(processId, userId, role)
 
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }

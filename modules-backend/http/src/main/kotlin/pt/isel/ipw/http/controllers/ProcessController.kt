@@ -105,8 +105,6 @@ class ProcessController(
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) areaId: Int?,
     ): ResponseEntity<*> {
-        println("BEFORE PARSE TOKEN TO USER ID")
-        println("GETTING USER ID")
 
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
