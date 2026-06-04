@@ -10,11 +10,11 @@ object AssignmentStateRole {
         State.ASSIGNED,
         State.ON_GOING,
         State.REJECTED_BY_SUPERVISOR,
+        State.REJECTED_BY_MANAGER
     )
 
     private val SUPERVISOR_STATES = setOf(
         State.WAITING_APPROVAL_SUPERVISOR,
-        State.REJECTED_BY_MANAGER
     )
 
     private val MANAGER_STATES = setOf(State.WAITING_APPROVAL_MANAGER)
