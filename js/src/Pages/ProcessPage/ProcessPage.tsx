@@ -36,6 +36,17 @@ export default function ProcessPage() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+
+  const openConfirmModal = (action: () => void) => {
+    setConfirmAction(() => action);
+    setShowConfirmModal(true);
+  };
+
+  const closeConfirmModal = () => {
+    setShowConfirmModal(false);
+    setConfirmAction(null);
+  };
 
   const fetchProcessData = async () => {
     if (!id) return;
@@ -197,8 +208,18 @@ export default function ProcessPage() {
   const report = apiResponse?.report;
 
   //#region supervisor
-  const aproveProcess = async () => {};
-  const rejectProcess = async () => {};
+  const aproveProcess = async () => {
+    const response = await ProcessApi.approve(Number(id));
+    if(response.success) {
+      navigate("/dashboard");
+    }
+  };
+  const rejectProcess = async () => {
+    const response = await ProcessApi.reject(Number(id));
+    if(response.success) {
+      navigate("/dashboard");
+    }
+  };
 
   const canAproveOrRejectProcess = apiResponse
     ? normalizeState(apiResponse?.state) === "WAITING_APPROVAL_SUPERVISOR"
@@ -209,7 +230,9 @@ export default function ProcessPage() {
   //#region insvestigator
   const handleSubmitProcess = async () => {
     const response = await ProcessApi.submit(Number(id));
-    console.log("Submit response:", response);
+    if (response.success) {
+      navigate("/dashboard");
+    }
   };
 
   const canSubmitProcess = apiResponse
@@ -223,7 +246,7 @@ export default function ProcessPage() {
     headerButtons: [
       <PrimaryButton
         text={"Submeter Processo"}
-        onClick={() => setShowConfirmModal(true)}
+        onClick={() => openConfirmModal(handleSubmitProcess)}
         enabled={canSubmitProcess}
       />,
     ],
@@ -237,12 +260,12 @@ export default function ProcessPage() {
     headerButtons: [
       <PrimaryButton
         text={"Aprovar Processo"}
-        onClick={aproveProcess}
+        onClick={() => openConfirmModal(aproveProcess)}
         enabled={canAproveOrRejectProcess}
       />,
       <PrimaryButton
         text={"Rejeitar Processo"}
-        onClick={rejectProcess}
+        onClick={() => openConfirmModal(rejectProcess)}
         enabled={canAproveOrRejectProcess}
       />,
     ],
@@ -331,30 +354,26 @@ export default function ProcessPage() {
           </div>
         </div>
       </div>
-      {showConfirmModal && (
-        <PrimaryModal
-          open={showConfirmModal}
-          onClose={() => setShowConfirmModal(false)}
-          header={"Confirmar Ação"}
-          body={
-            <>
-              <div className={styles["confirm-modal"]}>
-                <span>Tem certeza que deseja realizar esta ação?</span>
-                <div className={styles["modal-button-container"]}>
-                  <PrimaryButton
-                    enabled={true}
-                    text={"Confirmar"}
-                    onClick={() => {
-                      handleSubmitProcess();
-                      setShowConfirmModal(false);
-                    }}
-                  />
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
+      <PrimaryModal
+        open={showConfirmModal}
+        onClose={closeConfirmModal}
+        header={"Confirmar Ação"}
+        body={
+          <div className={styles["confirm-modal"]}>
+            <span>Tem certeza que deseja realizar esta ação?</span>
+            <div className={styles["modal-button-container"]}>
+              <PrimaryButton
+                enabled={true}
+                text={"Confirmar"}
+                onClick={() => {
+                  confirmAction?.();
+                  closeConfirmModal();
+                }}
+              />
+            </div>
+          </div>
+        }
+      />
     </div>
   );
 }

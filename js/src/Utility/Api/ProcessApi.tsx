@@ -6,7 +6,7 @@ import { enqueueSnackbar } from "notistack";
 
 export type ProcessResponseApi = {
   results: ProcessResponse[];
-}
+};
 
 export type ProcessResponse = {
   id: number;
@@ -104,17 +104,16 @@ export const ProcessApi = {
 async function create(
   process: ProcessRequest,
 ): Promise<ResponseApi<ProcessResponse>> {
-  const response  = await fetchApi<ProcessResponse>("process", {
+  const response = await fetchApi<ProcessResponse>("process", {
     method: "POST",
     body: JSON.stringify(process),
-    headers:{
+    headers: {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
-    }
+    },
   });
-  if(response.success){
+  if (response.success) {
     enqueueSnackbar("Process created successfully", { variant: "success" });
-    
-  }else {
+  } else {
     enqueueSnackbar("Failed to create process", { variant: "error" });
   }
   return response;
@@ -130,16 +129,16 @@ async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
   });
 }
 
-async function submit(id:number):Promise<ResponseApi<void>>{
+async function submit(id: number): Promise<ResponseApi<void>> {
   const response = await fetchApi<void>(`process/${id}/submit`, {
     method: "Post",
     headers: {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
-  if(response.success){
+  if (response.success) {
     enqueueSnackbar("Process submitted successfully", { variant: "success" });
-  }else {
+  } else {
     enqueueSnackbar("Failed to submit process", { variant: "error" });
   }
 
@@ -202,15 +201,33 @@ async function cancelProcess(id: number): Promise<ResponseApi<void>> {
 
 // Approve a process - Supervisor, Manager
 async function approve(id: number): Promise<ResponseApi<void>> {
-  return await fetchApi<void>(`process/${id}/report/approve`, {
+  const response = await fetchApi<void>(`process/${id}/report/approve`, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
   });
+  if (response.success) {
+    enqueueSnackbar("Process approved successfully", { variant: "success" });
+  } else {
+    enqueueSnackbar("Failed to approve process", { variant: "error" });
+  }
+  return response;
 }
 
 // Reject a process - Supervisor, Manager
 
 async function reject(id: number): Promise<ResponseApi<void>> {
-  return await fetchApi<void>(`process/${id}/report/reject`, {
+  const response = await fetchApi<void>(`process/${id}/report/reject`, {
     method: "POST",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
   });
+  if (response.success) {
+    enqueueSnackbar("Process rejected successfully", { variant: "success" });
+  } else {
+    enqueueSnackbar("Failed to reject process", { variant: "error" });
+  }
+  return response;
 }
