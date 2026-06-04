@@ -4,11 +4,11 @@ import pt.isel.ipw.domain.Activity
 import pt.isel.ipw.domain.DTO.output.*
 import pt.isel.ipw.domain.Entities.area.AreaView
 import pt.isel.ipw.domain.notes.Note
+import pt.isel.ipw.domain.notes.toResponse
 import pt.isel.ipw.domain.report.Report
 import pt.isel.ipw.domain.user.User
 import java.time.LocalDateTime
 
-// ProcessView
 data class ProcessView(
     val id: Int,
     val name: String,
@@ -22,13 +22,12 @@ data class ProcessView(
     val investigator: User?,
     val supervisor: User?,
     val state: State,
-    val proves: Prove?,
+    val proves: List<Prove>?,
     val report: Report?,
     val notes: List<Note>?,
-    val activity: Activity?,
+    val activity: List<Activity>?,
 )
 
-// VERIFICAR MAPEAMENTO DO USER
 fun ProcessView.toResponse(): GetProcessResponse = GetProcessResponse(
     id = id,
     name = name,
@@ -71,17 +70,7 @@ fun ProcessView.toResponse(): GetProcessResponse = GetProcessResponse(
     )
     },
     state = state.name.lowercase(),
-    proves = proves?.let {
-        ProvesResponse(
-            id = it.id,
-            processId = it.processId,
-            fileName = it.fileName,
-            contentType = it.contentType,
-            fileSize = it.fileSize,
-            createdBy = it.createdBy,
-            createdAt = it.createdAt.toString(),
-        )
-    },
+    proves = proves?.toResponse(),
     report = report?.let {
         ReportResponse(
             id = it.id,
@@ -91,16 +80,7 @@ fun ProcessView.toResponse(): GetProcessResponse = GetProcessResponse(
             updatedAt = it.updatedAt.toString(),
         )
     },
-    notes = notes?.map { note ->
-        NotesResponse(
-            id = note.id,
-            processId = note.processId,
-            provesId = note.provesId,
-            content = note.content,
-            authorId = note.authorId,
-            createdAt = note.creationDate.toString(),
-        )
-    },
+    notes = notes?.toResponse(),
     activity = activity?.toResponse()
 )
 

@@ -1,5 +1,6 @@
 package pt.isel.ipw.domain.notes
 
+import pt.isel.ipw.domain.DTO.output.NoteResponse
 import java.time.LocalDateTime
 
 data class Note (
@@ -10,3 +11,19 @@ data class Note (
     val authorId: Int,
     val creationDate: LocalDateTime
 )
+
+
+
+
+
+fun Note.toResponse(): NoteResponse =
+    NoteResponse(
+        id = id,
+        processId = processId,
+        provesId = provesId,
+        content = content,
+        authorId = authorId,
+        createdAt = creationDate.toString(),
+    )
+
+fun List<Note>.toResponse(): List<NoteResponse> = this.map { it.toResponse() }

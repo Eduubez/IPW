@@ -1,6 +1,7 @@
 package pt.isel.ipw.domain.DTO.output
 
-import pt.isel.ipw.domain.process.ProcessView
+import pt.isel.ipw.domain.DTO.output.prove.ProveResponse
+
 
 data class GetProcessResponse(
     val id: Int,
@@ -15,10 +16,10 @@ data class GetProcessResponse(
     val investigator: CreateUserResponse?,
     val supervisor: CreateUserResponse?,
     val state: String,
-    val proves: ProvesResponse?,
+    val proves: List<ProveResponse>?,
     val report: ReportResponse?,
-    val notes: List<NotesResponse>?,
-    val activity: ActivityResponse?,
+    val notes: List<NoteResponse>?,
+    val activity: List<ActivityResponse>?,
 )
 
 

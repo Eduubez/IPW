@@ -1,5 +1,7 @@
 package pt.isel.ipw.domain.roles
 
+import pt.isel.ipw.domain.process.State
+
 object Roles {
     const val INVESTIGATOR = "investigator"
     const val SUPERVISOR = "supervisor"

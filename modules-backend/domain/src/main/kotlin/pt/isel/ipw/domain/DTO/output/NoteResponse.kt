@@ -1,7 +1,7 @@
 package pt.isel.ipw.domain.DTO.output
 
 
-data class NotesResponse (
+data class NoteResponse (
     val id: Int,
     val processId: Int?,
     val provesId: Int?,
@@ -10,6 +10,3 @@ data class NotesResponse (
     val createdAt: String,
     )
 
-//fun Note.toResponse():GetNotesResponse = GetNotesResponse()
-
-//fun List<Note>.toResponse():List<GetNoteReponse> = this.map { it.toResponse() }

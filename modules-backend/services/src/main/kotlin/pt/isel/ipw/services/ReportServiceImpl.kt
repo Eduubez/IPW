@@ -66,7 +66,6 @@ class ReportServiceImpl(
         userId: Int,
         role: String
     ): Either<ReportError, Unit> = transactionManager.run {
-        // Update deveria apenas deixar dar update aps estados relacionados ao averiguador
         val process = processRepository.getById(processId)
             ?: return@run failure(ReportError.ProcessNotFound)
 

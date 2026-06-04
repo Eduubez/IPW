@@ -38,7 +38,7 @@ class ProcessServiceImplTest {
             ActivityServiceImpl(trxManager),
         )
 
-        //Alice(triator)=2, Bob(investigator)=3, Carol(supervisor)=4
+        //Alice(triator)=1, Bob(investigator)=2, Carol(supervisor)=3
         private const val TRIATOR_ID = 1
         private const val INVESTIGATOR_ID = 2   // Bob - area "Car Accident"
         private const val SUPERVISOR_ID = 3

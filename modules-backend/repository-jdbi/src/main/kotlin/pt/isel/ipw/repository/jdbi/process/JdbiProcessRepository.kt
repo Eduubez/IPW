@@ -3,8 +3,10 @@ package pt.isel.ipw.repository.jdbi.process
 import org.jdbi.v3.core.Handle
 import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.repository.ProcessRepository
+import pt.isel.ipw.repository.jdbi.mappers.ActivityMapper
 import pt.isel.ipw.repository.jdbi.mappers.notes.NoteMapper
 import pt.isel.ipw.repository.jdbi.mappers.process.ProcessMapper
+import pt.isel.ipw.repository.jdbi.mappers.process.ProvesMapper
 
 class JdbiProcessRepository(
     val handle: Handle
@@ -105,6 +107,43 @@ class JdbiProcessRepository(
             .map(NoteMapper())
             .list()
 
+        val activities = handle.createQuery(
+            """
+        select
+            act.id           as activity_id,
+            act.process_id   as activity_process_id,
+            act.user_id      as activity_user_id,
+            uact.name        as activity_user_name,
+            act.action       as activity_action,
+            act.description  as activity_description,
+            act.created_at   as activity_created_at
+        from Activity act
+        join Users uact on uact.id = act.user_id
+        where act.process_id = :id
+        """
+        )
+            .bind("id", id)
+            .map(ActivityMapper("activity_"))
+            .list()
+
+        val proves = handle.createQuery(
+            """
+        select 
+            pv.id             as proves_id,
+            pv.process_id     as proves_process_id,
+            pv.file_name      as proves_file_name,
+            pv.content_type   as proves_content_type,
+            pv.file_size      as proves_file_size,
+            pv.storage_key    as proves_storage_key,
+            pv.created_by     as proves_created_by,
+            pv.created_at     as proves_created_at
+        from Proves pv
+        where pv.process_id = :id
+        """
+        )
+            .bind("id", id)
+            .map(ProvesMapper())
+            .list()
 
         return handle.createQuery(
             """
@@ -154,28 +193,11 @@ class JdbiProcessRepository(
 
             cur_state.name   as state_,
 
-            pv.id            as proves_id,
-            pv.process_id    as proves_process_id,
-            pv.file_name     as proves_file_name,
-            pv.content_type  as proves_content_type,
-            pv.file_size     as proves_file_size,
-            pv.storage_key   as proves_storage_key,
-            pv.created_by    as proves_created_by,
-            pv.created_at    as proves_created_at,
-
             r.id             as report_id,
             r.process_id     as report_process_id,
             r.content        as report_content,
             r.created_at     as report_created_at,
-            r.updated_at     as report_updated_at,
-
-            act.id           as activity_id,
-            act.process_id   as activity_process_id,
-            act.user_id      as activity_user_id,
-            uact.name        as activity_user_name,
-            act.action       as activity_action,
-            act.description  as activity_description,
-            act.created_at   as activity_created_at
+            r.updated_at     as report_updated_at
 
         from Process p
         join Location l         on p.location        = l.id
@@ -194,16 +216,13 @@ class JdbiProcessRepository(
             join State st on st.id = ps.state_id
             where ps.end_date is null
         ) cur_state             on cur_state.process_id = p.id
-        left join Proves pv     on pv.process_id     = p.id
         left join Report r      on r.process_id      = p.id
-        left join Activity act  on act.process_id    = p.id
-        left join Users uact    on uact.id           = act.user_id
         where p.id = :id
         limit 1
         """
         )
             .bind("id", id)
-            .map(ProcessMapper(notes))
+            .map(ProcessMapper(notes, activities, proves))
             .findOne()
             .orElse(null)
     }
@@ -261,6 +280,46 @@ where n.process_id = any(:ids)
             .list()
             .groupBy { it.processId }
 
+        val allActivities = handle.createQuery(
+            """
+select
+    act.id           as activity_id,
+    act.process_id   as activity_process_id,
+    act.user_id      as activity_user_id,
+    uact.name        as activity_user_name,
+    act.action       as activity_action,
+    act.description  as activity_description,
+    act.created_at   as activity_created_at
+from Activity act
+join Users uact on uact.id = act.user_id
+where act.process_id = any(:ids)
+"""
+        )
+            .bind("ids", processIds.toTypedArray())
+            .map(ActivityMapper("activity_"))
+            .list()
+            .groupBy { it.processId }
+
+        val allProves = handle.createQuery(
+            """
+select 
+    pv.id             as proves_id,
+    pv.process_id     as proves_process_id,
+    pv.file_name      as proves_file_name,
+    pv.content_type   as proves_content_type,
+    pv.file_size      as proves_file_size,
+    pv.storage_key    as proves_storage_key,
+    pv.created_by     as proves_created_by,
+    pv.created_at     as proves_created_at
+from Proves pv
+where pv.process_id = any(:ids)
+"""
+        )
+            .bind("ids", processIds.toTypedArray())
+            .map(ProvesMapper())
+            .list()
+            .groupBy { it.processId }
+
         return handle.createQuery(
             """
 select
@@ -309,28 +368,11 @@ select
 
     cur_state.name   as state_,
 
-    pv.id            as proves_id,
-    pv.process_id    as proves_process_id,
-    pv.file_name     as proves_file_name,
-    pv.content_type  as proves_content_type,
-    pv.file_size     as proves_file_size,
-    pv.storage_key   as proves_storage_key,
-    pv.created_by    as proves_created_by,
-    pv.created_at    as proves_created_at,
-
     r.id             as report_id,
     r.process_id     as report_process_id,
     r.content        as report_content,
     r.created_at     as report_created_at,
-    r.updated_at     as report_updated_at,
-
-    act.id           as activity_id,
-    act.process_id   as activity_process_id,
-    act.user_id      as activity_user_id,
-    uact.name        as activity_user_name,
-    act.action       as activity_action,
-    act.description  as activity_description,
-    act.created_at   as activity_created_at
+    r.updated_at     as report_updated_at
 
 from Process p
 join Location l         on p.location        = l.id
@@ -349,10 +391,7 @@ left join (
     join State st on st.id = ps.state_id
     where ps.end_date is null
 ) cur_state             on cur_state.process_id = p.id
-left join Proves pv     on pv.process_id     = p.id
 left join Report r      on r.process_id      = p.id
-left join Activity act  on act.process_id    = p.id
-left join Users uact    on uact.id           = act.user_id
 where p.id = any(:ids)
 order by p.creation_date desc
 """
@@ -360,7 +399,11 @@ order by p.creation_date desc
             .bind("ids", processIds.toTypedArray())
             .map { rs, ctx ->
                 val processId = rs.getInt("id")
-                ProcessMapper(allNotes[processId] ?: emptyList()).map(rs, ctx)
+                ProcessMapper(
+                    notes = allNotes[processId] ?: emptyList(),
+                    activities = allActivities[processId] ?: emptyList(),
+                    proves = allProves[processId] ?: emptyList()
+                ).map(rs, ctx)
             }
             .list()
     }
