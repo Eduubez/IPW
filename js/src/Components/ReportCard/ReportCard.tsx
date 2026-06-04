@@ -38,10 +38,13 @@ export function ReportCard({
     // Lógica para adicionar notas
   };
 
-  const handleSaveReport = () => {
+  const handleSaveReport = async () => {
     setSubmitting(true);
     try {
-      const response = ReportApi.updateReport(processId, reportContent!);
+      const response = await ReportApi.updateReport(processId, reportContent!);
+      if(response.success) {
+        window.location.reload(); // Recarrega a página para mostrar o relatório atualizado
+      }
     } finally {
       setSubmitting(false);
       setEditMode(false);
@@ -52,6 +55,10 @@ export function ReportCard({
     setSubmitting(true);
     try {
       const response = await ReportApi.createReport(processId, reportContent!);
+      if(response.success) {
+        window.location.reload(); // Recarrega a página para mostrar o novo relatório criado
+      }
+
     } finally {
       setSubmitting(false);
       setOpenCreateReportModal(false);

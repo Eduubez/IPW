@@ -131,13 +131,19 @@ async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
 }
 
 async function submit(id:number):Promise<ResponseApi<void>>{
-  return await fetchApi<void>(`process/${id}/submit`, {
+  const response = await fetchApi<void>(`process/${id}/submit`, {
     method: "Post",
     headers: {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
+  if(response.success){
+    enqueueSnackbar("Process submitted successfully", { variant: "success" });
+  }else {
+    enqueueSnackbar("Failed to submit process", { variant: "error" });
+  }
 
+  return response;
 }
 
 // get all processes - Investigator, Supervisor, Manager

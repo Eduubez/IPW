@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProcessApi, type ProcessResponse } from "../../Utility/Api/ProcessApi";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { Color } from "../../StyleGuide/colors";
@@ -15,6 +15,8 @@ import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { ReportCard } from "../../Components/ReportCard/ReportCard";
 import { userStore } from "../../Utility/Store/UserStore";
+import { ReportApi } from "../../Utility/Api/ReportApi";
+import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
 
 const processPageState = (state?: string) => {
   switch (state) {
@@ -25,6 +27,7 @@ const processPageState = (state?: string) => {
   }
 };
 export default function ProcessPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { t } = useTranslation();
   const [apiResponse, setApiResponse] = useState<ProcessResponse | null>(null);
@@ -32,6 +35,7 @@ export default function ProcessPage() {
     { done: boolean; label: string; date: Date; user: string }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const fetchProcessData = async () => {
     if (!id) return;
@@ -190,46 +194,65 @@ export default function ProcessPage() {
     fetchProcessActivity();
     setLoading(false);
   }, [id]);
+  const report = apiResponse?.report;
 
-  // #region handlers
-  const handleStartProcess = () => {
-    // At this point we can't start
-  };
-  const handleSubmitProcess = () => {
-    // At this point we can't submit
-  };
+  //#region supervisor
+  const aproveProcess = async () => {};
+  const rejectProcess = async () => {};
 
-  // Variables after fetchin data
-  const canStartProcess = apiResponse
-    ? normalizeState(apiResponse?.state) === "ASSIGNED"
+  const canAproveOrRejectProcess = apiResponse
+    ? normalizeState(apiResponse?.state) === "WAITING_APPROVAL_SUPERVISOR"
     : false;
+
+  //#endregion
+
+  //#region insvestigator
+  const handleSubmitProcess = async () => {
+    const response = await ProcessApi.submit(Number(id));
+    console.log("Submit response:", response);
+  };
+
   const canSubmitProcess = apiResponse
     ? normalizeState(apiResponse?.state) === "ON_GOING"
     : false;
 
-  const report = apiResponse?.report;
+  //#endregion
 
+  //#region role based view
   const investigatorView = {
-    headerButtons: (
+    headerButtons: [
       <PrimaryButton
-        text={canStartProcess ? "Iniciar Processo" : "Submeter Processo"}
-        onClick={canStartProcess ? handleStartProcess : handleSubmitProcess}
-        enabled={canStartProcess || canSubmitProcess}
-      />
+        text={"Submeter Processo"}
+        onClick={() => setShowConfirmModal(true)}
+        enabled={canSubmitProcess}
+      />,
+    ],
+    reportView: (
+      <ReportCard report={report} processId={Number(id)} viewOnly={false} />
     ),
-    reportView: <ReportCard report={report} processId={Number(id)} viewOnly={false} />
+    key: "investigator",
   };
 
-  const supervisorView =  {
-    headerButtons: (
+  const supervisorView = {
+    headerButtons: [
       <PrimaryButton
-        text={canStartProcess ? "Iniciar Processo" : "Submeter Processo"}
-        onClick={canStartProcess ? handleStartProcess : handleSubmitProcess}
-        enabled={canStartProcess || canSubmitProcess}
-      />
+        text={"Aprovar Processo"}
+        onClick={aproveProcess}
+        enabled={canAproveOrRejectProcess}
+      />,
+      <PrimaryButton
+        text={"Rejeitar Processo"}
+        onClick={rejectProcess}
+        enabled={canAproveOrRejectProcess}
+      />,
+    ],
+    reportView: (
+      <ReportCard report={report} processId={Number(id)} viewOnly={true} />
     ),
-    reportView: <ReportCard report={report} processId={Number(id)} viewOnly={true} />
+    key: "supervisor",
   };
+
+  /// #endregion
 
   const activeView = () => {
     const activeRole = userStore.getActiveRole();
@@ -239,7 +262,11 @@ export default function ProcessPage() {
       case "supervisor":
         return supervisorView;
       default:
-        return <div>View not implemented for this role</div>;
+        return {
+          headerButtons: [],
+          reportView: <div>View not implemented for this role</div>,
+          key: "default",
+        };
     }
   };
 
@@ -252,9 +279,14 @@ export default function ProcessPage() {
           loading={loading}
         />
         <div className={styles["button-badage-wrapper"]}>
-          <div className={styles["button-container"]}>
-            {activeView().headerButtons}
-          </div>
+          {(canSubmitProcess || canAproveOrRejectProcess) &&
+            activeView().headerButtons.map((button, index) => (
+              <div
+                key={`${index}${activeView().key}`}
+                className={styles["button-container"]}>
+                {button}
+              </div>
+            ))}
           <StateBadge state={processPageState(apiResponse?.state)} />
         </div>
       </div>
@@ -277,7 +309,10 @@ export default function ProcessPage() {
       <div className={styles["details-container"]}>
         <div className={styles["d-container"]}>
           <WithBackground>
-            <TimeLine items={activityItems} loading={loading} />
+            <div>
+              <span>Atividades Recentes</span>
+              <TimeLine items={activityItems} loading={loading} />
+            </div>
           </WithBackground>
         </div>
         <div className={styles["d-container"]}>
@@ -296,6 +331,30 @@ export default function ProcessPage() {
           </div>
         </div>
       </div>
+      {showConfirmModal && (
+        <PrimaryModal
+          open={showConfirmModal}
+          onClose={() => setShowConfirmModal(false)}
+          header={"Confirmar Ação"}
+          body={
+            <>
+              <div className={styles["confirm-modal"]}>
+                <span>Tem certeza que deseja realizar esta ação?</span>
+                <div className={styles["modal-button-container"]}>
+                  <PrimaryButton
+                    enabled={true}
+                    text={"Confirmar"}
+                    onClick={() => {
+                      handleSubmitProcess();
+                      setShowConfirmModal(false);
+                    }}
+                  />
+                </div>
+              </div>
+            </>
+          }
+        />
+      )}
     </div>
   );
 }

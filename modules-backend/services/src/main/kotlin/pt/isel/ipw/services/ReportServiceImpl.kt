@@ -35,6 +35,8 @@ class ReportServiceImpl(
 
             val reportId = reportRepository.createReport(processId, content)
 
+            processRepository.changeState(processId, State.ON_GOING.toString())
+
 
             activityService.createActivity(
                 processId,

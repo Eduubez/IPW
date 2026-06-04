@@ -1,5 +1,5 @@
 import ".././i18n";
-import { Routes, Route, BrowserRouter, useLocation } from "react-router-dom";
+import { Routes, Route, BrowserRouter, useLocation, Navigate } from "react-router-dom";
 import Login from "./Pages/Login/Login";
 import SideBar from "./Components/SideBar/SideBar";
 import { DashboardRoute } from "./Routes/DashboardRoute";
@@ -23,6 +23,7 @@ function AppLayout() {
       {!hideSidebar && <SideBar />}
       <div className="root">
         <Routes>
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route
             path="/dashboard"
