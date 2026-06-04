@@ -8,15 +8,14 @@ begin
     update Process_State
     set end_date = NEW.start_date
     where process_id = NEW.process_id
-      and end_date   is null
-      and state_id   != NEW.state_id;
+      and end_date is null;
 
     return NEW;
 end;
 $$ language plpgsql;
 
 create or replace trigger trigger_close_previous_state
-    after insert on Process_State
+    before insert on Process_State
     for each row
 execute function close_previous_state();
 
@@ -52,10 +51,10 @@ begin
         initial_state := 'not_assigned';
     end if;
 
-        select id into new_state_id from State where name = initial_state;
-    
+    select id into new_state_id from State where name = initial_state;
+
     insert into Process_State(process_id, state_id, start_date)
-    values (new.id, new_state_id, current_timestamp);
+    values (new.id, new_state_id, new.creation_date);
 
     return new;
 end;
@@ -74,15 +73,24 @@ create or replace function set_process_assigned_state_when_fully_assigned()
     returns trigger as $$
 declare
     new_state_id int;
+    current_state_name varchar(100);
 begin
     if  (old.investigator_id is null or old.supervisor_id is null)
         and (new.investigator_id is not null and new.supervisor_id is not null)
     then
+        select s.name
+        into current_state_name
+        from Process_State ps
+                 join State s on s.id = ps.state_id
+        where ps.process_id = new.id
+          and ps.end_date is null;
 
-        select id into new_state_id from State where name = 'assigned';
+        if current_state_name = 'not_assigned' then
+            select id into new_state_id from State where name = 'assigned';
 
-        insert into Process_State(process_id, state_id, start_date)
-        values (new.id, new_state_id, current_timestamp);
+            insert into Process_State(process_id, state_id, start_date)
+            values (new.id, new_state_id, current_timestamp);
+        end if;
     end if;
 
     return new;
@@ -90,6 +98,6 @@ end;
 $$ language plpgsql;
 
 create or replace trigger trigger_set_process_assigned_state_when_fully_assigned
-    after update on Process
+    after update of investigator_id, supervisor_id on Process
     for each row
 execute function set_process_assigned_state_when_fully_assigned();
