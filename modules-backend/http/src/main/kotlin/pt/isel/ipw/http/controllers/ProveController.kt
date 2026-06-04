@@ -30,7 +30,7 @@ class ProveController(
     private val proveService: ProveService,
 ) {
 
-    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @RolesAllowed(Roles.INVESTIGATOR)
     @PostMapping(ApiRoutes.Process.PROVE_UPLOAD_URL)
     fun createUploadUrl(
         @PathVariable id: Int,
@@ -54,7 +54,7 @@ class ProveController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @RolesAllowed(Roles.INVESTIGATOR)
     @PostMapping(ApiRoutes.Process.PROVES)
     fun createProve(
         @PathVariable id: Int,
@@ -81,7 +81,7 @@ class ProveController(
         return handler(result, HttpStatus.CREATED) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @RolesAllowed(Roles.INVESTIGATOR)
     @GetMapping(ApiRoutes.Process.PROVES)
     fun getProcessProves(
         @PathVariable id: Int
@@ -115,7 +115,7 @@ class ProveController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @RolesAllowed(Roles.INVESTIGATOR)
     @GetMapping(ApiRoutes.Process.PROVE_ACCESS_URL)
     fun getProveAccessUrl(
         @PathVariable id: Int,
@@ -137,7 +137,7 @@ class ProveController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
+    @RolesAllowed(Roles.INVESTIGATOR)
     @DeleteMapping(ApiRoutes.Process.PROVE_BY_ID)
     fun deleteProve(
         @PathVariable id: Int,

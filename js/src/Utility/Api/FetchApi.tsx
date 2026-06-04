@@ -31,6 +31,14 @@ export async function fetchApi<T>(
         };
     }
 
+    if (response.status === 204) {
+        return {
+            success: true,
+            data: undefined as T,
+            status: response.status,
+        }
+    }
+
     const data: T = await response.json();
 
     return {
