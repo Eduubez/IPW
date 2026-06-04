@@ -32,8 +32,8 @@ const investigatorDashboardStatesMapper = (state: string) => {
   switch (normalizedState) {
     case "ASSIGNED":
       return "NOT_STARTED";
-    case "IN_PROGRESS":
-      return "IN_PROGRESS";
+    case "ON_GOING":
+      return "ON_GOING";
     case "REJECTED_BY_SUPERVISOR":
     case "REJECTED_BY_MANAGER":
       return "REJECTED";

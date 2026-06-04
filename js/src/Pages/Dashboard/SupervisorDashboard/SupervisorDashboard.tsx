@@ -23,6 +23,16 @@ type CleanProcess = {
   id: number;
   onClick: () => void;
 };
+
+const supervisorDashboardStatesMapper = (state: string) => {
+  const normalizedState = state.toUpperCase();
+  switch (normalizedState) {
+    case "WAITING_APPROVAL_SUPERVISOR":
+      return "NOT_STARTED";
+    default:
+      return "UNKNOWN";
+  }
+};
 const cleanProcess = (
   processes: ProcessResponse[],
   navigate: (path: string) => void,
@@ -34,7 +44,11 @@ const cleanProcess = (
     creationDate: new Date(process.creationDate).toLocaleDateString(),
     expirationDate: new Date(process.dueDate).toLocaleDateString(),
     priority: <PriorityBadge priority={process.priority} />,
-    state: <StateBadge state={process.state as StateType} />,
+    state: (
+      <StateBadge
+        state={supervisorDashboardStatesMapper(process.state) as StateType}
+      />
+    ),
     priorityValue: process.priority,
     id: process.id,
     onClick: () => navigate(`/processes/${process.id}`),

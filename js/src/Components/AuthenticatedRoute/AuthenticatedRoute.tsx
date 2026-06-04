@@ -10,12 +10,6 @@ export function AuthenticatedRoute({
   const location = useLocation();
   const returnUrl = `${location.pathname}${location.search}${location.hash}`;
 
-  if (userStore.getRoles() === null) {
-    userStore.clear();
-    return (<NoRoles/>)
-    
-  }
-
   if (userStore.hasTokenExpired()) {
     userStore.clear();
     return (

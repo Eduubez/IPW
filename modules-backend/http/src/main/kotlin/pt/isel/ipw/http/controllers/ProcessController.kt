@@ -82,7 +82,7 @@ class ProcessController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR)
-    @PostMapping(ApiRoutes.Process.SUBMIT_FULL)
+    @PostMapping("/{id}/submit")
     fun submitProcess(
         @PathVariable id: Int,
     ): ResponseEntity<*> {
