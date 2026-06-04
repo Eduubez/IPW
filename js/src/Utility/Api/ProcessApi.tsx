@@ -91,6 +91,7 @@ export const ProcessApi = {
   create,
   getById,
   getAll,
+  submit,
   update,
   approve,
   reject,
@@ -127,6 +128,16 @@ async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
+}
+
+async function submit(id:number):Promise<ResponseApi<void>>{
+  return await fetchApi<void>(`process/${id}/submit`, {
+    method: "Post",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
+  });
+
 }
 
 // get all processes - Investigator, Supervisor, Manager

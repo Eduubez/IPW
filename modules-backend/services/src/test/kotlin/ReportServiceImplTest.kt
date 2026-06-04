@@ -256,7 +256,7 @@ class ReportServiceImplTest {
         val processId = createProcess()
         val reportId = createReportAndGetId(processId)
 
-        val result = reportService.updateReport( processId, "Updated content", INVESTIGATOR_ID)
+        val result = reportService.updateReport( processId, "Updated content", INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Success)
 
         val updated = reportService.getByProcessId(processId, INVESTIGATOR_ID, Roles.INVESTIGATOR)
@@ -270,7 +270,7 @@ class ReportServiceImplTest {
         val processId = createProcess()
         val reportId = createReportAndGetId(processId)
 
-        val result = reportService.updateReport(processId, "", INVESTIGATOR_ID)
+        val result = reportService.updateReport(processId, "", INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(ReportError.InvalidContent, (result as Failure).value)
     }
@@ -280,7 +280,7 @@ class ReportServiceImplTest {
         val processId = createProcess()
         val reportId = createReportAndGetId(processId)
 
-        val result = reportService.updateReport(processId, "   ", INVESTIGATOR_ID)
+        val result = reportService.updateReport(processId, "   ", INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(ReportError.InvalidContent, (result as Failure).value)
     }
@@ -292,7 +292,7 @@ class ReportServiceImplTest {
         val processId = createProcess()
         val reportId = createReportAndGetId(processId)
 
-        val result = reportService.updateReport(9999, "Updated content", INVESTIGATOR_ID)
+        val result = reportService.updateReport(9999, "Updated content", INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(ReportError.ProcessNotFound, (result as Failure).value)
     }
@@ -304,7 +304,7 @@ class ReportServiceImplTest {
         val processId = createProcess()
         val reportId = createReportAndGetId(processId)
 
-        val result = reportService.updateReport(processId, "Updated content", TRIATOR_ID)
+        val result = reportService.updateReport(processId, "Updated content", TRIATOR_ID, Roles.TRIATOR)
         assertTrue(result is Failure)
         assertEquals(ReportError.UnauthorizedInvestigator, (result as Failure).value)
     }
@@ -315,7 +315,7 @@ class ReportServiceImplTest {
         val processId = createProcess(investigatorId = INVESTIGATOR_ID)
         val reportId = createReportAndGetId(processId)
 
-        val result = reportService.updateReport(processId, "Updated content", 8)
+        val result = reportService.updateReport(processId, "Updated content", 8, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(ReportError.UnauthorizedInvestigator, (result as Failure).value)
     }

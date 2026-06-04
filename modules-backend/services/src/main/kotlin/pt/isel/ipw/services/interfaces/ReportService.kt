@@ -22,7 +22,8 @@ interface ReportService {
     fun updateReport(
         processId: Int,
         content: String,
-        userId: Int
+        userId: Int,
+        role: String,
     ): Either<ReportError, Unit>
 
      fun deleteReport(

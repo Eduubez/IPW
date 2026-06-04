@@ -39,11 +39,11 @@ class ProcessServiceImplTest {
         )
 
         //Alice(triator)=2, Bob(investigator)=3, Carol(supervisor)=4
-        private const val TRIATOR_ID = 2
-        private const val INVESTIGATOR_ID = 3   // Bob - area "Car Accident"
-        private const val SUPERVISOR_ID = 4
+        private const val TRIATOR_ID = 1
+        private const val INVESTIGATOR_ID = 2   // Bob - area "Car Accident"
+        private const val SUPERVISOR_ID = 3
         // Carol - area "Car Accident"
-        private const val MANAGER_ID = 5
+        private const val MANAGER_ID = 4
 
         private const val CAR_ACCIDENT_AREA_ID = 1 // ID da área correspondente a "Car Accident"
     }
@@ -204,6 +204,82 @@ class ProcessServiceImplTest {
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidSupervisor, (result as Failure).value)
     }
+
+    // -----------------------------------------------------------------------
+// submitProcess
+// -----------------------------------------------------------------------
+
+    @Test
+    fun `submitProcess - investigator success moves to waiting approval supervisor`() {
+        val created = createValid(investigatorId = INVESTIGATOR_ID)
+        assertTrue(created is Success)
+        val processId = (created as Success).value
+
+        val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", processId)
+        assertTrue(result is Success)
+
+        val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
+        assertTrue(updated is Success)
+        val process = (updated as Success).value
+        assertEquals("waiting_approval_supervisor", process.state.name.lowercase())
+    }
+
+    @Test
+    fun `submitProcess - process not found returns ProcessNotFound`() {
+        val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", 9999)
+
+        assertTrue(result is Failure)
+        assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
+    }
+
+    @Test
+    fun `submitProcess - user without relation to process returns Failure`() {
+        val created = createValid(investigatorId = INVESTIGATOR_ID)
+        assertTrue(created is Success)
+        val processId = (created as Success).value
+
+        val wrongInvestigatorId = 99
+        val result = processService.submitProcess(wrongInvestigatorId, "investigator", processId)
+
+        assertTrue(result is Failure)
+        assertEquals(ProcessError.UnauthorizedAccess, (result as Failure).value)
+    }
+
+    @Test
+    fun `submitProcess - invalid state for submission returns InvalidState`() {
+        val created = createValid()
+        assertTrue(created is Success)
+        val processId = (created as Success).value
+
+        jdbi.useHandle<Exception> { handle ->
+            handle.execute("update public.process_state set end_date = now() where process_id = ?", processId)
+            handle.execute(
+                """
+                insert into public.process_state (process_id, state_id, start_date) 
+                values (?, (select id from public.state where lower(name) = 'canceled' limit 1), now())
+            """, processId
+            )
+        }
+
+        val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", processId)
+
+        assertTrue(result is Failure)
+        assertEquals(ProcessError.InvalidState, (result as Failure).value)
+    }
+
+    @Test
+    fun `submitProcess - invalid role for submission returns error`() {
+        val created = createValid()
+        assertTrue(created is Success)
+        val processId = (created as Success).value
+
+        // Tentar submeter usando uma Role que não tem fluxo de submissão mapeado (ex: "triator")
+        val result = processService.submitProcess(TRIATOR_ID, "triator", processId)
+
+        assertTrue(result is Failure)
+        assertEquals(ProcessError.UnauthorizedAccess, (result as Failure).value)
+    }
+
 
 
 // -----------------------------------------------------------------------

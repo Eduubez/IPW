@@ -1,13 +1,6 @@
 package pt.isel.ipw.services.interfaces
 
-import pt.isel.ipw.services.results.AssignInvestigatorResult
-import pt.isel.ipw.services.results.AssignSupervisorResult
-import pt.isel.ipw.services.results.CancelProcessResult
-import pt.isel.ipw.services.results.ChangeEndDateResult
-import pt.isel.ipw.services.results.ChangePriorityResult
-import pt.isel.ipw.services.results.CreateProcessResult
-import pt.isel.ipw.services.results.GetAllProcessesResult
-import pt.isel.ipw.services.results.GetProcessResult
+import pt.isel.ipw.services.results.*
 
 interface ProcessService {
 
@@ -30,6 +23,12 @@ interface ProcessService {
         canBeFraud: Boolean,
         note: String?,
     ): CreateProcessResult
+
+    fun submitProcess(
+        userId: Int,
+        role: String,
+        processId: Int
+    ): SubmitProcessResult
 
 
     fun getProcessById(id: Int, userId: Int, role: String): GetProcessResult

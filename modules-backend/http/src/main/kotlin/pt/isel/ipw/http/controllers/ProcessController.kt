@@ -81,13 +81,29 @@ class ProcessController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
+    @RolesAllowed(Roles.INVESTIGATOR)
+    @PostMapping(ApiRoutes.Process.SUBMIT_FULL)
+    fun submitProcess(
+        @PathVariable id: Int,
+    ): ResponseEntity<*> {
+        val userId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidToken)
+
+        val result = processService.submitProcess(userId, role, id).mapSuccess {
+            it
+        }
+
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
+    }
+
     @RolesAllowed(Roles.TRIATOR, Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @GetMapping
     fun getAllProcesses(
         @RequestParam(required = false) offset: Int?,
         @RequestParam(required = false) limit: Int?,
         @RequestParam(required = false) areaId: Int?,
-        // @RequestParam(required = false) states: Int?,
     ): ResponseEntity<*> {
         println("BEFORE PARSE TOKEN TO USER ID")
         println("GETTING USER ID")
