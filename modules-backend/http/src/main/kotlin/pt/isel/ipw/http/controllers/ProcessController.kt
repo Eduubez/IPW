@@ -85,6 +85,7 @@ class ProcessController(
     @PostMapping("/{id}/submit")
     fun submitProcess(
         @PathVariable id: Int,
+
     ): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
@@ -169,7 +170,7 @@ class ProcessController(
 
 
     @RolesAllowed(Roles.SUPERVISOR, Roles.MANAGER)
-    @PatchMapping(ApiRoutes.Process.PRIORITY_FULL)
+    @PatchMapping("/{id}/priority")
     fun changePriority(@PathVariable id: Int, @RequestBody priority: UpdatePriorityRequest): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)

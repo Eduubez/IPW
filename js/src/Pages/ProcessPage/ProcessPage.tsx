@@ -17,6 +17,7 @@ import { ReportCard } from "../../Components/ReportCard/ReportCard";
 import { userStore } from "../../Utility/Store/UserStore";
 import { ReportApi } from "../../Utility/Api/ReportApi";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
+import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge";
 
 const processPageState = (state?: string) => {
   switch (state) {
@@ -37,6 +38,7 @@ export default function ProcessPage() {
   const [loading, setLoading] = useState(true);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
+  const [showPriorityModal, setShowPriorityModal] = useState(false);
 
   const openConfirmModal = (action: () => void) => {
     setConfirmAction(() => action);
@@ -184,7 +186,13 @@ export default function ProcessPage() {
         value: t("CreateProcessPage.fields.priority"),
         text: t(`Priority.${apiResponse.priority}`) || "N/A",
         icon: { name: Icon.Info, style: { color: Color.LightBlue } },
-        button: undefined,
+        button:
+          userStore.getActiveRole() === "manager"
+            ? {
+                text: "Alterar",
+                onClick: () => setShowPriorityModal(true),
+              }
+            : undefined,
       },
     };
   }, [apiResponse]);
@@ -210,13 +218,13 @@ export default function ProcessPage() {
   //#region supervisor
   const aproveProcess = async () => {
     const response = await ProcessApi.approve(Number(id));
-    if(response.success) {
+    if (response.success) {
       navigate("/dashboard");
     }
   };
   const rejectProcess = async () => {
     const response = await ProcessApi.reject(Number(id));
-    if(response.success) {
+    if (response.success) {
       navigate("/dashboard");
     }
   };
@@ -235,9 +243,23 @@ export default function ProcessPage() {
     }
   };
 
-  const canSubmitProcess = apiResponse
-    ? normalizeState(apiResponse?.state) === "ON_GOING"
+  const canSubmitProcess = () => { 
+    const possibleStates = ["ASSIGNED", "REJECTED_BY_SUPERVISOR", "REJECTED_BY_MANAGER"];
+    return apiResponse
+    ? possibleStates.includes(normalizeState(apiResponse?.state) || "")
     : false;
+  }
+
+  //#endregion
+
+  //#region manager
+  const handleCancelProcess = async () => {};
+  const handleChangePriority = async (newPriority:PriorityType) => {
+    const response = await ProcessApi.changePriority(Number(id), newPriority);
+    if(response.success) {
+      window.location.reload();
+    }
+  };
 
   //#endregion
 
@@ -247,7 +269,7 @@ export default function ProcessPage() {
       <PrimaryButton
         text={"Submeter Processo"}
         onClick={() => openConfirmModal(handleSubmitProcess)}
-        enabled={canSubmitProcess}
+        enabled={canSubmitProcess()}
       />,
     ],
     reportView: (
@@ -274,6 +296,13 @@ export default function ProcessPage() {
     ),
     key: "supervisor",
   };
+  const managerView = {
+    headerButtons: [],
+        reportView: (
+      <ReportCard report={report} processId={Number(id)} viewOnly={true} />
+    ),
+    key: "manager",
+  }
 
   /// #endregion
 
@@ -284,6 +313,8 @@ export default function ProcessPage() {
         return investigatorView;
       case "supervisor":
         return supervisorView;
+      case "manager":
+        return managerView;
       default:
         return {
           headerButtons: [],
@@ -292,6 +323,28 @@ export default function ProcessPage() {
         };
     }
   };
+
+  const changePriorityModal = (currentPriority: PriorityType, setSelectedPriority: (priority: PriorityType) => void) => {
+    const normalizedPriority = currentPriority?.toUpperCase() || "";
+    let priorityOptions = ["NORMAL","WITH_PRIORITY","URGENT"];
+    if(currentPriority) {
+      priorityOptions = priorityOptions.filter(option => option !== normalizedPriority);
+    }
+
+
+
+    return (
+      <div>
+        <ul>
+          {priorityOptions.map((option) => (
+            <li key={option}>
+              <button onClick={() => setSelectedPriority(option as PriorityType)}>{option}</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
 
   return (
     <div className={styles["page-container"]}>
@@ -302,7 +355,7 @@ export default function ProcessPage() {
           loading={loading}
         />
         <div className={styles["button-badage-wrapper"]}>
-          {(canSubmitProcess || canAproveOrRejectProcess) &&
+          {(canSubmitProcess() || canAproveOrRejectProcess) &&
             activeView().headerButtons.map((button, index) => (
               <div
                 key={`${index}${activeView().key}`}
@@ -373,6 +426,12 @@ export default function ProcessPage() {
             </div>
           </div>
         }
+      />
+      <PrimaryModal
+        open={showPriorityModal}
+        onClose={() => setShowPriorityModal(false)}
+        header={"Alterar Prioridade"}
+        body={changePriorityModal(apiResponse?.priority, handleChangePriority)}
       />
     </div>
   );

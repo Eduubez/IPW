@@ -186,10 +186,19 @@ async function changePriority(
   processId: number,
   priority: PriorityType,
 ): Promise<ResponseApi<void>> {
-  return await fetchApi<void>(`process/${processId}/priority`, {
-    method: "PUT",
+  const response = await fetchApi<void>(`process/${processId}/priority`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
     body: JSON.stringify({ priority }),
   });
+  if (response.success) {
+    enqueueSnackbar("Priority changed successfully", { variant: "success" });
+  } else {
+    enqueueSnackbar("Failed to change priority", { variant: "error" });
+  }
+  return response;
 }
 
 // Cancel a process - Manager
