@@ -13,6 +13,7 @@ enum class ActivityActions {
     REJECTED_REPORT_SUPERVISOR,
     APPROVED_REPORT_MANAGER,
     REJECTED_REPORT_MANAGER,
+    SUBMIT_PROCESS_FOR_APPROVAL
 }
 
 
@@ -26,10 +27,11 @@ fun ActivityActions.mapToString(): String =
         ActivityActions.CHANGED_END_DATE -> "changed the end date"
         ActivityActions.CREATED_REPORT -> "created a new report"
         ActivityActions.DELETED_REPORT -> "deleted a report"
-        ActivityActions.APPROVED_REPORT_SUPERVISOR -> "Supervisor approved the report"
-        ActivityActions.REJECTED_REPORT_SUPERVISOR -> "Supervisor rejected the report"
-        ActivityActions.APPROVED_REPORT_MANAGER -> "Manager approved the report"
-        ActivityActions.REJECTED_REPORT_MANAGER -> "Manager rejected the report"
+        ActivityActions.APPROVED_REPORT_SUPERVISOR -> "supervisor approved the report"
+        ActivityActions.REJECTED_REPORT_SUPERVISOR -> "supervisor rejected the report"
+        ActivityActions.APPROVED_REPORT_MANAGER -> "manager approved the report"
+        ActivityActions.REJECTED_REPORT_MANAGER -> "manager rejected the report"
+        ActivityActions.SUBMIT_PROCESS_FOR_APPROVAL -> "process was submitted for approval"
     }
 
 

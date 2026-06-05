@@ -106,6 +106,7 @@ class ProcessServiceImpl(
         processId: Int
     ): SubmitProcessResult {
         return transactionManager.run {
+            val user = usersRepository.getUserById(userId) ?: return@run failure(ProcessError.InvalidUserId)
 
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
             val validation = validateProcessRelation(process, userId, role)
@@ -120,6 +121,14 @@ class ProcessServiceImpl(
             }
 
             processRepository.changeState(processId, State.WAITING_APPROVAL_SUPERVISOR.toString())
+
+            activityServices.createActivity(
+                processId,
+                userId,
+                ActivityActions.SUBMIT_PROCESS_FOR_APPROVAL.mapToString(),
+                "Process submitted by ${formatUserName(user.name, role)}"
+            )
+
             success(Unit)
         }
     }
