@@ -244,7 +244,7 @@ export default function ProcessPage() {
   };
 
   const canSubmitProcess = () => { 
-    const possibleStates = ["ASSIGNED", "REJECTED_BY_SUPERVISOR", "REJECTED_BY_MANAGER"];
+    const possibleStates = ["ASSIGNED", "REJECTED_BY_SUPERVISOR", "REJECTED_BY_MANAGER", "ON_GOING"];
     return apiResponse
     ? possibleStates.includes(normalizeState(apiResponse?.state) || "")
     : false;

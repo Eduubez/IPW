@@ -41,7 +41,7 @@ interface ProcessService {
 
     fun assignSupervisor(processId: Int, triatorId: Int, supervisorId: Int): AssignSupervisorResult
 
-    fun changePriority(processId: Int, newPriority: String, userId: Int): ChangePriorityResult
+    fun changePriority(processId: Int, newPriority: String, userId: Int, role: String): ChangePriorityResult
 
     fun cancelProcess(processId: Int, userId: Int): CancelProcessResult
 

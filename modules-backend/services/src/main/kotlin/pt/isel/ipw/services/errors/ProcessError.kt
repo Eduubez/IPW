@@ -21,4 +21,5 @@ sealed class ProcessError(
     data object InvalidAreaId: ProcessError(404)
     data object UnauthorizedAccess: ProcessError(403)
     data object InvalidState: ProcessError(400)
+    data object ReportNotFound: ProcessError( 400)
 }

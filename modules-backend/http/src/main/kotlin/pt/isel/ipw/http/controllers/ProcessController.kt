@@ -174,11 +174,13 @@ class ProcessController(
     fun changePriority(@PathVariable id: Int, @RequestBody priority: UpdatePriorityRequest): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
+        val role = AuthenticatedUser.role()
+            ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = processService.changePriority(id, priority.priority, userId)
+
+        val result = processService.changePriority(id, priority.priority, userId, role)
 
         return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
-
     }
 
     @RolesAllowed(Roles.MANAGER)

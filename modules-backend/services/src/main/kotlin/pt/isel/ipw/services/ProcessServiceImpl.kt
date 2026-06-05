@@ -111,6 +111,7 @@ class ProcessServiceImpl(
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
             val validation = validateProcessRelation(process, userId, role)
 
+            if (process.report == null) return@run failure(ProcessError.ReportNotFound)
             if (validation is Failure) {
                 return@run failure(validation.value)
             }
@@ -239,12 +240,17 @@ class ProcessServiceImpl(
         }
 
 
-    override fun changePriority(processId: Int, newPriority: String, userId: Int): ChangePriorityResult =
+    override fun changePriority(processId: Int, newPriority: String, userId: Int, role: String): ChangePriorityResult =
         transactionManager.run {
             val user = usersRepository.getUserById(userId) ?: return@run failure(ProcessError.InvalidUserId)
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
 
-            if (userId != process.supervisor?.id) return@run failure(ProcessError.InvalidSupervisor)
+            val validation = validateProcessRelation(process, userId, role)
+
+            if (validation is Failure) {
+                return@run failure(ProcessError.InvalidSupervisor)
+            }
+
             if (!validatePriority(newPriority)) return@run failure(ProcessError.InvalidPriority)
 
             processRepository.updateProcessPriority(processId, newPriority.lowercase())
@@ -253,7 +259,7 @@ class ProcessServiceImpl(
                 processId,
                 userId,
                 ActivityActions.CHANGED_PRIORITY.mapToString(),
-                "Priority changed to $newPriority by ${user.name}"
+                "Priority changed to $newPriority by ${formatUserName(user.name, role)}"
             )
 
             return@run success(Unit)
