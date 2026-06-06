@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import PrimaryButton from "../../../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { AreasApi, type AreaResponse } from "../../../../Utility/Api/AreasApi";
 import { UsersApi, type UserResponse } from "../../../../Utility/Api/UsersApi";
-import { ROLES } from "../../../../MockData/MockRoles";
+import { ROLES, ROLE_KEYS } from "../../../../MockData/MockRoles";
 import styles from "./ChangeRolesModal.module.css";
 
-const AREA_ROLES = new Set(["investigator", "supervisor"]);
+const AREA_ROLES = new Set([ROLE_KEYS.INVESTIGATOR, ROLE_KEYS.SUPERVISOR]);
 
 type ChangeRolesModalProps = {
   open: boolean;
@@ -32,7 +32,7 @@ export default function ChangeRolesModal({
     [selectedRoles],
   );
 
-  const hasSupervisorRole = selectedRoles.includes("supervisor");
+  const hasSupervisorRole = selectedRoles.includes(ROLE_KEYS.SUPERVISOR);
 
   const availableAreas = useMemo(() => {
     if (!hasSupervisorRole) {

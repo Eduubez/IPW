@@ -13,6 +13,7 @@ import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { useTranslation } from "react-i18next";
 import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
+import { ROLE_KEYS } from "../../MockData/MockRoles";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
@@ -44,12 +45,12 @@ export default function AdminDashboard() {
   const stats = useMemo(() => {
     return {
       total: users.length,
-      triators: users.filter((user) => user.roles.includes("triator")).length,
-      investigators: users.filter((user) => user.roles.includes("investigator"))
+      triators: users.filter((user) => user.roles.includes(ROLE_KEYS.TRIATOR)).length,
+      investigators: users.filter((user) => user.roles.includes(ROLE_KEYS.INVESTIGATOR))
         .length,
-      supervisors: users.filter((user) => user.roles.includes("supervisor"))
+      supervisors: users.filter((user) => user.roles.includes(ROLE_KEYS.SUPERVISOR))
         .length,
-      managers: users.filter((user) => user.roles.includes("manager")).length,
+      managers: users.filter((user) => user.roles.includes(ROLE_KEYS.MANAGER)).length,
     };
   }, [users]);
 

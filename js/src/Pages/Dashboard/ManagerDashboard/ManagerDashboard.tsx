@@ -8,6 +8,7 @@ import {
   StateBadge,
   type StateType,
 } from "../../../Components/Badge/StateBadge/StateBadge";
+import { STATES } from "../../../MockData/MockStates";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
@@ -28,8 +29,8 @@ type CleanProcess = {
 const managerDashboardStatesMapper = (state: string) => {
   const normalizedState = state.toUpperCase();
   switch (normalizedState) {
-    case "WAITING_APPROVAL_MANAGER":
-      return "NOT_STARTED";
+    case STATES.WAITING_APPROVAL_MANAGER:
+      return STATES.NOT_STARTED;
     default:
       return "UNKNOWN";
   }
@@ -91,11 +92,11 @@ export function ManagerDashboard() {
   return (
     <div className={styles["manager-dashboard-container"]}>
       <Header
-        title="Supervisor Dashboard"
-        description="Olá novamente, veja o que tem acontecido ultimamente!"
+        title={t("Dashboard.Manager.title")}
+        description={t("Dashboard.description")}
       />
       <DataGrid
-        title="Processos Recentes"
+        title={t("Dashboard.recentProcesses")}
         columns={gridColumns}
         rows={process}
         loading={loading}

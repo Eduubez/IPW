@@ -14,6 +14,7 @@ import {
   StateBadge,
   type StateType,
 } from "../../../Components/Badge/StateBadge/StateBadge";
+import { STATES } from "../../../MockData/MockStates";
 
 type CleanProcess = {
   name: string;
@@ -30,12 +31,12 @@ type CleanProcess = {
 const investigatorDashboardStatesMapper = (state: string) => {
   const normalizedState = state.toUpperCase();
   switch (normalizedState) {
-    case "ASSIGNED":
-      return "NOT_STARTED";
-    case "ON_GOING":
-      return "ON_GOING";
-    case "REJECTED_BY_SUPERVISOR":
-    case "REJECTED_BY_MANAGER":
+    case STATES.ASSIGNED:
+      return STATES.NOT_STARTED;
+    case STATES.ON_GOING:
+      return STATES.ON_GOING;
+    case STATES.REJECTED_BY_SUPERVISOR:
+    case STATES.REJECTED_BY_MANAGER:
       return "REJECTED";
   }
 };
@@ -95,8 +96,8 @@ export function InvestigatorDashboard() {
   return (
     <div className={styles["investigator-dashboard-container"]}>
       <Header
-        title="Averiguador  Dashboard"
-        description="Olá novamente, veja o que tem acontecido ultimamente!"
+        title={t("Dashboard.Investigator.title")}
+        description={t("Dashboard.description")}
       />
       <DataGrid
         title="Processos Recentes"

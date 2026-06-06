@@ -12,8 +12,8 @@ export type ActivityResponse = {
     userId: number,
     action: string,
     description: string,
-    createdAt: string
-
+    createdAt: string,
+    userName: string
 }
 
 export const ActivityApi = {getActivityByProcess, getActivityByUser}

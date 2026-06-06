@@ -33,11 +33,7 @@ export default function Login() {
         } else {
           navigate("/role-selection", { replace: true });
         }
-      } else {
-        enqueueSnackbar(response.message, {
-          variant: ToastType.ERROR,
-        });
-      }
+      } 
     } finally {
       setIsLoading(false);
     }

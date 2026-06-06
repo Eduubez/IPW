@@ -10,6 +10,7 @@ import { Header } from "../../../Components/Layouts/Header/Header";
 import { StatContainerLayout } from "../../../Components/StatContainerLayout/StatContainerLayout";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import { StateBadge, type StateType } from "../../../Components/Badge/StateBadge/StateBadge";
+import { STATES } from "../../../MockData/MockStates";
 import styles from "./supervisordashboard.module.css";
 
 type CleanProcess = {
@@ -27,8 +28,8 @@ type CleanProcess = {
 const supervisorDashboardStatesMapper = (state: string) => {
   const normalizedState = state.toUpperCase();
   switch (normalizedState) {
-    case "WAITING_APPROVAL_SUPERVISOR":
-      return "NOT_STARTED";
+    case STATES.WAITING_APPROVAL_SUPERVISOR:
+      return STATES.NOT_STARTED;
     default:
       return "UNKNOWN";
   }
@@ -89,11 +90,11 @@ export function SupervisorDashboard () {
   return (
     <div className={styles["supervisor-dashboard-container"]}>
       <Header
-        title="Supervisor Dashboard"
-        description="Olá novamente, veja o que tem acontecido ultimamente!"
+        title={t("Dashboard.Supervisor.title")}
+        description={t("Dashboard.description")}
       />
       <DataGrid
-        title="Processos Recentes"
+        title={t("Dashboard.recentProcesses")}
         columns={gridColumns}
         rows={process}
         loading={loading}

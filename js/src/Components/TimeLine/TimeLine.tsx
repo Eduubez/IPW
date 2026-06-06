@@ -9,7 +9,7 @@ import styles from "./timeline.module.css";
 import { TimeLineActivityItem } from "./TimeLineActivityItem/TimeLineActivityItem";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
-export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: boolean; label: string; date: Date; user: string }[] }) {
+export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: boolean; label: string; date: Date; userName: string }[] }) {
   return loading ? (
     <LoadingComponent />
   ) : (
@@ -51,7 +51,7 @@ export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: 
             <TimeLineActivityItem
               title={item.label}
               time={item.date.toLocaleTimeString()}
-              user={item.user}
+              user={item.userName}
             />
           </TimelineContent>
         </TimelineItem>

@@ -76,14 +76,14 @@ export default function Profile() {
 
   const informationItems = useMemo(
     () => [
-      { icon: Icon.Email, title: "Email", description: userInfo?.email ?? "" },
+      { icon: Icon.Email, title: t("Label.email"), description: userInfo?.email ?? "" },
       {
         icon: Icon.Group,
-        title: "Area",
-        description: userInfo?.area ?? "Not specified",
+        title: t("Profile.areaLabel"),
+        description: userInfo?.area ?? t("Profile.notSpecified"),
       },
     ],
-    [userInfo],
+    [userInfo, t],
   );
 
   return (

@@ -66,7 +66,7 @@ export function TriatorDashboard() {
   ];
   const gridActions = [
     {
-      label: "Criar novo processo",
+      label: t("Dashboard.createNewProcess"),
       onClick: () => {
         navigate("/processes/new");
       },
@@ -76,30 +76,30 @@ export function TriatorDashboard() {
   const statArray = [
     {
       icon: { name: Icon.CarCrash, style: { color: "purple" } },
-      text: "Acidente de Carro",
+      text: t("Dashboard.Triator.stats.carAccident"),
       value: process.filter((p) => p.area === "Car Accident").length,
     },
     {
       icon: { name: "tsunami", style: { color: "#2196f3" } },
-      text: "Inundação",
+      text: t("Dashboard.Triator.stats.floods"),
       value: process.filter((p) => p.area === "Floods").length,
     },
     {
       icon: { name: "emergency_heat", style: { color: "red" } },
-      text: "Fogo",
+      text: t("Dashboard.Triator.stats.fire"),
       value: process.filter((p) => p.area === "Fire").length,
     },
     {
       icon: { name: "earthquake", style: { color: "yellow" } },
-      text: "Terremoto",
+      text: t("Dashboard.Triator.stats.earthquake"),
       value: process.filter((p) => p.area === "Earthquake").length,
     },
   ];
   return (
     <div className={styles["triator-dashboard-container"]}>
       <Header
-        title="Triator Dashboard"
-        description="Olá novamente, veja o que tem acontecido ultimamente!"
+        title={t("Dashboard.Triator.title")}
+        description={t("Dashboard.description")}
       />
       <StatContainerLayout statArray={statArray} loading={loading} />
     </div>

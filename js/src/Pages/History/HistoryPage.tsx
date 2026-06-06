@@ -15,7 +15,10 @@ import { PriorityBadge } from "../../Components/Badge/PriorityBadge/PriorityBadg
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../../Components/Icons/Icons";
 import { Color } from "../../StyleGuide/colors";
-
+import { STATES } from "../../MockData/MockStates";
+import { ROLE_KEYS } from "../../MockData/MockRoles";
+import type { StateType } from "../../Components/Badge/StateBadge/StateBadge";
+import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 const formatDate = (date: Date) => {
   // format date to dd/mm/yyyy
   const day = date.getDate().toString().padStart(2, "0");
@@ -38,7 +41,7 @@ export default function HistoryPage() {
   const stats = useMemo(() => {
     if (!apiResponse) return [];
     switch (activeRole) {
-      case "investigator":
+      case ROLE_KEYS.INVESTIGATOR:
         return [
           {
             text: t("HistoryPage.TotalProcesses"),
@@ -49,7 +52,7 @@ export default function HistoryPage() {
             text: t("HistoryPage.CompletedProcesses"),
             value: processes
               .filter((process) => {
-                const isCompleted = process.state === "approved_by_manager";
+                const isCompleted = process.stateString === STATES.APPROVED_BY_MANAGER.toLowerCase();
                 return isCompleted;
               })
               .length.toString(),
@@ -59,7 +62,7 @@ export default function HistoryPage() {
             text: t("HistoryPage.CanceledProcesses"),
             value: processes
               .filter((process) => {
-                const isCanceled = process.state === "canceled";
+                const isCanceled = process.stateString === STATES.CANCELED.toLowerCase();
                 return isCanceled;
               })
               .length.toString(),
@@ -67,7 +70,7 @@ export default function HistoryPage() {
           },
         ];
 
-      case "triator":
+      case ROLE_KEYS.TRIATOR:
         return [
           {
             text: t("HistoryPage.TotalProcesses"),
@@ -78,8 +81,8 @@ export default function HistoryPage() {
             text: t("HistoryPage.ProcessesInProgress"),
             value: processes
               .filter((process) => {
-                const completedStates = ["pending", "canceled", "rejected_by_manager", "approved_by_manager"];
-                const isInProgress = !completedStates.includes(process.state);
+                const completedStates = ["pending", STATES.CANCELED.toLowerCase(), STATES.REJECTED_BY_MANAGER.toLowerCase(), STATES.APPROVED_BY_MANAGER.toLowerCase()];
+                const isInProgress = !completedStates.includes(process.stateString);
                 return isInProgress;
               })
               .length.toString(),
@@ -106,7 +109,7 @@ export default function HistoryPage() {
     try {
       let historyResponse;
       switch (activeRole) {
-        case "supervisor":
+        case ROLE_KEYS.SUPERVISOR:
           historyResponse = await HistoryApi.getAreaHistory(3); // while we dont have a way to get area id
           break;
         default:
@@ -130,9 +133,10 @@ export default function HistoryPage() {
         area: process.area,
         dueDate: formatDate(new Date(process.dueDate)),
         priority: <PriorityBadge priority={process.priority} />,
-        state: process.state,
+        state: <StateBadge state={process.state as StateType} />,
+        stateString: process.state,
         onClick: () => {
-          navigate(`/process/${process.id}`);
+          navigate(`/processes/${process.id}`);
         },
       }));
 

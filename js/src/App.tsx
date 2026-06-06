@@ -12,6 +12,7 @@ import ProcessPage from "./Pages/ProcessPage/ProcessPage";
 import HistoryPage from "./Pages/History/HistoryPage";
 import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
 import { NotAuthorizedPage } from "./Pages/NotAuthorized/NotAuthorizedPage";
+import { ROLE_KEYS } from "./MockData/MockRoles";
 function AppLayout() {
   const location = useLocation();
   const pathsWithoutSidebar = ["/login", "/role-selection"];
@@ -53,7 +54,7 @@ function AppLayout() {
             path="/processes/new"
             element={
               <AuthenticatedRoute>
-                <ProtectedRoute requiredRole={["triator"]}>
+                <ProtectedRoute requiredRole={[ROLE_KEYS.TRIATOR]}>
                   <NewProcess />
                 </ProtectedRoute>
               </AuthenticatedRoute>
@@ -64,7 +65,7 @@ function AppLayout() {
             element={
               <AuthenticatedRoute>
                 <ProtectedRoute
-                  requiredRole={["investigator", "supervisor", "manager"]}>
+                  requiredRole={[ROLE_KEYS.INVESTIGATOR, ROLE_KEYS.SUPERVISOR, ROLE_KEYS.MANAGER]}>
                   <ProcessPage />
                 </ProtectedRoute>
               </AuthenticatedRoute>
@@ -76,10 +77,10 @@ function AppLayout() {
               <AuthenticatedRoute>
                 <ProtectedRoute
                   requiredRole={[
-                    "investigator",
-                    "supervisor",
-                    "manager",
-                    "triator",
+                    ROLE_KEYS.INVESTIGATOR,
+                    ROLE_KEYS.SUPERVISOR,
+                    ROLE_KEYS.MANAGER,
+                    ROLE_KEYS.TRIATOR,
                   ]}>
                   <HistoryPage />
                 </ProtectedRoute>

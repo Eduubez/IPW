@@ -91,13 +91,13 @@ export function ReportCard({
                 <PrimaryButton
                   style={{ width: "120px", height: "fit-content" }}
                   enabled={isSaveEnabled}
-                  text={"Salvar"}
+                  text={t("reportCard.save")}
                   onClick={handleSaveReport}
                 />
                 <PrimaryButton
                   style={{ width: "120px", height: "fit-content" }}
                   enabled={!isSaveEnabled}
-                  text={"Editar"}
+                  text={t("reportCard.edit")}
                   onClick={handleEditReport}
                 />
               </>
@@ -105,7 +105,7 @@ export function ReportCard({
             <PrimaryButton
               style={{ width: "140px", height: "fit-content" }}
               enabled={true}
-              text={"Notas"}
+              text={t("reportCard.notes")}
               onClick={() => setOpenNotesModal(true)}
             />
           </div>
@@ -115,7 +115,7 @@ export function ReportCard({
         <PrimaryModal
           open={openCreateReportModal}
           onClose={() => setOpenCreateReportModal(false)}
-          header={"Criar Relatório"}
+          header={t("reportCard.createReportHeader")}
           body={
             <>
               <div
@@ -131,7 +131,7 @@ export function ReportCard({
                   <PrimaryButton
                     style={{ width: "120px", height: "fit-content" }}
                     enabled={isCreateEnabled}
-                    text={"Criar Relatório"}
+                    text={t("reportCard.createReport")}
                     onClick={handleCreateReport}
                   />
                 </div>
@@ -144,7 +144,7 @@ export function ReportCard({
         <PrimaryModal
           open={openNotesModal}
           onClose={() => setOpenNotesModal(false)}
-          header={"Adicionar Notas"}
+          header={t("reportCard.addNotesHeader")}
           body={
             <>
               <div
@@ -155,13 +155,13 @@ export function ReportCard({
                   height: "100%",
                   width: "100%",
                 }}>
-                <span>Funcionalidade de notas ainda não implementada.</span>
+                <span>{t("reportCard.notesNotImplemented")}</span>
 
                 <div className={styles["report-card-actions"]}>
                   <PrimaryButton
                     style={{ width: "120px", height: "fit-content" }}
                     enabled={false}
-                    text={"Adicionar Notas"}
+                    text={t("reportCard.addNotes")}
                     onClick={handleAddNotes}
                   />
                 </div>
