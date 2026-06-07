@@ -32,24 +32,24 @@ begin
 
     -- Insert 5 Users (password_hash is a bcrypt placeholder) - all passwords -> '12345'
     insert into Users(name, email, password_hash, area_id) values
-        ('Alice Triator',     'alice@ipw.pt',      '$2a$10$E8Rg/TrDsbjQnr2QY/cbreSuzOl0iQizuGzDoSs6h24StXCHgza7a', null)
+        ('Tiago Triador',     'tiago@ipw.pt',      '$2a$10$E8Rg/TrDsbjQnr2QY/cbreSuzOl0iQizuGzDoSs6h24StXCHgza7a', null)
     returning id into v_triator_id;
 
     insert into Users(name, email, password_hash, area_id) values
-        ('Bob Investigator',  'bob@ipw.pt',         '$2a$10$38tAgpNUr2KptI3NGjsbFO0L0Hhnyaut6iQy7lrogidVIFS9QJeBq', v_area_car)
+        ('Ana Averiguador',  'ana@ipw.pt',         '$2a$10$38tAgpNUr2KptI3NGjsbFO0L0Hhnyaut6iQy7lrogidVIFS9QJeBq', v_area_car)
     returning id into v_investigator_id;
 
     insert into Users(name, email, password_hash, area_id) values
-        ('Carol Supervisor',  'carol@ipw.pt',       '$2a$10$0hssu/FOYwHfbWNMNh9a3uMVaqrX2/Wdotv6tpcvi2ARAhgWAuyZG', v_area_car)
+        ('Sofia Supervisor',  'sofia@ipw.pt',       '$2a$10$0hssu/FOYwHfbWNMNh9a3uMVaqrX2/Wdotv6tpcvi2ARAhgWAuyZG', v_area_car)
     returning id into v_supervisor_id;
 
     insert into Users(name, email, password_hash, area_id) values
-        ('David Manager',     'david@ipw.pt',       '$2a$10$sDiI5XyQcOvvAbdCiA0cKu6OFJFjA.vP1sEaPHAJCw1AiBwyGakpS', null)
+        ('Gabriel Gestor',     'gabriel@ipw.pt',       '$2a$10$sDiI5XyQcOvvAbdCiA0cKu6OFJFjA.vP1sEaPHAJCw1AiBwyGakpS', null)
     returning id into v_manager_id;
 
     -- 5th user has NO processes at all
     insert into Users(name, email, password_hash, area_id) values
-        ('Eve NoProcess',     'eve@ipw.pt',         '$2a$10$OOJLQvwls4eECyUz11clh.dXkwQrNAB6ILaEV.s5n68dpeMQ4D1Pi', null)
+        ('Andreia Administrador',     'andreia@ipw.pt',         '$2a$10$OOJLQvwls4eECyUz11clh.dXkwQrNAB6ILaEV.s5n68dpeMQ4D1Pi', null)
     returning id into v_admin_id;
 
     -- Assign roles

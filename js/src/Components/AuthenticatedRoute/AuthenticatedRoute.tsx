@@ -9,7 +9,9 @@ export function AuthenticatedRoute({
 }) {
   const location = useLocation();
   const returnUrl = `${location.pathname}${location.search}${location.hash}`;
-
+  if (location.pathname === "/login") {
+    return <>{children}</>;
+  }
   if (userStore.hasTokenExpired()) {
     userStore.clear();
     return (
