@@ -21,7 +21,13 @@
     "waitingApproval": "Nº de Processos a aguardar Aprovação",
     "recentActivities": "Atividades Recentes",
     "areaLabel": "Área",
-    "notSpecified": "Não especificado"
+    "notSpecified": "Não especificado",
+    "activityType": {
+      "process was submitted for approval": "Submeteu um processo para aprovação",
+      "updated": "Atualizou um processo",
+      "submitted": "Submeteu um processo",
+      "approved": "Aprovou um processo"
+    }
   },
   "Label": {
     "createNewProcess": "Criar processo",
