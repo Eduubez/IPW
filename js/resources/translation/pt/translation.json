@@ -5,7 +5,10 @@
     "welcome": "Olá !",
     "welcomeText": "Utilize as suas credenciais para acessar a sua conta",
     "successMessage": "Login bem sucedido!",
-    "logout": "Logout bem sucedido!"
+    "logout": "Logout bem sucedido!",
+    "error":{
+      "problems/invalid-credentials":"Credenciais inválidas. Por favor, tente novamente."
+    }
   },
   "text": {
     "title": "Bem vindo a IPW "
@@ -16,7 +19,15 @@
     "activeProcess": "Nº de Processos Ativos",
     "completedProcessWeekly": "Nº de Processos Concluídos esta Semana",
     "waitingApproval": "Nº de Processos a aguardar Aprovação",
-    "recentActivities": "Atividades Recentes"
+    "recentActivities": "Atividades Recentes",
+    "areaLabel": "Área",
+    "notSpecified": "Não especificado",
+    "activityType": {
+      "process was submitted for approval": "Submeteu um processo para aprovação",
+      "updated": "Atualizou um processo",
+      "submitted": "Submeteu um processo",
+      "approved": "Aprovou um processo"
+    }
   },
   "Label": {
     "createNewProcess": "Criar processo",
@@ -183,5 +194,68 @@
   "Areas":{
     "Car Accident": "Acidente Automóvel",
     "Job Accident": "Acidente de Trabalho"
+  },
+  "Dashboard": {
+    "description": "Olá novamente, veja o que tem acontecido ultimamente!",
+    "recentProcesses": "Processos Recentes",
+    "createNewProcess": "Criar novo processo",
+    "Triator": {
+      "title": "Dashboard do Triador",
+      "stats": {
+        "carAccident": "Acidente de Carro",
+        "floods": "Inundação",
+        "fire": "Fogo",
+        "earthquake": "Terremoto"
+      }
+    },
+    "Investigator": {
+      "title": "Dashboard do Averiguador"
+    },
+    "Supervisor": {
+      "title": "Dashboard do Supervisor"
+    },
+    "Manager": {
+      "title": "Dashboard do Gestor"
+    }
+  },
+  "ProcessPage": {
+    "description": "Veja os detalhes do processo",
+    "fallbackTitle": "Detalhes do Processo",
+    "notify": "Notificar",
+    "changePriority": "Alterar",
+    "submitProcess": "Submeter Processo",
+    "approveProcess": "Aprovar Processo",
+    "rejectProcess": "Rejeitar Processo",
+    "notImplemented": "Vista não implementada para este papel",
+    "stateSection": "Estado",
+    "attachmentsSection": "Anexos",
+    "activitiesSection": "Atividades",
+    "confirmModal": {
+      "header": "Confirmar Ação",
+      "body": "Tem certeza que deseja realizar esta ação?",
+      "confirm": "Confirmar"
+    },
+    "priorityModal": {
+      "header": "Alterar Prioridade",
+      "description": "Esta ação trocará a prioridade deste processo que atualmente é {{current}} para:"
+    }
+  },
+  "reportCard": {
+    "title": "Relatório",
+    "save": "Salvar",
+    "edit": "Editar",
+    "notes": "Notas",
+    "createReportHeader": "Criar Relatório",
+    "createReport": "Criar Relatório",
+    "addNotesHeader": "Adicionar Notas",
+    "addNotes": "Adicionar Notas",
+    "notesNotImplemented": "Funcionalidade de notas ainda não implementada.",
+    "noReport": "Não há um relatório para este processo."
+  },
+  "DataGrid": {
+    "searchPlaceholder": "Pesquisar..."
+  },
+  "Modal": {
+    "cancel": "Cancelar"
   }
 }

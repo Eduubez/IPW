@@ -1,4 +1,4 @@
 
-export const normalizeState = (state: string): string => {
-    return state.toUpperCase();
+export const normalizeState = (state: string | undefined | null): string => {
+    return state?.toUpperCase() ?? "";
 }

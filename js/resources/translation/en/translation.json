@@ -5,7 +5,10 @@
     "welcome": "Hello!",
     "welcomeText": "Use your credentials to access your account",
     "successMessage": "Login successful!",
-    "logout": "Logout successful!"
+    "logout": "Logout successful!",
+    "error": {
+      "problems/invalid-credentials": "Invalid credentials. Please try again."
+    }
   },
   "text": {
     "title": "Welcome to IPW"
@@ -15,7 +18,10 @@
     "description": "View and manage your profile information",
     "activeProcess": "No. of Active Processes",
     "completedProcessWeekly": "No. of Processes Completed This Week",
-    "waitingApproval": "No. of Processes Awaiting Approval"
+    "waitingApproval": "No. of Processes Awaiting Approval",
+    "recentActivities": "Recent Activities",
+    "areaLabel": "Area",
+    "notSpecified": "Not specified"
   },
   "Label": {
     "createNewProcess": "Create process",
@@ -60,7 +66,10 @@
     "area": "Area",
     "dueDate": "Expires on",
     "priority": "Priority",
-    "state": "State"
+    "state": "State",
+    "roles": "Roles",
+    "expirationDate": "Expires on",
+    "location": "Location"
   },
   "HistoryPage": {
     "Title": "My History",
@@ -152,5 +161,95 @@
       "note": "Note"
     },
     "submit": "Create"
+  },
+  "NavigationItems": {
+    "Dashboard": "Dashboard",
+    "NewProcess": "New Process",
+    "History": "History"
+  },
+  "State": {
+    "NOT_ASSIGNED": "Not Assigned",
+    "ASSIGNED": "Assigned",
+    "NOT_STARTED": "Not Started",
+    "ON_GOING": "In Progress",
+    "WAITING_APPROVAL_SUPERVISOR": "Awaiting Supervisor Approval",
+    "APPROVED_BY_SUPERVISOR": "Approved by Supervisor",
+    "REJECTED_BY_SUPERVISOR": "Rejected by Supervisor",
+    "WAITING_APPROVAL_MANAGER": "Awaiting Manager Approval",
+    "APPROVED_BY_MANAGER": "Approved by Manager",
+    "REJECTED_BY_MANAGER": "Rejected by Manager",
+    "CANCELED": "Canceled"
+  },
+  "NotAuthorizedPage": {
+    "title": "Access Denied",
+    "description": "You do not have permission to access this page.",
+    "goBack": "Go Back"
+  },
+  "Areas": {
+    "Car Accident": "Car Accident",
+    "Job Accident": "Job Accident"
+  },
+  "Dashboard": {
+    "description": "Hello again, see what has been happening lately!",
+    "recentProcesses": "Recent Processes",
+    "createNewProcess": "Create new process",
+    "Triator": {
+      "title": "Triator Dashboard",
+      "stats": {
+        "carAccident": "Car Accident",
+        "floods": "Floods",
+        "fire": "Fire",
+        "earthquake": "Earthquake"
+      }
+    },
+    "Investigator": {
+      "title": "Investigator Dashboard"
+    },
+    "Supervisor": {
+      "title": "Supervisor Dashboard"
+    },
+    "Manager": {
+      "title": "Manager Dashboard"
+    }
+  },
+  "ProcessPage": {
+    "description": "View process details",
+    "fallbackTitle": "Process Details",
+    "notify": "Notify",
+    "changePriority": "Change",
+    "submitProcess": "Submit Process",
+    "approveProcess": "Approve Process",
+    "rejectProcess": "Reject Process",
+    "notImplemented": "View not implemented for this role",
+    "stateSection": "State",
+    "attachmentsSection": "Attachments",
+    "activitiesSection": "Activities",
+    "confirmModal": {
+      "header": "Confirm Action",
+      "body": "Are you sure you want to perform this action?",
+      "confirm": "Confirm"
+    },
+    "priorityModal": {
+      "header": "Change Priority",
+      "description": "This action will change the priority of this process, which is currently {{current}}, to:"
+    }
+  },
+  "reportCard": {
+    "title": "Report",
+    "save": "Save",
+    "edit": "Edit",
+    "notes": "Notes",
+    "createReportHeader": "Create Report",
+    "createReport": "Create Report",
+    "addNotesHeader": "Add Notes",
+    "addNotes": "Add Notes",
+    "notesNotImplemented": "Notes functionality not yet implemented.",
+    "noReport": "There is no report for this process."
+  },
+  "DataGrid": {
+    "searchPlaceholder": "Search..."
+  },
+  "Modal": {
+    "cancel": "Cancel"
   }
 }

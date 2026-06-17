@@ -22,6 +22,9 @@ const shortName = (name: string) => {
   return names[0].charAt(0).toUpperCase() + names[1].charAt(0).toUpperCase();
 };
 
+
+
+
 export default function Profile() {
   const { t } = useTranslation();
   const role = userStore.getActiveRole();
@@ -30,6 +33,11 @@ export default function Profile() {
   const [activity, setActivity] = useState<ActivityResponse[]>([]);
   const [userInfo, setUserInfo] = useState<UserProfileResponse>();
 
+  const cleanActivityDescription = (activity: ActivityResponse):ActivityResponse => {
+  return {...activity, description: t(`Profile.activityType.${activity.action}` as string) };
+
+}
+
   // Fetch user Activity
   const fetchUserActivity = async () => {
     if (!userId) return;
@@ -37,7 +45,10 @@ export default function Profile() {
       setIsLoading(true);
       const response = await ActivityApi.getActivityByUser(userId, 0, 10);
       if (response.success) {
-        setActivity(response.data.results);
+        const cleanedActivities = response.data.results.map(cleanActivityDescription);
+        console.log("Cleaned Activities:", cleanedActivities);
+
+        setActivity(response.data.results.map(cleanActivityDescription));
       }
     } finally {
       setIsLoading(false);
@@ -76,14 +87,14 @@ export default function Profile() {
 
   const informationItems = useMemo(
     () => [
-      { icon: Icon.Email, title: "Email", description: userInfo?.email ?? "" },
+      { icon: Icon.Email, title: t("Label.email"), description: userInfo?.email ?? "" },
       {
         icon: Icon.Group,
-        title: "Area",
-        description: userInfo?.area ?? "Not specified",
+        title: t("Profile.areaLabel"),
+        description: userInfo?.area ?? t("Profile.notSpecified"),
       },
     ],
-    [userInfo],
+    [userInfo, t],
   );
 
   return (

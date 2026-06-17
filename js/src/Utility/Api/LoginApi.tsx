@@ -35,7 +35,12 @@ async function login(input: LoginRequest): Promise<ResponseApi<LoginResponse>> {
         enqueueSnackbar(i18next.t("Login.successMessage"), {
             variant: ToastType.SUCCESS,
         });
+    }else{
+        console.log(response);
+        const code = response.type;
+        enqueueSnackbar(i18next.t(`Login.error.${code}`), { variant: ToastType.ERROR });
     }
+    
     return response;
 }
 

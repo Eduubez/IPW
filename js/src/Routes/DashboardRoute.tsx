@@ -4,20 +4,21 @@ import { userStore } from "../Utility/Store/UserStore";
 import { InvestigatorDashboard } from "../Pages/Dashboard/InvestigatorDashboard/InvestigatorDashboard";
 import { SupervisorDashboard } from "../Pages/Dashboard/SupervisorDashboard/SupervisorDashboard";
 import { ManagerDashboard } from "../Pages/Dashboard/ManagerDashboard/ManagerDashboard";
+import { ROLE_KEYS } from "../MockData/MockRoles";
 
 export function DashboardRoute() {
   const activeRole = userStore.getActiveRole();
 
   switch (activeRole) {
-    case "admin":
+    case ROLE_KEYS.ADMIN:
       return <AdminDashboard />;
-    case "triator":
+    case ROLE_KEYS.TRIATOR:
       return <TriatorDashboard />;
-    case "investigator":
+    case ROLE_KEYS.INVESTIGATOR:
       return <InvestigatorDashboard />;
-    case "supervisor":
+    case ROLE_KEYS.SUPERVISOR:
       return <SupervisorDashboard />;
-    case "manager":
+    case ROLE_KEYS.MANAGER:
       return <ManagerDashboard />;
 
     default:

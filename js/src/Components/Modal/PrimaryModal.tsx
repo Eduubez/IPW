@@ -2,6 +2,7 @@ import { Modal } from "@mui/material";
 import styles from "./primarymodal.module.css";
 import PrimaryButton from "../Buttons/PrimaryButton/PrimaryButton";
 import { Color } from "../../StyleGuide/colors";
+import { useTranslation } from "react-i18next";
 
 export function PrimaryModal({
   open,
@@ -16,6 +17,7 @@ export function PrimaryModal({
   body?: React.ReactNode;
   footer?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <>
       <Modal
@@ -32,7 +34,7 @@ export function PrimaryModal({
           {footer && <div>{footer}</div>}
           <div className={styles["modal-actions"]}>
             <PrimaryButton
-              text={"Cancel"}
+              text={t("Modal.cancel")}
               onClick={onClose}
               enabled={true}
               style={{ backgroundColor: Color.DarkRed }}

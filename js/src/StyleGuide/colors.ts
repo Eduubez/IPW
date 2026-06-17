@@ -23,3 +23,17 @@ export const Color = {
   YellowPrimary: "var(--color-yellow-primary)",
   Purple:"var(--color-purple)",
 }
+
+export const getPriorityColor = (priority: string) => {
+  const normalizedPriority = priority.toUpperCase();
+  switch (normalizedPriority) {
+    case "URGENT":
+      return Color.DarkRed;
+    case "WITH_PRIORITY":
+      return Color.Orange;
+    case "NORMAL":
+      return Color.GreenPrimary;
+    default:
+      return Color.Gray;
+  }
+}

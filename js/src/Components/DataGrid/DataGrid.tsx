@@ -40,6 +40,7 @@ export function DataGrid({
   const gridId = useId();
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const translatedColumns = useMemo(
     () =>
@@ -82,7 +83,14 @@ export function DataGrid({
 
     return String(value);
   };
-  const normalizedSearch = search.toLowerCase();
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const normalizedSearch = debouncedSearch.toLowerCase();
 
   const filteredRows = useMemo(
     () =>
@@ -108,7 +116,7 @@ export function DataGrid({
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [normalizedSearch]);
+  }, [debouncedSearch]);
 
   const paginatedRows = useMemo(() => {
     const startIndex = (currentPage - 1) * dataGridConfiguration.itemPerPage;
@@ -138,7 +146,7 @@ export function DataGrid({
           </div>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t("DataGrid.searchPlaceholder")}
             className={styles["search-input"]}
             value={search}
             onChange={(e) => setSearch(e.target.value)}

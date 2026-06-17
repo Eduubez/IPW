@@ -2,6 +2,16 @@ import { Icon } from "../Components/Icons/Icons";
 import { Color } from "../StyleGuide/colors";
 import i18next from 'i18next'
 
+export const ROLE_KEYS = {
+  ADMIN: "admin",
+  TRIATOR: "triator",
+  INVESTIGATOR: "investigator",
+  SUPERVISOR: "supervisor",
+  MANAGER: "manager",
+} as const;
+
+export type RoleKey = (typeof ROLE_KEYS)[keyof typeof ROLE_KEYS];
+
 export const ROLES = [
   {
     key: "admin",
