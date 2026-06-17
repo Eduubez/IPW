@@ -1,10 +1,12 @@
 import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.postgresql.ds.PGSimpleDataSource
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.jdbi.configureWithAppRequirements
 import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
 import pt.isel.ipw.services.ActivityServiceImpl
 import pt.isel.ipw.services.ProcessServiceImpl
+import pt.isel.ipw.services.ReportServiceImpl
 import pt.isel.ipw.services.auth.JwtTokenService
 import pt.isel.ipw.services.errors.Failure
 import pt.isel.ipw.services.errors.ProcessError
@@ -32,10 +34,17 @@ class ProcessServiceImplTest {
         )
 
         private val trxManager = JdbiTransactionManager(jdbi)
+        private val activityService = ActivityServiceImpl(trxManager)
+
 
         private val processService = ProcessServiceImpl(
             trxManager,
-            ActivityServiceImpl(trxManager),
+            activityService
+        )
+
+        private val reportService = ReportServiceImpl(
+            trxManager,
+            activityService
         )
 
         //Alice(triator)=1, Bob(investigator)=2, Carol(supervisor)=3
@@ -205,7 +214,7 @@ class ProcessServiceImplTest {
         assertEquals(ProcessError.InvalidSupervisor, (result as Failure).value)
     }
 
-    // -----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 // submitProcess
 // -----------------------------------------------------------------------
 
@@ -214,7 +223,11 @@ class ProcessServiceImplTest {
         val created = createValid(investigatorId = INVESTIGATOR_ID)
         assertTrue(created is Success)
         val processId = (created as Success).value
-
+        reportService.createReport(
+            processId = processId,
+            userId = INVESTIGATOR_ID,
+            content = "Report content",
+        )
         val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", processId)
         assertTrue(result is Success)
 
@@ -237,12 +250,16 @@ class ProcessServiceImplTest {
         val created = createValid(investigatorId = INVESTIGATOR_ID)
         assertTrue(created is Success)
         val processId = (created as Success).value
-
+        reportService.createReport(
+            processId = processId,
+            userId = INVESTIGATOR_ID,
+            content = "Report content",
+        )
         val wrongInvestigatorId = 99
         val result = processService.submitProcess(wrongInvestigatorId, "investigator", processId)
 
         assertTrue(result is Failure)
-        assertEquals(ProcessError.UnauthorizedAccess, (result as Failure).value)
+        assertEquals(ProcessError.InvalidUserId, (result as Failure).value)
     }
 
     @Test
@@ -250,7 +267,11 @@ class ProcessServiceImplTest {
         val created = createValid()
         assertTrue(created is Success)
         val processId = (created as Success).value
-
+        reportService.createReport(
+            processId = processId,
+            userId = INVESTIGATOR_ID,
+            content = "Report content",
+        )
         jdbi.useHandle<Exception> { handle ->
             handle.execute("update public.process_state set end_date = now() where process_id = ?", processId)
             handle.execute(
@@ -272,7 +293,11 @@ class ProcessServiceImplTest {
         val created = createValid()
         assertTrue(created is Success)
         val processId = (created as Success).value
-
+        reportService.createReport(
+            processId = processId,
+            userId = INVESTIGATOR_ID,
+            content = "Report content",
+        )
         // Tentar submeter usando uma Role que não tem fluxo de submissão mapeado (ex: "triator")
         val result = processService.submitProcess(TRIATOR_ID, "triator", processId)
 
@@ -688,7 +713,7 @@ class ProcessServiceImplTest {
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.changePriority(processId, "urgent", SUPERVISOR_ID)
+        val result = processService.changePriority(processId, "urgent", SUPERVISOR_ID, Roles.SUPERVISOR)
         assertTrue(result is Success)
 
         val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
@@ -699,7 +724,7 @@ class ProcessServiceImplTest {
 
     @Test
     fun `changePriority - process not found returns error`() {
-        val result = processService.changePriority(9999, "urgent", SUPERVISOR_ID)
+        val result = processService.changePriority(9999, "urgent", SUPERVISOR_ID,   Roles.SUPERVISOR)
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
@@ -709,7 +734,7 @@ class ProcessServiceImplTest {
         val created = createValid(priority = "normal")
         val processId = (created as Success).value
 
-        val result = processService.changePriority(processId, "invalid_priority", SUPERVISOR_ID)
+        val result = processService.changePriority(processId, "invalid_priority", SUPERVISOR_ID, Roles.SUPERVISOR)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidPriority, (result as Failure).value)
     }
@@ -719,7 +744,7 @@ class ProcessServiceImplTest {
         val created = createValid(priority = "normal")
         val processId = (created as Success).value
 
-        val result = processService.changePriority(processId, "normal", SUPERVISOR_ID)
+        val result = processService.changePriority(processId, "normal", SUPERVISOR_ID, Roles.SUPERVISOR)
         assertTrue(result is Success)
         val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
         assertTrue(updated is Success)

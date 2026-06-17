@@ -19,19 +19,19 @@ enum class ActivityActions {
 
 fun ActivityActions.mapToString(): String =
     when (this) {
-        ActivityActions.CREATED_PROCESS -> "created a new process"
-        ActivityActions.UPDATED_REPORT -> "updated the report"
-        ActivityActions.CANCELLED_PROCESS -> "canceled the process"
-        ActivityActions.CHANGED_PRIORITY -> "changed the priority"
-        ActivityActions.ASSIGNED_SUPERVISOR -> "assigned a supervisor"
-        ActivityActions.CHANGED_END_DATE -> "changed the end date"
-        ActivityActions.CREATED_REPORT -> "created a new report"
-        ActivityActions.DELETED_REPORT -> "deleted a report"
-        ActivityActions.APPROVED_REPORT_SUPERVISOR -> "supervisor approved the report"
-        ActivityActions.REJECTED_REPORT_SUPERVISOR -> "supervisor rejected the report"
-        ActivityActions.APPROVED_REPORT_MANAGER -> "manager approved the report"
-        ActivityActions.REJECTED_REPORT_MANAGER -> "manager rejected the report"
-        ActivityActions.SUBMIT_PROCESS_FOR_APPROVAL -> "process was submitted for approval"
+        ActivityActions.CREATED_PROCESS -> "CREATED_PROCESS"
+        ActivityActions.UPDATED_REPORT -> "UPDATED_REPORT"
+        ActivityActions.CANCELLED_PROCESS -> "CANCELLED_PROCESS"
+        ActivityActions.CHANGED_PRIORITY -> "CHANGED_PRIORITY"
+        ActivityActions.ASSIGNED_SUPERVISOR -> "ASSIGNED_SUPERVISOR"
+        ActivityActions.CHANGED_END_DATE -> "CHANGED_END_DATE"
+        ActivityActions.CREATED_REPORT -> "CREATED_REPORT"
+        ActivityActions.DELETED_REPORT -> "DELETED_REPORT"
+        ActivityActions.APPROVED_REPORT_SUPERVISOR -> "APPROVED_SUPERVISOR"
+        ActivityActions.REJECTED_REPORT_SUPERVISOR -> "REJECTED_SUPERVISOR"
+        ActivityActions.APPROVED_REPORT_MANAGER -> "APPROVED_REPORT_MANAGER"
+        ActivityActions.REJECTED_REPORT_MANAGER -> "REJECTED_REPORT_MANAGER"
+        ActivityActions.SUBMIT_PROCESS_FOR_APPROVAL -> "SUBMIT_PROCESS_FOR_APPROVAL"
     }
 
 
