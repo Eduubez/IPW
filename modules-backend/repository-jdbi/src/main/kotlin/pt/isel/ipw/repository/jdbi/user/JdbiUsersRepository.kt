@@ -246,6 +246,19 @@ class JdbiUsersRepository(
             .execute()
     }
 
+    override fun updateUserStatus(userId: Int, isActive: Boolean) {
+        handle.createUpdate(
+            """
+            update Users
+            set is_active = :isActive
+            where id = :userId
+        """
+        )
+            .bind("userId", userId)
+            .bind("isActive", isActive)
+            .execute()
+    }
+
     override fun removeUserRole(userId: Int, role: String) {
         handle.createUpdate(
             """

@@ -18,6 +18,7 @@ import pt.isel.ipw.services.errors.success
 import pt.isel.ipw.services.interfaces.UserService
 import pt.isel.ipw.services.results.ChangeUserPasswordResult
 import pt.isel.ipw.services.results.ChangeUserRolesResult
+import pt.isel.ipw.services.results.ChangeUserStatusResult
 import pt.isel.ipw.services.results.CreateUserResult
 import pt.isel.ipw.services.results.GetAdminContactResult
 import pt.isel.ipw.services.results.GetAllUsersResult
@@ -140,6 +141,15 @@ class UserServiceImpl(
             return@run failure(UserError.ExpiredRefreshToken)
         }
 
+        val user = usersRepository.getUserById(storedRefreshToken.userId)
+            ?: return@run failure(UserError.UserNotFound)
+
+        if (!user.isActive) {
+            refreshTokensRepository.deleteByToken(refreshToken)
+            accessTokensRepository.deleteByUserId(storedRefreshToken.userId)
+            return@run failure(UserError.UserNotActive)
+        }
+
         accessTokensRepository.deleteByUserId(storedRefreshToken.userId)
 
         val createdAccessToken = tokenService.createAccessToken(
@@ -246,6 +256,29 @@ class UserServiceImpl(
         success(Unit)
     }
 
+    override fun changeUserStatus(
+        userId: Int,
+        authenticatedUserId: Int,
+        isActive: Boolean
+    ): ChangeUserStatusResult = transactionManager.run {
+        usersRepository.getUserById(userId)
+            ?: return@run failure(UserError.UserNotFound)
+
+        if (!isActive && userId == authenticatedUserId) {
+            return@run failure(UserError.CannotDeactivateSelf)
+        }
+
+        usersRepository.updateUserStatus(userId, isActive)
+
+        if (!isActive) {
+            accessTokensRepository.deleteByUserId(userId)
+            refreshTokensRepository.deleteByUserId(userId)
+            loginTokensRepository.deleteByUserId(userId)
+        }
+
+        success(Unit)
+    }
+
     override fun selectRole(
         loginToken: String,
         userId: Int,
@@ -262,6 +295,14 @@ class UserServiceImpl(
         if (storedLoginToken.expiresAt.isBefore(Instant.now())) {
             loginTokensRepository.deleteByToken(loginToken)
             return@run failure(UserError.ExpiredLoginToken)
+        }
+
+        val user = usersRepository.getUserById(userId)
+            ?: return@run failure(UserError.UserNotFound)
+
+        if (!user.isActive) {
+            loginTokensRepository.deleteByToken(loginToken)
+            return@run failure(UserError.UserNotActive)
         }
 
         val storedRoles = usersRepository.getUserRoles(userId)
@@ -322,7 +363,6 @@ class UserServiceImpl(
             )
         )
     }
-
 
     private fun getAssignableUsersByRole(
         role: String,

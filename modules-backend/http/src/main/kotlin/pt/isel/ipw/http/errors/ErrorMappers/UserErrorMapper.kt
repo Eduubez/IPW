@@ -6,6 +6,7 @@ private val userErrorMap = mapOf(
     UserError.UserAlreadyExists to Problem.userAlreadyExists,
     UserError.UserNotFound to Problem.userNotFound,
     UserError.UserNotActive to Problem.userNotActive,
+    UserError.CannotDeactivateSelf to Problem.cannotDeactivateSelf,
     UserError.InsecurePassword to Problem.insecurePassword,
     UserError.InvalidCredentials to Problem.invalidCredentials,
     UserError.InvalidRoleSelection to Problem.invalidRoleSelection,

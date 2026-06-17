@@ -22,6 +22,7 @@ sealed class UserError(
     data object RefreshTokenNotFound : UserError(404)
 
     data object UserNotActive : UserError(403)
+    data object CannotDeactivateSelf : UserError(409)
 
     data object AreaRequired : UserError(400)
     data object AreaNotFound : UserError(404)

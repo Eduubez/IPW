@@ -40,6 +40,12 @@ class Problem(
             errorCode = ErrorCode.USER_NOT_ACTIVE
         )
 
+        val cannotDeactivateSelf = Problem(
+            type = "problems/cannot-deactivate-self",
+            message = "Admin cannot deactivate their own user",
+            errorCode = ErrorCode.CANNOT_DEACTIVATE_SELF
+        )
+
         val insecurePassword = Problem(
             type = "problems/insecure-password",
             message = "Weak password",

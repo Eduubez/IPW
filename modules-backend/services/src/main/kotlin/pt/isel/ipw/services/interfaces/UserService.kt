@@ -2,6 +2,7 @@ package pt.isel.ipw.services.interfaces
 
 import pt.isel.ipw.services.results.ChangeUserPasswordResult
 import pt.isel.ipw.services.results.ChangeUserRolesResult
+import pt.isel.ipw.services.results.ChangeUserStatusResult
 import pt.isel.ipw.services.results.CreateUserResult
 import pt.isel.ipw.services.results.GetAdminContactResult
 import pt.isel.ipw.services.results.GetAllUsersResult
@@ -43,6 +44,8 @@ interface UserService {
     ): ChangeUserRolesResult
 
     fun changeUserPassword(userId: Int, newPassword: String): ChangeUserPasswordResult
+
+    fun changeUserStatus(userId: Int, authenticatedUserId: Int, isActive: Boolean): ChangeUserStatusResult
 
     fun refreshAccessToken(
         refreshToken: String,

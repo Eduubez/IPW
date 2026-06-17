@@ -208,6 +208,40 @@ async function changeUserPassword(
 
   return response;
 }
+
+// change active status - Admin
+async function changeUserStatus(
+  userId: number,
+  isActive: boolean,
+): Promise<ResponseApi<void>> {
+  const token = userStore.getAccessToken()?.trim();
+
+  const response = await fetchApi<void>(`users/${userId}/status`, {
+    method: "PUT",
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+    body: JSON.stringify({ isActive }),
+  });
+
+  if (!response.success) {
+    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
+  } else {
+    enqueueSnackbar(
+      isActive
+        ? i18next.t("DashboardAdmin.changeStatusModal.enableSuccess", {
+            defaultValue: "Utilizador ativado com sucesso.",
+          })
+        : i18next.t("DashboardAdmin.changeStatusModal.disableSuccess", {
+            defaultValue: "Utilizador desativado com sucesso.",
+          }),
+      { variant: ToastType.SUCCESS },
+    );
+  }
+
+  return response;
+}
+
 async function getUserInformation() {
   return await fetchApi<UserProfileResponse>("users/me", {
     method: "GET",
@@ -224,6 +258,7 @@ export const UsersApi = {
   getAll,
   changeUserRoles,
   changeUserPassword,
+  changeUserStatus,
   getUserInformation,
   getInvestigators,
 };

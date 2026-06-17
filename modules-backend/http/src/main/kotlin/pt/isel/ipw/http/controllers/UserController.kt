@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import pt.isel.ipw.domain.DTO.input.ChangeUserPasswordRequest
 import pt.isel.ipw.domain.DTO.input.ChangeUserRolesRequest
+import pt.isel.ipw.domain.DTO.input.ChangeUserStatusRequest
 import pt.isel.ipw.domain.DTO.input.CreateUserRequest
 import pt.isel.ipw.domain.DTO.input.LoginRequest
 import pt.isel.ipw.domain.DTO.input.SelectRoleRequest
@@ -204,6 +205,19 @@ class UserController(
     ): ResponseEntity<*> {
         val result = userService.changeUserPassword(userId, body.newPassword)
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
+    }
+
+    @PutMapping("/{userId}/status")
+    @RolesAllowed(Roles.ADMIN)
+    fun changeUserStatus(
+        @PathVariable userId: Int,
+        @RequestBody body: ChangeUserStatusRequest
+    ): ResponseEntity<*> {
+        val authenticatedUserId = AuthenticatedUser.id()
+            ?: return Problem.response(401, Problem.invalidToken)
+
+        val result = userService.changeUserStatus(userId, authenticatedUserId, body.isActive)
+        return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
     }
 
     @GetMapping(ApiRoutes.Users.ROLES)

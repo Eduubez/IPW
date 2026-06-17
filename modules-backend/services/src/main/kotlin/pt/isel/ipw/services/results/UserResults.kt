@@ -17,6 +17,7 @@ typealias GetAllUsersResult = Either<UserError, List<UserWithRoles>>
 typealias GetUserProfileInfoResult = Either<UserError, UserWithRoles>
 typealias ChangeUserRolesResult = Either<UserError, Unit>
 typealias ChangeUserPasswordResult = Either<UserError, Unit>
+typealias ChangeUserStatusResult = Either<UserError, Unit>
 typealias RefreshAccessTokenResult = Either<UserError, RefreshAccessToken>
 typealias SelectRoleServiceResult = Either<UserError, SelectRoleResult>
 typealias GetAssignableUsersResult = Either<UserError, List<AssignableUser>>
