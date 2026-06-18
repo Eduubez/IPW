@@ -85,6 +85,11 @@ class MinIOProveStorageService(
                 .bucket(bucket)
                 .`object`(storageKey)
                 .expiry(10, TimeUnit.MINUTES)
+                .extraQueryParams(
+                    mapOf(
+                        "response-content-disposition" to "attachment"
+                    )
+                )
                 .build()
         )
 }

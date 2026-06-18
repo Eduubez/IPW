@@ -20,6 +20,7 @@ import { userStore } from "../../Utility/Store/UserStore";
 import { ReportApi } from "../../Utility/Api/ReportApi";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
 import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge";
+import { Attachments } from "../../Components/Attachments/Attachments";
 
 const processPageState = (state?: string) => {
   switch (state) {
@@ -437,11 +438,9 @@ export default function ProcessPage() {
           <WithBackground>{activeView().reportView}</WithBackground>
         </div>
         <div className={styles["d-container"]}>
-          <div className={styles["attachments-container"]}>
             <WithBackground>
-              <span>{t("ProcessPage.attachmentsSection")}</span>
+              <Attachments proves={apiResponse?.proves} />
             </WithBackground>
-          </div>
           <div className={styles["activity-container"]}>
             <WithBackground>
               <span>{t("ProcessPage.activitiesSection")}</span>
