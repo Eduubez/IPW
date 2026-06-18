@@ -38,13 +38,13 @@ class JdbiProvesRepository(
             """
             select
                 id,
-                process_id as processId,
-                file_name as fileName,
-                content_type as contentType,
-                file_size as fileSize,
-                storage_key as storageKey,
-                created_by as createdBy,
-                created_at as createdAt
+                process_id,
+                file_name,
+                content_type,
+                file_size,
+                storage_key,
+                created_by,
+                created_at
             from Proves
             where id = :proveId
             """
@@ -58,13 +58,13 @@ class JdbiProvesRepository(
             """
             select
                 id,
-                process_id as processId,
-                file_name as fileName,
-                content_type as contentType,
-                file_size as fileSize,
-                storage_key as storageKey,
-                created_by as createdBy,
-                created_at as createdAt
+                process_id,
+                file_name,
+                content_type,
+                file_size,
+                storage_key,
+                created_by,
+                created_at
             from Proves
             where process_id = :processId
             order by created_at desc

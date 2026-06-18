@@ -10,6 +10,7 @@ import pt.isel.ipw.domain.Entities.area.AreaInfo
 import pt.isel.ipw.domain.Entities.area.AreaView
 import pt.isel.ipw.domain.LoginToken
 import pt.isel.ipw.domain.RefreshToken
+import pt.isel.ipw.domain.process.Prove
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.repository.jdbi.mappers.AccessTokenMapper
@@ -18,6 +19,7 @@ import pt.isel.ipw.repository.jdbi.mappers.AreaInfoMapper
 import pt.isel.ipw.repository.jdbi.mappers.AreaViewMapper
 import pt.isel.ipw.repository.jdbi.mappers.LoginTokenMapper
 import pt.isel.ipw.repository.jdbi.mappers.RefreshTokenMapper
+import pt.isel.ipw.repository.jdbi.mappers.process.ProvesMapper
 import pt.isel.ipw.repository.jdbi.mappers.user.AssignableUserMapper
 import pt.isel.ipw.repository.jdbi.mappers.user.UserMapper
 import pt.isel.ipw.repository.jdbi.mappers.user.UserWithRolesMapper
@@ -36,6 +38,7 @@ fun Jdbi.configureWithAppRequirements(): Jdbi {
     registerRowMapper(Activity::class.java, ActivityMapper())
     registerRowMapper(AreaInfo::class.java, AreaInfoMapper())
     registerRowMapper(AreaView::class.java, AreaViewMapper())
+    registerRowMapper(Prove::class.java, ProvesMapper())
 
     return this
 }
