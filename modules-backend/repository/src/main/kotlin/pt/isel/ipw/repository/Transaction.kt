@@ -13,6 +13,7 @@ interface Transaction {
     val processRepository: ProcessRepository
     val provesRepository: ProvesRepository
     val reportRepository: ReportRepository
+    val noteRepository: NoteRepository
 
     fun rollback()
 }
