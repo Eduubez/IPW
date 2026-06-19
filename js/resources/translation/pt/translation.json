@@ -257,5 +257,19 @@
   },
   "Modal": {
     "cancel": "Cancelar"
+  },
+  "ActivityItem": {
+    "CREATED_PROCESS": "Processo criado",
+    "CANCELLED_PROCESS": "Processo cancelado",
+    "APPROVED_SUPERVISOR": "Processo aprovado pelo supervisor",
+    "REJECTED_SUPERVISOR": "Processo rejeitado pelo supervisor",
+    "APPROVED_REPORT_MANAGER": "Processo aprovado pelo gestor",
+    "REJECTED_REPORT_MANAGER": "Processo rejeitado pelo gestor",
+    "SUBMIT_PROCESS_FOR_APPROVAL": "Processo submetido para aprovação",
+    "UPDATED_REPORT": "Relatório atualizado",
+    "CHANGED_PRIORITY": "Prioridade do processo alterada",
+    "ASSIGNED_SUPERVISOR": "Supervisor atribuído ao processo",
+    "CHANGED_END_DATE": "Data de expiração do processo alterada",
+    "CREATED_REPORT": "Relatório criado para este processo"
   }
 }

@@ -58,7 +58,7 @@ class ProveServiceImpl(
             val storageKey = createStorageKey(processId, fileName)
 
             val uploadUrl = try {
-                proveStorageService.createUploadUrl(storageKey)
+                proveStorageService.createUploadUrl(storageKey,fileName)
             } catch (_: Exception) {
                 return@run failure(ProveError.StorageError)
             }
@@ -158,7 +158,7 @@ class ProveServiceImpl(
         }
 
         val accessUrl = try {
-            proveStorageService.createAccessUrl(prove.storageKey)
+            proveStorageService.createAccessUrl(prove.storageKey,prove.fileName)
         } catch (_: Exception) {
             return@run failure(ProveError.StorageError)
         }

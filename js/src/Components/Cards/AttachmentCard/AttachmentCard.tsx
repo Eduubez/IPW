@@ -1,14 +1,15 @@
 import styles from "./attachmentcard.module.css";
+import { formatDate } from "../../../Utility/Helpers/DateHelpers";
 
 interface AttachmentCardProps {
   fileName: string;
-  fileSize: string;
+  date: Date;
   downloadFn: () => void;
 }
 
 export const AttachmentCard = ({
   fileName,
-  fileSize,
+  date,
   downloadFn,
 }: AttachmentCardProps) => {
   return (
@@ -18,7 +19,7 @@ export const AttachmentCard = ({
       </div>
       <div className={styles["card-body"]}>
         <span>{fileName}</span>
-        <span>{fileSize}</span>
+        <span>{formatDate(date)}</span>
       </div>
       <div className={styles["button-container"]}>
           <button onClick={downloadFn} className={styles["download-button"]}>

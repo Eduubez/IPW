@@ -1,9 +1,9 @@
 package pt.isel.ipw.services.interfaces
 
 interface ProveStorageService {
-    fun createUploadUrl(storageKey: String): String
+    fun createUploadUrl(storageKey: String,fileName:String): String
 
-    fun createAccessUrl(storageKey: String): String
+    fun createAccessUrl(storageKey: String,fileName: String): String
 
     fun deleteObject(storageKey: String)
 

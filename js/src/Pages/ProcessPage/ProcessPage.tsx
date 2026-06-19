@@ -17,10 +17,28 @@ import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { ReportCard } from "../../Components/ReportCard/ReportCard";
 import { userStore } from "../../Utility/Store/UserStore";
-import { ReportApi } from "../../Utility/Api/ReportApi";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
 import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge";
 import { Attachments } from "../../Components/Attachments/Attachments";
+import { ActivityCard } from "../../Components/Cards/ActivityCard/ActivityCard";
+import { formatDate } from "../../Utility/Helpers/DateHelpers";
+
+const TIME_LINE_ACTIVITY_TYPE = [
+  "CREATED_PROCESS",
+  "CANCELLED_PROCESS",
+  "APPROVED_SUPERVISOR",
+  "REJECTED_SUPERVISOR",
+  "APPROVED_REPORT_MANAGER",
+  "REJECTED_REPORT_MANAGER",
+  "SUBMIT_PROCESS_FOR_APPROVAL",
+];
+const BOX_ACTIVITY_TYPE = [
+  "UPDATED_REPORT",
+  "CHANGED_PRIORITY",
+  "ASSIGNED_SUPERVISOR",
+  "CHANGED_END_DATE",
+  "CREATED_REPORT",
+];
 
 const processPageState = (state?: string) => {
   switch (state) {
@@ -78,11 +96,27 @@ export default function ProcessPage() {
         done: true,
         label: activity.action,
         date: new Date(activity.createdAt),
-        userName: activity.userName, // You might want to replace this with the actual user name
+        userName: activity.userName,
       }));
       setActivityItems(items);
     }
   };
+
+  const timeLineActivityItens = useMemo(() => {
+    if (!apiResponse) return [];
+    const items = activityItems.filter((item) =>
+      TIME_LINE_ACTIVITY_TYPE.includes(item.label),
+    );
+    return items;
+  }, [apiResponse]);
+
+  const boxActivityItens = useMemo(() => {
+    if (!apiResponse) return [];
+    const items = activityItems.filter((item) =>
+      BOX_ACTIVITY_TYPE.includes(item.label),
+    );
+    return items;
+  }, [apiResponse]);
 
   const {
     supervisorCard,
@@ -182,7 +216,7 @@ export default function ProcessPage() {
       creationCard: {
         value: t("CreateProcessPage.fields.creationDate"),
         text: apiResponse.creationDate
-          ? new Date(apiResponse.creationDate).toLocaleDateString()
+          ? formatDate(new Date(apiResponse.creationDate))
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
         button: undefined,
@@ -190,7 +224,7 @@ export default function ProcessPage() {
       dueDateCard: {
         value: t("CreateProcessPage.fields.expiresAt"),
         text: apiResponse.dueDate
-          ? new Date(apiResponse.dueDate).toLocaleDateString()
+          ? formatDate(new Date(apiResponse.dueDate))
           : "N/A",
         icon: { name: Icon.Calendar, style: { color: Color.LightBlue } },
         button: undefined,
@@ -268,7 +302,10 @@ export default function ProcessPage() {
 
   const canSubmitProcess = () => {
     if (!apiResponse) return false;
-    return (SUBMITTABLE_STATES as readonly string[]).includes(processState) && hasReport;
+    return (
+      (SUBMITTABLE_STATES as readonly string[]).includes(processState) &&
+      hasReport
+    );
   };
 
   //#endregion
@@ -369,7 +406,9 @@ export default function ProcessPage() {
       <div className={styles["priority-options-container"]}>
         <div className={styles["priority-description"]}>
           <span>
-            {t("ProcessPage.priorityModal.description", { current: t(`Priority.${normalizedPriority}`) })}
+            {t("ProcessPage.priorityModal.description", {
+              current: t(`Priority.${normalizedPriority}`),
+            })}
           </span>
         </div>
         {priorityOptions.map((option) => (
@@ -430,7 +469,7 @@ export default function ProcessPage() {
           <WithBackground>
             <div>
               <span>{t("ProcessPage.stateSection")}</span>
-              <TimeLine items={activityItems} loading={loading} />
+              <TimeLine items={timeLineActivityItens} loading={loading} />
             </div>
           </WithBackground>
         </div>
@@ -438,14 +477,17 @@ export default function ProcessPage() {
           <WithBackground>{activeView().reportView}</WithBackground>
         </div>
         <div className={styles["d-container"]}>
+          <WithBackground>
+            <Attachments proves={apiResponse?.proves} />
+          </WithBackground>
             <WithBackground>
-              <Attachments proves={apiResponse?.proves} />
+              <div className={styles["activity-box"]}>
+                <span>{t("ProcessPage.activitiesSection")}</span>
+                {boxActivityItens.map((activity, index) => (
+                  <ActivityCard key={index} activity={activity} />
+                ))}
+              </div>
             </WithBackground>
-          <div className={styles["activity-container"]}>
-            <WithBackground>
-              <span>{t("ProcessPage.activitiesSection")}</span>
-            </WithBackground>
-          </div>
         </div>
       </div>
       <PrimaryModal

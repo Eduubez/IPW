@@ -3,6 +3,7 @@ import { buildQuery, fetchApi, type ResponseApi } from "./FetchApi.tsx";
 import { userStore } from "../Store/UserStore.tsx";
 import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge.tsx";
 import { enqueueSnackbar } from "notistack";
+import type { ProveResponse } from "./ProvesApi.tsx";
 
 export type ProcessResponseApi = {
   results: ProcessResponse[];
@@ -21,7 +22,7 @@ export type ProcessResponse = {
   investigator: UserResponse;
   supervisor: UserResponse;
   state: string;
-  proves: ProvesType[];
+  proves: ProveResponse[];
   report: ReportType;
   notes: NotesType[];
   activity: ActivityType[];
@@ -52,14 +53,7 @@ type LocationType = {
   longitude: string;
 };
 
-type ProvesType = {
-  id: number;
-  processId: number;
-  fileName: string;
-  fileType: string;
-  fileUrl: string;
-  createdAt: string;
-};
+
 
 type ActivityType = {
   id: number;

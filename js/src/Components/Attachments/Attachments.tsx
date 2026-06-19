@@ -6,6 +6,7 @@ import { useState } from "react";
 import { PrimaryModal } from "../Modal/PrimaryModal";
 import { ProvesApi } from "../../Utility/Api/ProvesApi";
 import { useParams } from "react-router-dom";
+import { UploadAttachmentModal } from "./UploadAttachmentModal/UploadAttachmentModal";
 const buttonStyle = {
   display: "flex",
   justifyContent: "center",
@@ -19,7 +20,11 @@ const buttonStyle = {
   cursor: "pointer",
 };
 
-export const Attachments = ({ proves }: { proves: ProveResponse[] }) => {
+export const Attachments = ({
+  proves,
+}: {
+  proves: ProveResponse[] | undefined;
+}) => {
   const params = useParams();
   const processId = Number(params.id);
 
@@ -39,6 +44,7 @@ export const Attachments = ({ proves }: { proves: ProveResponse[] }) => {
     await ProvesApi.create(processId, file, urlRes.data.storageKey);
 
     setShowNewAttachmentModal(false);
+    window.location.reload();
   };
 
   const handleDownload = async (processId: number, proveId: number) => {
@@ -46,16 +52,17 @@ export const Attachments = ({ proves }: { proves: ProveResponse[] }) => {
 
     if (!accessUrlRes.success) return;
     const url = accessUrlRes.data.url;
-    const fileName = accessUrlRes.data.fileName;
 
     const link = document.createElement("a");
     link.href = url;
-    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-    
+  };
 
+  const handleCloseModal = () => {
+    setShowNewAttachmentModal(false);
+    setFile(null);
   };
 
   return (
@@ -79,34 +86,19 @@ export const Attachments = ({ proves }: { proves: ProveResponse[] }) => {
             <AttachmentCard
               key={index}
               fileName={attachment.fileName}
-              fileSize={attachment.fileSize.toString()}
+              date={new Date(attachment.createdAt)}
               downloadFn={() => handleDownload(processId, attachment.id)}
             />
           ))}
         </div>
       )}
-      {showNewAttachmentModal && (
-        <PrimaryModal
-          open={showNewAttachmentModal}
-          onClose={() => setShowNewAttachmentModal(false)}
-          header="Adicionar Anexo"
-          body={
-            <div>
-              <input
-                type="file"
-                onChange={(e) =>
-                  setFile(e.target.files ? e.target.files[0] : null)
-                }
-              />
-              <PrimaryButton
-                text="Upload"
-                onClick={handleFileUpload}
-                enabled={true}
-              />
-            </div>
-          }
-        />
-      )}
+      <UploadAttachmentModal
+        isOpen={showNewAttachmentModal}
+        onClose={handleCloseModal}
+        file={file}
+        setFile={(e) => setFile(e.target.files ? e.target.files[0] : null)}
+        handleFileUpload={handleFileUpload}
+      />
     </div>
   );
 };

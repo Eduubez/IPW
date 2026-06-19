@@ -8,8 +8,11 @@ import { Icon } from "../Icons/Icons";
 import styles from "./timeline.module.css";
 import { TimeLineActivityItem } from "./TimeLineActivityItem/TimeLineActivityItem";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
+import { useTranslation } from "react-i18next";
 
 export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: boolean; label: string; date: Date; userName: string }[] }) {
+  const { t } = useTranslation();
+  
   return loading ? (
     <LoadingComponent />
   ) : (
@@ -49,7 +52,7 @@ export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: 
           </TimelineSeparator>
           <TimelineContent>
             <TimeLineActivityItem
-              title={item.label}
+              title={t(`ActivityItem.${item.label}`)}
               time={item.date.toLocaleTimeString()}
               user={item.userName}
             />

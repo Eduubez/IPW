@@ -33,11 +33,6 @@ export default function Profile() {
   const [activity, setActivity] = useState<ActivityResponse[]>([]);
   const [userInfo, setUserInfo] = useState<UserProfileResponse>();
 
-  const cleanActivityDescription = (activity: ActivityResponse):ActivityResponse => {
-  return {...activity, description: t(`Profile.activityType.${activity.action}` as string) };
-
-}
-
   // Fetch user Activity
   const fetchUserActivity = async () => {
     if (!userId) return;
@@ -45,10 +40,7 @@ export default function Profile() {
       setIsLoading(true);
       const response = await ActivityApi.getActivityByUser(userId, 0, 10);
       if (response.success) {
-        const cleanedActivities = response.data.results.map(cleanActivityDescription);
-        console.log("Cleaned Activities:", cleanedActivities);
-
-        setActivity(response.data.results.map(cleanActivityDescription));
+        setActivity(response.data.results);
       }
     } finally {
       setIsLoading(false);
@@ -150,7 +142,7 @@ export default function Profile() {
                 </div>
                 <div className={styles["activity-list"]}>
                   {sortedActivity.map((item) => (
-                    <ActivityCard key={item.id} activity={item} />
+                    <ActivityCard key={item.id} activity={{ label: item.action, date: item.createdAt }} />
                   ))}
                 </div>
               </>

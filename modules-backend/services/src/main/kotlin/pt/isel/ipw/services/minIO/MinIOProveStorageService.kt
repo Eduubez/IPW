@@ -43,11 +43,13 @@ class MinIOProveStorageService(
 
     override fun createUploadUrl(
         storageKey: String,
-    ): String = createUrl(Method.PUT, storageKey)
+        fileName: String,
+    ): String = createUrl(Method.PUT, storageKey,fileName)
 
     override fun createAccessUrl(
-        storageKey: String
-    ): String = createUrl(Method.GET, storageKey)
+        storageKey: String,
+        fileName: String
+    ): String = createUrl(Method.GET, storageKey,fileName)
 
     override fun deleteObject(
         storageKey: String
@@ -77,7 +79,8 @@ class MinIOProveStorageService(
 
     private fun createUrl(
         method: Method,
-        storageKey: String
+        storageKey: String,
+        fileName: String
     ): String =
         publicClient.getPresignedObjectUrl(
             GetPresignedObjectUrlArgs.builder()
@@ -87,7 +90,8 @@ class MinIOProveStorageService(
                 .expiry(10, TimeUnit.MINUTES)
                 .extraQueryParams(
                     mapOf(
-                        "response-content-disposition" to "attachment"
+                        "response-content-disposition" to
+                                "attachment; filename=\"$fileName\""
                     )
                 )
                 .build()
