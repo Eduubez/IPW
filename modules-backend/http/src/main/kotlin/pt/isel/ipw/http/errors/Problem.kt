@@ -301,5 +301,17 @@ class Problem(
             message = "Storage operation failed",
             errorCode = ErrorCode.STORAGE_ERROR
         )
+
+        val invalidNoteRequest = Problem(
+            type = "problems/invalid-note-request",
+            message = "Must have just proveId or processId, not both",
+            errorCode = ErrorCode.INVALID_NOTE_REQUEST
+        )
+
+        val noteNotFound = Problem(
+            type = "problems/note-not-found",
+            message = "Note not found",
+            errorCode = ErrorCode.NOTE_NOT_FOUND
+        )
     }
 }

@@ -23,16 +23,15 @@ type NotesUpdateRequest = {
 }
 
 export const NotesApi = {
-    createOnProcess,
+    createNote,
     getAllByProcessId,
-    createOnProve,
     getAllByProveId,
     update,
-    deleteById
 }
+
 // create a note associated to a process -  Triator ,Investigator, Supervisor, Manager
-async function createOnProcess(input: NotesRequest): Promise<ResponseApi<NotesResponse>> {
-    return await fetchApi<NotesResponse>(`notes/process/${input.processId}`, {
+async function createNote(processId: number, input: NotesRequest): Promise<ResponseApi<NotesResponse>> {
+    return await fetchApi<NotesResponse>(`process/${processId}/note`, {
         method: "POST",
         body: JSON.stringify(input)
     })
@@ -40,38 +39,24 @@ async function createOnProcess(input: NotesRequest): Promise<ResponseApi<NotesRe
 
 // get all notes by a process Id - Investigator, Supervisor, Manager
 async function getAllByProcessId(processId: number): Promise<ResponseApi<NotesResponse[]>> {
-    return await fetchApi<NotesResponse[]>(`notes/process/${processId}`, {
+    return await fetchApi<NotesResponse[]>(`process/${processId}/note`, {
         method: "GET",
     });
 }
 
-// create a note associated to a process - Triator ,Investigator, Supervisor, Manager
-async function createOnProve(input: NotesRequest): Promise<ResponseApi<NotesResponse>> {
-    return await fetchApi(`notes/proves/${input.proveId}`, {
-        method: "POST",
-        body: JSON.stringify(input)
-    })
-}
-
 // get all notes by a prove Id - Investigator, Supervisor, Manager
-async function getAllByProveId(proveId: number): Promise<ResponseApi<NotesResponse[]>> {
-    return await fetchApi<NotesResponse[]>(`notes/proves/${proveId}`, {
+async function getAllByProveId(proveId: number, processId: number): Promise<ResponseApi<NotesResponse[]>> {
+    return await fetchApi<NotesResponse[]>(`process/${processId}/proves/${proveId}/note`, {
         method: "GET",
     })
 
 }
 
 // update a note - Investigator, Supervisor, Manager
-async function update(input: NotesUpdateRequest): Promise<ResponseApi<NotesResponse>> {
-    return await fetchApi<NotesResponse>(`notes/${input.id}`, {
-        method: "PUT",
+async function update(processId: number, input: NotesUpdateRequest): Promise<ResponseApi<NotesResponse>> {
+    return await fetchApi<NotesResponse>(`process/${processId}/note/${input.id}`, {
+        method: "PATCH",
         body: JSON.stringify(input)
     })
 }
 
-// delete a note - Investigator, Supervisor, Manager
-async function deleteById (id: number): Promise<ResponseApi<void>> {
-    return await fetchApi<void>(`notes/${id}`, {
-        method: "DELETE",
-    })
-}

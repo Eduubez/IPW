@@ -319,7 +319,7 @@ where pv.process_id = any(:ids)
 """
         )
             .bind("ids", processIds.toTypedArray())
-            .map(ProvesMapper())
+            .map(ProvesMapper("proves_"))
             .list()
             .groupBy { it.processId }
 

@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:8080/api
+
+@loginTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgxODY4OTE2LCJleHAiOjE3ODE4NjkyMTZ9.6j7JmKGdlb_sIMfdo3SdQHPuPyollkQBI4VsmDKZpgyNlz0xE0vCCkJJHx-0R5BaU1GFiEN9SEzQskmFNlXShA
+@accessTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MTg2ODkzNCwiZXhwIjoxNzgxODc2MTM0fQ.Hjv0Y0gZhCh8Y99iaU50B8wp4y_mHXWdXtzgbnNTXmXBlKUBVzVZEwusiQWfHUUG8ZdyO3vpM1TAnqqFsr1PZg
+
+@processId = 1
+
+@noteId = 1
+@proveId = 1
+
+### Login - Investigator
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "bob@ipw.pt",
+  "password": "12345"
+}
+
+### Select Role - Investigator
+POST {{baseUrl}}/users/auth/select-role
+Content-Type: application/json
+Authorization: Bearer {{loginTokenInvestigator}}
+
+{
+  "role": "investigator"
+}
+
+
+### Create Note - Investigator
+POST {{baseUrl}}/process/{{processId}}/note
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+    "processId": {{processId}},
+    "content": "This is a note for the process 5."
+}
+
+
+### Get Notes By Process Id - Investigator
+GET {{baseUrl}}/process/{{processId}}/note
+Authorization: Bearer {{accessTokenInvestigator}}
+
+
+### Get Notes By Process Id - Investigator
+GET {{baseUrl}}/process/{{processId}}/proves/{{proveId}}/note
+Authorization: Bearer {{accessTokenInvestigator}}
+
+
+### Update Note
+PATCH {{baseUrl}}/process/{{processId}}/note/{{noteId}}
+Content-Type: application/json
+Authorization: Bearer {{accessTokenInvestigator}}
+
+{
+  "content": "UPDATED!!!"
+}
