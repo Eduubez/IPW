@@ -31,7 +31,7 @@ class NoteServiceImpl(
             val error = validateNote(
                 note = note,
                 process = process,
-                proveId = note.provesId,
+                proveId = note.proveId,
                 userId = userId,
                 role = role
             )
@@ -40,7 +40,7 @@ class NoteServiceImpl(
 
             val noteId = noteRepository.createNote(
                 processId = note.processId,
-                provesId = note.provesId,
+                provesId = note.proveId,
                 content = note.content,
                 authorId = userId
             )
@@ -139,7 +139,7 @@ class NoteServiceImpl(
 
     private fun isValidNoteRequest(note: CreateNoteRequest): Boolean {
         val hasProcessId = note.processId != null
-        val hasProvesId = note.provesId != null
+        val hasProvesId = note.proveId != null
 
         // XOR: exactly one must be true
         return (hasProcessId && !hasProvesId) || (!hasProcessId && hasProvesId)

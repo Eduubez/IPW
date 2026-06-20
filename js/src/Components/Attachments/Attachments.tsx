@@ -2,11 +2,12 @@ import styles from "./attachments.module.css";
 import { AttachmentCard } from "../Cards/AttachmentCard/AttachmentCard";
 import { type ProveResponse } from "../../Utility/Api/ProvesApi";
 import PrimaryButton from "../Buttons/PrimaryButton/PrimaryButton";
-import { useState } from "react";
-import { PrimaryModal } from "../Modal/PrimaryModal";
+import { useEffect, useState } from "react";
 import { ProvesApi } from "../../Utility/Api/ProvesApi";
 import { useParams } from "react-router-dom";
 import { UploadAttachmentModal } from "./UploadAttachmentModal/UploadAttachmentModal";
+import { SlideShow } from "../SlideShow/SlideShow";
+import { NotesApi } from "../../Utility/Api/NotesApi";
 const buttonStyle = {
   display: "flex",
   justifyContent: "center",
@@ -27,9 +28,50 @@ export const Attachments = ({
 }) => {
   const params = useParams();
   const processId = Number(params.id);
-
   const attachments = proves || [];
   const [showNewAttachmentModal, setShowNewAttachmentModal] = useState(false);
+  const [notes, setNotes] = useState<
+    { proveId: number | null; content: string; createdAt: string }[]
+  >([]);
+
+  useEffect(() => {
+    if (!proves || proves.length === 0) return;
+
+    let cancelled = false;
+
+    const fetchAllNotes = async () => {
+      const results = await Promise.all(
+        proves.map((prove) => NotesApi.getAllByProveId(prove.id, processId)),
+      );
+
+      if (cancelled) return;
+
+      const allNotes = results.flatMap((res) => {
+        if (!res.success) return [];
+        return res.data.results.map((note) => ({
+          proveId: note.provesId,
+          content: note.content,
+          createdAt: note.createdAt,
+        }));
+      });
+
+      setNotes(allNotes);
+    };
+
+    fetchAllNotes();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [proves, processId]);
+
+  const attachmentsWithNotes = attachments.map((attachment) => {
+    const attachmentNotes = notes.filter((note) => note.proveId === attachment.id);
+    return { ...attachment, notes: attachmentNotes };
+  });
+ 
+
+
   const [file, setFile] = useState<File | null>(null);
 
   const handleFileUpload = async () => {
@@ -82,14 +124,20 @@ export const Attachments = ({
         </div>
       ) : (
         <div className={styles["attachments-body"]}>
-          {attachments.map((attachment, index) => (
-            <AttachmentCard
-              key={index}
-              fileName={attachment.fileName}
-              date={new Date(attachment.createdAt)}
-              downloadFn={() => handleDownload(processId, attachment.id)}
-            />
-          ))}
+          <SlideShow
+            offContentArrow={true}
+            content={attachmentsWithNotes.map((attachment, index) => (
+              <AttachmentCard
+                key={index}
+                fileName={attachment.fileName}
+                date={new Date(attachment.createdAt)}
+                downloadFn={() => handleDownload(processId, attachment.id)}
+                notes={attachment.notes}
+                processId={processId}
+                proveId={attachment.id}
+              />
+            ))}
+          />
         </div>
       )}
       <UploadAttachmentModal

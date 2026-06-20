@@ -1,5 +1,6 @@
 package pt.isel.ipw.http.controllers
 
+import jakarta.annotation.security.RolesAllowed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -8,6 +9,7 @@ import pt.isel.ipw.domain.DTO.input.UpdateNoteRequest
 import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.notes.toResponse
 import pt.isel.ipw.domain.process.toResponse
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.errors.Problem
@@ -17,11 +19,13 @@ import pt.isel.ipw.services.errors.mapSuccess
 import pt.isel.ipw.services.interfaces.NoteService
 
 @RestController
+@RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 @RequestMapping(ApiRoutes.Process.BASE)
 class NoteController(
     private val noteService: NoteService
 ) {
 
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
     @PostMapping(ApiRoutes.Process.NOTE_REL)
     fun createNote(
@@ -38,6 +42,8 @@ class NoteController(
         val result = noteService.createNote(id, note, userId, role)
         return handler(result, HttpStatus.CREATED) { error -> error.toHttp() }
     }
+
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
     @GetMapping(ApiRoutes.Process.NOTE_REL)
     fun getNotesByProcessId(
@@ -62,6 +68,7 @@ class NoteController(
     }
 
 
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
     @GetMapping(ApiRoutes.Process.PROVE_NOTE_REL)
     fun getNotesByProveId(
@@ -87,13 +94,14 @@ class NoteController(
     }
 
 
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
     @PatchMapping(ApiRoutes.Process.PROCESS_NOTE)
     fun updateNote(
         @PathVariable id: Int,
         @PathVariable noteId: Int,
         @RequestBody note: UpdateNoteRequest
-    ): ResponseEntity<*>{
+    ): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
 

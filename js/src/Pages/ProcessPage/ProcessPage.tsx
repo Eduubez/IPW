@@ -472,6 +472,9 @@ export default function ProcessPage() {
               <TimeLine items={timeLineActivityItens} loading={loading} />
             </div>
           </WithBackground>
+          <WithBackground>
+            <span>Notas</span>
+          </WithBackground>
         </div>
         <div className={styles["d-container"]}>
           <WithBackground>{activeView().reportView}</WithBackground>
@@ -480,14 +483,14 @@ export default function ProcessPage() {
           <WithBackground>
             <Attachments proves={apiResponse?.proves} />
           </WithBackground>
-            <WithBackground>
-              <div className={styles["activity-box"]}>
-                <span>{t("ProcessPage.activitiesSection")}</span>
-                {boxActivityItens.map((activity, index) => (
-                  <ActivityCard key={index} activity={activity} />
-                ))}
-              </div>
-            </WithBackground>
+          <WithBackground>
+            <div className={styles["activity-box"]}>
+              <span>{t("ProcessPage.activitiesSection")}</span>
+              {boxActivityItens.map((activity, index) => (
+                <ActivityCard key={index} activity={activity} />
+              ))}
+            </div>
+          </WithBackground>
         </div>
       </div>
       <PrimaryModal

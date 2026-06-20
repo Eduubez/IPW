@@ -13,3 +13,8 @@
     background: none;
     border: none;
 }
+
+.slide-show-outter-arrow .next-button {
+    display:flex;
+    justify-content: end;
+}

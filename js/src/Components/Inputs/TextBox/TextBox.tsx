@@ -6,7 +6,7 @@ export default function TextBox({
   value,
   icon,
   onChange,
-  mandatory
+  mandatory,
 }: {
   label: string;
   type: string;
