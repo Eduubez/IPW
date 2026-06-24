@@ -22,6 +22,22 @@ import type { PriorityType } from "../../Components/Badge/PriorityBadge/Priority
 import { Attachments } from "../../Components/Attachments/Attachments";
 import { ActivityCard } from "../../Components/Cards/ActivityCard/ActivityCard";
 import { formatDate } from "../../Utility/Helpers/DateHelpers";
+import { NoteCard } from "../../Components/Cards/NoteCard/NoteCard";
+import TextArea from "../../Components/Inputs/TextArea/TextArea";
+import { NotesApi } from "../../Utility/Api/NotesApi";
+
+const newNoteButtonStyle = {
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  width: "2rem",
+  height: "2rem",
+  borderRadius: "50%",
+  backgroundColor: "var(--color-dark-blue-100)",
+  color: "white",
+  fontSize: "1.5rem",
+  cursor: "pointer",
+};
 
 const TIME_LINE_ACTIVITY_TYPE = [
   "CREATED_PROCESS",
@@ -70,6 +86,8 @@ export default function ProcessPage() {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null);
   const [showPriorityModal, setShowPriorityModal] = useState(false);
+  const [showNewNoteModal, setShowNewNoteModal] = useState(false);
+  const [newNote, setNewNote] = useState("");
 
   const openConfirmModal = (action: () => void) => {
     setConfirmAction(() => action);
@@ -86,6 +104,9 @@ export default function ProcessPage() {
     const response = await ProcessApi.getById(Number(id));
     if (response.success) {
       setApiResponse(response.data);
+    } else {
+      window.history.replaceState(null, "", "/not-authorized"); // Used to be able to use the back button
+      navigate("/not-authorized");
     }
   };
   const fetchProcessActivity = async () => {
@@ -264,6 +285,23 @@ export default function ProcessPage() {
   const processState = normalizeState(apiResponse?.state);
   const hasReport = (report?.content?.length ?? 0) > 0;
 
+  const handleSubmitProcessNote = async () => {
+    const requestNote: {
+      processId: number;
+      proveId: number | null;
+      content: string;
+    } = {
+      processId: Number(id),
+      proveId: null,
+      content: newNote,
+    };
+
+    const response = await NotesApi.createNote(Number(id), requestNote);
+    if (response.success) {
+      window.location.reload();
+    }
+  };
+
   //#region supervisor
   const aproveProcess = async () => {
     const response = await ProcessApi.approve(Number(id));
@@ -427,7 +465,6 @@ export default function ProcessPage() {
       </div>
     );
   };
-
   return (
     <div className={styles["page-container"]}>
       <div className={styles["header-container"]}>
@@ -473,7 +510,29 @@ export default function ProcessPage() {
             </div>
           </WithBackground>
           <WithBackground>
-            <span>Notas</span>
+            <div className={styles["d-container"]}>
+              <div className={styles["note-header"]}>
+                <span>Notas</span>
+                <PrimaryButton
+                  style={newNoteButtonStyle}
+                  enabled={true}
+                  text="+"
+                  onClick={() => setShowNewNoteModal(true)}
+                />
+              </div>
+
+              {apiResponse?.notes?.length ? (
+                <div className={styles["note-card-container"]}>
+                  {apiResponse.notes.map((note, index) => (
+                    <NoteCard key={index} note={note} />
+                  ))}
+                </div>
+              ) : (
+                <div className={styles["no-attachments"]}>
+                  <span>Nenhuma nota encontrada.</span>
+                </div>
+              )}
+            </div>
           </WithBackground>
         </div>
         <div className={styles["d-container"]}>
@@ -519,6 +578,23 @@ export default function ProcessPage() {
         header={t("ProcessPage.priorityModal.header")}
         body={changePriorityModal(apiResponse?.priority, handleChangePriority)}
       />
-    </div>
-  );
+      <PrimaryModal
+        open={showNewNoteModal}
+        onClose={() => setShowNewNoteModal(false)}
+        header={t("ProcessPage.newNoteModal.header")}
+        body={
+          <div className={styles["new-note-modal"]}>
+            <TextArea value={newNote} onChange={setNewNote} label={""} />
+            <div className={styles["modal-button-container"]}>
+              <PrimaryButton
+                enabled={true}
+                text={t("ProcessPage.newNoteModal.confirm")}
+                onClick={handleSubmitProcessNote}
+              />
+            </div>
+          </div>
+        }
+      />
+    </div>)
+  ;
 }

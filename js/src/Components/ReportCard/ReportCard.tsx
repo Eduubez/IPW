@@ -23,7 +23,6 @@ export function ReportCard({
     report?.content || null,
   );
   const [openCreateReportModal, setOpenCreateReportModal] = useState(false);
-  const [openNotesModal, setOpenNotesModal] = useState(false);
 
   useEffect(() => {
     setReportContent(report?.content || null);
@@ -34,15 +33,11 @@ export function ReportCard({
     setEditMode(!editMode);
   };
 
-  const handleAddNotes = () => {
-    // Lógica para adicionar notas
-  };
-
   const handleSaveReport = async () => {
     setSubmitting(true);
     try {
       const response = await ReportApi.updateReport(processId, reportContent!);
-      if(response.success) {
+      if (response.success) {
         window.location.reload(); // Recarrega a página para mostrar o relatório atualizado
       }
     } finally {
@@ -55,10 +50,9 @@ export function ReportCard({
     setSubmitting(true);
     try {
       const response = await ReportApi.createReport(processId, reportContent!);
-      if(response.success) {
+      if (response.success) {
         window.location.reload(); // Recarrega a página para mostrar o novo relatório criado
       }
-
     } finally {
       setSubmitting(false);
       setOpenCreateReportModal(false);
@@ -102,74 +96,36 @@ export function ReportCard({
                 />
               </>
             )}
-            <PrimaryButton
-              style={{ width: "140px", height: "fit-content" }}
-              enabled={true}
-              text={t("reportCard.notes")}
-              onClick={() => setOpenNotesModal(true)}
-            />
           </div>
         </>
       )}
-      {openCreateReportModal && (
-        <PrimaryModal
-          open={openCreateReportModal}
-          onClose={() => setOpenCreateReportModal(false)}
-          header={t("reportCard.createReportHeader")}
-          body={
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                  height: "100%",
-                  width: "100%",
-                }}>
-                {reportTextArea()}
-                <div className={styles["report-card-actions"]}>
-                  <PrimaryButton
-                    style={{ width: "120px", height: "fit-content" }}
-                    enabled={isCreateEnabled}
-                    text={t("reportCard.createReport")}
-                    onClick={handleCreateReport}
-                  />
-                </div>
+      <PrimaryModal
+        open={openCreateReportModal}
+        onClose={() => setOpenCreateReportModal(false)}
+        header={t("reportCard.createReportHeader")}
+        body={
+          <>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: "1rem",
+                height: "100%",
+                width: "100%",
+              }}>
+              {reportTextArea()}
+              <div className={styles["report-card-actions"]}>
+                <PrimaryButton
+                  style={{ width: "120px", height: "fit-content" }}
+                  enabled={isCreateEnabled}
+                  text={t("reportCard.createReport")}
+                  onClick={handleCreateReport}
+                />
               </div>
-            </>
-          }
-        />
-      )}
-      {openNotesModal && (
-        <PrimaryModal
-          open={openNotesModal}
-          onClose={() => setOpenNotesModal(false)}
-          header={t("reportCard.addNotesHeader")}
-          body={
-            <>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "1rem",
-                  height: "100%",
-                  width: "100%",
-                }}>
-                <span>{t("reportCard.notesNotImplemented")}</span>
-
-                <div className={styles["report-card-actions"]}>
-                  <PrimaryButton
-                    style={{ width: "120px", height: "fit-content" }}
-                    enabled={false}
-                    text={t("reportCard.addNotes")}
-                    onClick={handleAddNotes}
-                  />
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
+            </div>
+          </>
+        }
+      />
     </div>
   );
 }

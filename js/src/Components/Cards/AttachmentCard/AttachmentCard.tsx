@@ -58,11 +58,14 @@ export const AttachmentCard = ({
           </button>
         </div>
         <div className={styles["new-note-button-container"]}>
-          <PrimaryButton
-            text="Adicionar Nota "
+          <button
             onClick={() => setShowNoteModal(true)}
-            enabled={true}
-          />
+            className={styles["download-button"]}>
+            <span
+              className={`material-symbols-outlined ${styles["card-download-button"]}`}>
+              note_add
+            </span>
+          </button>
         </div>
         <PrimaryModal
           open={showNoteModal}
@@ -91,7 +94,9 @@ export const AttachmentCard = ({
           {notes.map((note, index) => (
             <div key={index} className={styles["note"]}>
               <span className="paragraph-s-regular">{note.content}</span>
-              <span className="paragraph-s-regular">{formatDate(new Date(note.createdAt))}</span>
+              <span className="paragraph-s-regular">
+                {formatDate(new Date(note.createdAt))}
+              </span>
             </div>
           ))}
         </div>

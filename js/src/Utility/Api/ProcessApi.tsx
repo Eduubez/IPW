@@ -64,7 +64,7 @@ type ActivityType = {
   createdAt: string;
 };
 
-type NotesType = {
+export type NotesType = {
   id: number;
   processId: number | null;
   proves: number | null;
