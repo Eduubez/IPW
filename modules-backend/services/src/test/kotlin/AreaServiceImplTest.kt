@@ -10,19 +10,11 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class AreaServiceImplTest {
-    companion object {
-        val jdbi = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5434/ipw_test")
-                user = "postgres"
-                password = "1234"
-            }
-        ).configureWithAppRequirements()
-        private val areaService = AreaServiceImpl(
-            JdbiTransactionManager(jdbi)
-        )
-    }
+    private val jdbi = DbConfig.getConnection()
 
+    private val areaService = AreaServiceImpl(
+        JdbiTransactionManager(jdbi)
+    )
     @BeforeTest
     fun cleanUp() {
         jdbi.useHandle<Exception> { handle ->

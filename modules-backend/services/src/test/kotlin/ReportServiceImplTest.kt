@@ -19,13 +19,8 @@ import kotlin.test.assertEquals
 class ReportServiceImplTest {
 
     companion object {
-        val jdbi = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5433/postgres")
-                user = "postgres"
-                password = "changeit"
-            }
-        ).configureWithAppRequirements()
+        private val jdbi = DbConfig.getConnection()
+
 
         private val trxManager = JdbiTransactionManager(jdbi)
         private val activityService = ActivityServiceImpl(trxManager)

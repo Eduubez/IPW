@@ -17,13 +17,8 @@ import kotlin.test.assertTrue
 class UserServiceImplTest {
 
     companion object {
-        private val jdbi = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5434/ipw_test")
-                user = "postgres"
-                password = "1234"
-            }
-        ).configureWithAppRequirements()
+        private val jdbi = DbConfig.getConnection()
+
 
         private const val JWT_SECRET =
             "1234567890123456789012345678901234567890123456789012345678901234"
