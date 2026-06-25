@@ -18,8 +18,13 @@ import kotlin.test.Test
 
 class HistoryServiceTest {
     companion object {
-        private val jdbi = DbConfig.getConnection()
-
+        val jdbi = Jdbi.create(
+            PGSimpleDataSource().apply {
+                setUrl("jdbc:postgresql://localhost:5434/ipw_test")
+                user = "postgres"
+                password = "1234"
+            }
+        ).configureWithAppRequirements()
         private val historyService = HistoryServiceImpl(
             JdbiTransactionManager(jdbi)
         )

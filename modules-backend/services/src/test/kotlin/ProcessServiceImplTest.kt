@@ -18,8 +18,13 @@ import kotlin.test.assertEquals
 class ProcessServiceImplTest {
 
     companion object {
-        private val jdbi = DbConfig.getConnection()
-
+        val jdbi = Jdbi.create(
+            PGSimpleDataSource().apply {
+                setUrl("jdbc:postgresql://localhost:5433/postgres")
+                user = "postgres"
+                password = "changeit"
+            }
+        ).configureWithAppRequirements()
 
         private val tokenService = JwtTokenService(
             secret = "1234567890123456789012345678901234567890123456789012345678901234",

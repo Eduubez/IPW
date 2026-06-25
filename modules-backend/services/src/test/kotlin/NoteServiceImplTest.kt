@@ -21,7 +21,13 @@ import kotlin.test.assertEquals
 class NoteServiceImplTest {
 
     companion object {
-        private val jdbi = DbConfig.getConnection()
+        val jdbi = Jdbi.create(
+            PGSimpleDataSource().apply {
+                setUrl("jdbc:postgresql://localhost:5433/postgres")
+                user = "postgres"
+                password = "changeit"
+            }
+        ).configureWithAppRequirements()
 
         private val trxManager = JdbiTransactionManager(jdbi)
 
@@ -91,14 +97,14 @@ class NoteServiceImplTest {
         }
 
     private fun createNoteOnProcess(processId: Int, authorId: Int = INVESTIGATOR_ID): Int {
-        val req = CreateNoteRequest(processId = processId, proveId = null, content = "A note on the process")
+        val req = CreateNoteRequest(processId = processId, provesId = null, content = "A note on the process")
         val res = noteService.createNote(processId, req, authorId, Roles.INVESTIGATOR)
         assertTrue(res is Success)
         return (res as Success).value
     }
 
     private fun createNoteOnProve(proveId: Int, processId: Int, authorId: Int = INVESTIGATOR_ID): Int {
-        val req = CreateNoteRequest(processId = null, proveId = proveId, content = "Note for prove")
+        val req = CreateNoteRequest(processId = null, provesId = proveId, content = "Note for prove")
         val res = noteService.createNote(processId, req, authorId, Roles.INVESTIGATOR)
         assertTrue(res is Success)
         return (res as Success).value
@@ -111,7 +117,7 @@ class NoteServiceImplTest {
     @Test
     fun `createNote - success on process`() {
         val processId = createProcess()
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, proveId = null, content = "Valid content"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, provesId = null, content = "Valid content"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Success)
         assertTrue((result as Success).value > 0)
     }
@@ -119,7 +125,7 @@ class NoteServiceImplTest {
     @Test
     fun `createNote - empty content returns InvalidContent`() {
         val processId = createProcess()
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, proveId = null, content = ""), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, provesId = null, content = ""), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.InvalidContent, (result as Failure).value)
     }
@@ -127,7 +133,7 @@ class NoteServiceImplTest {
     @Test
     fun `createNote - invalid note request both ids null returns InvalidNoteRequest`() {
         val processId = createProcess()
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = null, proveId = null, content = "Some content"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = null, provesId = null, content = "Some content"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.InvalidNoteRequest, (result as Failure).value)
     }
@@ -136,14 +142,14 @@ class NoteServiceImplTest {
     fun `createNote - invalid note request both ids present returns InvalidNoteRequest`() {
         val processId = createProcess()
         val proveId = createProve(processId)
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, proveId = proveId, content = "Some content"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, provesId = proveId, content = "Some content"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.InvalidNoteRequest, (result as Failure).value)
     }
 
     @Test
     fun `createNote - process not found returns ProcessNotFound`() {
-        val result = noteService.createNote(9999, CreateNoteRequest(processId = 9999, proveId = null, content = "Valid"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(9999, CreateNoteRequest(processId = 9999, provesId = null, content = "Valid"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.ProcessNotFound, (result as Failure).value)
     }
@@ -151,7 +157,7 @@ class NoteServiceImplTest {
     @Test
     fun `createNote - triator not allowed returns UnauthorizedAccess`() {
         val processId = createProcess()
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, proveId = null, content = "Valid"), TRIATOR_ID, Roles.TRIATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, provesId = null, content = "Valid"), TRIATOR_ID, Roles.TRIATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.UnauthorizedAccess, (result as Failure).value)
     }
@@ -160,7 +166,7 @@ class NoteServiceImplTest {
     fun `createNote - other investigator not assigned returns UnauthorizedAccess`() {
         val processId = createProcess(investigatorId = INVESTIGATOR_ID)
         val otherInvestigator = 8 // not assigned to this process in sample data
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, proveId = null, content = "Valid"), otherInvestigator, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = processId, provesId = null, content = "Valid"), otherInvestigator, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.UnauthorizedAccess, (result as Failure).value)
     }
@@ -173,7 +179,7 @@ class NoteServiceImplTest {
     fun `createNote - success on prove`() {
         val processId = createProcess()
         val proveId = createProve(processId)
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = null, proveId = proveId, content = "Valid content for prove"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = null, provesId = proveId, content = "Valid content for prove"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Success)
         assertTrue((result as Success).value > 0)
     }
@@ -181,7 +187,7 @@ class NoteServiceImplTest {
     @Test
     fun `createNote - invalid prove id returns ProveNotFound`() {
         val processId = createProcess()
-        val result = noteService.createNote(processId, CreateNoteRequest(processId = null, proveId = 9999, content = "Valid"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
+        val result = noteService.createNote(processId, CreateNoteRequest(processId = null, provesId = 9999, content = "Valid"), INVESTIGATOR_ID, Roles.INVESTIGATOR)
         assertTrue(result is Failure)
         assertEquals(NoteError.ProveNotFound, (result as Failure).value)
     }
