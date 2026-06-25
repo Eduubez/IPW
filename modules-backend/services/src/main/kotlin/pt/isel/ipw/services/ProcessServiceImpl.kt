@@ -65,10 +65,6 @@ class ProcessServiceImpl(
                 return@run failure(validation.value)
             }
 
-            if (note != null) { /*noteServices.createNote(note)*/
-            }
-            // Deveria estar a utilizar o NoteServices para escrever as notas
-
             val processId = processRepository.createProcess(
                 userId,
                 name,
@@ -158,15 +154,13 @@ class ProcessServiceImpl(
 
             val validation = validateFilters(limit, offset, areaId)
 
-            val resolvedId = resolvedUserId(userId, role)
-
             if (validation is Failure) {
                 return@run failure(validation.value)
             }
 
             val targetStates = AssignmentStateRole.getStates(role).map { it.toString() }
 
-            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?: 0, resolvedId, targetStates)
+            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?: 0, userId, role, targetStates)
             return@run success(processes)
 
         }
@@ -366,11 +360,15 @@ class ProcessServiceImpl(
         userId: Int,
         role: String
     ): ProcessValidationResult {
-        if (process.investigator?.id == userId || process.supervisor?.id == userId || role == Roles.MANAGER) {
-            return success(Unit)
+        val authorized = when (role) {
+            Roles.MANAGER -> true
+            Roles.INVESTIGATOR -> process.investigator?.id == userId
+            Roles.SUPERVISOR -> process.supervisor?.id == userId
+            Roles.TRIATOR -> process.triator.id == userId
+            else -> false
         }
-        return failure(ProcessError.UnauthorizedAccess)
 
+        return if (authorized) success(Unit) else failure(ProcessError.UnauthorizedAccess)
     }
 
 

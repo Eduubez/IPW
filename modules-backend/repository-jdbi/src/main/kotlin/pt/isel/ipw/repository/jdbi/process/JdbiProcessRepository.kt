@@ -4,6 +4,7 @@ import org.jdbi.v3.core.Handle
 import org.jdbi.v3.core.kotlin.mapTo
 import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.domain.process.Prove
+import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.ProcessRepository
 import pt.isel.ipw.repository.jdbi.mappers.ActivityMapper
 import pt.isel.ipw.repository.jdbi.mappers.notes.NoteMapper
@@ -234,20 +235,25 @@ class JdbiProcessRepository(
         offset: Int,
         limit: Int,
         areaId: Int,
-        userId: Int?,
+        userId: Int,
+        role: String,
         processStates: List<String>
     ): List<ProcessView> {
+        val userCondition = when (role) {
+            Roles.MANAGER    -> "true"
+            Roles.INVESTIGATOR -> "p.investigator_id = :userId"
+            Roles.SUPERVISOR   -> "p.supervisor_id   = :userId"
+            Roles.TRIATOR      -> "p.triator_id      = :userId"
+            else               -> "false"
+        }
+
         val processIds = handle.createQuery(
             """
 select p.id
 from Process p
 left join Process_State ps on ps.process_id = p.id and ps.end_date is null
 left join State st         on st.id = ps.state_id
-where (:userId::int is null or (
-    p.triator_id      = :userId or
-    p.investigator_id = :userId or
-    p.supervisor_id   = :userId
-))
+where ($userCondition)
 and (:areaId = 0 or p.area_id = :areaId)
 and (:hasStates = false or st.name = any(:processStates))
 order by p.creation_date desc

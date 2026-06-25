@@ -20,6 +20,7 @@ private val processErrorMap = mapOf(
     ProcessError.InvalidOffset to Problem.invalidOffset,
     ProcessError.InvalidAreaId to Problem.invalidAreaId,
     ProcessError.ReportNotFound to Problem.reportNotFound,
+    ProcessError.UnauthorizedAccess to Problem.unauthorized
 )
 
 fun ProcessError.toHttp(): Pair<Int, Problem> =

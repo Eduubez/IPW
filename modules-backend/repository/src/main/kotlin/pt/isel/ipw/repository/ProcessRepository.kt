@@ -29,7 +29,8 @@ interface ProcessRepository {
         offset: Int,
         limit: Int,
         areaId: Int,
-        userId: Int?,
+        userId: Int,
+        role:String,
         processStates: List<String>
     ): List<ProcessView>
 

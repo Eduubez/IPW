@@ -4,8 +4,10 @@ import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.ActivityActions
 import pt.isel.ipw.domain.DTO.input.CreateNoteRequest
 import pt.isel.ipw.domain.mapToString
+import pt.isel.ipw.domain.process.AssignmentStateRole
 import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.domain.roles.Roles
+import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.NoteError
@@ -27,6 +29,10 @@ class NoteServiceImpl(
         return transactionManager.run {
             val process = processRepository.getById(processId)
                 ?: return@run failure(NoteError.ProcessNotFound)
+
+            if(!isPossibleToAddNote(process, role)){
+                return@run failure(NoteError.UnauthorizedAccess)
+            }
 
             val error = validateNote(
                 note = note,
@@ -166,4 +172,10 @@ class NoteServiceImpl(
         provesRepository.getById(proveId) ?: return false
         return true
     }
+
+    private fun isPossibleToAddNote(process:ProcessView, role:String):Boolean {
+        val targetStates = AssignmentStateRole.getStates(role)
+        return process.state in targetStates
+     }
+
 }
