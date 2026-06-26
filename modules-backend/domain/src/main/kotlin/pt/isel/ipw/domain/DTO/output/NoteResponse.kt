@@ -7,6 +7,7 @@ data class NoteResponse (
     val provesId: Int?,
     val content: String,
     val authorId: Int,
+    val authorName: String,
     val createdAt: String,
     )
 

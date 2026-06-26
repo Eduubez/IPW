@@ -101,8 +101,9 @@ class JdbiProcessRepository(
             n.proves_id  as proves_id,
             n.content    as content,
             n.author_id  as author_id,
-            n.created_at as created_at
-        from Notes n
+            n.created_at as created_at,
+            u.name as author_name
+        from Notes n join Users u on n.id = u.id
         where n.process_id = :id
         """
         )
@@ -279,8 +280,9 @@ select
     n.proves_id  as proves_id,
     n.content    as content,
     n.author_id  as author_id,
-    n.created_at as created_at
-from Notes n
+    n.created_at as created_at,
+    u.name as author_name
+from Notes n join Users u on n.id = u.id
 where n.process_id = any(:ids)
 """
         )

@@ -8,6 +8,7 @@ type NotesResponse = {
   provesId: number | null;
   content: string;
   authorId: number;
+  userId: string;
   createdAt: string;
 };
 

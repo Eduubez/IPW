@@ -1,12 +1,6 @@
 import TestEitherUtils.assertFailure
 import TestEitherUtils.assertSuccess
-import org.jdbi.v3.core.Jdbi
-import org.postgresql.ds.PGSimpleDataSource
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import pt.isel.ipw.repository.jdbi.configureWithAppRequirements
-import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
-import pt.isel.ipw.services.UserServiceImpl
-import pt.isel.ipw.services.auth.JwtTokenService
+
 import pt.isel.ipw.services.errors.UserError
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -17,40 +11,16 @@ import kotlin.test.assertTrue
 class UserServiceImplTest {
 
     companion object {
-        private val jdbi = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5434/ipw_test")
-                user = "postgres"
-                password = "1234"
-            }
-        ).configureWithAppRequirements()
+        private val jdbi = DbConfig.getConnection()
+        private val testUtils = TestUtils(jdbi)
 
-        private const val JWT_SECRET =
-            "1234567890123456789012345678901234567890123456789012345678901234"
 
-        private const val LOGIN_TOKEN_TTL_MINUTES = 5L
-        private const val ACCESS_TOKEN_TTL_MINUTES = 120L
-        private const val REFRESH_TOKEN_TTL_MINUTES = 10080L
-
-        private val tokenService = JwtTokenService(
-            secret = JWT_SECRET,
-            loginTokenTtlMinutes = LOGIN_TOKEN_TTL_MINUTES,
-            accessTokenTtlMinutes = ACCESS_TOKEN_TTL_MINUTES,
-            refreshTokenTtlMinutes = REFRESH_TOKEN_TTL_MINUTES
-        )
-
-        private val userService = UserServiceImpl(
-            transactionManager = JdbiTransactionManager(jdbi),
-            passwordEncoder = BCryptPasswordEncoder(),
-            tokenService = tokenService
-        )
+        private val userService = testUtils.userService
     }
 
     @BeforeTest
     fun cleanUp() {
-        jdbi.useHandle<Exception> { handle ->
-            handle.execute("call public.sample_data()")
-        }
+        testUtils.cleanRepo()
     }
 
     @Test

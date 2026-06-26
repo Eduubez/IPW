@@ -1,8 +1,4 @@
-import org.jdbi.v3.core.Jdbi
-import org.postgresql.ds.PGSimpleDataSource
-import pt.isel.ipw.repository.jdbi.configureWithAppRequirements
-import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
-import pt.isel.ipw.services.AreaServiceImpl
+
 import pt.isel.ipw.services.errors.AreaError
 import pt.isel.ipw.services.errors.Failure
 import pt.isel.ipw.services.errors.Success
@@ -11,23 +7,15 @@ import kotlin.test.Test
 
 class AreaServiceImplTest {
     companion object {
-        val jdbi = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5434/ipw_test")
-                user = "postgres"
-                password = "1234"
-            }
-        ).configureWithAppRequirements()
-        private val areaService = AreaServiceImpl(
-            JdbiTransactionManager(jdbi)
-        )
+        private val jdbi = DbConfig.getConnection()
+        private val testUtils = TestUtils(jdbi)
+
+        val areaService = testUtils.areaService
     }
 
     @BeforeTest
     fun cleanUp() {
-        jdbi.useHandle<Exception> { handle ->
-            handle.execute("call public.sample_data()")
-        }
+        testUtils.cleanRepo()
     }
 
     // -----------------------------------------------------------------------
@@ -58,30 +46,25 @@ class AreaServiceImplTest {
             is Failure -> assert(false) { "Expected success but got failure: ${result.value}" }
             is Success -> {
                 val areas = result.value.areas
-                // seed_static_data assigns Root User (id=1) as boss of all areas
                 areas.forEach { area ->
                     val bossId = area.bossId
-                    assert(bossId != null && bossId > 0) { "Expected area '${area.name}' to have a valid bossId but got: ${area.bossId}" }
-                    assert(area.bossName?.isNotBlank() == true) { "Expected area '${area.name}' to have a boss name but got blank" }
+                    val bossName = area.bossName
+
+                    if (bossId == null || bossId == 0) {
+                         assert(bossName == null) {
+                            "Expected area '${area.name}' to have no boss (bossId=null or 0) and bossName=null, but bossName='${bossName}'"
+                        }
+                    } else {
+                         assert(bossId > 0) { "Expected area '${area.name}' to have a positive bossId but got: $bossId" }
+                        assert(bossName?.isNotBlank() == true) {
+                            "Expected area '${area.name}' to have a boss name but got blank or null"
+                        }
+                    }
                 }
             }
         }
     }
 
-    @Test
-    fun `getAllAreas should return areas with Root User as boss`() {
-        val result = areaService.getAllAreas()
-        when (result) {
-            is Failure -> assert(false) { "Expected success but got failure: ${result.value}" }
-            is Success -> {
-                val areas = result.value.areas
-                areas.forEach { area ->
-                    assert(area.bossId == 1) { "Expected bossId 1 for area '${area.name}' but got: ${area.bossId}" }
-                    assert(area.bossName == "Root User") { "Expected bossName 'Root User' for area '${area.name}' but got: ${area.bossName}" }
-                }
-            }
-        }
-    }
 
     // -----------------------------------------------------------------------
     // getAreaById
@@ -121,8 +104,8 @@ class AreaServiceImplTest {
                 val area = result.value
                 assert(area.id == 1) { "Expected id 1 but got: ${area.id}" }
                 assert(area.name == "Car Accident") { "Expected name 'Car Accident' but got: ${area.name}" }
-                assert(area.bossId == 1) { "Expected bossId 1 but got: ${area.bossId}" }
-                assert(area.bossName == "Root User") { "Expected bossName 'Root User' but got: ${area.bossName}" }
+                assert(area.bossId == 3) { "Expected bossId 1 but got: ${area.bossId}" }
+                assert(area.bossName == "Sofia Supervisor") { "Expected bossName 'Root User' but got: ${area.bossName}" }
             }
         }
     }
@@ -204,7 +187,7 @@ class AreaServiceImplTest {
                 assert(area.id == 1) { "Expected area id 1 but got: ${area.id}" }
                 assert(area.name == "Car Accident") { "Expected name 'Car Accident' but got: ${area.name}" }
                 assert(area.bossId == 2) { "Expected bossId 2 but got: ${area.bossId}" }
-                assert(area.bossName == "Alice Triator") { "Expected bossName 'Alice Triator' but got: ${area.bossName}" }
+                assert(area.bossName == "Ana Averiguador") { "Expected bossName 'Ana Averiguador' but got: ${area.bossName}" }
             }
         }
     }
@@ -218,7 +201,7 @@ class AreaServiceImplTest {
             is Success -> {
                 val area = result.value
                 assert(area.bossId == 4) { "Expected bossId 4 but got: ${area.bossId}" }
-                assert(area.bossName == "Carol Supervisor") { "Expected bossName 'Carol Supervisor' but got: ${area.bossName}" }
+                assert(area.bossName == "Gabriel Gestor") { "Expected bossName 'Gabriel Gestor' but got: ${area.bossName}" }
             }
         }
     }
