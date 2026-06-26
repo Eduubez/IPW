@@ -161,6 +161,7 @@ class ProcessServiceImpl(
             val targetStates = AssignmentStateRole.getStates(role).map { it.toString() }
 
             val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?: 0, userId, role, targetStates)
+
             return@run success(processes)
 
         }

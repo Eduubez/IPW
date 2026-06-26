@@ -53,8 +53,6 @@ type LocationType = {
   longitude: string;
 };
 
-
-
 type ActivityType = {
   id: number;
   processId: number;
@@ -197,9 +195,18 @@ async function changePriority(
 
 // Cancel a process - Manager
 async function cancelProcess(id: number): Promise<ResponseApi<void>> {
-  return await fetchApi<void>(`process/${id}/cancel`, {
-    method: "PUT",
+  const response = await fetchApi<void>(`process/${id}/cancel`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
   });
+  if (response.success) {
+    enqueueSnackbar("Process canceled successfully", { variant: "success" });
+  } else {
+    enqueueSnackbar("Failed to cancel process", { variant: "error" });
+  }
+  return response;
 }
 
 // Approve a process - Supervisor, Manager

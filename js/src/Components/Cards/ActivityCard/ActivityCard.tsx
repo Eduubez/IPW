@@ -1,4 +1,3 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "../../../Utility/Helpers/DateHelpers";
 import styles from "./activitycard.module.css";
@@ -6,6 +5,7 @@ import styles from "./activitycard.module.css";
 type ActivityCardProps = {
     label: string;
     date: Date | string;
+    userName?: string;
 };
 
 export function ActivityCard({ activity }: { activity: ActivityCardProps }) {
@@ -16,7 +16,7 @@ export function ActivityCard({ activity }: { activity: ActivityCardProps }) {
 
     return (
         <div className={styles["activity-card"]}>
-            <span className={styles["activity-description"]}>{t(`ActivityItem.${activity.label}`)}</span>
+            <span className={styles["activity-description"]}>{activity.userName ? `${activity.userName} - ` : ""}{t(`ActivityItem.${activity.label}`)}</span>
             <span className={styles["activity-date"]}>{formattedDate}</span>
         </div>
     );

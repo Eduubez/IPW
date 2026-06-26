@@ -226,8 +226,12 @@
     "submitProcess": "Submeter Processo",
     "approveProcess": "Aprovar Processo",
     "rejectProcess": "Rejeitar Processo",
+    "cancelProcess": "Cancelar Processo",
     "notImplemented": "Vista não implementada para este papel",
     "stateSection": "Estado",
+    "notesSection": "Notas",
+    "noNotes": "Nenhuma nota encontrada.",
+    "noAttachments": "Nenhum anexo encontrado.",
     "attachmentsSection": "Anexos",
     "activitiesSection": "Atividades",
     "confirmModal": {
@@ -238,6 +242,10 @@
     "priorityModal": {
       "header": "Alterar Prioridade",
       "description": "Esta ação trocará a prioridade deste processo que atualmente é {{current}} para:"
+    },
+    "newNoteModal": {
+      "header": "Nova Nota",
+      "confirm": "Adicionar"
     }
   },
   "reportCard": {
@@ -270,6 +278,7 @@
     "CHANGED_PRIORITY": "Prioridade do processo alterada",
     "ASSIGNED_SUPERVISOR": "Supervisor atribuído ao processo",
     "CHANGED_END_DATE": "Data de expiração do processo alterada",
-    "CREATED_REPORT": "Relatório criado para este processo"
+    "CREATED_REPORT": "Criou um relatório",
+    "CREATED_NOTE": "Adicionou uma nota"
   }
 }

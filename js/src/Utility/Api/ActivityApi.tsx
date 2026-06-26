@@ -13,7 +13,7 @@ export type ActivityResponse = {
     action: string,
     description: string,
     createdAt: string,
-    userName: string
+    authorName : string
 }
 
 export const ActivityApi = {getActivityByProcess, getActivityByUser}
@@ -30,10 +30,10 @@ async function getActivityByProcess(processId: number, offset:number, limit: num
     })
 }
 
-async function getActivityByUser(userId: number, offset:number, limit: number): Promise<ResponseApi<ActivityResponse[]>> {
+async function getActivityByUser(userId: number, offset:number, limit: number): Promise<ResponseApi<ListActivityResponse>> {
     const query = buildQuery({offset, limit})
 
-    return await fetchApi<ActivityResponse[]>(`activity/users/${userId}${query}`, {
+    return await fetchApi<ListActivityResponse>(`activity/users/${userId}${query}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${userStore.getAccessToken()}`
