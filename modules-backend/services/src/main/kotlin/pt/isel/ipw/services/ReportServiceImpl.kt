@@ -30,13 +30,11 @@ class ReportServiceImpl(
             if (!validateContent(content)) return@run failure(ReportError.InvalidContent)
             val process = processRepository.getById(processId) ?: return@run failure(ReportError.ProcessNotFound)
 
-
             if (!isInvestigator(process, userId)) return@run failure(ReportError.Unauthorized)
 
             val reportId = reportRepository.createReport(processId, content)
 
             processRepository.changeState(processId, State.ON_GOING.toString())
-
 
             activityService.createActivity(
                 processId,

@@ -9,6 +9,7 @@ data class Note (
     val provesId: Int?,
     val content: String,
     val authorId: Int,
+    val authorName: String,
     val creationDate: LocalDateTime
 )
 
@@ -23,6 +24,7 @@ fun Note.toResponse(): NoteResponse =
         provesId = provesId,
         content = content,
         authorId = authorId,
+        authorName = authorName,
         createdAt = creationDate.toString(),
     )
 

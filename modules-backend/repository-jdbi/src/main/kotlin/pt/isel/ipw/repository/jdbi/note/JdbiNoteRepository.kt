@@ -54,13 +54,14 @@ class JdbiNoteRepository(
         handle.createQuery(
             """
             select
-                id,
-                process_id,
-                proves_id,
-                content,
-                author_id,
-                created_at
-            from Notes
+                n.id,
+                n.process_id,
+                n.proves_id,
+                n.content,
+                n.author_id,
+                n.created_at,
+                u.name as author_name
+            from Notes n join Users u on n.id = u.id
             where process_id = :processId
             order by created_at desc
             """
@@ -73,13 +74,14 @@ class JdbiNoteRepository(
         handle.createQuery(
             """
             select
-                id,
-                process_id,
-                proves_id,
-                content,
-                author_id,
-                created_at
-            from Notes
+                n.id,
+                n.process_id,
+                n.proves_id,
+                n.content,
+                n.author_id,
+                n.created_at,
+                u.name as author_name
+            from Notes n join Users u on n.id = u.id
             where proves_id = :proveId
             order by created_at desc
             """
@@ -92,13 +94,14 @@ class JdbiNoteRepository(
         handle.createQuery(
             """
             select
-                id,
-                process_id,
-                proves_id,
-                content,
-                author_id,
-                created_at
-            from Notes
+                n.id,
+                n.process_id,
+                n.proves_id,
+                n.content,
+                n.author_id,
+                n.created_at,
+                u.name as author_name
+            from Notes n join Users u on n.id = u.id
             order by created_at desc
             """
         )

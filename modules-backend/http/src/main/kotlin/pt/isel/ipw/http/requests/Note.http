@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080/api
 
-@loginTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgxODY4OTE2LCJleHAiOjE3ODE4NjkyMTZ9.6j7JmKGdlb_sIMfdo3SdQHPuPyollkQBI4VsmDKZpgyNlz0xE0vCCkJJHx-0R5BaU1GFiEN9SEzQskmFNlXShA
-@accessTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MTg2ODkzNCwiZXhwIjoxNzgxODc2MTM0fQ.Hjv0Y0gZhCh8Y99iaU50B8wp4y_mHXWdXtzgbnNTXmXBlKUBVzVZEwusiQWfHUUG8ZdyO3vpM1TAnqqFsr1PZg
+@loginTokenInvestigator =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgyNTAxMDIxLCJleHAiOjE3ODI1MDEzMjF9.iVL1FxXSgrk2PFWOGoQ4vPueX2TSTyF8dD2UEcTfocILeTtGVn3cgQegbk3cKcRFy06M204Eqxmi6rHf4gnY4A
+@accessTokenInvestigator =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MjUwMTA1MSwiZXhwIjoxNzgyNTA4MjUxfQ.H61mvuNFXqYpgipK5nATwYEElQ2RU61Ib1IqMciOsq7gGzF3mBjmww53bijqtO5gyHwNcL2bs8UVcJT4kBdEbA
 
 @processId = 1
 
@@ -13,7 +13,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "bob@ipw.pt",
+  "email": "ana@ipw.pt",
   "password": "12345"
 }
 
@@ -56,3 +56,4 @@ Authorization: Bearer {{accessTokenInvestigator}}
 {
   "content": "UPDATED!!!"
 }
+

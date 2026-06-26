@@ -13,6 +13,7 @@ class NoteMapper(private val prefix: String = "") : RowMapper<Note> {
             provesId = if (rs.getObject("${prefix}proves_id") != null) rs.getInt("${prefix}proves_id") else null,
             content = rs.getString("${prefix}content"),
             authorId = rs.getInt("${prefix}author_id"),
+            authorName = rs.getString("${prefix}author_name"),
             creationDate = rs.getTimestamp("${prefix}created_at").toLocalDateTime(),
         )
     }

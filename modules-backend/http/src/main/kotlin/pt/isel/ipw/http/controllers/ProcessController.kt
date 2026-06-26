@@ -35,7 +35,7 @@ class ProcessController(
 
     @RolesAllowed(Roles.TRIATOR)
     @PostMapping
-    fun createProcess(@RequestBody process: CreateProcessRequest, request: HttpServletRequest): ResponseEntity<*> {
+    fun createProcess(@RequestBody process: CreateProcessRequest): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
 

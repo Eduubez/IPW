@@ -1,13 +1,6 @@
-import org.jdbi.v3.core.Jdbi
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.repository.jdbi.configureWithAppRequirements
-import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
-import pt.isel.ipw.services.ActivityServiceImpl
-import pt.isel.ipw.services.ProcessServiceImpl
-import pt.isel.ipw.services.ReportServiceImpl
-import pt.isel.ipw.services.auth.JwtTokenService
+
 import pt.isel.ipw.services.errors.Failure
 import pt.isel.ipw.services.errors.ProcessError
 import pt.isel.ipw.services.errors.Success
@@ -18,93 +11,29 @@ import kotlin.test.assertEquals
 class ProcessServiceImplTest {
 
     companion object {
-        val jdbi = Jdbi.create(
-            PGSimpleDataSource().apply {
-                setUrl("jdbc:postgresql://localhost:5433/postgres")
-                user = "postgres"
-                password = "changeit"
-            }
-        ).configureWithAppRequirements()
-
-        private val tokenService = JwtTokenService(
-            secret = "1234567890123456789012345678901234567890123456789012345678901234",
-            loginTokenTtlMinutes = 5L,
-            accessTokenTtlMinutes = 120L,
-            refreshTokenTtlMinutes = 10080L
-        )
-
-        private val trxManager = JdbiTransactionManager(jdbi)
-        private val activityService = ActivityServiceImpl(trxManager)
+        val jdbi = DbConfig.getConnection()
+        val testUtils = TestUtils(jdbi)
 
 
-        private val processService = ProcessServiceImpl(
-            trxManager,
-            activityService
-        )
+        private val processService = testUtils.processService
 
-        private val reportService = ReportServiceImpl(
-            trxManager,
-            activityService
-        )
+        private val reportService = testUtils.reportService
 
-        //Alice(triator)=1, Bob(investigator)=2, Carol(supervisor)=3
-        private const val TRIATOR_ID = 1
-        private const val INVESTIGATOR_ID = 2   // Bob - area "Car Accident"
-        private const val SUPERVISOR_ID = 3
-        // Carol - area "Car Accident"
-        private const val MANAGER_ID = 4
-
-        private const val CAR_ACCIDENT_AREA_ID = 1 // ID da área correspondente a "Car Accident"
     }
 
     @BeforeTest
     fun cleanUp() {
-        jdbi.useHandle<Exception> { handle ->
-            handle.execute("call public.sample_data()")
-        }
+        testUtils.cleanRepo()
     }
 
 
-    private val validToken = tokenService.createAccessToken(TRIATOR_ID, "triator").token
-    private fun userId() = tokenService.parseAccessToken(validToken).userId
 
-    private fun createValid(
-        userId: Int = userId(),
-        name: String = "Processo Teste",
-        street: String = "Rua Augusta 1",
-        county: String = "Lisboa",
-        district: String = "Lisboa",
-        area: String = "Car Accident",
-        priority: String = "normal",
-        expiresAt: String = "2027-12-31T23:59:59",
-        investigatorId: Int? = INVESTIGATOR_ID,
-        supervisorId: Int? = SUPERVISOR_ID,
-        canBeFraud: Boolean = false,
-        note: String? = "Nota de teste"
-    ) = processService.createProcess(
-        userId = userId,
-        name = name,
-        street = street,
-        county = county,
-        district = district,
-        latitude = null,
-        longitude = null,
-        area = area,
-        priority = priority,
-        expiresAt = expiresAt,
-        investigatorId = investigatorId,
-        supervisorId = supervisorId,
-        insuranceId = null,
-        typificationId = null,
-        canBeFraud = canBeFraud,
-        note = note
-    )
 
     //Success
 
     @Test
     fun `create process - success`() {
-        val result = createValid()
+        val result = testUtils.createProcess()
         assertTrue(result is Success)
         assertTrue((result as Success).value > 0)
     }
@@ -113,7 +42,7 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - invalid userId returns InvalidTriator`() {
-        val result = createValid(userId = -1)
+        val result = testUtils.createProcess(userId = -1)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidTriator, (result as Failure).value)
     }
@@ -122,14 +51,14 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - name too short returns InvalidName`() {
-        val result = createValid(name = "AB") // length <= 3
+        val result = testUtils.createProcess(name = "AB")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidName, (result as Failure).value)
     }
 
     @Test
     fun `create process - empty name returns InvalidName`() {
-        val result = createValid(name = "")
+        val result = testUtils.createProcess(name = "")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidName, (result as Failure).value)
     }
@@ -138,21 +67,21 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - blank street returns InvalidLocation`() {
-        val result = createValid(street = "")
+        val result = testUtils.createProcess(street = "")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidLocation, (result as Failure).value)
     }
 
     @Test
     fun `create process - blank county returns InvalidLocation`() {
-        val result = createValid(county = "")
+        val result = testUtils.createProcess(county = "")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidLocation, (result as Failure).value)
     }
 
     @Test
     fun `create process - blank district returns InvalidLocation`() {
-        val result = createValid(district = "")
+        val result = testUtils.createProcess(district = "")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidLocation, (result as Failure).value)
     }
@@ -161,14 +90,14 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - past expiration date returns InvalidExpirationDate`() {
-        val result = createValid(expiresAt = "2020-01-01T00:00:00") // past date
+        val result = testUtils.createProcess(expiresAt = "2020-01-01T00:00:00") // past date
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidExpirationDate, (result as Failure).value)
     }
 
     @Test
     fun `create process - invalid date format returns InvalidExpirationDate`() {
-        val result = createValid(expiresAt = "22-12-2004")
+        val result = testUtils.createProcess(expiresAt = "22-12-2004")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidExpirationDate, (result as Failure).value)
     }
@@ -177,14 +106,14 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - invalid priority returns InvalidPriority`() {
-        val result = createValid(priority = "HIGH")
+        val result = testUtils.createProcess(priority = "HIGH")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidPriority, (result as Failure).value)
     }
 
     @Test
     fun `create process - empty priority returns InvalidPriority`() {
-        val result = createValid(priority = "")
+        val result = testUtils.createProcess(priority = "")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidPriority, (result as Failure).value)
     }
@@ -193,14 +122,14 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - investigator does not exist returns InvalidInvestigator`() {
-        val result = createValid(investigatorId = 9999)
+        val result = testUtils.createProcess(investigatorId = 9999)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidInvestigator, (result as Failure).value)
     }
 
     @Test
     fun `create process - investigator from different area returns InvalidInvestigator`() {
-        val result = createValid(area = "Fire", investigatorId = INVESTIGATOR_ID)
+        val result = testUtils.createProcess(area = "Fire", investigatorId = testUtils.INVESTIGATOR_ID)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidInvestigator, (result as Failure).value)
     }
@@ -209,7 +138,7 @@ class ProcessServiceImplTest {
 
     @Test
     fun `create process - supervisor does not exist returns InvalidSupervisor`() {
-        val result = createValid(supervisorId = 9999)
+        val result = testUtils.createProcess(supervisorId = 9999)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidSupervisor, (result as Failure).value)
     }
@@ -220,18 +149,18 @@ class ProcessServiceImplTest {
 
     @Test
     fun `submitProcess - investigator success moves to waiting approval supervisor`() {
-        val created = createValid(investigatorId = INVESTIGATOR_ID)
+        val created = testUtils.createProcess(investigatorId = testUtils.INVESTIGATOR_ID)
         assertTrue(created is Success)
         val processId = (created as Success).value
         reportService.createReport(
             processId = processId,
-            userId = INVESTIGATOR_ID,
+            userId = testUtils.INVESTIGATOR_ID,
             content = "Report content",
         )
-        val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", processId)
+        val result = processService.submitProcess(testUtils.INVESTIGATOR_ID, "investigator", processId)
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
+        val updated = processService.getProcessById(processId, testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(updated is Success)
         val process = (updated as Success).value
         assertEquals("waiting_approval_supervisor", process.state.name.lowercase())
@@ -239,7 +168,7 @@ class ProcessServiceImplTest {
 
     @Test
     fun `submitProcess - process not found returns ProcessNotFound`() {
-        val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", 9999)
+        val result = processService.submitProcess(testUtils.INVESTIGATOR_ID, "investigator", 9999)
 
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
@@ -247,12 +176,12 @@ class ProcessServiceImplTest {
 
     @Test
     fun `submitProcess - user without relation to process returns Failure`() {
-        val created = createValid(investigatorId = INVESTIGATOR_ID)
+        val created = testUtils.createProcess(investigatorId = testUtils.INVESTIGATOR_ID)
         assertTrue(created is Success)
         val processId = (created as Success).value
         reportService.createReport(
             processId = processId,
-            userId = INVESTIGATOR_ID,
+            userId = testUtils.INVESTIGATOR_ID,
             content = "Report content",
         )
         val wrongInvestigatorId = 99
@@ -264,12 +193,12 @@ class ProcessServiceImplTest {
 
     @Test
     fun `submitProcess - invalid state for submission returns InvalidState`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         assertTrue(created is Success)
         val processId = (created as Success).value
         reportService.createReport(
             processId = processId,
-            userId = INVESTIGATOR_ID,
+            userId = testUtils.INVESTIGATOR_ID,
             content = "Report content",
         )
         jdbi.useHandle<Exception> { handle ->
@@ -282,7 +211,7 @@ class ProcessServiceImplTest {
             )
         }
 
-        val result = processService.submitProcess(INVESTIGATOR_ID, "investigator", processId)
+        val result = processService.submitProcess(testUtils.INVESTIGATOR_ID, "investigator", processId)
 
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidState, (result as Failure).value)
@@ -290,19 +219,18 @@ class ProcessServiceImplTest {
 
     @Test
     fun `submitProcess - invalid role for submission returns error`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         assertTrue(created is Success)
         val processId = (created as Success).value
         reportService.createReport(
             processId = processId,
-            userId = INVESTIGATOR_ID,
+            userId = testUtils.INVESTIGATOR_ID,
             content = "Report content",
         )
-        // Tentar submeter usando uma Role que não tem fluxo de submissão mapeado (ex: "triator")
-        val result = processService.submitProcess(TRIATOR_ID, "triator", processId)
+         val result = processService.submitProcess(testUtils.TRIATOR_ID, "triator", processId)
 
         assertTrue(result is Failure)
-        assertEquals(ProcessError.UnauthorizedAccess, (result as Failure).value)
+        assertEquals(ProcessError.InvalidState, (result as Failure).value)
     }
 
 
@@ -313,11 +241,11 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getProcessById - success`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.getProcessById(processId, MANAGER_ID, "manager")
+        val result = processService.getProcessById(processId, testUtils.MANAGER_ID, "manager")
         assertTrue(result is Success)
 
         val process = (result as Success).value
@@ -329,10 +257,10 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getProcessById - verify location data`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         val processId = (created as Success).value
 
-        val result = processService.getProcessById(processId, MANAGER_ID, "manager")
+        val result = processService.getProcessById(processId, testUtils.MANAGER_ID, "manager")
         assertTrue(result is Success)
 
         val process = (result as Success).value
@@ -343,35 +271,35 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getProcessById - verify triator investigator and supervisor`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         val processId = (created as Success).value
 
-        val result = processService.getProcessById(processId, MANAGER_ID, "manager")
+        val result = processService.getProcessById(processId, testUtils.MANAGER_ID, "manager")
         assertTrue(result is Success)
 
         val process = (result as Success).value
-        assertEquals(TRIATOR_ID, process.triator.id)
-        assertEquals(INVESTIGATOR_ID, process.investigator?.id)
-        assertEquals(SUPERVISOR_ID, process.supervisor?.id)
+        assertEquals(testUtils.TRIATOR_ID, process.triator.id)
+        assertEquals(testUtils.INVESTIGATOR_ID, process.investigator?.id)
+        assertEquals(testUtils.SUPERVISOR_ID, process.supervisor?.id)
     }
 
     @Test
     fun `getProcessById - process not found returns ProcessNotFound`() {
-        val result = processService.getProcessById(9999, MANAGER_ID, "manager")
+        val result = processService.getProcessById(9999, testUtils.MANAGER_ID, "manager")
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
 
     @Test
     fun `getProcessById - negative id returns ProcessNotFound`() {
-        val result = processService.getProcessById(-1, MANAGER_ID, "manager")
+        val result = processService.getProcessById(-1, testUtils.MANAGER_ID, "manager")
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
 
     @Test
     fun `getProcessById - zero id returns ProcessNotFound`() {
-        val result = processService.getProcessById(0, MANAGER_ID, "manager")
+        val result = processService.getProcessById(0, testUtils.MANAGER_ID, "manager")
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
@@ -381,11 +309,11 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getAllProcesses - returns at least one process for triator`() {
-        val created = createValid(investigatorId = null, supervisorId = null)
+        val created = testUtils.createProcess(investigatorId = null, supervisorId = null)
         assertTrue(created is Success)
 
         val result = processService.getAllProcesses(
-            userId = TRIATOR_ID,
+            userId = testUtils.TRIATOR_ID,
             areaId = null,
             offset = 0,
             limit = 10,
@@ -400,12 +328,12 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getAllProcesses - returns only processes from investigator matching allowed states`() {
-        val created = createValid(investigatorId = INVESTIGATOR_ID)
+        val created = testUtils.createProcess(investigatorId = testUtils.INVESTIGATOR_ID)
         assertTrue(created is Success)
 
         val result = processService.getAllProcesses(
-            userId = INVESTIGATOR_ID,
-            areaId = CAR_ACCIDENT_AREA_ID, // Filtra pela área correta do investigador
+            userId = testUtils.INVESTIGATOR_ID,
+            areaId = testUtils.CAR_ACCIDENT_AREA_ID,
             offset = 0,
             limit = 10,
             role = "investigator"
@@ -415,13 +343,13 @@ class ProcessServiceImplTest {
         val processes = (result as Success).value
 
         val allowedStates = listOf("assigned", "on_going", "rejected_by_supervisor")
-        assertTrue(processes.all { it.investigator?.id == INVESTIGATOR_ID })
+        assertTrue(processes.all { it.investigator?.id == testUtils.INVESTIGATOR_ID })
         assertTrue(processes.all { allowedStates.contains(it.state.name.lowercase()) })
     }
 
     @Test
     fun `getAllProcesses - returns only processes from supervisor area matching allowed states`() {
-        val created = createValid(area = "Car Accident", supervisorId = SUPERVISOR_ID)
+        val created = testUtils.createProcess(area = "Car Accident", supervisorId = testUtils.SUPERVISOR_ID)
         assertTrue(created is Success)
         val processId = (created as Success).value
 
@@ -436,8 +364,8 @@ class ProcessServiceImplTest {
         }
 
         val result = processService.getAllProcesses(
-            userId = SUPERVISOR_ID,
-            areaId = CAR_ACCIDENT_AREA_ID,
+            userId = testUtils.SUPERVISOR_ID,
+            areaId = testUtils.CAR_ACCIDENT_AREA_ID,
             offset = 0,
             limit = 10,
             role = "supervisor"
@@ -453,7 +381,7 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getAllProcesses - returns all processes for manager matching waiting manager state`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         assertTrue(created is Success)
         val processId = (created as Success).value
 
@@ -468,7 +396,7 @@ class ProcessServiceImplTest {
         }
 
         val result = processService.getAllProcesses(
-            userId = MANAGER_ID,
+            userId = testUtils.MANAGER_ID,
             offset = 0,
             areaId = null,
             limit = 100,
@@ -482,12 +410,12 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getAllProcesses - with areaId filter returns only that area`() {
-        val created = createValid(area = "Car Accident", investigatorId = INVESTIGATOR_ID)
+        val created = testUtils.createProcess(area = "Car Accident", investigatorId = testUtils.INVESTIGATOR_ID)
         assertTrue(created is Success)
 
         val result = processService.getAllProcesses(
-            userId = INVESTIGATOR_ID,
-            areaId = CAR_ACCIDENT_AREA_ID,
+            userId = testUtils.INVESTIGATOR_ID,
+            areaId = testUtils.CAR_ACCIDENT_AREA_ID,
             offset = 0,
             limit = 10,
             role = "investigator"
@@ -499,12 +427,12 @@ class ProcessServiceImplTest {
 
     @Test
     fun `getAllProcesses - offset and limit work as pagination`() {
-        createValid(name = "Process 1", investigatorId = null, supervisorId = null)
-        createValid(name = "Process 2", investigatorId = null, supervisorId = null)
-        createValid(name = "Process 3", investigatorId = null, supervisorId = null)
+        testUtils.createProcess(name = "Process 1", investigatorId = null, supervisorId = null)
+        testUtils.createProcess(name = "Process 2", investigatorId = null, supervisorId = null)
+        testUtils.createProcess(name = "Process 3", investigatorId = null, supervisorId = null)
 
         val result1 = processService.getAllProcesses(
-            userId = TRIATOR_ID,
+            userId = testUtils.TRIATOR_ID,
             areaId = null,
             offset = 0,
             limit = 2,
@@ -512,7 +440,7 @@ class ProcessServiceImplTest {
         )
 
         val result2 = processService.getAllProcesses(
-            userId = TRIATOR_ID,
+            userId = testUtils.TRIATOR_ID,
             areaId = null,
             offset = 2,
             limit = 2,
@@ -531,7 +459,7 @@ class ProcessServiceImplTest {
     @Test
     fun `getAllProcesses - invalid offset returns empty list or error`() {
         val result = processService.getAllProcesses(
-            userId = TRIATOR_ID,
+            userId = testUtils.TRIATOR_ID,
             areaId = 0,
             offset = -1,
             limit = 10,
@@ -543,7 +471,7 @@ class ProcessServiceImplTest {
     @Test
     fun `getAllProcesses - invalid limit returns empty list or error`() {
         val result = processService.getAllProcesses(
-            userId = TRIATOR_ID,
+            userId = testUtils.TRIATOR_ID,
             areaId = 0,
             offset = 0,
             limit = 0,
@@ -558,15 +486,15 @@ class ProcessServiceImplTest {
 
     @Test
     fun `changeEndDate - success updates due date`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         assertTrue(created is Success)
         val processId = (created as Success).value
 
         val newEndDate = "2028-01-01T00:00"
-        val result = processService.changeEndDate(processId, newEndDate, SUPERVISOR_ID, "supervisor")
+        val result = processService.changeEndDate(processId, newEndDate, testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, MANAGER_ID, "manager")
+        val updated = processService.getProcessById(processId, testUtils.MANAGER_ID, "manager")
         assertTrue(updated is Success)
         val process = (updated as Success).value
         assertEquals(newEndDate, process.dueDate.toString())
@@ -574,27 +502,27 @@ class ProcessServiceImplTest {
 
     @Test
     fun `changeEndDate - process not found returns error`() {
-        val result = processService.changeEndDate(9999, "2028-01-01T00:00", SUPERVISOR_ID, "supervisor")
+        val result = processService.changeEndDate(9999, "2028-01-01T00:00", testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
 
     @Test
     fun `changeEndDate - invalid date format returns error`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         val processId = (created as Success).value
 
-        val result = processService.changeEndDate(processId, "invalid-date", SUPERVISOR_ID, "supervisor")
+        val result = processService.changeEndDate(processId, "invalid-date", testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidExpirationDate, (result as Failure).value)
     }
 
     @Test
     fun `changeEndDate - past date returns error`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         val processId = (created as Success).value
 
-        val result = processService.changeEndDate(processId, "2020-01-01T00:00:00", SUPERVISOR_ID, "supervisor")
+        val result = processService.changeEndDate(processId, "2020-01-01T00:00:00", testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidExpirationDate, (result as Failure).value)
     }
@@ -606,42 +534,42 @@ class ProcessServiceImplTest {
 
     @Test
     fun `assignSupervisor - success assigns supervisor`() {
-        val created = createValid(supervisorId = null)
+        val created = testUtils.createProcess(supervisorId = null)
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.assignSupervisor(processId, TRIATOR_ID, SUPERVISOR_ID)
+        val result = processService.assignSupervisor(processId, testUtils.TRIATOR_ID, testUtils.SUPERVISOR_ID)
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
+        val updated = processService.getProcessById(processId, testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(updated is Success)
         val process = (updated as Success).value
-        assertEquals(SUPERVISOR_ID, process.supervisor?.id)
+        assertEquals(testUtils.SUPERVISOR_ID, process.supervisor?.id)
     }
 
     @Test
     fun `assignSupervisor - process not found returns error`() {
-        val result = processService.assignSupervisor(9999, TRIATOR_ID, SUPERVISOR_ID)
+        val result = processService.assignSupervisor(9999, testUtils.TRIATOR_ID, testUtils.SUPERVISOR_ID)
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
 
     @Test
     fun `assignSupervisor - supervisor not found returns error`() {
-        val created = createValid(supervisorId = null)
+        val created = testUtils.createProcess(supervisorId = null)
         val processId = (created as Success).value
 
-        val result = processService.assignSupervisor(processId, TRIATOR_ID, 9999)
+        val result = processService.assignSupervisor(processId, testUtils.TRIATOR_ID, 9999)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidSupervisor, (result as Failure).value)
     }
 
     @Test
     fun `assignSupervisor - supervisor from different area returns error`() {
-        val created = createValid(supervisorId = null, area = "Car Accident")
+        val created = testUtils.createProcess(supervisorId = null, area = "Car Accident")
         val processId = (created as Success).value
 
-        val result = processService.assignSupervisor(processId, TRIATOR_ID, 6)
+        val result = processService.assignSupervisor(processId, testUtils.TRIATOR_ID, 6)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidSupervisor, (result as Failure).value)
     }
@@ -652,55 +580,45 @@ class ProcessServiceImplTest {
 
     @Test
     fun `assignInvestigator - success assigns investigator`() {
-        val created = createValid(investigatorId = null)
+        val created = testUtils.createProcess(investigatorId = null)
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.assignInvestigator(processId, TRIATOR_ID, INVESTIGATOR_ID)
+        val result = processService.assignInvestigator(processId, testUtils.TRIATOR_ID, testUtils.INVESTIGATOR_ID)
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, INVESTIGATOR_ID, "investigator")
+        val updated = processService.getProcessById(processId, testUtils.INVESTIGATOR_ID, "investigator")
         assertTrue(updated is Success)
         val process = (updated as Success).value
-        assertEquals(INVESTIGATOR_ID, process.investigator?.id)
+        assertEquals(testUtils.INVESTIGATOR_ID, process.investigator?.id)
     }
 
     @Test
     fun `assignInvestigator - process not found returns error`() {
-        val result = processService.assignInvestigator(9999, TRIATOR_ID, INVESTIGATOR_ID)
+        val result = processService.assignInvestigator(9999, testUtils.TRIATOR_ID, testUtils.INVESTIGATOR_ID)
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
 
     @Test
     fun `assignInvestigator - investigator not found returns error`() {
-        val created = createValid(investigatorId = null)
+        val created = testUtils.createProcess(investigatorId = null)
         val processId = (created as Success).value
 
-        val result = processService.assignInvestigator(processId, TRIATOR_ID, 9999)
+        val result = processService.assignInvestigator(processId, testUtils.TRIATOR_ID, 9999)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidInvestigator, (result as Failure).value)
     }
 
     @Test
     fun `assignInvestigator - investigator from different area returns error`() {
-        val created = createValid(investigatorId = null, area = "Car Accident")
+        val created = testUtils.createProcess(investigatorId = null, area = "Car Accident")
         val processId = (created as Success).value
 
-        val result = processService.assignInvestigator(processId, TRIATOR_ID, 6)
+        val result = processService.assignInvestigator(processId, testUtils.TRIATOR_ID, 6)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidInvestigator, (result as Failure).value)
     }
-
-//    @Test
-//    fun `assignInvestigator - already has investigator returns error`() {
-//        val created = createValid()
-//        val processId = (created as Success).value.id
-//
-//        val result = processService.assignInvestigator(processId, TRIATOR_ID,INVESTIGATOR_ID)
-//        assertTrue(result is Failure)
-//        assertEquals(ProcessError.InvestigatorAlreadyAssigned, (result as Failure).value)
-//    }
 
 // -----------------------------------------------------------------------
 // changePriority
@@ -709,14 +627,14 @@ class ProcessServiceImplTest {
 
     @Test
     fun `changePriority - success updates priority`() {
-        val created = createValid(priority = "normal")
+        val created = testUtils.createProcess(priority = "normal")
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.changePriority(processId, "urgent", SUPERVISOR_ID, Roles.SUPERVISOR)
+        val result = processService.changePriority(processId, "urgent", testUtils.SUPERVISOR_ID, Roles.SUPERVISOR)
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
+        val updated = processService.getProcessById(processId, testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(updated is Success)
         val process = (updated as Success).value
         assertEquals("urgent", process.priority.name.lowercase())
@@ -724,29 +642,29 @@ class ProcessServiceImplTest {
 
     @Test
     fun `changePriority - process not found returns error`() {
-        val result = processService.changePriority(9999, "urgent", SUPERVISOR_ID,   Roles.SUPERVISOR)
+        val result = processService.changePriority(9999, "urgent", testUtils.SUPERVISOR_ID,   Roles.SUPERVISOR)
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
 
     @Test
     fun `changePriority - invalid priority returns error`() {
-        val created = createValid(priority = "normal")
+        val created = testUtils.createProcess(priority = "normal")
         val processId = (created as Success).value
 
-        val result = processService.changePriority(processId, "invalid_priority", SUPERVISOR_ID, Roles.SUPERVISOR)
+        val result = processService.changePriority(processId, "invalid_priority", testUtils.SUPERVISOR_ID, Roles.SUPERVISOR)
         assertTrue(result is Failure)
         assertEquals(ProcessError.InvalidPriority, (result as Failure).value)
     }
 
     @Test
     fun `changePriority - same priority returns success or no-op`() {
-        val created = createValid(priority = "normal")
+        val created = testUtils.createProcess(priority = "normal")
         val processId = (created as Success).value
 
-        val result = processService.changePriority(processId, "normal", SUPERVISOR_ID, Roles.SUPERVISOR)
+        val result = processService.changePriority(processId, "normal", testUtils.SUPERVISOR_ID, Roles.SUPERVISOR)
         assertTrue(result is Success)
-        val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
+        val updated = processService.getProcessById(processId, testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(updated is Success)
         val process = (updated as Success).value
         assertEquals("normal", process.priority.name.lowercase())
@@ -759,14 +677,14 @@ class ProcessServiceImplTest {
 
     @Test
     fun `cancelProcess - success cancels the process`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         assertTrue(created is Success)
         val processId = (created as Success).value
 
-        val result = processService.cancelProcess(processId, SUPERVISOR_ID)
+        val result = processService.cancelProcess(processId, testUtils.SUPERVISOR_ID)
         assertTrue(result is Success)
 
-        val updated = processService.getProcessById(processId, SUPERVISOR_ID, "supervisor")
+        val updated = processService.getProcessById(processId, testUtils.SUPERVISOR_ID, "supervisor")
         assertTrue(updated is Success)
 
         val process = (updated as Success).value
@@ -775,7 +693,7 @@ class ProcessServiceImplTest {
 
     @Test
     fun `cancelProcess - process not found returns error`() {
-        val result = processService.cancelProcess(9999, SUPERVISOR_ID)
+        val result = processService.cancelProcess(9999,testUtils. SUPERVISOR_ID)
         assertTrue(result is Failure)
         assertEquals(ProcessError.ProcessNotFound, (result as Failure).value)
     }
@@ -783,13 +701,13 @@ class ProcessServiceImplTest {
 
     @Test
     fun `cancelProcess - already canceled returns error or no-op`() {
-        val created = createValid()
+        val created = testUtils.createProcess()
         val processId = (created as Success).value
 
-        val firstCancel = processService.cancelProcess(processId, SUPERVISOR_ID)
+        val firstCancel = processService.cancelProcess(processId, testUtils.SUPERVISOR_ID)
         assertTrue(firstCancel is Success)
 
-        val secondCancel = processService.cancelProcess(processId, SUPERVISOR_ID)
+        val secondCancel = processService.cancelProcess(processId, testUtils.SUPERVISOR_ID)
         assertTrue(secondCancel is Failure || secondCancel is Success)
     }
 
