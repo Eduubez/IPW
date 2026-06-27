@@ -46,9 +46,11 @@ async function logout(): Promise<ResponseApi<void>> {
     },
   });
 
+  if(response.success){
   enqueueSnackbar(i18next.t("Login.logout"), {
     variant: ToastType.SUCCESS,
   });
+}
 
   userStore.clear();
   return response;

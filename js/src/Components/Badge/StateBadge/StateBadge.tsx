@@ -36,6 +36,9 @@ const CANCELED_STYLE = {
 const NOT_STARTED_STYLE = {
   background: Color.Gray,
 };
+const REJECTED_STYLE = {
+  background: Color.DarkRed,
+};
 
 export type StateType = ProcessState;
 
@@ -66,6 +69,8 @@ export function StateBadge({ state }: { state: StateType }) {
         return CANCELED_STYLE;
       case STATES.NOT_STARTED:
         return NOT_STARTED_STYLE;
+      case STATES.REJECTED:
+        return REJECTED_STYLE;
       default:
         return {};
     }

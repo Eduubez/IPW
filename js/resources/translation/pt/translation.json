@@ -160,7 +160,8 @@
     "WAITING_APPROVAL_MANAGER": "Aguarda Aprovação do Gestor",
     "APPROVED_BY_MANAGER": "Aprovado pelo Gestor",
     "REJECTED_BY_MANAGER": "Rejeitado pelo Gestor",
-    "CANCELED": "Cancelado"
+    "CANCELED": "Cancelado",
+    "REJECTED": "Rejeitado"
   },
   "NotAuthorizedPage": {
     "title": "Acesso Negado",
@@ -331,6 +332,7 @@
     "INVALID_STORAGE_KEY": "Chave de armazenamento inválida",
     "STORAGE_ERROR": "Erro de armazenamento",
     "INVALID_NOTE_REQUEST": "Solicitação de nota inválida",
-    "NOTE_NOT_FOUND": "Nota não encontrada"
+    "NOTE_NOT_FOUND": "Nota não encontrada",
+    "UNKNOWN_ERROR": "Erro desconhecido"
   }
 }

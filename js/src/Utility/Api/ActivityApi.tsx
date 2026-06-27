@@ -13,7 +13,7 @@ export type ActivityResponse = {
     action: string,
     description: string,
     createdAt: string,
-    authorName : string
+    userName : string
 }
 
 export const ActivityApi = {getActivityByProcess, getActivityByUser}

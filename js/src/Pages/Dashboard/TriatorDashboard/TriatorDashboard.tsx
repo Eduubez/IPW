@@ -11,6 +11,7 @@ import {
 import { Icon } from "../../../Components/Icons/Icons";
 import { PriorityBadge } from "../../../Components/Badge/PriorityBadge/PriorityBadge";
 import { useNavigate } from "react-router-dom";
+import {formatDate} from "../../../Utility/Helpers/DateHelpers";
 
 type CleanProcess = {
   name: string;
@@ -27,8 +28,8 @@ const cleanProcess = (processes: ProcessResponse[]): CleanProcess[] => {
     name: process.name,
     location: `${process.location.street}, ${process.location.district}`,
     area: process.area,
-    creationDate: new Date(process.creationDate).toLocaleDateString(),
-    expirationDate: new Date(process.dueDate).toLocaleDateString(),
+    creationDate: formatDate(new Date(process.creationDate)),
+    expirationDate: formatDate(new Date(process.dueDate)),
     priority: <PriorityBadge priority={process.priority} />,
     priorityValue: process.priority,
     id: process.id,

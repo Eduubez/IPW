@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import { Header } from "../../../Components/Layouts/Header/Header";
 import styles from "./managerdashboard.module.css";
+import { formatDate } from "../../../Utility/Helpers/DateHelpers";
+
 type CleanProcess = {
   name: string;
   location: string;
@@ -43,8 +45,8 @@ const cleanProcess = (
     name: process.name,
     location: `${process.location.street}, ${process.location.district}`,
     area: process.area,
-    creationDate: new Date(process.creationDate).toLocaleDateString(),
-    expirationDate: new Date(process.dueDate).toLocaleDateString(),
+    creationDate: formatDate(new Date(process.creationDate)),
+    expirationDate: formatDate(new Date(process.dueDate)),
     priority: <PriorityBadge priority={process.priority} />,
     state: (
       <StateBadge
@@ -67,7 +69,6 @@ export function ManagerDashboard() {
     try {
       const response = await ProcessApi.getAll(0, 100);
       if (response.success) {
-        console.log(response.data.results);
         setProcess(cleanProcess(response.data.results, navigate));
       }
     } finally {

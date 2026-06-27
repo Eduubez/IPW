@@ -120,7 +120,7 @@ export default function ProcessPage() {
         done: true,
         label: activity.action,
         date: new Date(activity.createdAt),
-        userName: activity.authorName,
+        userName: activity.userName,
       }));
       setActivityItems(items);
     }
