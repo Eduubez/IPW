@@ -44,6 +44,8 @@ interface ProcessRepository {
 
     fun updateProcessPriority(processId: Int, newPriority: String)
 
+    fun updatePrioritiesByDeadline(): Int
+
     fun cancelProcess(processId: Int)
 
     fun changeState(processId: Int, newState: String)

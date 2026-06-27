@@ -3,6 +3,7 @@ package pt.isel.ipw.app
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.Bean
+import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 
@@ -12,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 
 @SpringBootApplication(scanBasePackages = ["pt.isel.ipw"])
+@EnableScheduling
 class BackendApplication {
 
 	@Bean

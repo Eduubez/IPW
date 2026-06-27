@@ -43,6 +43,8 @@ interface ProcessService {
 
     fun changePriority(processId: Int, newPriority: String, userId: Int, role: String): ChangePriorityResult
 
+    fun updatePrioritiesByDeadline(): UpdateProcessPrioritiesResult
+
     fun cancelProcess(processId: Int, userId: Int): CancelProcessResult
 
 }

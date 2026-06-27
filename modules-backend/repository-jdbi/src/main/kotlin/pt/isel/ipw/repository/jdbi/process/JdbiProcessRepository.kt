@@ -472,6 +472,39 @@ order by p.creation_date desc
             .execute()
     }
 
+    override fun updatePrioritiesByDeadline(): Int =
+        handle.createUpdate(
+            """
+            update Process p
+            set priority = case
+                when p.due_date <= current_timestamp + interval '3 days'
+                    then 'urgent'
+                when p.due_date <= current_timestamp + interval '7 days'
+                     and p.priority = 'normal'
+                    then 'with_priority'
+                else p.priority
+            end
+            where p.due_date is not null
+              and p.priority <> 'urgent'
+              and exists (
+                  select 1
+                  from Process_State ps
+                  join State st on st.id = ps.state_id
+                  where ps.process_id = p.id
+                    and ps.end_date is null
+                    and st.name not in ('approved_by_manager', 'canceled')
+              )
+              and (
+                  p.due_date <= current_timestamp + interval '3 days'
+                  or (
+                      p.due_date <= current_timestamp + interval '7 days'
+                      and p.priority = 'normal'
+                  )
+              )
+            """
+        )
+            .execute()
+
     override fun cancelProcess(processId: Int) {
         val stateId = handle.createQuery(
             "select id from State where name = 'canceled'"

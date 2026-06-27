@@ -12,5 +12,6 @@ typealias ChangeEndDateResult = Either<ProcessError, Unit>
 typealias AssignInvestigatorResult = Either<ProcessError, Unit>
 typealias AssignSupervisorResult = Either<ProcessError, Unit>
 typealias ChangePriorityResult = Either<ProcessError, Unit>
+typealias UpdateProcessPrioritiesResult = Either<ProcessError, Int>
 typealias CancelProcessResult = Either<ProcessError, Unit>
 typealias SubmitProcessResult = Either<ProcessError, Unit>

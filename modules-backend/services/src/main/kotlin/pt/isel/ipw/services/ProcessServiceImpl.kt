@@ -260,6 +260,12 @@ class ProcessServiceImpl(
             return@run success(Unit)
         }
 
+    override fun updatePrioritiesByDeadline(): UpdateProcessPrioritiesResult =
+        transactionManager.run {
+            val updatedProcesses = processRepository.updatePrioritiesByDeadline()
+            success(updatedProcesses)
+        }
+
     //apenas o manager
     override fun cancelProcess(processId: Int, userId: Int): CancelProcessResult =
         transactionManager.run {
