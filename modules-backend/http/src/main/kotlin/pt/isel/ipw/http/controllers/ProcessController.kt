@@ -184,7 +184,7 @@ class ProcessController(
     }
 
     @RolesAllowed(Roles.MANAGER)
-    @PatchMapping(ApiRoutes.Process.CANCEL_FULL)
+    @PostMapping("/{id}/cancel")
     fun cancelProcess(@PathVariable id: Int): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)

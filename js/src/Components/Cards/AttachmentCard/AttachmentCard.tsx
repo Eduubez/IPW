@@ -12,7 +12,7 @@ interface AttachmentCardProps {
   downloadFn: () => void;
   processId: number;
   proveId: number;
-  notes?: { content: string; createdAt: string }[];
+  notes?: { content: string; createdAt: string; authorName: string }[];
 }
 
 export const AttachmentCard = ({
@@ -25,7 +25,6 @@ export const AttachmentCard = ({
 }: AttachmentCardProps) => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
-  console.log(`ProveId: ${proveId}, Notes: ${notes}`);
 
   const handleSaveNote = async () => {
     const res = await NotesApi.createNote(processId, {
@@ -97,6 +96,7 @@ export const AttachmentCard = ({
               <span className="paragraph-s-regular">
                 {formatDate(new Date(note.createdAt))}
               </span>
+              <span className="paragraph-s-regular">{note.authorName}</span>
             </div>
           ))}
         </div>

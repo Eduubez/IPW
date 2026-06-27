@@ -3,6 +3,7 @@ import { AttachmentCard } from "../Cards/AttachmentCard/AttachmentCard";
 import { type ProveResponse } from "../../Utility/Api/ProvesApi";
 import PrimaryButton from "../Buttons/PrimaryButton/PrimaryButton";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ProvesApi } from "../../Utility/Api/ProvesApi";
 import { useParams } from "react-router-dom";
 import { UploadAttachmentModal } from "./UploadAttachmentModal/UploadAttachmentModal";
@@ -28,10 +29,11 @@ export const Attachments = ({
 }) => {
   const params = useParams();
   const processId = Number(params.id);
+  const { t } = useTranslation();
   const attachments = proves || [];
   const [showNewAttachmentModal, setShowNewAttachmentModal] = useState(false);
   const [notes, setNotes] = useState<
-    { proveId: number | null; content: string; createdAt: string }[]
+    { proveId: number | null; content: string; createdAt: string; authorName: string }[]
   >([]);
 
   useEffect(() => {
@@ -52,6 +54,7 @@ export const Attachments = ({
           proveId: note.provesId,
           content: note.content,
           createdAt: note.createdAt,
+          authorName: note.authorName,
         }));
       });
 
@@ -110,7 +113,7 @@ export const Attachments = ({
   return (
     <div className={styles["attachments-container"]}>
       <div className={styles["attachments-header"]}>
-        <span>Anexos</span>
+        <span>{t("ProcessPage.attachmentsSection")}</span>
         <PrimaryButton
           text="+"
           onClick={() => setShowNewAttachmentModal(true)}
@@ -120,7 +123,7 @@ export const Attachments = ({
       </div>
       {attachments === undefined || attachments.length === 0 ? (
         <div className={styles["no-attachments"]}>
-          <span>Nenhum anexo encontrado.</span>
+          <span>{t("ProcessPage.noAttachments")}</span>
         </div>
       ) : (
         <div className={styles["attachments-body"]}>

@@ -5,10 +5,7 @@
     "welcome": "Olá !",
     "welcomeText": "Utilize as suas credenciais para acessar a sua conta",
     "successMessage": "Login bem sucedido!",
-    "logout": "Logout bem sucedido!",
-    "error":{
-      "problems/invalid-credentials":"Credenciais inválidas. Por favor, tente novamente."
-    }
+    "logout": "Logout bem sucedido!"
   },
   "text": {
     "title": "Bem vindo a IPW "
@@ -152,18 +149,19 @@
     "NewProcess": "Novo Processo",
     "History": "Histórico"
   },
-  "State":{
-      "NOT_ASSIGNED": "Não Atribuído",
-      "ASSIGNED": "Atribuído",
-      "NOT_STARTED": "Por Começar",
-      "ON_GOING": "Em Progresso",
-      "WAITING_APPROVAL_SUPERVISOR": "Aguarda Aprovação do Supervisor",
-      "APPROVED_BY_SUPERVISOR": "Aprovado pelo Supervisor",
-      "REJECTED_BY_SUPERVISOR": "Rejeitado pelo Supervisor",
-      "WAITING_APPROVAL_MANAGER": "Aguarda Aprovação do Gestor",
-      "APPROVED_BY_MANAGER": "Aprovado pelo Gestor",
-      "REJECTED_BY_MANAGER": "Rejeitado pelo Gestor",
-      "CANCELED": "Cancelado"
+  "State": {
+    "NOT_ASSIGNED": "Não Atribuído",
+    "ASSIGNED": "Atribuído",
+    "NOT_STARTED": "Por Começar",
+    "ON_GOING": "Em Progresso",
+    "WAITING_APPROVAL_SUPERVISOR": "Aguarda Aprovação do Supervisor",
+    "APPROVED_BY_SUPERVISOR": "Aprovado pelo Supervisor",
+    "REJECTED_BY_SUPERVISOR": "Rejeitado pelo Supervisor",
+    "WAITING_APPROVAL_MANAGER": "Aguarda Aprovação do Gestor",
+    "APPROVED_BY_MANAGER": "Aprovado pelo Gestor",
+    "REJECTED_BY_MANAGER": "Rejeitado pelo Gestor",
+    "CANCELED": "Cancelado",
+    "REJECTED": "Rejeitado"
   },
   "NotAuthorizedPage": {
     "title": "Acesso Negado",
@@ -189,9 +187,10 @@
       "canBeFraud": "Pode ser fraude",
       "note": "Nota"
     },
-    "submit": "Criar"
+    "submit": "Criar",
+    "createSuccess": "Processo criado com sucesso!"
   },
-  "Areas":{
+  "Areas": {
     "Car Accident": "Acidente Automóvel",
     "Job Accident": "Acidente de Trabalho"
   },
@@ -226,8 +225,12 @@
     "submitProcess": "Submeter Processo",
     "approveProcess": "Aprovar Processo",
     "rejectProcess": "Rejeitar Processo",
+    "cancelProcess": "Cancelar Processo",
     "notImplemented": "Vista não implementada para este papel",
     "stateSection": "Estado",
+    "notesSection": "Notas",
+    "noNotes": "Nenhuma nota encontrada.",
+    "noAttachments": "Nenhum anexo encontrado.",
     "attachmentsSection": "Anexos",
     "activitiesSection": "Atividades",
     "confirmModal": {
@@ -238,7 +241,14 @@
     "priorityModal": {
       "header": "Alterar Prioridade",
       "description": "Esta ação trocará a prioridade deste processo que atualmente é {{current}} para:"
-    }
+    },
+    "newNoteModal": {
+      "header": "Nova Nota",
+      "confirm": "Adicionar"
+    },
+    "submitSuccess": "Processo submitido com sucesso!",
+    "approvalSuccess": "Processo aprovado com sucesso!",
+    "rejectionSuccess": "Processo rejeitado com sucesso!"
   },
   "reportCard": {
     "title": "Relatório",
@@ -270,6 +280,59 @@
     "CHANGED_PRIORITY": "Prioridade do processo alterada",
     "ASSIGNED_SUPERVISOR": "Supervisor atribuído ao processo",
     "CHANGED_END_DATE": "Data de expiração do processo alterada",
-    "CREATED_REPORT": "Relatório criado para este processo"
+    "CREATED_REPORT": "Criou um relatório",
+    "CREATED_NOTE": "Adicionou uma nota"
+  },
+  "Error": {
+    "INTERNAL_ERROR": "Erro interno",
+    "USER_ALREADY_EXISTS": "Utilizador já existe",
+    "USER_NOT_FOUND": "Utilizador não encontrado",
+    "USER_NOT_ACTIVE": "Utilizador não ativo",
+    "INSECURE_PASSWORD": "Senha insegura",
+    "INVALID_CREDENTIALS": "Credenciais inválidas",
+    "INVALID_ROLE": "Papel inválido",
+    "INVALID_ROLES": "Papéis inválidos",
+    "INVALID_TOKEN": "Token inválido",
+    "REFRESH_NOT_FOUND": "Refresh Token não encontrado",
+    "LOGIN_EXPIRED": "Login expirado",
+    "ACCESS_EXPIRED": "Acesso expirado",
+    "REFRESH_EXPIRED": "Refresh Token expirado",
+    "CANNOT_DEACTIVATE_SELF": "Não é possível desativar a si mesmo",
+    "AREA_REQUIRED": "Área obrigatória",
+    "AREA_NOT_FOUND": "Área não encontrada",
+    "AREA_ALREADY_HAS_SUPERVISOR": "Área já possui um supervisor",
+    "INVALID_OFFSET": "Offset inválido",
+    "INVALID_LIMIT": "Limite inválido",
+    "PROCESS_NOT_FOUND": "Processo não encontrado",
+    "INVALID_PROCESS_NAME": "Nome do processo inválido",
+    "INVALID_LOCATION": "Localização inválida",
+    "INVALID_EXPIRATION_DATE": "Data de expiração inválida",
+    "INVALID_PRIORITY": "Prioridade inválida",
+    "INVALID_INVESTIGATOR": "Investigador inválido",
+    "INVALID_SUPERVISOR": "Supervisor inválido",
+    "INVALID_TRIATOR": "Triador inválido",
+    "INVALID_INSURANCE": "Seguro inválido",
+    "INVALID_TYPIFICATION": "Tipificação inválida",
+    "UPDATE_NOT_ALLOWED": "Atualização não permitida",
+    "INVALID_USER_ID": "ID de utilizador inválido",
+    "INVALID_AREA_ID": "ID de área inválido",
+    "REQUEST_ERROR": "Erro na solicitação",
+    "INVALID_CONTENT": "Conteúdo inválido",
+    "NOT_ASSOCIATED": "Não associado",
+    "UNAUTHORIZED_INVESTIGATOR": "Investigador não autorizado",
+    "UNAUTHORIZED": "Não autorizado",
+    "REPORT_NOT_FOUND": "Relatório não encontrado",
+    "ALREADY_REJECTED": "Já rejeitado",
+    "NOT_APPROVED_BY_SUPERVISOR": "Não aprovado pelo supervisor",
+    "ALREADY_APPROVED": "Já aprovado",
+    "PROVE_NOT_FOUND": "Anexo não encontrado",
+    "INVALID_FILE_NAME": "Nome de anexo inválido",
+    "INVALID_CONTENT_TYPE": "Tipo de conteúdo inválido",
+    "INVALID_FILE_SIZE": "Tamanho de anexo inválido",
+    "INVALID_STORAGE_KEY": "Chave de armazenamento inválida",
+    "STORAGE_ERROR": "Erro de armazenamento",
+    "INVALID_NOTE_REQUEST": "Solicitação de nota inválida",
+    "NOTE_NOT_FOUND": "Nota não encontrada",
+    "UNKNOWN_ERROR": "Erro desconhecido"
   }
 }

@@ -1,7 +1,5 @@
 import { userStore } from "../Store/UserStore";
 import { fetchApi, type ResponseApi } from "./FetchApi";
-import { enqueueSnackbar } from "notistack";
-import i18next from 'i18next'
 
 
 export type UserProcessHistoryResponse = {
@@ -30,9 +28,6 @@ async function getAreaHistory(areaId: number): Promise<ResponseApi<AreaProcessHi
             "Authorization": `Bearer ${userStore.getAccessToken()}`,
         },
     });
-    if(!response.success) {
-        enqueueSnackbar(i18next.t("HistoryPage.FetchError"), { variant: "error" });
-    }
     return response;
 }
 

@@ -10,7 +10,9 @@ export default function SideBar() {
   const activeRole = userStore.getActiveRole();
   const navigate = useNavigate();
 
-  const navigationItems = activeRole ? ROLES.find(role => role.key === activeRole)!.navigationItems : [];
+  const navigationItems = activeRole
+    ? ROLES.find((role) => role.key === activeRole)!.navigationItems
+    : [];
   const handleNavigation = (path: string) => {
     navigate(path);
   };
@@ -20,10 +22,9 @@ export default function SideBar() {
   };
   const handleLogout = async () => {
     const response = await AuthApi.logout();
-    if(response.success) {
-      navigate("/login");
-    }
-  }
+
+    navigate("/login");
+  };
 
   return (
     <div
@@ -34,7 +35,9 @@ export default function SideBar() {
       <div className={styles["navigation-container"]}>
         {navigationItems.map((item) => (
           <div key={item.path} className={styles["navigation-item"]}>
-            <a onClick={() => handleNavigation(item.path)} className={styles["nav-link"]}>
+            <a
+              onClick={() => handleNavigation(item.path)}
+              className={styles["nav-link"]}>
               <div className={styles["nav-icon-container"]}>
                 <span className="material-symbols-outlined">{item.icon}</span>
               </div>

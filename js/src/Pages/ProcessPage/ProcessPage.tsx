@@ -25,6 +25,7 @@ import { formatDate } from "../../Utility/Helpers/DateHelpers";
 import { NoteCard } from "../../Components/Cards/NoteCard/NoteCard";
 import TextArea from "../../Components/Inputs/TextArea/TextArea";
 import { NotesApi } from "../../Utility/Api/NotesApi";
+import { enqueueSnackbar } from "notistack";
 
 const newNoteButtonStyle = {
   display: "flex",
@@ -54,6 +55,7 @@ const BOX_ACTIVITY_TYPE = [
   "ASSIGNED_SUPERVISOR",
   "CHANGED_END_DATE",
   "CREATED_REPORT",
+  "CREATED_NOTE",
 ];
 
 const processPageState = (state?: string) => {
@@ -104,7 +106,8 @@ export default function ProcessPage() {
     const response = await ProcessApi.getById(Number(id));
     if (response.success) {
       setApiResponse(response.data);
-    } else {
+    } 
+    else {
       window.history.replaceState(null, "", "/not-authorized"); // Used to be able to use the back button
       navigate("/not-authorized");
     }
@@ -306,12 +309,14 @@ export default function ProcessPage() {
   const aproveProcess = async () => {
     const response = await ProcessApi.approve(Number(id));
     if (response.success) {
+      enqueueSnackbar(t("ProcessPage.approvalSuccess"), { variant: "success" });
       navigate("/dashboard");
     }
   };
   const rejectProcess = async () => {
     const response = await ProcessApi.reject(Number(id));
     if (response.success) {
+      enqueueSnackbar(t("ProcessPage.rejectionSuccess"), { variant: "success" });
       navigate("/dashboard");
     }
   };
@@ -334,6 +339,7 @@ export default function ProcessPage() {
   const handleSubmitProcess = async () => {
     const response = await ProcessApi.submit(Number(id));
     if (response.success) {
+      enqueueSnackbar(t("ProcessPage.submitSuccess"), { variant: "success" });
       navigate("/dashboard");
     }
   };
@@ -349,7 +355,12 @@ export default function ProcessPage() {
   //#endregion
 
   //#region manager
-  const handleCancelProcess = async () => {};
+  const handleCancelProcess = async () => {
+    const response = await ProcessApi.cancelProcess(Number(id));
+    if (response.success) {
+      navigate("/dashboard");
+    }
+  };
   const handleChangePriority = async (newPriority: PriorityType) => {
     const response = await ProcessApi.changePriority(Number(id), newPriority);
     if (response.success) {
@@ -403,6 +414,12 @@ export default function ProcessPage() {
         text={t("ProcessPage.rejectProcess")}
         onClick={() => openConfirmModal(rejectProcess)}
         enabled={canAproveOrRejectProcess()}
+      />,
+      <PrimaryButton
+        style={{ backgroundColor: Color.DarkRed }}
+        text={t("ProcessPage.cancelProcess")}
+        onClick={() => openConfirmModal(handleCancelProcess)}
+        enabled={true}
       />,
     ],
     reportView: (
@@ -512,7 +529,7 @@ export default function ProcessPage() {
           <WithBackground>
             <div className={styles["d-container"]}>
               <div className={styles["note-header"]}>
-                <span>Notas</span>
+                <span>{t("ProcessPage.notesSection")}</span>
                 <PrimaryButton
                   style={newNoteButtonStyle}
                   enabled={true}
@@ -529,7 +546,7 @@ export default function ProcessPage() {
                 </div>
               ) : (
                 <div className={styles["no-attachments"]}>
-                  <span>Nenhuma nota encontrada.</span>
+                  <span>{t("ProcessPage.noNotes")}</span>
                 </div>
               )}
             </div>

@@ -7,11 +7,11 @@ import {
   type ProcessResponse,
 } from "../../../Utility/Api/ProcessApi";
 import { Header } from "../../../Components/Layouts/Header/Header";
-import { StatContainerLayout } from "../../../Components/StatContainerLayout/StatContainerLayout";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import { StateBadge, type StateType } from "../../../Components/Badge/StateBadge/StateBadge";
 import { STATES } from "../../../MockData/MockStates";
 import styles from "./supervisordashboard.module.css";
+import { formatDate } from "../../../Utility/Helpers/DateHelpers";
 
 type CleanProcess = {
   name: string;
@@ -42,8 +42,8 @@ const cleanProcess = (
     name: process.name,
     location: `${process.location.street}, ${process.location.district}`,
     area: process.area,
-    creationDate: new Date(process.creationDate).toLocaleDateString(),
-    expirationDate: new Date(process.dueDate).toLocaleDateString(),
+    creationDate: formatDate(new Date(process.creationDate)),
+    expirationDate: formatDate(new Date(process.dueDate)),
     priority: <PriorityBadge priority={process.priority} />,
     state: (
       <StateBadge
@@ -66,7 +66,6 @@ export function SupervisorDashboard () {
     try {
       const response = await ProcessApi.getAll(0, 100);
       if (response.success) {
-        console.log(response.data.results);
         setProcess(cleanProcess(response.data.results, navigate));
       }
     } finally {

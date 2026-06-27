@@ -10,6 +10,7 @@ export const STATES = {
   REJECTED_BY_MANAGER: "REJECTED_BY_MANAGER",
   CANCELED: "CANCELED",
   NOT_STARTED: "NOT_STARTED",
+  REJECTED: "REJECTED",
 } as const;
 
 export type ProcessState = (typeof STATES)[keyof typeof STATES];
