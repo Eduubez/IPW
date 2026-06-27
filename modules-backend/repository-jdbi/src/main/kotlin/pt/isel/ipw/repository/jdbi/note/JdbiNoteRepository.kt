@@ -61,7 +61,7 @@ class JdbiNoteRepository(
                 n.author_id,
                 n.created_at,
                 u.name as author_name
-            from Notes n join Users u on n.id = u.id
+            from Notes n join Users u on n.author_id = u.id
             where process_id = :processId
             order by created_at desc
             """
@@ -81,7 +81,7 @@ class JdbiNoteRepository(
                 n.author_id,
                 n.created_at,
                 u.name as author_name
-            from Notes n join Users u on n.id = u.id
+            from Notes n join Users u on n.author_id = u.id
             where proves_id = :proveId
             order by created_at desc
             """
@@ -101,7 +101,7 @@ class JdbiNoteRepository(
                 n.author_id,
                 n.created_at,
                 u.name as author_name
-            from Notes n join Users u on n.id = u.id
+            from Notes n join Users u on n.author_id = u.id
             order by created_at desc
             """
         )
