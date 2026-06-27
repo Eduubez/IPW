@@ -36,11 +36,7 @@ const createReport = async (
   );
   if(response.success){
     enqueueSnackbar(i18next.t("report.createSuccess"), { variant: "success" });
-  }else {
-    enqueueSnackbar(i18next.t("report.createError"), { variant: "error" });
   }
-
-
   return response;
 };
 
@@ -74,8 +70,6 @@ const updateReport = async (
   );
   if(response.success){
     enqueueSnackbar(i18next.t("report.updateSuccess"), { variant: "success" });
-  }else {
-    enqueueSnackbar(i18next.t("report.updateError"), { variant: "error" });
   }
   return response;
 };

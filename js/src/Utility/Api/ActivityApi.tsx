@@ -22,12 +22,14 @@ export const ActivityApi = {getActivityByProcess, getActivityByUser}
 
 async function getActivityByProcess(processId: number, offset:number, limit: number ): Promise<ResponseApi<ListActivityResponse>> {
     const query = buildQuery({offset, limit})
-    return await fetchApi<ListActivityResponse>(`activity/process/${processId}${query}`, {
+    const response = await fetchApi<ListActivityResponse>(`activity/process/${processId}${query}`, {
         method: "GET",
         headers: {
             "Authorization": `Bearer ${userStore.getAccessToken()}`
         }
     })
+
+    return response
 }
 
 async function getActivityByUser(userId: number, offset:number, limit: number): Promise<ResponseApi<ListActivityResponse>> {

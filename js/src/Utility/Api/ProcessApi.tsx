@@ -4,6 +4,7 @@ import { userStore } from "../Store/UserStore.tsx";
 import type { PriorityType } from "../../Components/Badge/PriorityBadge/PriorityBadge.tsx";
 import { enqueueSnackbar } from "notistack";
 import type { ProveResponse } from "./ProvesApi.tsx";
+import i18n from "i18next";
 
 export type ProcessResponseApi = {
   results: ProcessResponse[];
@@ -104,10 +105,8 @@ async function create(
     },
   });
   if (response.success) {
-    enqueueSnackbar("Process created successfully", { variant: "success" });
-  } else {
-    enqueueSnackbar("Failed to create process", { variant: "error" });
-  }
+    enqueueSnackbar(i18n.t("CreateProcessPage.createSuccess"), { variant: "success" });
+  } 
   return response;
 }
 
@@ -128,12 +127,6 @@ async function submit(id: number): Promise<ResponseApi<void>> {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
-  if (response.success) {
-    enqueueSnackbar("Process submitted successfully", { variant: "success" });
-  } else {
-    enqueueSnackbar("Failed to submit process", { variant: "error" });
-  }
-
   return response;
 }
 
@@ -185,11 +178,6 @@ async function changePriority(
     },
     body: JSON.stringify({ priority }),
   });
-  if (response.success) {
-    enqueueSnackbar("Priority changed successfully", { variant: "success" });
-  } else {
-    enqueueSnackbar("Failed to change priority", { variant: "error" });
-  }
   return response;
 }
 
@@ -201,11 +189,6 @@ async function cancelProcess(id: number): Promise<ResponseApi<void>> {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
-  if (response.success) {
-    enqueueSnackbar("Process canceled successfully", { variant: "success" });
-  } else {
-    enqueueSnackbar("Failed to cancel process", { variant: "error" });
-  }
   return response;
 }
 
@@ -217,11 +200,6 @@ async function approve(id: number): Promise<ResponseApi<void>> {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
-  if (response.success) {
-    enqueueSnackbar("Process approved successfully", { variant: "success" });
-  } else {
-    enqueueSnackbar("Failed to approve process", { variant: "error" });
-  }
   return response;
 }
 

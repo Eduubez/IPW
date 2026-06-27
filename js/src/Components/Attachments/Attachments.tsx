@@ -33,7 +33,7 @@ export const Attachments = ({
   const attachments = proves || [];
   const [showNewAttachmentModal, setShowNewAttachmentModal] = useState(false);
   const [notes, setNotes] = useState<
-    { proveId: number | null; content: string; createdAt: string }[]
+    { proveId: number | null; content: string; createdAt: string; authorName: string }[]
   >([]);
 
   useEffect(() => {
@@ -54,6 +54,7 @@ export const Attachments = ({
           proveId: note.provesId,
           content: note.content,
           createdAt: note.createdAt,
+          authorName: note.authorName,
         }));
       });
 

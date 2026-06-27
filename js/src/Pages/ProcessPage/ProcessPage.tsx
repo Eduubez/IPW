@@ -25,6 +25,7 @@ import { formatDate } from "../../Utility/Helpers/DateHelpers";
 import { NoteCard } from "../../Components/Cards/NoteCard/NoteCard";
 import TextArea from "../../Components/Inputs/TextArea/TextArea";
 import { NotesApi } from "../../Utility/Api/NotesApi";
+import { enqueueSnackbar } from "notistack";
 
 const newNoteButtonStyle = {
   display: "flex",
@@ -308,12 +309,14 @@ export default function ProcessPage() {
   const aproveProcess = async () => {
     const response = await ProcessApi.approve(Number(id));
     if (response.success) {
+      enqueueSnackbar(t("ProcessPage.approvalSuccess"), { variant: "success" });
       navigate("/dashboard");
     }
   };
   const rejectProcess = async () => {
     const response = await ProcessApi.reject(Number(id));
     if (response.success) {
+      enqueueSnackbar(t("ProcessPage.rejectionSuccess"), { variant: "success" });
       navigate("/dashboard");
     }
   };
@@ -336,6 +339,7 @@ export default function ProcessPage() {
   const handleSubmitProcess = async () => {
     const response = await ProcessApi.submit(Number(id));
     if (response.success) {
+      enqueueSnackbar(t("ProcessPage.submitSuccess"), { variant: "success" });
       navigate("/dashboard");
     }
   };

@@ -1,9 +1,11 @@
+import { notifyUser } from "../Helpers/NotifyHelper";
+
 // talvez Colocar num .env
 const API_URL = "/api/"
 
 export type ResponseApi<T> =
     | { success: true; data: T; status: number }
-    | { success: false; type: string; status: number; message: string }
+    | { success: false; type: string; status: number; message: string ;errorCode:string}
 
 export async function fetchApi<T>(
     endpoint: string,
@@ -22,12 +24,15 @@ export async function fetchApi<T>(
         const error = await response
             .json()
             .catch(() => ({type: "unknown", message: "Unknown error"}));
+        
+        notifyUser(error.errorCode ?? "UNKNOWN_ERROR");
 
         return {
             success: false,
             type: error.type ?? "unknown",
             status: response.status,
             message: error.message ?? "Unknown error",
+            errorCode: error.erroCode ?? "UNKNOWN_ERROR"
         };
     }
 

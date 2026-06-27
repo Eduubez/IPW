@@ -128,9 +128,7 @@ async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
     },
     body: JSON.stringify(input),
   });
-  if (!response.success) {
-    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-  } else {
+  if(response.success) {
     enqueueSnackbar(i18next.t("DashboardAdmin.createUser.successMessage"), {
       variant: ToastType.SUCCESS,
     });
@@ -172,9 +170,7 @@ async function changeUserRoles(
     body: JSON.stringify({ roles, areaId }),
   });
 
-  if (!response.success) {
-    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-  } else {
+ if(response.success) {
     enqueueSnackbar(i18next.t("DashboardAdmin.changeRolesModal.success"), {
       variant: ToastType.SUCCESS,
     });
@@ -198,9 +194,7 @@ async function changeUserPassword(
     body: JSON.stringify({ newPassword }),
   });
 
-  if (!response.success) {
-    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-  } else {
+  if(response.success) {
     enqueueSnackbar(i18next.t("DashboardAdmin.changePasswordModal.success"), {
       variant: ToastType.SUCCESS,
     });
@@ -224,9 +218,7 @@ async function changeUserStatus(
     body: JSON.stringify({ isActive }),
   });
 
-  if (!response.success) {
-    enqueueSnackbar(response.message, { variant: ToastType.ERROR });
-  } else {
+  if(response.success) {
     enqueueSnackbar(
       isActive
         ? i18next.t("DashboardAdmin.changeStatusModal.enableSuccess", {
