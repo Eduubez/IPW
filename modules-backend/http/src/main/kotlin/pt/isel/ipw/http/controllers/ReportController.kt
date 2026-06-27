@@ -15,7 +15,6 @@ import pt.isel.ipw.domain.DTO.input.CreateReportRequest
 import pt.isel.ipw.domain.DTO.input.UpdateReportRequest
 import pt.isel.ipw.domain.DTO.output.CreateReportResponse
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
@@ -24,7 +23,7 @@ import pt.isel.ipw.services.errors.mapSuccess
 import pt.isel.ipw.services.interfaces.ReportService
 
 @RestController
-@RequestMapping(ApiRoutes.Report.BASE)
+@RequestMapping("/api/process/{processId}/report")
 class ReportController(
     private val reportService: ReportService
 ) {
@@ -75,7 +74,7 @@ class ReportController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping(ApiRoutes.Report.APPROVE)
+    @PostMapping("/approve")
     fun approveReport(
         @PathVariable processId: Int
     ): ResponseEntity<*> {
@@ -89,7 +88,7 @@ class ReportController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping(ApiRoutes.Report.REJECT)
+    @PostMapping("/reject")
     fun rejectReport(
         @PathVariable processId: Int
     ): ResponseEntity<*> {

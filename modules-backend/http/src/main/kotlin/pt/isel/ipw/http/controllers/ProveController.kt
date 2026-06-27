@@ -16,7 +16,6 @@ import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.DTO.output.prove.CreateProveResponse
 import pt.isel.ipw.domain.DTO.output.prove.ProveResponse
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
@@ -25,13 +24,13 @@ import pt.isel.ipw.services.errors.mapSuccess
 import pt.isel.ipw.services.interfaces.ProveService
 
 @RestController
-@RequestMapping(ApiRoutes.Process.BASE)
+@RequestMapping("/api/process")
 class ProveController(
     private val proveService: ProveService,
 ) {
 
     @RolesAllowed(Roles.INVESTIGATOR)
-    @PostMapping(ApiRoutes.Process.PROVE_UPLOAD_URL)
+    @PostMapping("/{id}/proves/upload-url")
     fun createUploadUrl(
         @PathVariable id: Int,
         @RequestBody body: CreateProveUploadUrlRequest
@@ -55,7 +54,7 @@ class ProveController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR)
-    @PostMapping(ApiRoutes.Process.PROVES)
+    @PostMapping("/{id}/proves")
     fun createProve(
         @PathVariable id: Int,
         @RequestBody body: CreateProveRequest
@@ -82,7 +81,7 @@ class ProveController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR)
-    @GetMapping(ApiRoutes.Process.PROVES)
+    @GetMapping("/{id}/proves")
     fun getProcessProves(
         @PathVariable id: Int
     ): ResponseEntity<*> {
@@ -116,7 +115,7 @@ class ProveController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR)
-    @GetMapping(ApiRoutes.Process.PROVE_ACCESS_URL)
+    @GetMapping("/{id}/proves/{proveId}/url")
     fun getProveAccessUrl(
         @PathVariable id: Int,
         @PathVariable proveId: Int
@@ -138,7 +137,7 @@ class ProveController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR)
-    @DeleteMapping(ApiRoutes.Process.PROVE_BY_ID)
+    @DeleteMapping("/{id}/proves/{proveId}")
     fun deleteProve(
         @PathVariable id: Int,
         @PathVariable proveId: Int

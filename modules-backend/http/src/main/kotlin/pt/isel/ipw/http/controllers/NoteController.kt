@@ -10,7 +10,6 @@ import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.notes.toResponse
 import pt.isel.ipw.domain.process.toResponse
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
@@ -20,14 +19,14 @@ import pt.isel.ipw.services.interfaces.NoteService
 
 @RestController
 @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
-@RequestMapping(ApiRoutes.Process.BASE)
+@RequestMapping("/api/process")
 class NoteController(
     private val noteService: NoteService
 ) {
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
-    @PostMapping(ApiRoutes.Process.NOTE_REL)
+    @PostMapping("/{id}/note")
     fun createNote(
         @PathVariable id: Int,
         @RequestBody note: CreateNoteRequest,
@@ -45,7 +44,7 @@ class NoteController(
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
-    @GetMapping(ApiRoutes.Process.NOTE_REL)
+    @GetMapping("/{id}/note")
     fun getNotesByProcessId(
         @PathVariable id: Int,
     ): ResponseEntity<*> {
@@ -70,7 +69,7 @@ class NoteController(
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
-    @GetMapping(ApiRoutes.Process.PROVE_NOTE_REL)
+    @GetMapping("/{id}/proves/{proveId}/note")
     fun getNotesByProveId(
         @PathVariable id: Int,
         @PathVariable proveId: Int,
@@ -96,7 +95,7 @@ class NoteController(
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
 
-    @PatchMapping(ApiRoutes.Process.PROCESS_NOTE)
+    @PatchMapping("/{id}/note/{noteId}")
     fun updateNote(
         @PathVariable id: Int,
         @PathVariable noteId: Int,

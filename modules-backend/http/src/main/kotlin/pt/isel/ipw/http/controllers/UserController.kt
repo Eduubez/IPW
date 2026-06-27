@@ -28,7 +28,6 @@ import pt.isel.ipw.domain.DTO.output.user.UserRolesResponse
 import pt.isel.ipw.domain.DTO.output.user.AdminUserResponse
 import pt.isel.ipw.domain.DTO.output.user.UserProfileResponse
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.auth.AuthenticatedLogin
 import pt.isel.ipw.http.auth.AuthenticatedRefresh
@@ -41,7 +40,7 @@ import pt.isel.ipw.services.errors.mapSuccess
 import pt.isel.ipw.services.interfaces.UserService
 
 @RestController
-@RequestMapping(ApiRoutes.Users.BASE)
+@RequestMapping("/api/users")
 class UserController(
     private val userService: UserService
 ) {
@@ -114,7 +113,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping(ApiRoutes.Users.LOGIN)
+    @PostMapping("/login")
     fun login(
         @RequestBody input: LoginRequest,
     ): ResponseEntity<*> {
@@ -132,7 +131,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping(ApiRoutes.Users.LOGOUT)
+    @PostMapping("/logout")
     fun logout(): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
@@ -141,7 +140,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping(ApiRoutes.Users.REFRESH_TOKEN)
+    @PostMapping("/refresh-token")
     fun refreshToken(
         @AuthenticatedRefresh refreshToken: RefreshTokenPrincipal
     ): ResponseEntity<*> {
@@ -160,7 +159,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PostMapping(ApiRoutes.Users.SELECT_ROLE)
+    @PostMapping("/auth/select-role")
     fun selectRole(
         @RequestBody body: SelectRoleRequest,
         @AuthenticatedLogin loginToken: LoginTokenPrincipal
@@ -220,7 +219,7 @@ class UserController(
         return handler(result, HttpStatus.NO_CONTENT) { error -> error.toHttp() }
     }
 
-    @GetMapping(ApiRoutes.Users.ROLES)
+    @GetMapping("/roles")
     fun roles(@RequestParam email: String): ResponseEntity<*> {
         val result = userService.getUserRoles(email)
             .mapSuccess { roles ->
@@ -230,7 +229,7 @@ class UserController(
     }
 
 
-    @GetMapping(ApiRoutes.Users.INVESTIGATORS)
+    @GetMapping("/investigators")
     @RolesAllowed(Roles.TRIATOR)
     fun getAllInvestigators(
         @RequestParam(required = false) areaId: Int?
@@ -252,7 +251,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @GetMapping(ApiRoutes.Users.SUPERVISORS)
+    @GetMapping("/supervisors")
     @RolesAllowed(Roles.TRIATOR)
     fun getAllSupervisors(
         @RequestParam(required = false) areaId: Int?

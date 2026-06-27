@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
-import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.TokenExtractor.extractToken
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.toHttp
@@ -27,10 +26,10 @@ class JwtAuthenticationFilter(
         val path = request.servletPath
 
         return path in setOf(
-            ApiRoutes.Users.LOGIN_FULL,
-            ApiRoutes.Users.SELECT_ROLE_FULL,
-            ApiRoutes.Users.REFRESH_TOKEN_FULL,
-            ApiRoutes.Users.ROLES_FULL,
+            "/api/users/login",
+            "/api/users/auth/select-role",
+            "/api/users/refresh-token",
+            "/api/users/roles",
             "/api/public/contacts"
         )
     }

@@ -18,7 +18,6 @@ import pt.isel.ipw.domain.DTO.output.CreateProcessResponse
 import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.process.toResponse
 import pt.isel.ipw.domain.roles.Roles
-import pt.isel.ipw.http.ApiRoutes
 import pt.isel.ipw.http.auth.AuthenticatedUser
 import pt.isel.ipw.http.errors.Problem
 import pt.isel.ipw.http.errors.handler
@@ -27,7 +26,7 @@ import pt.isel.ipw.services.errors.mapSuccess
 import pt.isel.ipw.services.interfaces.ProcessService
 
 @RestController
-@RequestMapping(ApiRoutes.Process.BASE)
+@RequestMapping("/api/process")
 class ProcessController(
     private val processService: ProcessService,
 ) {
@@ -66,7 +65,7 @@ class ProcessController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
-    @GetMapping(ApiRoutes.Process.BY_ID)
+    @GetMapping("/{id}")
     fun getProcessById(@PathVariable id: Int): ResponseEntity<*> {
         val userId = AuthenticatedUser.id()
             ?: return Problem.response(401, Problem.invalidToken)
@@ -124,7 +123,7 @@ class ProcessController(
 
 
     @RolesAllowed(Roles.SUPERVISOR, Roles.MANAGER)
-    @PatchMapping(ApiRoutes.Process.END_DATE_FULL)
+    @PatchMapping("/{id}/end-date")
     fun updateProcessEndDate(
         @PathVariable id: Int,
         @RequestBody endDate: String
@@ -141,7 +140,7 @@ class ProcessController(
     }
 
     @RolesAllowed(Roles.TRIATOR)
-    @PatchMapping(ApiRoutes.Process.INVESTIGATOR_FULL)
+    @PatchMapping("/{id}/investigator")
     fun assignInvestigator(
         @PathVariable id: Int,
         @RequestBody investigatorId: Int
@@ -155,7 +154,7 @@ class ProcessController(
     }
 
     @RolesAllowed(Roles.TRIATOR)
-    @PatchMapping(ApiRoutes.Process.SUPERVISOR_FULL)
+    @PatchMapping("/{id}/supervisor")
     fun assignSupervisor(
         @PathVariable id: Int,
         @RequestBody supervisorId: Int
