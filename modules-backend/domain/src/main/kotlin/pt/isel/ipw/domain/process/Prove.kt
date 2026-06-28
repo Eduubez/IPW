@@ -11,6 +11,7 @@ data class Prove(
     val fileSize: Long,
     val storageKey: String,
     val createdBy: Int,
+    val authorName: String,
     val createdAt: LocalDateTime
 )
 
@@ -21,6 +22,7 @@ fun Prove.toResponse() = ProveResponse(
     contentType = contentType,
     fileSize = fileSize,
     createdBy = createdBy,
+    authorName = authorName,
     createdAt = createdAt.toString()
 )
 

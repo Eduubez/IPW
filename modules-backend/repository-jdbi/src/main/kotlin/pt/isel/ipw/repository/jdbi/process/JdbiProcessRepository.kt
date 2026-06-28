@@ -133,17 +133,19 @@ class JdbiProcessRepository(
         val proves = handle.createQuery(
             """
             select
-                id,
-                process_id,
-                file_name,
-                content_type,
-                file_size,
-                storage_key,
-                created_by,
-                created_at
-            from Proves
-            where process_id = :processId
-            order by created_at desc
+                pv.id,
+                pv.process_id,
+                pv.file_name,
+                pv.content_type,
+                pv.file_size,
+                pv.storage_key,
+                pv.created_by,
+                u.name as author_name,
+                pv.created_at
+            from Proves pv
+            join Users u on u.id = pv.created_by
+            where pv.process_id = :processId
+            order by pv.created_at desc
             """
         )
             .bind("processId", id)
@@ -321,8 +323,10 @@ select
     pv.file_size      as proves_file_size,
     pv.storage_key    as proves_storage_key,
     pv.created_by     as proves_created_by,
+    upv.name          as proves_author_name,
     pv.created_at     as proves_created_at
 from Proves pv
+join Users upv on upv.id = pv.created_by
 where pv.process_id = any(:ids)
 """
         )

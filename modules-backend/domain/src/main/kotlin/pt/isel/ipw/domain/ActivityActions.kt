@@ -15,7 +15,9 @@ enum class ActivityActions {
     REJECTED_REPORT_MANAGER,
     SUBMIT_PROCESS_FOR_APPROVAL,
     CREATED_NOTE,
-    UPDATED_NOTE
+    UPDATED_NOTE,
+    CREATED_PROVE,
+    DELETED_PROVE
 }
 
 
@@ -36,6 +38,8 @@ fun ActivityActions.mapToString(): String =
         ActivityActions.SUBMIT_PROCESS_FOR_APPROVAL -> "SUBMIT_PROCESS_FOR_APPROVAL"
         ActivityActions.CREATED_NOTE -> "CREATED_NOTE"
         ActivityActions.UPDATED_NOTE -> "UPDATED_NOTE"
+        ActivityActions.CREATED_PROVE -> "CREATED_PROVE"
+        ActivityActions.DELETED_PROVE -> "DELETED_PROVE"
     }
 
 

@@ -1,8 +1,10 @@
 package pt.isel.ipw.services
 
 import org.springframework.stereotype.Service
+import pt.isel.ipw.domain.ActivityActions
 import pt.isel.ipw.domain.DTO.output.prove.CreateProveUploadUrlResponse
 import pt.isel.ipw.domain.DTO.output.prove.ProveAccessUrlResponse
+import pt.isel.ipw.domain.mapToString
 import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.roles.Roles
@@ -23,6 +25,7 @@ import java.util.UUID
 class ProveServiceImpl(
     private val transactionManager: TransactionManager,
     private val proveStorageService: ProveStorageService,
+    private val activityService: ActivityServiceImpl,
 ) : ProveService {
 
     companion object {
@@ -82,6 +85,7 @@ class ProveServiceImpl(
     ): CreateProveResult = transactionManager.run {
         val process = processRepository.getById(processId)
             ?: return@run failure(ProveError.ProcessNotFound)
+        val user = usersRepository.getUserById(userId)
 
         val error = validateProve(
             process = process,
@@ -116,6 +120,17 @@ class ProveServiceImpl(
             storageKey = storageKey,
             createdBy = userId,
         )
+
+        activityService.createActivity(
+            processId = processId,
+            userId = userId,
+            action = ActivityActions.CREATED_PROVE.mapToString(),
+            description = "${user?.name ?: "User $userId"} added attachment $fileName."
+        )
+
+        if (process.state == State.ASSIGNED) {
+            processRepository.changeState(processId, State.ON_GOING.toString())
+        }
 
         success(proveId)
     }
@@ -180,6 +195,7 @@ class ProveServiceImpl(
     ): DeleteProveResult = transactionManager.run {
         val process = processRepository.getById(processId)
             ?: return@run failure(ProveError.ProcessNotFound)
+        val user = usersRepository.getUserById(userId)
 
         if (!canAccessProves(process, userId, role)) {
             return@run failure(ProveError.UnauthorizedAccess)
@@ -199,6 +215,13 @@ class ProveServiceImpl(
         }
 
         provesRepository.delete(proveId)
+
+        activityService.createActivity(
+            processId = processId,
+            userId = userId,
+            action = ActivityActions.DELETED_PROVE.mapToString(),
+            description = "${user?.name ?: "User $userId"} deleted attachment ${prove.fileName}."
+        )
 
         success(Unit)
     }

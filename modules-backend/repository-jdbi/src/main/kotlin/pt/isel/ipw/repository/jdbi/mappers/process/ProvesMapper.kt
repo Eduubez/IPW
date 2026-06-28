@@ -16,6 +16,7 @@ class ProvesMapper(private val prefix: String = "") : RowMapper<Prove> {
             fileSize = rs.getLong("${prefix}file_size"),
             storageKey = rs.getString("${prefix}storage_key"),
             createdBy = rs.getInt("${prefix}created_by"),
+            authorName = rs.getString("${prefix}author_name"),
             createdAt = rs.getTimestamp("${prefix}created_at").toLocalDateTime(),
         )
     }

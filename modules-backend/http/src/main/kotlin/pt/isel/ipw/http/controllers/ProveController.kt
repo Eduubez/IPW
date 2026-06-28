@@ -29,7 +29,7 @@ class ProveController(
     private val proveService: ProveService,
 ) {
 
-    @RolesAllowed(Roles.INVESTIGATOR)
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @PostMapping("/{id}/proves/upload-url")
     fun createUploadUrl(
         @PathVariable id: Int,
@@ -53,7 +53,7 @@ class ProveController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR)
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @PostMapping("/{id}/proves")
     fun createProve(
         @PathVariable id: Int,
@@ -80,7 +80,7 @@ class ProveController(
         return handler(result, HttpStatus.CREATED) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR)
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @GetMapping("/{id}/proves")
     fun getProcessProves(
         @PathVariable id: Int
@@ -105,6 +105,7 @@ class ProveController(
                         contentType = prove.contentType,
                         fileSize = prove.fileSize,
                         createdBy = prove.createdBy,
+                        authorName = prove.authorName,
                         createdAt = prove.createdAt.toString(),
                     )
                 }
@@ -114,7 +115,7 @@ class ProveController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR)
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @GetMapping("/{id}/proves/{proveId}/url")
     fun getProveAccessUrl(
         @PathVariable id: Int,
@@ -136,7 +137,7 @@ class ProveController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @RolesAllowed(Roles.INVESTIGATOR)
+    @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @DeleteMapping("/{id}/proves/{proveId}")
     fun deleteProve(
         @PathVariable id: Int,

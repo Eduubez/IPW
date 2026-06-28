@@ -7,5 +7,6 @@ data class ProveResponse(
     val contentType: String,
     val fileSize: Long,
     val createdBy: Int,
+    val authorName: String,
     val createdAt: String
 )

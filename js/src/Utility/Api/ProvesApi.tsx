@@ -8,6 +8,7 @@ export type ProveResponse = {
     contentType: string;
     fileSize: number;
     createdBy: number;
+    authorName: string;
     createdAt: string;
 };
 
