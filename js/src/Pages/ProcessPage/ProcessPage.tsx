@@ -490,6 +490,7 @@ export default function ProcessPage() {
       </div>
     );
   };
+
   return (
     <div className={styles["page-container"]}>
       <div className={styles["header-container"]}>

@@ -21,7 +21,13 @@
     "waitingApproval": "No. of Processes Awaiting Approval",
     "recentActivities": "Recent Activities",
     "areaLabel": "Area",
-    "notSpecified": "Not specified"
+    "notSpecified": "Not specified",
+    "activityType": {
+      "process was submitted for approval": "Submitted a process for approval",
+      "updated": "Updated a process",
+      "submitted": "Submitted a process",
+      "approved": "Approved a process"
+    }
   },
   "Label": {
     "createNewProcess": "Create process",
@@ -160,7 +166,8 @@
       "canBeFraud": "Can be fraud",
       "note": "Note"
     },
-    "submit": "Create"
+    "submit": "Create",
+    "createSuccess": "Process created successfully!"
   },
   "NavigationItems": {
     "Dashboard": "Dashboard",
@@ -178,7 +185,8 @@
     "WAITING_APPROVAL_MANAGER": "Awaiting Manager Approval",
     "APPROVED_BY_MANAGER": "Approved by Manager",
     "REJECTED_BY_MANAGER": "Rejected by Manager",
-    "CANCELED": "Canceled"
+    "CANCELED": "Canceled",
+    "REJECTED": "Rejected"
   },
   "NotAuthorizedPage": {
     "title": "Access Denied",
@@ -187,7 +195,10 @@
   },
   "Areas": {
     "Car Accident": "Car Accident",
-    "Job Accident": "Job Accident"
+    "Job Accident": "Job Accident",
+    "Floods": "Floods",
+    "Fire": "Fire",
+    "Earthquake": "Earthquake"
   },
   "Dashboard": {
     "description": "Hello again, see what has been happening lately!",
@@ -220,8 +231,12 @@
     "submitProcess": "Submit Process",
     "approveProcess": "Approve Process",
     "rejectProcess": "Reject Process",
+    "cancelProcess": "Cancel Process",
     "notImplemented": "View not implemented for this role",
     "stateSection": "State",
+    "notesSection": "Notes",
+    "noNotes": "No notes found.",
+    "noAttachments": "No attachments found.",
     "attachmentsSection": "Attachments",
     "activitiesSection": "Activities",
     "confirmModal": {
@@ -232,7 +247,14 @@
     "priorityModal": {
       "header": "Change Priority",
       "description": "This action will change the priority of this process, which is currently {{current}}, to:"
-    }
+    },
+    "newNoteModal": {
+      "header": "New Note",
+      "confirm": "Add"
+    },
+    "submitSuccess": "Process submitted successfully!",
+    "approvalSuccess": "Process approved successfully!",
+    "rejectionSuccess": "Process rejected successfully!"
   },
   "reportCard": {
     "title": "Report",
@@ -251,5 +273,88 @@
   },
   "Modal": {
     "cancel": "Cancel"
+  },
+  "ActivityItem": {
+    "CREATED_PROCESS": "Process created",
+    "CANCELLED_PROCESS": "Process cancelled",
+    "APPROVED_SUPERVISOR": "Process approved by supervisor",
+    "REJECTED_SUPERVISOR": "Process rejected by supervisor",
+    "APPROVED_REPORT_MANAGER": "Process approved by manager",
+    "REJECTED_REPORT_MANAGER": "Process rejected by manager",
+    "SUBMIT_PROCESS_FOR_APPROVAL": "Process submitted for approval",
+    "UPDATED_REPORT": "Report updated",
+    "CHANGED_PRIORITY": "Process priority changed",
+    "ASSIGNED_SUPERVISOR": "Supervisor assigned to process",
+    "CHANGED_END_DATE": "Process expiration date changed",
+    "CREATED_REPORT": "Created a report",
+    "CREATED_NOTE": "Added a note"
+  },
+  "Error": {
+    "INTERNAL_ERROR": "Internal error",
+    "USER_ALREADY_EXISTS": "User already exists",
+    "USER_NOT_FOUND": "User not found",
+    "USER_NOT_ACTIVE": "User not active",
+    "INSECURE_PASSWORD": "Insecure password",
+    "INVALID_CREDENTIALS": "Invalid credentials",
+    "INVALID_ROLE": "Invalid role",
+    "INVALID_ROLES": "Invalid roles",
+    "INVALID_TOKEN": "Invalid token",
+    "REFRESH_NOT_FOUND": "Refresh token not found",
+    "LOGIN_EXPIRED": "Login expired",
+    "ACCESS_EXPIRED": "Access expired",
+    "REFRESH_EXPIRED": "Refresh token expired",
+    "CANNOT_DEACTIVATE_SELF": "Cannot deactivate yourself",
+    "AREA_REQUIRED": "Area required",
+    "AREA_NOT_FOUND": "Area not found",
+    "AREA_ALREADY_HAS_SUPERVISOR": "Area already has a supervisor",
+    "INVALID_OFFSET": "Invalid offset",
+    "INVALID_LIMIT": "Invalid limit",
+    "PROCESS_NOT_FOUND": "Process not found",
+    "INVALID_PROCESS_NAME": "Invalid process name",
+    "INVALID_LOCATION": "Invalid location",
+    "INVALID_EXPIRATION_DATE": "Invalid expiration date",
+    "INVALID_PRIORITY": "Invalid priority",
+    "INVALID_INVESTIGATOR": "Invalid investigator",
+    "INVALID_SUPERVISOR": "Invalid supervisor",
+    "INVALID_TRIATOR": "Invalid triator",
+    "INVALID_INSURANCE": "Invalid insurance",
+    "INVALID_TYPIFICATION": "Invalid typification",
+    "UPDATE_NOT_ALLOWED": "Update not allowed",
+    "INVALID_USER_ID": "Invalid user ID",
+    "INVALID_AREA_ID": "Invalid area ID",
+    "REQUEST_ERROR": "Request error",
+    "INVALID_CONTENT": "Invalid content",
+    "NOT_ASSOCIATED": "Not associated",
+    "UNAUTHORIZED_INVESTIGATOR": "Unauthorized investigator",
+    "UNAUTHORIZED": "Unauthorized",
+    "REPORT_NOT_FOUND": "Report not found",
+    "ALREADY_REJECTED": "Already rejected",
+    "NOT_APPROVED_BY_SUPERVISOR": "Not approved by supervisor",
+    "ALREADY_APPROVED": "Already approved",
+    "PROVE_NOT_FOUND": "Attachment not found",
+    "INVALID_FILE_NAME": "Invalid file name",
+    "INVALID_CONTENT_TYPE": "Invalid content type",
+    "INVALID_FILE_SIZE": "Invalid file size",
+    "INVALID_STORAGE_KEY": "Invalid storage key",
+    "STORAGE_ERROR": "Storage error",
+    "INVALID_NOTE_REQUEST": "Invalid note request",
+    "NOTE_NOT_FOUND": "Note not found",
+    "UNKNOWN_ERROR": "Unknown error"
+  },
+  "ContactAdmin": {
+    "description": "No role has been assigned to your account. Please contact the administrator.",
+    "logout": "Logout"
+  },
+  "Attachment": {
+    "SubmitedBy": "Submitted by"
+  },
+  "AttachmentCard": {
+    "addNoteHeader": "Add Note",
+    "noteContentLabel": "Note Content",
+    "saveNoteButton": "Save Note"
+  },
+  "UploadAttachmentModal": {
+    "header": "Upload Attachment",
+    "uploadButton": "Upload"
   }
 }

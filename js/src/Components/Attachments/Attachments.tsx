@@ -134,6 +134,7 @@ export const Attachments = ({
             content={attachmentsWithNotes.map((attachment, index) => (
               <AttachmentCard
                 key={index}
+                authorName={attachment.authorName}
                 fileName={attachment.fileName}
                 date={new Date(attachment.createdAt)}
                 downloadFn={() => handleDownload(processId, attachment.id)}

@@ -1,6 +1,7 @@
 import { PrimaryModal } from "../../Modal/PrimaryModal";
 import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
 import styles from "./uploadattachment.module.css";
+import { useTranslation } from "react-i18next";
 
 interface UploadAttachmentModalProps {
   isOpen: boolean;
@@ -17,6 +18,8 @@ export const UploadAttachmentModal = ({
   setFile,
   handleFileUpload,
 }: UploadAttachmentModalProps) => {
+  const { t } = useTranslation();
+
   const modalBody = () => {
     let isUploadButtonEnabled = file !== null;
 
@@ -34,7 +37,7 @@ export const UploadAttachmentModal = ({
         <input type="file" onChange={setFile} />
         <div className={styles["button-container"]}>
           <PrimaryButton
-            text="Upload"
+            text={t("UploadAttachmentModal.uploadButton")}
             onClick={handlePrimaryButtonClick}
             enabled={isUploadButtonEnabled}
           />
@@ -47,7 +50,7 @@ export const UploadAttachmentModal = ({
     <PrimaryModal
       open={isOpen}
       onClose={onClose}
-      header="Upload Attachment"
+      header={t("UploadAttachmentModal.header")}
       body={modalBody()}
     />
   );

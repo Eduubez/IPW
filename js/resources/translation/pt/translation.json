@@ -5,7 +5,10 @@
     "welcome": "Olá !",
     "welcomeText": "Utilize as suas credenciais para acessar a sua conta",
     "successMessage": "Login bem sucedido!",
-    "logout": "Logout bem sucedido!"
+    "logout": "Logout bem sucedido!",
+    "error": {
+      "problems/invalid-credentials": "Credenciais inválidas. Por favor tente novamente."
+    }
   },
   "text": {
     "title": "Bem vindo a IPW "
@@ -192,6 +195,7 @@
   },
   "Areas": {
     "Car Accident": "Acidente Automóvel",
+    "Job Accident": "Acidente de Trabalho",
     "Floods": "Inundações",
     "Fire": "Incêndio",
     "Earthquake": "Terremoto"
@@ -340,5 +344,17 @@
   "ContactAdmin": {
     "description": "Nenhum papel foi atribuído à sua conta. Por favor, contacte o administrador.",
     "logout": "Sair"
+  },
+  "Attachment": {
+    "SubmitedBy": "Submetido por"
+  },
+  "AttachmentCard": {
+    "addNoteHeader": "Adicionar Nota",
+    "noteContentLabel": "Conteúdo da Nota",
+    "saveNoteButton": "Guardar Nota"
+  },
+  "UploadAttachmentModal": {
+    "header": "Carregar Anexo",
+    "uploadButton": "Carregar"
   }
 }

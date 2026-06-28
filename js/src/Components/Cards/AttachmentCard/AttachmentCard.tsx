@@ -5,6 +5,7 @@ import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
 import { PrimaryModal } from "../../Modal/PrimaryModal";
 import TextArea from "../../Inputs/TextArea/TextArea";
 import { NotesApi } from "../../../Utility/Api/NotesApi";
+import { useTranslation } from "react-i18next";
 
 interface AttachmentCardProps {
   fileName: string;
@@ -14,10 +15,12 @@ interface AttachmentCardProps {
   proveId: number;
   notes?: { content: string; createdAt: string; authorName: string }[];
   triggerRenderFn: () => void;
+  authorName: string;
 }
 
 export const AttachmentCard = ({
   fileName,
+  authorName,
   date,
   downloadFn,
   processId,
@@ -27,6 +30,8 @@ export const AttachmentCard = ({
 }: AttachmentCardProps) => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
+  const {t} = useTranslation();
+
 
   const handleSaveNote = async () => {
     const res = await NotesApi.createNote(processId, {
@@ -49,6 +54,7 @@ export const AttachmentCard = ({
         <div className={styles["card-body"]}>
           <span>{fileName}</span>
           <span>{formatDate(date)}</span>
+          <span className={`paragraph-xs ${styles["author-name"]}`}>{t("Attachment.SubmitedBy")} {authorName}</span>
         </div>
         <div className={styles["button-container"]}>
           <button onClick={downloadFn} className={styles["download-button"]}>
@@ -71,17 +77,17 @@ export const AttachmentCard = ({
         <PrimaryModal
           open={showNoteModal}
           onClose={() => setShowNoteModal(false)}
-          header="Adicionar Nota"
+          header={t("AttachmentCard.addNoteHeader")}
           body={
             <div className={styles["add-note-container"]}>
               <TextArea
-                label="Conteúdo da Nota"
+                label={t("AttachmentCard.noteContentLabel")}
                 value={newNoteContent}
                 onChange={setNewNoteContent}
               />
               <div className={styles["upload-note-button-container"]}>
                 <PrimaryButton
-                  text="Salvar Nota"
+                  text={t("AttachmentCard.saveNoteButton")}
                   onClick={handleSaveNote}
                   enabled={true}
                 />

@@ -113,12 +113,14 @@ async function create(
 
 // get a process by id - Investigator, Supervisor, Manager
 async function getById(id: number): Promise<ResponseApi<ProcessResponse>> {
-  return await fetchApi<ProcessResponse>(`process/${id}`, {
+  const response =  await fetchApi<ProcessResponse>(`process/${id}`, {
     method: "GET",
     headers: {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
   });
+
+  return response;
 }
 
 async function submit(id: number): Promise<ResponseApi<void>> {

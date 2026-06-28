@@ -100,7 +100,7 @@ export function InvestigatorDashboard() {
         description={t("Dashboard.description")}
       />
       <DataGrid
-        title="Processos Recentes"
+        title={t("Dashboard.recentProcesses")}
         columns={gridColumns}
         rows={process}
         loading={loading}
