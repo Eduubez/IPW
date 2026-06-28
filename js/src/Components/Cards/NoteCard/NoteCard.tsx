@@ -7,7 +7,7 @@ export const NoteCard = ({ note }: { note: NotesType }) => {
     <div className={styles["note-card"]}>
       <span>{note.content}</span>
       <span>{formatDate(new Date(note.createdAt))}</span>
-      <span>{note.authorId}</span>
+      <span>{note.authorName}</span>
     </div>
   );
 };

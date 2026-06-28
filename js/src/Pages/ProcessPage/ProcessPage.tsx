@@ -62,6 +62,8 @@ const processPageState = (state?: string) => {
   switch (state) {
     case STATES.ASSIGNED.toLowerCase():
       return STATES.NOT_STARTED;
+      case STATES.CANCELED.toLowerCase():
+      return STATES.CANCELED;
     default:
       return STATES.ON_GOING;
   }
@@ -90,6 +92,7 @@ export default function ProcessPage() {
   const [showPriorityModal, setShowPriorityModal] = useState(false);
   const [showNewNoteModal, setShowNewNoteModal] = useState(false);
   const [newNote, setNewNote] = useState("");
+  const [renderCountKey, setRenderCountKey] = useState(0);
 
   const openConfirmModal = (action: () => void) => {
     setConfirmAction(() => action);
@@ -132,7 +135,7 @@ export default function ProcessPage() {
       TIME_LINE_ACTIVITY_TYPE.includes(item.label),
     );
     return items;
-  }, [apiResponse]);
+  }, [activityItems]);
 
   const boxActivityItens = useMemo(() => {
     if (!apiResponse) return [];
@@ -140,7 +143,7 @@ export default function ProcessPage() {
       BOX_ACTIVITY_TYPE.includes(item.label),
     );
     return items;
-  }, [apiResponse]);
+  }, [activityItems]);
 
   const {
     supervisorCard,
@@ -279,11 +282,13 @@ export default function ProcessPage() {
   ];
 
   useEffect(() => {
-    setLoading(true);
-    fetchProcessData();
-    fetchProcessActivity();
-    setLoading(false);
-  }, [id]);
+    const load = async () => {
+      setLoading(true);
+      await Promise.all([fetchProcessData(), fetchProcessActivity()]);
+      setLoading(false);
+    };
+    load();
+  }, [id, renderCountKey]);
   const report = apiResponse?.report;
   const processState = normalizeState(apiResponse?.state);
   const hasReport = (report?.content?.length ?? 0) > 0;
@@ -301,7 +306,9 @@ export default function ProcessPage() {
 
     const response = await NotesApi.createNote(Number(id), requestNote);
     if (response.success) {
-      window.location.reload();
+      setShowNewNoteModal(false);
+      setNewNote("");
+      setRenderCountKey((prev) => prev + 1);
     }
   };
 
@@ -364,7 +371,8 @@ export default function ProcessPage() {
   const handleChangePriority = async (newPriority: PriorityType) => {
     const response = await ProcessApi.changePriority(Number(id), newPriority);
     if (response.success) {
-      window.location.reload();
+      setShowPriorityModal(false);
+      setRenderCountKey((prev) => prev + 1);
     }
   };
 
@@ -380,7 +388,7 @@ export default function ProcessPage() {
       />,
     ],
     reportView: (
-      <ReportCard report={report} processId={Number(id)} viewOnly={false} />
+      <ReportCard report={report} processId={Number(id)} viewOnly={false} triggerRenderFn={() => setRenderCountKey((prev) => prev + 1)} />
     ),
     key: ROLE_KEYS.INVESTIGATOR,
   };
@@ -399,8 +407,8 @@ export default function ProcessPage() {
       />,
     ],
     reportView: (
-      <ReportCard report={report} processId={Number(id)} viewOnly={true} />
-    ),
+        <ReportCard report={report} processId={Number(id)} viewOnly={true}  triggerRenderFn={() => setRenderCountKey(prev => prev +1)}/>
+      ),
     key: ROLE_KEYS.SUPERVISOR,
   };
   const managerView = {
@@ -423,7 +431,7 @@ export default function ProcessPage() {
       />,
     ],
     reportView: (
-      <ReportCard report={report} processId={Number(id)} viewOnly={true} />
+      <ReportCard report={report} processId={Number(id)} viewOnly={true}  triggerRenderFn={() => setRenderCountKey(prev => prev + 1)}/>
     ),
     key: ROLE_KEYS.MANAGER,
   };
@@ -557,7 +565,7 @@ export default function ProcessPage() {
         </div>
         <div className={styles["d-container"]}>
           <WithBackground>
-            <Attachments proves={apiResponse?.proves} />
+            <Attachments proves={apiResponse?.proves} triggerRenderFn={() => setRenderCountKey(prev => prev + 1)} />
           </WithBackground>
           <WithBackground>
             <div className={styles["activity-box"]}>
@@ -582,6 +590,7 @@ export default function ProcessPage() {
                 text={t("ProcessPage.confirmModal.confirm")}
                 onClick={() => {
                   confirmAction?.();
+                  setRenderCountKey((prev) => prev + 1); // Increment the renderCountKey to trigger re-render
                   closeConfirmModal();
                 }}
               />
@@ -606,7 +615,9 @@ export default function ProcessPage() {
               <PrimaryButton
                 enabled={true}
                 text={t("ProcessPage.newNoteModal.confirm")}
-                onClick={handleSubmitProcessNote}
+                onClick={() => {
+                  handleSubmitProcessNote();
+                }}
               />
             </div>
           </div>

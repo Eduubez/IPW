@@ -83,7 +83,7 @@ export default function Profile() {
       {
         icon: Icon.Group,
         title: t("Profile.areaLabel"),
-        description: userInfo?.area ?? t("Profile.notSpecified"),
+        description: t(`Areas.${userInfo?.area}`) ?? t("Profile.notSpecified"),
       },
     ],
     [userInfo, t],

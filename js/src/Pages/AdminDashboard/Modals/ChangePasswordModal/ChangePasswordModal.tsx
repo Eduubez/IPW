@@ -10,6 +10,7 @@ type ChangePasswordModalProps = {
   user: UserResponse | null;
   onClose: () => void;
   onSuccess: () => void;
+  triggerRenderFn: () => void;
 };
 
 export default function ChangePasswordModal({
@@ -17,6 +18,7 @@ export default function ChangePasswordModal({
   user,
   onClose,
   onSuccess,
+  triggerRenderFn,
 }: ChangePasswordModalProps) {
   const { t } = useTranslation();
   const [newPassword, setNewPassword] = useState("");
@@ -46,6 +48,7 @@ export default function ChangePasswordModal({
 
     if (!response.success) return;
 
+    triggerRenderFn();
     onSuccess();
     onClose();
   };

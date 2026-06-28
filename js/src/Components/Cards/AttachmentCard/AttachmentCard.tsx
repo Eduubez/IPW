@@ -13,6 +13,7 @@ interface AttachmentCardProps {
   processId: number;
   proveId: number;
   notes?: { content: string; createdAt: string; authorName: string }[];
+  triggerRenderFn: () => void;
 }
 
 export const AttachmentCard = ({
@@ -22,6 +23,7 @@ export const AttachmentCard = ({
   processId,
   proveId,
   notes,
+  triggerRenderFn
 }: AttachmentCardProps) => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
@@ -35,7 +37,7 @@ export const AttachmentCard = ({
     if (!res.success) return;
     setShowNoteModal(false);
     setNewNoteContent("");
-    window.location.reload();
+    triggerRenderFn();
   };
 
   return (

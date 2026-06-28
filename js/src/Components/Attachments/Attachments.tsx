@@ -24,8 +24,10 @@ const buttonStyle = {
 
 export const Attachments = ({
   proves,
+  triggerRenderFn
 }: {
   proves: ProveResponse[] | undefined;
+  triggerRenderFn: () => void;
 }) => {
   const params = useParams();
   const processId = Number(params.id);
@@ -89,7 +91,7 @@ export const Attachments = ({
     await ProvesApi.create(processId, file, urlRes.data.storageKey);
 
     setShowNewAttachmentModal(false);
-    window.location.reload();
+    triggerRenderFn();
   };
 
   const handleDownload = async (processId: number, proveId: number) => {
@@ -136,6 +138,7 @@ export const Attachments = ({
                 date={new Date(attachment.createdAt)}
                 downloadFn={() => handleDownload(processId, attachment.id)}
                 notes={attachment.notes}
+                triggerRenderFn={triggerRenderFn}
                 processId={processId}
                 proveId={attachment.id}
               />

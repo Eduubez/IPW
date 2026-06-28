@@ -69,6 +69,7 @@ export type NotesType = {
   proves: number | null;
   content: string;
   authorId: number;
+  authorName: string;
   createdAt: string;
 };
 

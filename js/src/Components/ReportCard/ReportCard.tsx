@@ -12,10 +12,12 @@ export function ReportCard({
   report,
   processId,
   viewOnly,
+  triggerRenderFn
 }: {
   report: ReportType | undefined;
   processId: number;
   viewOnly: boolean;
+  triggerRenderFn: () => void;
 }) {
   const { t } = useTranslation();
   const [editMode, setEditMode] = useState(false);
@@ -38,7 +40,7 @@ export function ReportCard({
     try {
       const response = await ReportApi.updateReport(processId, reportContent!);
       if (response.success) {
-        window.location.reload(); // Recarrega a página para mostrar o relatório atualizado
+        triggerRenderFn(); // Chama a função para atualizar o estado do componente pai
       }
     } finally {
       setSubmitting(false);
@@ -51,7 +53,7 @@ export function ReportCard({
     try {
       const response = await ReportApi.createReport(processId, reportContent!);
       if (response.success) {
-        window.location.reload(); // Recarrega a página para mostrar o novo relatório criado
+        triggerRenderFn(); // Chama a função para atualizar o estado do componente pai
       }
     } finally {
       setSubmitting(false);

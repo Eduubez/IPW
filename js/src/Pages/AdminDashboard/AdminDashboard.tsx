@@ -20,6 +20,8 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [renderCountKey, setRenderCountKey] = useState(0);
+  const triggerRenderFn = () => setRenderCountKey((prev) => prev + 1);
   const loadUsers = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -40,7 +42,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     loadUsers();
-  }, [loadUsers]);
+  }, [loadUsers, renderCountKey]);
 
   const stats = useMemo(() => {
     return {
@@ -91,6 +93,7 @@ export default function AdminDashboard() {
   const cleanRows = useMemo(() => {
     return users.map((user) => ({
       ...user,
+      area:t(`Areas.${user.area}`, { defaultValue: "" }),
       onClick: () => {
         setSelectedUser(user);
         setIsModalOpen(true);
@@ -171,6 +174,7 @@ export default function AdminDashboard() {
           user={selectedUser}
           onClose={() => setIsChangePasswordOpen(false)}
           onSuccess={() => setIsChangePasswordOpen(false)}
+          triggerRenderFn={triggerRenderFn}
         />
       )}
       {isChangeRolesOpen && selectedUser && (
@@ -179,6 +183,7 @@ export default function AdminDashboard() {
           user={selectedUser}
           onClose={() => setIsChangeRolesOpen(false)}
           onSuccess={() => setIsChangeRolesOpen(false)}
+          triggerRenderFn={triggerRenderFn}
         />
       )}
       {isCreateUserOpen && (
@@ -186,6 +191,7 @@ export default function AdminDashboard() {
           open={isCreateUserOpen}
           onClose={() => setIsCreateUserOpen(false)}
           onSuccess={() => setIsCreateUserOpen(false)}
+          triggerRenderFn={triggerRenderFn}
         />
        )
       }

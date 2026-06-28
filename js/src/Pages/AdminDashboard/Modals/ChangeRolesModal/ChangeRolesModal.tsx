@@ -13,6 +13,7 @@ type ChangeRolesModalProps = {
   user: UserResponse | null;
   onClose: () => void;
   onSuccess: () => void;
+  triggerRenderFn: () => void;
 };
 
 export default function ChangeRolesModal({
@@ -20,6 +21,7 @@ export default function ChangeRolesModal({
   user,
   onClose,
   onSuccess,
+  triggerRenderFn,
 }: ChangeRolesModalProps) {
   const { t } = useTranslation();
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
@@ -112,6 +114,7 @@ export default function ChangeRolesModal({
 
     if (!response.success) return;
 
+    triggerRenderFn();
     onSuccess();
     onClose();
   };

@@ -13,12 +13,14 @@ type CreateUserModalProps = {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  triggerRenderFn: () => void;
 };
 
 export default function CreateUserModal({
   open,
   onClose,
   onSuccess,
+  triggerRenderFn,
 }: CreateUserModalProps) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -115,6 +117,7 @@ export default function CreateUserModal({
     });
     setIsSubmitting(false);
 
+    triggerRenderFn();
     onSuccess();
     onClose();
   };

@@ -164,7 +164,7 @@ export default function NewProcess() {
   const dropdownFields = [
     {
       label: t("CreateProcessPage.fields.area"),
-      options: allAreas.map((area) => ({ id: area.name, name: area.name })),
+      options: allAreas.map((area) => ({ id: area.name, name: t(`Areas.${area.name}`) })),
       onSelect: setArea,
       mandatory: true,
       disabled: allAreas.length === 0,

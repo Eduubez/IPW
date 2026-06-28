@@ -192,7 +192,9 @@
   },
   "Areas": {
     "Car Accident": "Acidente Automóvel",
-    "Job Accident": "Acidente de Trabalho"
+    "Floods": "Inundações",
+    "Fire": "Incêndio",
+    "Earthquake": "Terremoto"
   },
   "Dashboard": {
     "description": "Olá novamente, veja o que tem acontecido ultimamente!",
@@ -334,5 +336,9 @@
     "INVALID_NOTE_REQUEST": "Solicitação de nota inválida",
     "NOTE_NOT_FOUND": "Nota não encontrada",
     "UNKNOWN_ERROR": "Erro desconhecido"
+  },
+  "ContactAdmin": {
+    "description": "Nenhum papel foi atribuído à sua conta. Por favor, contacte o administrador.",
+    "logout": "Sair"
   }
 }

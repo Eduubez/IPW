@@ -4,20 +4,20 @@ import RoleCard from "../../Components/Cards/RoleCard/RoleCard";
 import { useTranslation } from "react-i18next";
 import { ROLES } from "../../MockData/MockRoles";
 import { useNavigate } from "react-router";
-import { ToastType } from "../../Types/ToastType";
-import { useSnackbar } from "notistack";
 import { userStore } from "../../Utility/Store/UserStore";
 import { UsersApi } from "../../Utility/Api/UsersApi";
+import { ContactAdmin } from "../../Components/ContactAdmin/ContactAdmin";
 
 export default function RoleSelection() {
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const userRoles = useMemo(() => {
     const roles = userStore.getRoles();
     return roles ? roles : [];
   }, []);
+
+  const hasRole = userRoles.length > 0;
 
   const filteredRoles = ROLES.filter((role) => userRoles.includes(role.key));
   const translatedRoles = useMemo(() => {
@@ -49,7 +49,8 @@ export default function RoleSelection() {
         <p className="subtitle-medium">{roleSelection.description}</p>
       </div>
       <div className={styles["role-selection-role-container"]}>
-        {translatedRoles.map((role) => (
+    {hasRole ? (
+        translatedRoles.map((role) => (
           <RoleCard
             icon={role.icon}
             key={role.key}
@@ -58,7 +59,9 @@ export default function RoleSelection() {
             style={role.style}
             onClick={() => handleSelectRole(role.key)}
           />
-        ))}
+        ))) : (
+          <ContactAdmin />
+        )}
       </div>
     </div>
   );

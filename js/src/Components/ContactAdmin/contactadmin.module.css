@@ -1,0 +1,19 @@
+.contact-admin-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.contact-admin-container a{
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--color-dark-blue-100);
+}
+.contact-admin-button-container{
+    display: flex;
+    width: 5rem;
+    height: 2rem;
+}
