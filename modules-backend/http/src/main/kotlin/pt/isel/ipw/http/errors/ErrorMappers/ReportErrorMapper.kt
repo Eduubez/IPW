@@ -11,7 +11,8 @@ private val reportErrorMap = mapOf(
     ReportError.Unauthorized to Problem.unauthorized,
     ReportError.AlreadyRejected to Problem.alreadyRejected,
     ReportError.NotApprovedBySupervisor to Problem.notApprovedBySupervisor,
-    ReportError.AlreadyApproved to Problem.alreadyApproved
+    ReportError.AlreadyApproved to Problem.alreadyApproved,
+    ReportError.ProcessFinished to Problem.processFinished,
 )
 
 fun ReportError.toHttp(): Pair<Int, Problem> =

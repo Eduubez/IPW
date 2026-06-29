@@ -9,5 +9,5 @@ sealed class NoteError(
     data object InvalidNoteRequest : NoteError(400)
     data object InvalidContent : NoteError(400)
     data object NoteNotFound : NoteError(404)
-
+    data object ProcessFinished: NoteError(400)
 }

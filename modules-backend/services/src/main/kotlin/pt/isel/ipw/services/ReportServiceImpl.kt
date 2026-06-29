@@ -29,6 +29,11 @@ class ReportServiceImpl(
 
             if (!validateContent(content)) return@run failure(ReportError.InvalidContent)
             val process = processRepository.getById(processId) ?: return@run failure(ReportError.ProcessNotFound)
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            ) return@run failure(ReportError.ProcessFinished)
 
             if (!isInvestigator(process, userId)) return@run failure(ReportError.Unauthorized)
 
@@ -67,9 +72,15 @@ class ReportServiceImpl(
         val process = processRepository.getById(processId)
             ?: return@run failure(ReportError.ProcessNotFound)
 
+        if (process.state in setOf(
+                State.CANCELED,
+                State.APPROVED_BY_MANAGER
+            )
+        ) return@run failure(ReportError.ProcessFinished)
+
         val allowedStates = AssignmentStateRole.getStates(role)
 
-        if(process.state !in allowedStates) return@run failure(ReportError.InvalidState)
+        if (process.state !in allowedStates) return@run failure(ReportError.InvalidState)
 
         if (!validateContent(content)) return@run failure(ReportError.InvalidContent)
 
@@ -87,6 +98,7 @@ class ReportServiceImpl(
         )
 
         return@run success(Unit)
+
     }
 
     override fun deleteReport(processId: Int, userId: Int): Either<ReportError, Unit> =
@@ -94,6 +106,12 @@ class ReportServiceImpl(
 
             val process = processRepository.getById(processId)
                 ?: return@run failure(ReportError.ProcessNotFound)
+
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            ) return@run failure(ReportError.ProcessFinished)
 
             val reportId = process.report?.id ?: return@run failure(ReportError.ReportNotFound)
 
@@ -117,12 +135,19 @@ class ReportServiceImpl(
             val process = processRepository.getById(processId)
                 ?: return@run failure(ReportError.ProcessNotFound)
 
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            ) return@run failure(ReportError.ProcessFinished)
+
+
             reportRepository.getByProcessId(processId)
                 ?: return@run failure(ReportError.ReportNotFound)
 
             val verification = verifyApproval(process, userId, role)
 
-            if(verification is Failure){
+            if (verification is Failure) {
                 return@run verification
             }
 
@@ -130,7 +155,7 @@ class ReportServiceImpl(
 
             processRepository.changeState(processId, newState)
 
-            if(role == Roles.SUPERVISOR)
+            if (role == Roles.SUPERVISOR)
                 processRepository.changeState(processId, State.WAITING_APPROVAL_MANAGER.toString())
 
             activityService.createActivity(
@@ -143,11 +168,18 @@ class ReportServiceImpl(
             return@run success(Unit)
         }
 
-    override fun rejectReport( processId: Int, userId: Int, role: String): Either<ReportError, Unit> =
+    override fun rejectReport(processId: Int, userId: Int, role: String): Either<ReportError, Unit> =
         transactionManager.run {
 
             val process = processRepository.getById(processId)
                 ?: return@run failure(ReportError.ProcessNotFound)
+
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            ) return@run failure(ReportError.ProcessFinished)
+
 
             reportRepository.getByProcessId(processId)
                 ?: return@run failure(ReportError.ReportNotFound)
@@ -173,7 +205,6 @@ class ReportServiceImpl(
     private fun validateContent(content: String): Boolean =
         content.isNotBlank()
 
-
     private fun isInvestigator(process: ProcessView, userId: Int): Boolean =
         process.investigator?.id == userId
 
@@ -194,66 +225,88 @@ class ReportServiceImpl(
     }
 
 
-    private fun verifyApproval(process: ProcessView, userId: Int, role: String): Either<ReportError, Pair<String, ActivityActions>> =
+    private fun verifyApproval(
+        process: ProcessView,
+        userId: Int,
+        role: String
+    ): Either<ReportError, Pair<String, ActivityActions>> =
         when {
             isSupervisor(process, userId) -> {
                 when (process.state) {
                     State.WAITING_APPROVAL_SUPERVISOR ->
                         success(State.APPROVED_BY_SUPERVISOR.toString() to ActivityActions.APPROVED_REPORT_SUPERVISOR)
+
                     State.APPROVED_BY_SUPERVISOR ->
                         failure(ReportError.AlreadyApproved)
+
                     State.WAITING_APPROVAL_MANAGER ->
                         failure(ReportError.AlreadyApproved)
+
                     else ->
                         failure(ReportError.InvalidState)
                 }
             }
+
             isManager(role) -> {
                 when (process.state) {
                     State.WAITING_APPROVAL_MANAGER ->
                         success(State.APPROVED_BY_MANAGER.toString() to ActivityActions.APPROVED_REPORT_MANAGER)
+
                     State.WAITING_APPROVAL_SUPERVISOR ->
                         failure(ReportError.NotApprovedBySupervisor)
+
                     State.APPROVED_BY_MANAGER ->
                         failure(ReportError.AlreadyApproved)
+
                     else ->
                         failure(ReportError.InvalidState)
                 }
             }
+
             else -> failure(ReportError.Unauthorized)
         }
 
 
-    private fun verifyRejection(process: ProcessView, userId: Int, role: String): Either<ReportError, Pair<String, ActivityActions>> =
+    private fun verifyRejection(
+        process: ProcessView,
+        userId: Int,
+        role: String
+    ): Either<ReportError, Pair<String, ActivityActions>> =
         when {
             isSupervisor(process, userId) -> {
                 when (process.state) {
                     State.WAITING_APPROVAL_SUPERVISOR ->
                         success(State.REJECTED_BY_SUPERVISOR.toString() to ActivityActions.REJECTED_REPORT_SUPERVISOR)
+
                     State.REJECTED_BY_SUPERVISOR ->
                         failure(ReportError.AlreadyRejected)
 
                     State.WAITING_APPROVAL_MANAGER ->
                         failure(ReportError.AlreadyApproved)
+
                     else ->
                         failure(ReportError.InvalidState)
                 }
             }
+
             isManager(role) -> {
                 when (process.state) {
                     State.WAITING_APPROVAL_MANAGER ->
                         success(State.REJECTED_BY_MANAGER.toString() to ActivityActions.REJECTED_REPORT_MANAGER)
+
                     State.WAITING_APPROVAL_SUPERVISOR ->
                         failure(ReportError.NotApprovedBySupervisor)
+
                     State.REJECTED_BY_MANAGER ->
                         failure(ReportError.AlreadyRejected)
+
                     else ->
                         failure(ReportError.InvalidState)
                 }
             }
+
             else -> failure(ReportError.Unauthorized)
         }
-
 
 
 }

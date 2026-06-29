@@ -13,5 +13,6 @@ sealed class ReportError(
     data object NotApprovedBySupervisor : ReportError(409)
     data object AlreadyRejected : ReportError(409)
     data object AlreadyApproved: ReportError(409)
+    data object ProcessFinished: ReportError(400)
 
 }

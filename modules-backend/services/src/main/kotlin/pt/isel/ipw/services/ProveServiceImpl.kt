@@ -9,6 +9,7 @@ import pt.isel.ipw.domain.process.ProcessView
 import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.TransactionManager
+import pt.isel.ipw.services.errors.ProcessError
 import pt.isel.ipw.services.errors.ProveError
 import pt.isel.ipw.services.errors.failure
 import pt.isel.ipw.services.errors.success
@@ -52,27 +53,32 @@ class ProveServiceImpl(
         contentType: String,
         fileSize: Long
     ): CreateProveUploadUrlResult = transactionManager.run {
-            val process = processRepository.getById(processId)
-                ?: return@run failure(ProveError.ProcessNotFound)
-
-            val error = validateProve(process, userId, role, fileName, contentType, fileSize)
-            error?.let { return@run failure(it) }
-
-            val storageKey = createStorageKey(processId, fileName)
-
-            val uploadUrl = try {
-                proveStorageService.createUploadUrl(storageKey,fileName)
-            } catch (_: Exception) {
-                return@run failure(ProveError.StorageError)
-            }
-
-            success(
-                CreateProveUploadUrlResponse(
-                    uploadUrl = uploadUrl,
-                    storageKey = storageKey,
-                )
+        val process = processRepository.getById(processId)
+            ?: return@run failure(ProveError.ProcessNotFound)
+        if (process.state in setOf(
+                State.CANCELED,
+                State.APPROVED_BY_MANAGER
             )
+        ) return@run failure(ProveError.ProcessFinished)
+
+        val error = validateProve(process, userId, role, fileName, contentType, fileSize)
+        error?.let { return@run failure(it) }
+
+        val storageKey = createStorageKey(processId, fileName)
+
+        val uploadUrl = try {
+            proveStorageService.createUploadUrl(storageKey, fileName)
+        } catch (_: Exception) {
+            return@run failure(ProveError.StorageError)
         }
+
+        success(
+            CreateProveUploadUrlResponse(
+                uploadUrl = uploadUrl,
+                storageKey = storageKey,
+            )
+        )
+    }
 
     override fun createProve(
         processId: Int,
@@ -85,6 +91,12 @@ class ProveServiceImpl(
     ): CreateProveResult = transactionManager.run {
         val process = processRepository.getById(processId)
             ?: return@run failure(ProveError.ProcessNotFound)
+
+        if (process.state in setOf(
+                State.CANCELED,
+                State.APPROVED_BY_MANAGER
+            )
+        ) return@run failure(ProveError.ProcessFinished)
         val user = usersRepository.getUserById(userId)
 
         val error = validateProve(
@@ -173,7 +185,7 @@ class ProveServiceImpl(
         }
 
         val accessUrl = try {
-            proveStorageService.createAccessUrl(prove.storageKey,prove.fileName)
+            proveStorageService.createAccessUrl(prove.storageKey, prove.fileName)
         } catch (_: Exception) {
             return@run failure(ProveError.StorageError)
         }
@@ -195,6 +207,13 @@ class ProveServiceImpl(
     ): DeleteProveResult = transactionManager.run {
         val process = processRepository.getById(processId)
             ?: return@run failure(ProveError.ProcessNotFound)
+
+        if (process.state in setOf(
+                State.CANCELED,
+                State.APPROVED_BY_MANAGER
+            )
+        ) return@run failure(ProveError.ProcessFinished)
+
         val user = usersRepository.getUserById(userId)
 
         if (!canAccessProves(process, userId, role)) {
@@ -272,9 +291,9 @@ class ProveServiceImpl(
 
     private fun isValidFileName(fileName: String): Boolean =
         fileName.isNotBlank() &&
-            fileName.length <= MAX_FILE_NAME_LENGTH &&
-            !fileName.contains("/") &&
-            !fileName.contains("\\")
+                fileName.length <= MAX_FILE_NAME_LENGTH &&
+                !fileName.contains("/") &&
+                !fileName.contains("\\")
 
     private fun isValidContentType(contentType: String): Boolean =
         contentType.lowercase() in ALLOWED_CONTENT_TYPES

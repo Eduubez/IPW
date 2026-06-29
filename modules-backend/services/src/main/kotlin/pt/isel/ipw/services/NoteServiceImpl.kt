@@ -6,6 +6,7 @@ import pt.isel.ipw.domain.DTO.input.CreateNoteRequest
 import pt.isel.ipw.domain.mapToString
 import pt.isel.ipw.domain.process.AssignmentStateRole
 import pt.isel.ipw.domain.process.ProcessView
+import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.repository.Transaction
@@ -29,6 +30,12 @@ class NoteServiceImpl(
         return transactionManager.run {
             val process = processRepository.getById(processId)
                 ?: return@run failure(NoteError.ProcessNotFound)
+
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            ) return@run failure(NoteError.ProcessFinished)
 
             if(!isPossibleToAddNote(process, role)){
                 return@run failure(NoteError.UnauthorizedAccess)
@@ -77,6 +84,17 @@ class NoteServiceImpl(
 
     override fun updateNote(noteId: Int, processId: Int, content: String, userId: Int): UpdateNoteResult =
         transactionManager.run {
+            val process =
+                processRepository.getById(processId)
+                    ?: return@run failure(NoteError.ProcessNotFound)
+
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            )  return@run failure(NoteError.ProcessFinished)
+
+
             val note = noteRepository.getById(noteId)
                 ?: return@run failure(NoteError.NoteNotFound)
 
@@ -88,9 +106,6 @@ class NoteServiceImpl(
                 return@run failure(NoteError.InvalidContent)
             }
 
-            val process =
-                processRepository.getById(processId)
-                    ?: return@run failure(NoteError.ProcessNotFound)
 
             noteRepository.updateNote(noteId, content)
 

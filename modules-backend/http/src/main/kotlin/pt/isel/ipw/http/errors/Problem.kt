@@ -313,5 +313,11 @@ class Problem(
             message = "Note not found",
             errorCode = ErrorCode.NOTE_NOT_FOUND
         )
+
+        val processFinished = Problem(
+            type = "problems/process-finished",
+            message = "Process finished or canceled",
+            errorCode = ErrorCode.PROCESS_FINISHED
+        )
     }
 }

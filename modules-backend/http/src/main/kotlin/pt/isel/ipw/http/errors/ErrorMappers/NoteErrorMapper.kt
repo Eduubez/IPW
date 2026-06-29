@@ -9,7 +9,8 @@ private val noteErrorMap = mapOf(
     NoteError.InvalidNoteRequest to Problem.invalidNoteRequest,
     NoteError.InvalidNoteRequest to Problem.invalidContent,
     NoteError.InvalidContent to Problem.invalidContent,
-    NoteError.NoteNotFound to Problem.noteNotFound
+    NoteError.NoteNotFound to Problem.noteNotFound,
+    NoteError.ProcessFinished to Problem.processFinished,
 )
 
 fun NoteError.toHttp(): Pair<Int, Problem> =

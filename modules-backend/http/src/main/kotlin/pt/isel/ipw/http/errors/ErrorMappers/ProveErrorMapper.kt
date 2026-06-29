@@ -10,7 +10,8 @@ private val proveErrorMap = mapOf(
     ProveError.InvalidContentType to Problem.invalidContentType,
     ProveError.InvalidFileSize to Problem.invalidFileSize,
     ProveError.InvalidStorageKey to Problem.invalidStorageKey,
-    ProveError.StorageError to Problem.storageError
+    ProveError.StorageError to Problem.storageError,
+    ProveError.ProcessFinished to Problem.processFinished,
 )
 
 fun ProveError.toHttp(): Pair<Int, Problem> =

@@ -11,4 +11,5 @@ sealed class ProveError(
     data object InvalidFileSize : ProveError(400)
     data object InvalidStorageKey : ProveError(400)
     data object StorageError : ProveError(500)
+    data object ProcessFinished : ProveError(400)
 }

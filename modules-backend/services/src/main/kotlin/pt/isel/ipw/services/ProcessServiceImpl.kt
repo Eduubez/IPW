@@ -186,6 +186,11 @@ class ProcessServiceImpl(
         transactionManager.run {
             val user = usersRepository.getUserById(userId) ?: return@run failure(ProcessError.InvalidUserId)
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            ) return@run failure(ProcessError.ProcessFinished)
 
             if (!isAuthorizedToChangeEndDate(process, userId, role)) return@run failure(ProcessError.InvalidSupervisor)
             if (!validateExpireDate(endDate)) return@run failure(ProcessError.InvalidExpirationDate)
@@ -255,6 +260,11 @@ class ProcessServiceImpl(
         transactionManager.run {
             val user = usersRepository.getUserById(userId) ?: return@run failure(ProcessError.InvalidUserId)
             val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            )  return@run failure(ProcessError.ProcessFinished)
 
             val validation = validateProcessRelation(process, userId, role)
 
@@ -282,11 +292,16 @@ class ProcessServiceImpl(
             success(updatedProcesses)
         }
 
-    //apenas o manager
     override fun cancelProcess(processId: Int, userId: Int): CancelProcessResult =
         transactionManager.run {
 
-            if (!validateProcess(processId)) return@run failure(ProcessError.ProcessNotFound)
+            val process = processRepository.getById(processId) ?: return@run failure(ProcessError.ProcessNotFound)
+            if (process.state in setOf(
+                    State.CANCELED,
+                    State.APPROVED_BY_MANAGER
+                )
+            )  return@run failure(ProcessError.ProcessFinished)
+
             processRepository.cancelProcess(processId)
 
             activityServices.createActivity(
@@ -370,11 +385,6 @@ class ProcessServiceImpl(
         return success(Unit)
     }
 
-    private fun Transaction.validateProcess(processId: Int): Boolean {
-        processRepository.getById(processId) ?: return false
-        return true
-
-    }
 
 
     private fun validateProcessRelation(
