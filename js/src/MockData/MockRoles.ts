@@ -20,7 +20,7 @@ export const ROLES = [
     permissions: ["ManageUsers", "CreateUsers"],
     style: { border: `2px solid ${Color.Purple}` },
     navigationItems : [
-      { name: i18next.t("Dashboard"), path: "/dashboard", icon: "dashboard" },
+      { name: i18next.t("NavigationItems.Dashboard"), path: "/dashboard", icon: "dashboard" },
     ]
   },
   {

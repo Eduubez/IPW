@@ -14,6 +14,8 @@ import { useTranslation } from "react-i18next";
 import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
 import { ROLE_KEYS } from "../../MockData/MockRoles";
+import { Color } from "../../StyleGuide/colors";
+import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
@@ -47,12 +49,16 @@ export default function AdminDashboard() {
   const stats = useMemo(() => {
     return {
       total: users.length,
-      triators: users.filter((user) => user.roles.includes(ROLE_KEYS.TRIATOR)).length,
-      investigators: users.filter((user) => user.roles.includes(ROLE_KEYS.INVESTIGATOR))
+      triators: users.filter((user) => user.roles.includes(ROLE_KEYS.TRIATOR))
         .length,
-      supervisors: users.filter((user) => user.roles.includes(ROLE_KEYS.SUPERVISOR))
+      investigators: users.filter((user) =>
+        user.roles.includes(ROLE_KEYS.INVESTIGATOR),
+      ).length,
+      supervisors: users.filter((user) =>
+        user.roles.includes(ROLE_KEYS.SUPERVISOR),
+      ).length,
+      managers: users.filter((user) => user.roles.includes(ROLE_KEYS.MANAGER))
         .length,
-      managers: users.filter((user) => user.roles.includes(ROLE_KEYS.MANAGER)).length,
     };
   }, [users]);
 
@@ -88,12 +94,12 @@ export default function AdminDashboard() {
       loading: isLoading,
     },
   ];
-  const gridColumns = ["name", "roles", "email", "area"];
+  const gridColumns = ["name", "roles", "email", "area", "status"];
 
   const cleanRows = useMemo(() => {
     return users.map((user) => ({
       ...user,
-      area:t(`Areas.${user.area}`, { defaultValue: "" }),
+      area: t(`Areas.${user.area}`, { defaultValue: "" }),
       onClick: () => {
         setSelectedUser(user);
         setIsModalOpen(true);
@@ -107,8 +113,18 @@ export default function AdminDashboard() {
           />
         );
       }),
+      status: user.isActive ? (
+        <PrimaryBadge text={t("DashboardAdmin.gridStatus.active")} style={{backgroundColor: Color.GreenPrimary}}/>
+      ) : (
+        <PrimaryBadge text={t("DashboardAdmin.gridStatus.inactive")} style={{backgroundColor: Color.DarkRed}}/>
+      ),
     }));
   }, [users, t]);
+
+  const handleDeactivateUser = async (userId: number, isActive: boolean) => {
+    await UsersApi.changeUserStatus(userId, !isActive);
+    triggerRenderFn();
+  };
 
   const modalContent = () => {
     return (
@@ -129,6 +145,18 @@ export default function AdminDashboard() {
           }}
           enabled={true}
         />
+        <PrimaryButton
+          text={
+            selectedUser!.isActive
+              ? t("DashboardAdmin.userModal.deactivateUser")
+              : t("DashboardAdmin.userModal.activateUser")
+          }
+          onClick={() => {
+            handleDeactivateUser(Number(selectedUser!.id), selectedUser!.isActive);
+            setIsModalOpen(false);
+          }}
+          enabled={true}
+        />
       </div>
     );
   };
@@ -137,7 +165,7 @@ export default function AdminDashboard() {
       label: t("DashboardAdmin.createUserButton"),
       onClick: () => setIsCreateUserOpen(true),
     },
-  ]
+  ];
 
   return (
     <div className={styles["admin-dashboard-container"]}>
@@ -159,7 +187,12 @@ export default function AdminDashboard() {
           />
         ))}
       </div>
-      <DataGrid title={t("DashboardAdmin.gridTitle")} columns={gridColumns} rows={cleanRows}  actions={gridActions}/>
+      <DataGrid
+        title={t("DashboardAdmin.gridTitle")}
+        columns={gridColumns}
+        rows={cleanRows}
+        actions={gridActions}
+      />
       {isModalOpen && (
         <PrimaryModal
           open={isModalOpen}
@@ -193,8 +226,7 @@ export default function AdminDashboard() {
           onSuccess={() => setIsCreateUserOpen(false)}
           triggerRenderFn={triggerRenderFn}
         />
-       )
-      }
+      )}
     </div>
   );
 }
