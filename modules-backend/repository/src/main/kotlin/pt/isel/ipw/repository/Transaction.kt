@@ -9,7 +9,6 @@ interface Transaction {
 
     val areasRepository: AreasRepository
     val activityRepository: ActivityRepository
-    val historyRepository: HistoryRepository
     val processRepository: ProcessRepository
     val provesRepository: ProvesRepository
     val reportRepository: ReportRepository

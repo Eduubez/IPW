@@ -11,6 +11,7 @@ import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.repository.Transaction
 import pt.isel.ipw.repository.TransactionManager
 import pt.isel.ipw.services.errors.*
+import pt.isel.ipw.services.interfaces.AreaService
 import pt.isel.ipw.services.interfaces.ProcessService
 import pt.isel.ipw.services.results.*
 import java.time.LocalDateTime
@@ -19,6 +20,7 @@ import java.time.LocalDateTime
 class ProcessServiceImpl(
     private val transactionManager: TransactionManager,
     private val activityServices: ActivityServiceImpl,
+    private val areaService: AreaService,
 
     ) : ProcessService {
 
@@ -113,7 +115,7 @@ class ProcessServiceImpl(
             }
 
             val allowedStates = AssignmentStateRole.getStates(role)
-            if(process.state !in allowedStates) {
+            if (process.state !in allowedStates) {
                 return@run failure(ProcessError.InvalidState)
             }
 
@@ -146,21 +148,35 @@ class ProcessServiceImpl(
     override fun getAllProcesses(
         offset: Int?,
         limit: Int?,
-        areaId: Int?,
+        history: Boolean?,
         userId: Int,
         role: String
     ): GetAllProcessesResult =
         transactionManager.run {
 
-            val validation = validateFilters(limit, offset, areaId)
+            val validation = validateFilters(limit, offset)
+            val areaValidation = checkAreaId(userId, role)
 
             if (validation is Failure) {
                 return@run failure(validation.value)
             }
 
-            val targetStates = AssignmentStateRole.getStates(role).map { it.toString() }
+            if (areaValidation is Failure) {
+                return@run failure(areaValidation.value)
+            }
 
-            val processes = processRepository.getAll(offset ?: 0, limit ?: 10, areaId ?: 0, userId, role, targetStates)
+            val areaId = (areaValidation as Success).value
+
+            val targetStates = resolveTargetStates(role, history)
+
+            val processes = processRepository.getAll(
+                offset ?: 0,
+                limit ?: 10,
+                areaId ?: 0,
+                userId,
+                role,
+                targetStates
+            )
 
             return@run success(processes)
 
@@ -348,10 +364,9 @@ class ProcessServiceImpl(
         return user.area == area
     }
 
-    private fun validateFilters(limit: Int?, offset: Int?, areaId: Int?): ProcessValidationResult {
+    private fun validateFilters(limit: Int?, offset: Int?): ProcessValidationResult {
         if (limit != null && limit <= 0) return failure(ProcessError.InvalidLimit)
         if (offset != null && offset < 0) return failure(ProcessError.InvalidOffset)
-        if (areaId != null && areaId <= 0) return failure(ProcessError.InvalidAreaId)
         return success(Unit)
     }
 
@@ -413,6 +428,21 @@ class ProcessServiceImpl(
 
         return success(Unit)
     }
+
+    private fun Transaction.checkAreaId(userId: Int, role: String): CheckAreaIdResult {
+        if (role != Roles.SUPERVISOR) return success(null)
+        val area = areasRepository.getAreaByUserId(userId) ?: return failure(ProcessError.InvalidAreaId)
+        return success(area.areaId)
+    }
+
+
+    private fun resolveTargetStates(role: String, history: Boolean?): List<String> =
+
+        if (history == null || !history) {
+            AssignmentStateRole.getStates(role).map { it.toString() }
+        } else {
+            AssignmentStateRole.getHistoryStates().map { it.toString() }
+        }
 
 
 }

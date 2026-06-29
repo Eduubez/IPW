@@ -85,6 +85,7 @@ export const ProcessApi = {
   create,
   getById,
   getAll,
+  getHistory,
   submit,
   update,
   approve,
@@ -139,6 +140,19 @@ async function getAll(
   limit?: number,
 ): Promise<ResponseApi<ProcessResponseApi>> {
   const query = buildQuery({ offset: offset, limit });
+  return await fetchApi<ProcessResponseApi>(`process${query}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${userStore.getAccessToken()}`,
+    },
+  });
+}
+
+async function getHistory(
+    offset?: number,
+    limit?: number,
+): Promise<ResponseApi<ProcessResponseApi>> {
+  const query = buildQuery({ offset: offset, limit: limit, history: true });
   return await fetchApi<ProcessResponseApi>(`process${query}`, {
     method: "GET",
     headers: {

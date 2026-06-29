@@ -15,3 +15,4 @@ typealias ChangePriorityResult = Either<ProcessError, Unit>
 typealias UpdateProcessPrioritiesResult = Either<ProcessError, Int>
 typealias CancelProcessResult = Either<ProcessError, Unit>
 typealias SubmitProcessResult = Either<ProcessError, Unit>
+typealias CheckAreaIdResult = Either<ProcessError, Int?>

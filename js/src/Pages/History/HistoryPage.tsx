@@ -1,16 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { userStore } from "../../Utility/Store/UserStore";
 import { useState, useEffect, useMemo } from "react";
-import {
-  HistoryApi,
-  type AreaProcessHistoryResponse,
-  type UserProcessHistoryResponse,
-} from "../../Utility/Api/HistoryApi";
 import { Header } from "../../Components/Layouts/Header/Header";
 import styles from "./historypage.module.css";
 import { StatContainerLayout } from "../../Components/StatContainerLayout/StatContainerLayout";
 import { DataGrid } from "../../Components/DataGrid/DataGrid";
-import { ProcessApi } from "../../Utility/Api/ProcessApi";
+import {ProcessApi, type ProcessResponseApi} from "../../Utility/Api/ProcessApi";
 import { PriorityBadge } from "../../Components/Badge/PriorityBadge/PriorityBadge";
 import { useNavigate } from "react-router-dom";
 import { Icon } from "../../Components/Icons/Icons";
@@ -34,7 +29,7 @@ export default function HistoryPage() {
   const activeRole = userStore.getActiveRole();
   const [loading, setLoading] = useState(false);
   const [apiResponse, setApiResponse] =
-    useState<UserProcessHistoryResponse | AreaProcessHistoryResponse | null>(null);
+    useState<ProcessResponseApi | null>(null);
   const [processes, setProcesses] = useState<any[]>([]);
 
 
@@ -104,27 +99,15 @@ export default function HistoryPage() {
   ];
 
 
-  const fecthHistory = async () => {
+  const fetchHistory = async () => {
     setLoading(true);
     try {
-      let historyResponse;
-      switch (activeRole) {
-        case ROLE_KEYS.SUPERVISOR:
-          historyResponse = await HistoryApi.getAreaHistory(3); // while we dont have a way to get area id
-          break;
-        default:
-          historyResponse = await HistoryApi.getUserProcessHistory(userId || 0);
-      }
+      const historyResponse = await ProcessApi.getHistory();
       if (!historyResponse.success) return;
 
       setApiResponse(historyResponse.data);
 
-      const processIds = historyResponse.data.process;
-      const processPromises = processIds.map((id) => ProcessApi.getById(id)); 
-      const processesResponses = await Promise.all(processPromises);
-      const fetchedProcesses = processesResponses
-        .filter((res) => res.success)
-        .map((res) => res.data);
+      const fetchedProcesses = historyResponse.data.results
 
       const clearedProcesses = fetchedProcesses.map((process) => ({
         id: process.id,
@@ -147,7 +130,7 @@ export default function HistoryPage() {
   };
 
   useEffect(() => {
-    fecthHistory();
+    fetchHistory();
   }, []);
   return (
     <div className={styles["history-page-container"]}>

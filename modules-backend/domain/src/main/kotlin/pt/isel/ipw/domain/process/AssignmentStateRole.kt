@@ -19,6 +19,10 @@ object AssignmentStateRole {
 
     private val MANAGER_STATES = setOf(State.WAITING_APPROVAL_MANAGER)
 
+    fun getAllStates() = TRIATOR_STATES + INVESTIGATOR_STATES + SUPERVISOR_STATES + MANAGER_STATES
+
+    fun getHistoryStates() = setOf( State.APPROVED_BY_MANAGER, State.CANCELED)
+
     fun getStates(role: String): Set<State> {
         return when (role) {
             Roles.TRIATOR -> TRIATOR_STATES

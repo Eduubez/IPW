@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Assertions.assertTrue
+import pt.isel.ipw.domain.process.State
 import pt.isel.ipw.domain.roles.Roles
 
 import pt.isel.ipw.services.errors.Failure
@@ -25,8 +26,6 @@ class ProcessServiceImplTest {
     fun cleanUp() {
         testUtils.cleanRepo()
     }
-
-
 
 
     //Success
@@ -314,7 +313,7 @@ class ProcessServiceImplTest {
 
         val result = processService.getAllProcesses(
             userId = testUtils.TRIATOR_ID,
-            areaId = null,
+            history = null,
             offset = 0,
             limit = 10,
             role = "triator"
@@ -333,7 +332,7 @@ class ProcessServiceImplTest {
 
         val result = processService.getAllProcesses(
             userId = testUtils.INVESTIGATOR_ID,
-            areaId = testUtils.CAR_ACCIDENT_AREA_ID,
+            history = null,
             offset = 0,
             limit = 10,
             role = "investigator"
@@ -365,7 +364,7 @@ class ProcessServiceImplTest {
 
         val result = processService.getAllProcesses(
             userId = testUtils.SUPERVISOR_ID,
-            areaId = testUtils.CAR_ACCIDENT_AREA_ID,
+            history = null,
             offset = 0,
             limit = 10,
             role = "supervisor"
@@ -398,7 +397,7 @@ class ProcessServiceImplTest {
         val result = processService.getAllProcesses(
             userId = testUtils.MANAGER_ID,
             offset = 0,
-            areaId = null,
+            history = null,
             limit = 100,
             role = "manager"
         )
@@ -415,7 +414,7 @@ class ProcessServiceImplTest {
 
         val result = processService.getAllProcesses(
             userId = testUtils.INVESTIGATOR_ID,
-            areaId = testUtils.CAR_ACCIDENT_AREA_ID,
+            history = null,
             offset = 0,
             limit = 10,
             role = "investigator"
@@ -433,7 +432,7 @@ class ProcessServiceImplTest {
 
         val result1 = processService.getAllProcesses(
             userId = testUtils.TRIATOR_ID,
-            areaId = null,
+            history = null,
             offset = 0,
             limit = 2,
             role = "triator"
@@ -441,7 +440,7 @@ class ProcessServiceImplTest {
 
         val result2 = processService.getAllProcesses(
             userId = testUtils.TRIATOR_ID,
-            areaId = null,
+            history = null,
             offset = 2,
             limit = 2,
             role = "triator"
@@ -460,7 +459,7 @@ class ProcessServiceImplTest {
     fun `getAllProcesses - invalid offset returns empty list or error`() {
         val result = processService.getAllProcesses(
             userId = testUtils.TRIATOR_ID,
-            areaId = 0,
+            history = null,
             offset = -1,
             limit = 10,
             role = "triator"
@@ -472,12 +471,29 @@ class ProcessServiceImplTest {
     fun `getAllProcesses - invalid limit returns empty list or error`() {
         val result = processService.getAllProcesses(
             userId = testUtils.TRIATOR_ID,
-            areaId = 0,
+            history = null,
             offset = 0,
             limit = 0,
             role = "triator"
         )
         assertTrue(result is Failure || (result is Success && (result as Success).value.isEmpty()))
+    }
+
+
+
+    @Test
+    fun `getAllProcesses - history true returns all processes`(){
+        val result = processService.getAllProcesses(
+            userId = testUtils.SUPERVISOR_ID,
+            history = true,
+            offset = 0,
+            limit = null,
+            role = Roles.SUPERVISOR
+        )
+
+        assertTrue(result is Success)
+        assertTrue((result as Success).value.find { it.state == State.ASSIGNED} != null)
+
     }
 // -----------------------------------------------------------------------
 // changeEndDate

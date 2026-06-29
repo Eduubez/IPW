@@ -51,11 +51,11 @@ class AreaServiceImplTest {
                     val bossName = area.bossName
 
                     if (bossId == null || bossId == 0) {
-                         assert(bossName == null) {
+                        assert(bossName == null) {
                             "Expected area '${area.name}' to have no boss (bossId=null or 0) and bossName=null, but bossName='${bossName}'"
                         }
                     } else {
-                         assert(bossId > 0) { "Expected area '${area.name}' to have a positive bossId but got: $bossId" }
+                        assert(bossId > 0) { "Expected area '${area.name}' to have a positive bossId but got: $bossId" }
                         assert(bossName?.isNotBlank() == true) {
                             "Expected area '${area.name}' to have a boss name but got blank or null"
                         }

@@ -1,11 +1,8 @@
 import org.jdbi.v3.core.Jdbi
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import pt.isel.ipw.repository.jdbi.transaction.JdbiTransactionManager
 import pt.isel.ipw.services.*
 import pt.isel.ipw.services.auth.JwtTokenService
-import pt.isel.ipw.services.errors.Success
-import pt.isel.ipw.services.results.CreateProcessResult
 
 class TestUtils(
     private val jdbi: Jdbi,
@@ -32,16 +29,13 @@ class TestUtils(
         trxManager
     )
 
-    val historyService = HistoryServiceImpl(
-        trxManager
-    )
 
     val activityService = ActivityServiceImpl(
         trxManager
     )
 
     val processService = ProcessServiceImpl(
-        trxManager, activityService
+        trxManager, activityService, areaService
     )
 
     val noteService = NoteServiceImpl(
