@@ -320,7 +320,7 @@ class ProcessServiceImplTest {
         )
 
         assertTrue(result is Success)
-        val processes = (result as Success).value
+        val processes = (result as Success).value.first
         assertTrue(processes.isNotEmpty())
         assertTrue(processes.all { it.state.name.lowercase() == "not_assigned" })
     }
@@ -339,7 +339,7 @@ class ProcessServiceImplTest {
         )
 
         assertTrue(result is Success)
-        val processes = (result as Success).value
+        val processes = (result as Success).value.first
 
         val allowedStates = listOf("assigned", "on_going", "rejected_by_supervisor")
         assertTrue(processes.all { it.investigator?.id == testUtils.INVESTIGATOR_ID })
@@ -371,7 +371,7 @@ class ProcessServiceImplTest {
         )
 
         assertTrue(result is Success)
-        val processes = (result as Success).value
+        val processes = (result as Success).value.first
 
         val allowedStates = listOf("waiting_approval_supervisor", "rejected_by_manager")
         assertTrue(processes.isNotEmpty())
@@ -403,7 +403,7 @@ class ProcessServiceImplTest {
         )
 
         assertTrue(result is Success)
-        val processes = (result as Success).value
+        val processes = (result as Success).value.first
         assertTrue(processes.all { it.state.name.lowercase() == "waiting_approval_manager" })
     }
 
@@ -420,7 +420,7 @@ class ProcessServiceImplTest {
             role = "investigator"
         )
         assertTrue(result is Success)
-        val processes = (result as Success).value
+        val processes = (result as Success).value.first
         assertTrue(processes.all { it.area.name == "Car Accident" })
     }
 
@@ -448,8 +448,8 @@ class ProcessServiceImplTest {
 
         assertTrue(result1 is Success)
         assertTrue(result2 is Success)
-        val list1 = (result1 as Success).value
-        val list2 = (result2 as Success).value
+        val list1 = (result1 as Success).value.first
+        val list2 = (result2 as Success).value.first
         assertTrue(list1.size <= 2)
         assertTrue(list2.size <= 2)
         assertTrue(list1.none { p1 -> list2.any { p2 -> p1.id == p2.id } })
@@ -464,7 +464,7 @@ class ProcessServiceImplTest {
             limit = 10,
             role = "triator"
         )
-        assertTrue(result is Failure || (result is Success && (result as Success).value.isEmpty()))
+        assertTrue(result is Failure || (result is Success && (result as Success).value.first.isEmpty()))
     }
 
     @Test
@@ -476,9 +476,8 @@ class ProcessServiceImplTest {
             limit = 0,
             role = "triator"
         )
-        assertTrue(result is Failure || (result is Success && (result as Success).value.isEmpty()))
+        assertTrue(result is Failure || (result is Success && (result).value.first.isEmpty()))
     }
-
 
 
     @Test
@@ -487,14 +486,65 @@ class ProcessServiceImplTest {
             userId = testUtils.SUPERVISOR_ID,
             history = true,
             offset = 0,
-            limit = null,
+            limit = 10,
             role = Roles.SUPERVISOR
         )
 
         assertTrue(result is Success)
-        assertTrue((result as Success).value.find { it.state == State.ASSIGNED} != null)
+        assertTrue((result as Success).value.first.find { it.state == State.ASSIGNED} != null)
 
     }
+
+    @Test
+    fun `getAllProcesses - limit and skip `(){
+
+        val result1 = processService.getAllProcesses(
+            userId = testUtils.INVESTIGATOR_ID,
+            history = false,
+            offset = 0,
+            limit = 2,
+            role = Roles.INVESTIGATOR
+        )
+
+        val result2 = processService.getAllProcesses(
+            userId = testUtils.INVESTIGATOR_ID,
+            history = false,
+            offset = 2,
+            limit = 2,
+            role = Roles.INVESTIGATOR
+        )
+
+        val result3 = processService.getAllProcesses(
+            userId = testUtils.INVESTIGATOR_ID,
+            history = false,
+            offset = 4,
+            limit = 2,
+            role = Roles.INVESTIGATOR
+        )
+
+        val result4 = processService.getAllProcesses(
+            userId = testUtils.INVESTIGATOR_ID,
+            history = false,
+            offset = 2,
+            limit = 1,
+            role = Roles.INVESTIGATOR
+        )
+
+        assertTrue(result1 is Success)
+        assertTrue(result2 is Success)
+        assertTrue(result3 is Success)
+        assertTrue(result4 is Success)
+
+        assertTrue((result1 as Success).value.first.size == 2 && result1.value.second )
+        assertTrue((result2 as Success).value.first.size == 2 && result2.value.second)
+        assertTrue((result3 as Success).value.first.size == 1 && !result3.value.second)
+        assertTrue(result1.value.third == result2.value.third )
+        assertTrue(result1.value.third == result3.value.third )
+
+
+    }
+
+
 // -----------------------------------------------------------------------
 // changeEndDate
 // -----------------------------------------------------------------------

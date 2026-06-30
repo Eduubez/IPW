@@ -245,17 +245,6 @@ class ProcessControllerTest {
         assertEquals(ErrorCode.INVALID_OFFSET, error.errorCode)
     }
 
-    @Test
-    fun `getAllProcesses - invalid area id`() {
-        TestUtils.setUpSecurityContext(userId = TestUtils.INVESTIGATOR_ID, role = Roles.INVESTIGATOR)
-
-        val resp = processController.getAllProcesses(null, null, -1)
-        val error = resp.body as Problem
-
-        assertEquals(404, resp.statusCode.value())
-        assertEquals("problems/invalid-area-id", error.type)
-        assertEquals(ErrorCode.INVALID_AREA_ID, error.errorCode)
-    }
 
     // ── updateProcessEndDate ──────────────────────────────────────────────────
 

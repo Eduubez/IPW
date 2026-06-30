@@ -111,10 +111,12 @@ class ProcessController(
         val role = AuthenticatedUser.role()
             ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = processService.getAllProcesses(offset, limit, history, userId, role)
-            .mapSuccess { processes ->
+        val result = processService.getAllProcesses(offset ?: 0, limit ?: 10, history, userId, role)
+            .mapSuccess { res ->
                 ListResponse(
-                    results = processes.map { it.toResponse() }
+                    results = res.first.map { it.toResponse() },
+                    hasNext = res.second,
+                    totalCount = res.third
                 )
             }
 

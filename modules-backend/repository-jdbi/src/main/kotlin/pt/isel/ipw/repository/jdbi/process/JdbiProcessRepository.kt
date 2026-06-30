@@ -241,7 +241,7 @@ class JdbiProcessRepository(
         userId: Int,
         role: String,
         processStates: List<String>
-    ): List<ProcessView> {
+    ): Pair<List<ProcessView>, Int> {
         val userCondition = when (role) {
             Roles.MANAGER    -> "true"
             Roles.INVESTIGATOR -> "p.investigator_id = :userId"
@@ -259,7 +259,12 @@ left join State st         on st.id = ps.state_id
 where ($userCondition)
 and (:areaId = 0 or p.area_id = :areaId)
 and (:hasStates = false or st.name = any(:processStates))
-order by p.creation_date desc
+order by   
+CASE priority
+    WHEN 'urgent' THEN 1
+    WHEN 'with_priority' THEN 2
+    WHEN 'normal' THEN 3
+  END
 limit :limit offset :offset
 """
         )
@@ -272,7 +277,7 @@ limit :limit offset :offset
             .mapTo(Int::class.java)
             .list()
 
-        if (processIds.isEmpty()) return emptyList()
+        if (processIds.isEmpty()) return Pair(emptyList(), 0)
 
         val allNotes = handle.createQuery(
             """
@@ -335,7 +340,28 @@ where pv.process_id = any(:ids)
             .list()
             .groupBy { it.processId }
 
-        return handle.createQuery(
+        val total = handle.createQuery(
+            """
+    select count(distinct p.id)
+    from Process p
+    left join Process_State ps 
+        on ps.process_id = p.id 
+        and ps.end_date is null
+    left join State st 
+        on st.id = ps.state_id
+    where ($userCondition)
+    and (:areaId = 0 or p.area_id = :areaId)
+    and (:hasStates = false or st.name = any(:processStates))
+    """
+        )
+            .bind("userId", userId)
+            .bind("areaId", areaId)
+            .bind("hasStates", processStates.isNotEmpty())
+            .bind("processStates", processStates.toTypedArray())
+            .mapTo(Int::class.java)
+            .one()
+
+        val processes =  handle.createQuery(
             """
 select
     p.id,
@@ -421,7 +447,13 @@ order by p.creation_date desc
                 ).map(rs, ctx)
             }
             .list()
+
+        return Pair(processes, total)
     }
+
+
+
+
     override fun updateEndDate(processId: Int, endDate: String) {
         handle.createUpdate(
             """
@@ -548,5 +580,7 @@ order by p.creation_date desc
             .bind("stateId", stateId)
             .execute()
     }
+
+
 
 }

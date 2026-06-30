@@ -146,8 +146,8 @@ class ProcessServiceImpl(
 
 
     override fun getAllProcesses(
-        offset: Int?,
-        limit: Int?,
+        offset: Int,
+        limit: Int,
         history: Boolean?,
         userId: Int,
         role: String
@@ -169,16 +169,18 @@ class ProcessServiceImpl(
 
             val targetStates = resolveTargetStates(role, history)
 
-            val processes = processRepository.getAll(
-                offset ?: 0,
-                limit ?: 10,
+            val (processes, totalCount) =processRepository.getAll(
+                offset,
+                limit,
                 areaId ?: 0,
                 userId,
                 role,
                 targetStates
             )
 
-            return@run success(processes)
+            val hasNext = processes.size == limit
+
+            return@run success(Triple(processes, hasNext, totalCount))
 
         }
 

@@ -7,6 +7,8 @@ import type { ProveResponse } from "./ProvesApi.tsx";
 import i18n from "i18next";
 
 export type ProcessResponseApi = {
+  totalCount: number;
+  hasNext: boolean;
   results: ProcessResponse[];
 };
 
@@ -139,7 +141,7 @@ async function getAll(
   offset?: number,
   limit?: number,
 ): Promise<ResponseApi<ProcessResponseApi>> {
-  const query = buildQuery({ offset: offset, limit });
+  const query = buildQuery({ offset: offset, limit: limit });
   return await fetchApi<ProcessResponseApi>(`process${query}`, {
     method: "GET",
     headers: {

@@ -32,7 +32,7 @@ interface ProcessRepository {
         userId: Int,
         role:String,
         processStates: List<String>
-    ): List<ProcessView>
+    ): Pair<List<ProcessView>, Int>
 
 
 
@@ -49,6 +49,5 @@ interface ProcessRepository {
     fun cancelProcess(processId: Int)
 
     fun changeState(processId: Int, newState: String)
-
 
 }
