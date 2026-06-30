@@ -46,6 +46,8 @@ export type UserProfileResponse = {
 };
 
 type UserResponseList = {
+  totalCount: number;
+  hasNext: boolean;
   results: UserResponse[];
 };
 

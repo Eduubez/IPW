@@ -462,7 +462,7 @@ class ReportServiceImplTest {
     // AlreadyApproved
 
     @Test
-    fun `approveReport - manager tries approve twice returns AlreadyApproved`() {
+    fun `approveReport - manager tries approve twice returns ProcessFinished`() {
         val process = testUtils.createProcess(investigatorId = testUtils.INVESTIGATOR_ID)
         assertTrue(process is Success)
         val processId = (process as Success).value
@@ -475,7 +475,7 @@ class ReportServiceImplTest {
 
         val result = reportService.approveReport(processId, testUtils.MANAGER_ID, Roles.MANAGER)
         assertTrue(result is Failure)
-        assertEquals(ReportError.AlreadyApproved, (result as Failure).value)
+        assertEquals(ReportError.ProcessFinished, (result as Failure).value)
     }
 
     @Test

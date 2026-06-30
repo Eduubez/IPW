@@ -2,6 +2,7 @@ package pt.isel.ipw.services.results
 
 import pt.isel.ipw.domain.DTO.output.user.AdminInformationDTO
 import pt.isel.ipw.domain.DTO.output.user.AssignableUser
+import pt.isel.ipw.domain.ListProps
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.services.auth.LoginResult
 import pt.isel.ipw.services.auth.RefreshAccessToken
@@ -13,7 +14,7 @@ typealias CreateUserResult = Either<UserError, Int>
 typealias LoginResultResponse = Either<UserError, LoginResult>
 typealias LogoutResult = Either<UserError, Unit>
 typealias GetUserRolesResult = Either<UserError, List<String>>
-typealias GetAllUsersResult = Either<UserError, List<UserWithRoles>>
+typealias GetAllUsersResult = Either<UserError, Pair<List<UserWithRoles>, ListProps>>
 typealias GetUserProfileInfoResult = Either<UserError, UserWithRoles>
 typealias ChangeUserRolesResult = Either<UserError, Unit>
 typealias ChangeUserPasswordResult = Either<UserError, Unit>

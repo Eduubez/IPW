@@ -28,7 +28,7 @@ interface UsersRepository {
 
     fun getUserWithRolesById(userId: Int): UserWithRoles?
 
-    fun getAllUsers(offset: Int, limit: Int): List<UserWithRoles>
+    fun getAllUsers(offset: Int, limit: Int): Pair<List<UserWithRoles>, Int>
 
     fun getAssignableUsersByRole(role: String, areaId: Int?): List<AssignableUser>
 

@@ -101,9 +101,9 @@ class ProcessController(
     @RolesAllowed(Roles.TRIATOR, Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
     @GetMapping
     fun getAllProcesses(
-        @RequestParam(required = false) offset: Int?,
-        @RequestParam(required = false) limit: Int?,
-        @RequestParam(required = false) history: Boolean?,
+        @RequestParam(defaultValue = "0") offset: Int,
+        @RequestParam(defaultValue = "10") limit: Int,
+        @RequestParam(defaultValue = "false") history: Boolean,
     ): ResponseEntity<*> {
 
         val userId = AuthenticatedUser.id()
@@ -111,12 +111,12 @@ class ProcessController(
         val role = AuthenticatedUser.role()
             ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = processService.getAllProcesses(offset ?: 0, limit ?: 10, history, userId, role)
+        val result = processService.getAllProcesses(offset, limit, history, userId, role)
             .mapSuccess { res ->
                 ListResponse(
                     results = res.first.map { it.toResponse() },
-                    hasNext = res.second,
-                    totalCount = res.third
+                    hasNext = res.second.hasNext,
+                    totalCount = res.second.totalCount,
                 )
             }
 

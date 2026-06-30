@@ -35,7 +35,7 @@ class TestUtils(
     )
 
     val processService = ProcessServiceImpl(
-        trxManager, activityService, areaService
+        trxManager, activityService
     )
 
     val noteService = NoteServiceImpl(

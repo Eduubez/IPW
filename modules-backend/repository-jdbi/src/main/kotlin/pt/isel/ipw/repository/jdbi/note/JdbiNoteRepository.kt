@@ -34,14 +34,15 @@ class JdbiNoteRepository(
         handle.createQuery(
             """
         select
-            id,
-            process_id,
-            proves_id,
-            content,
-            author_id,
-            created_at
-        from Notes
-        where id = :noteId
+                n.id,
+                n.process_id,
+                n.proves_id,
+                n.content,
+                n.author_id,
+                n.created_at,
+                u.name as author_name
+            from Notes n join Users u on n.author_id = u.id
+        where n.id = :noteId
         """
         )
             .bind("noteId", noteId)

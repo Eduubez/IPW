@@ -196,7 +196,7 @@ class ProcessControllerTest {
     fun `getAllProcesses - success as investigator`() {
         TestUtils.setUpSecurityContext(userId = TestUtils.INVESTIGATOR_ID, role = Roles.INVESTIGATOR)
 
-        val resp = processController.getAllProcesses(null, null, null)
+        val resp = processController.getAllProcesses(0, 10, false)
 
         assertEquals(200, resp.statusCode.value())
         assertNotNull(resp.body as? ListResponse<*>)
@@ -206,7 +206,7 @@ class ProcessControllerTest {
     fun `getAllProcesses - success as triator`() {
         TestUtils.setUpSecurityContext(userId = TestUtils.TRIATOR_ID, role = Roles.TRIATOR)
 
-        val resp = processController.getAllProcesses(null, null, null)
+        val resp = processController.getAllProcesses(0, 10, false)
 
         assertEquals(200, resp.statusCode.value())
         assertNotNull(resp.body as? ListResponse<*>)
@@ -216,7 +216,7 @@ class ProcessControllerTest {
     fun `getAllProcesses - success as manager`() {
         TestUtils.setUpSecurityContext(userId = TestUtils.MANAGER_ID, role = Roles.MANAGER)
 
-        val resp = processController.getAllProcesses(null, null, null)
+        val resp = processController.getAllProcesses(0, 10, false)
 
         assertEquals(200, resp.statusCode.value())
     }
@@ -225,7 +225,7 @@ class ProcessControllerTest {
     fun `getAllProcesses - invalid limit`() {
         TestUtils.setUpSecurityContext(userId = TestUtils.INVESTIGATOR_ID, role = Roles.INVESTIGATOR)
 
-        val resp = processController.getAllProcesses(null, 0, null)
+        val resp = processController.getAllProcesses(0, 0, false)
         val error = resp.body as Problem
 
         assertEquals(404, resp.statusCode.value())
@@ -237,7 +237,7 @@ class ProcessControllerTest {
     fun `getAllProcesses - invalid offset`() {
         TestUtils.setUpSecurityContext(userId = TestUtils.INVESTIGATOR_ID, role = Roles.INVESTIGATOR)
 
-        val resp = processController.getAllProcesses(-1, null, null)
+        val resp = processController.getAllProcesses(-1, 10, false)
         val error = resp.body as Problem
 
         assertEquals(404, resp.statusCode.value())

@@ -2,6 +2,7 @@ package pt.isel.ipw.services
 
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.ActivityActions
+import pt.isel.ipw.domain.ListProps
 import pt.isel.ipw.domain.mapToString
 import pt.isel.ipw.domain.process.Priority
 import pt.isel.ipw.domain.process.ProcessView
@@ -20,8 +21,6 @@ import java.time.LocalDateTime
 class ProcessServiceImpl(
     private val transactionManager: TransactionManager,
     private val activityServices: ActivityServiceImpl,
-    private val areaService: AreaService,
-
     ) : ProcessService {
 
 
@@ -178,9 +177,9 @@ class ProcessServiceImpl(
                 targetStates
             )
 
-            val hasNext = processes.size == limit
+            val hasNext = offset + processes.size < totalCount
 
-            return@run success(Triple(processes, hasNext, totalCount))
+            return@run success(Pair(processes, ListProps(hasNext, totalCount)))
 
         }
 

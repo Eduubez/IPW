@@ -97,7 +97,7 @@ class UserController(
         val result = userService.getAllUsers(offset, limit)
             .mapSuccess { users ->
                 ListResponse(
-                    results = users.map {
+                    results = users.first.map {
                         AdminUserResponse(
                             id = it.id,
                             name = it.name,
@@ -107,7 +107,10 @@ class UserController(
                             isActive = it.isActive,
                             roles = it.roles
                         )
-                    }
+                    },
+                    hasNext = users.second.hasNext,
+                    totalCount = users.second.totalCount,
+
                 )
             }
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }

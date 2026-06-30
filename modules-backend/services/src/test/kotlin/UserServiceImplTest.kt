@@ -206,18 +206,44 @@ class UserServiceImplTest {
     fun `get all users with valid pagination should return users`() {
         val createdUserId = createTestUser()
 
-        val users = assertSuccess(
+        val users1 = assertSuccess(
             userService.getAllUsers(
                 offset = 0,
-                limit = 100
+                limit = 2
             )
         )
 
-        val createdUser = users.first { it.id == createdUserId }
+        val users2 = assertSuccess(
+            userService.getAllUsers(
+                offset = 2,
+                limit = 2
+            )
+        )
+
+        val users3 = assertSuccess(
+            userService.getAllUsers(
+                offset = 4,
+                limit = 2
+            )
+        )
+
+        println(users1.second.totalCount)
+        println( users1.first)
+        println(users2.first)
+        println(users3.first)
+
+
+        val createdUser = users3.first.first { it.id == createdUserId }
 
         assertEquals("Chico", createdUser.name)
         assertEquals("chico@gmail.com", createdUser.email)
         assertEquals(listOf("admin"), createdUser.roles)
+
+        assertTrue(users1.second.hasNext && users1.first.size == 2)
+        assertTrue(users2.second.hasNext && users2.first.size == 2)
+        assertTrue(!users3.second.hasNext && users3.first.size == 2)
+
+
     }
 
     @Test

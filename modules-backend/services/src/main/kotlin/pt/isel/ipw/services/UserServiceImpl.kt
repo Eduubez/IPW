@@ -3,6 +3,7 @@ package pt.isel.ipw.services
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import pt.isel.ipw.domain.DTO.output.user.AdminInformationDTO
+import pt.isel.ipw.domain.ListProps
 import pt.isel.ipw.domain.user.User
 import pt.isel.ipw.domain.user.UserWithRoles
 import pt.isel.ipw.domain.roles.Roles
@@ -112,7 +113,7 @@ class UserServiceImpl(
     ): LogoutResult = transactionManager.run {
         val user = usersRepository.getUserById(userId)
             ?: return@run failure(UserError.UserNotFound)
-        
+
         accessTokensRepository.deleteByUserId(user.id)
         refreshTokensRepository.deleteByUserId(user.id)
         loginTokensRepository.deleteByUserId(user.id)
@@ -200,11 +201,15 @@ class UserServiceImpl(
         offset: Int,
         limit: Int
     ): GetAllUsersResult = transactionManager.run {
-        when {
-            offset < 0 -> failure(UserError.InvalidOffset)
-            limit <= 0 -> failure(UserError.InvalidLimit)
-            else -> success(usersRepository.getAllUsers(offset, limit))
-        }
+
+        if (offset < 0) return@run failure(UserError.InvalidOffset)
+        if (limit <= 0) return@run failure(UserError.InvalidLimit)
+
+        val (users, count) = usersRepository.getAllUsers(offset, limit)
+
+        val hasNext = offset + users.size < count
+        return@run success(Pair(users, ListProps(hasNext, count)))
+
     }
 
     override fun changeUserRoles(
@@ -312,7 +317,7 @@ class UserServiceImpl(
             return@run failure(UserError.InvalidRoleSelection)
         }
 
-        val areaInfo = if(normalizedRequestedRole in Roles.AREA_ROLES) {
+        val areaInfo = if (normalizedRequestedRole in Roles.AREA_ROLES) {
             areasRepository.getAreaByUserId(userId)
         } else {
             null

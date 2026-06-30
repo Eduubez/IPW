@@ -152,33 +152,47 @@ class JdbiUsersRepository(
             .singleOrNull()
     }
 
-    override fun getAllUsers(offset: Int, limit: Int): List<UserWithRoles> {
-        return handle.createQuery(
+    override fun getAllUsers(offset: Int, limit: Int): Pair<List<UserWithRoles>, Int> {
+
+        val users = handle.createQuery(
             """
-            select
-                u.id,
-                u.name,
-                u.email,
-                u.area_id,
-                a.name as area,
-                u.is_active,
-                coalesce(
-                    array_agg(ur.role_name) filter (where ur.role_name is not null),
-                    '{}'
-                ) as roles
-            from Users u
-            left join Area a on u.area_id = a.id
-            left join User_Role ur on ur.user_id = u.id
-            group by u.id, u.name, u.email, u.area_id, a.name, u.is_active
-            order by u.id
-            offset :offset
-            limit :limit
+        select
+            u.id,
+            u.name,
+            u.email,
+            u.area_id,
+            a.name as area,
+            u.is_active,
+            coalesce(
+                array_agg(ur.role_name) filter (where ur.role_name is not null),
+                '{}'
+            ) as roles
+        from Users u
+        left join Area a on u.area_id = a.id
+        left join User_Role ur on ur.user_id = u.id
+        group by u.id, u.name, u.email, u.area_id, a.name, u.is_active
+        order by u.id
+        offset :offset
+        limit :limit
         """
         )
             .bind("offset", offset)
             .bind("limit", limit)
             .mapTo<UserWithRoles>()
             .list()
+
+
+        val total = handle.createQuery(
+            """
+        select count(*)
+        from Users
+        """
+        )
+            .mapTo<Int>()
+            .one()
+
+
+        return Pair(users, total)
     }
 
     override fun getAssignableUsersByRole(
