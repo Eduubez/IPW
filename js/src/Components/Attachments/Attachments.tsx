@@ -24,10 +24,12 @@ const buttonStyle = {
 
 export const Attachments = ({
   proves,
-  triggerRenderFn
+  triggerRenderFn,
+  buttonsEnabled = true,
 }: {
   proves: ProveResponse[] | undefined;
   triggerRenderFn: () => void;
+  buttonsEnabled?: boolean;
 }) => {
   const params = useParams();
   const processId = Number(params.id);
@@ -107,6 +109,11 @@ export const Attachments = ({
     document.body.removeChild(link);
   };
 
+  const handleDeleteAttachment = async (processId:number,proveId: number) => {
+    await ProvesApi.delete(processId, proveId);
+    triggerRenderFn();
+  }
+
   const handleCloseModal = () => {
     setShowNewAttachmentModal(false);
     setFile(null);
@@ -119,8 +126,8 @@ export const Attachments = ({
         <PrimaryButton
           text="+"
           onClick={() => setShowNewAttachmentModal(true)}
-          enabled={true}
-          style={buttonStyle}
+          enabled={buttonsEnabled}
+          style={{ ...buttonStyle, backgroundColor: buttonsEnabled ? 'var(--color-dark-blue-100)' : 'gray' }}
         />
       </div>
       {attachments === undefined || attachments.length === 0 ? (
@@ -142,6 +149,8 @@ export const Attachments = ({
                 triggerRenderFn={triggerRenderFn}
                 processId={processId}
                 proveId={attachment.id}
+                deleteFn={() => handleDeleteAttachment(processId,attachment.id)}
+                buttonsEnabled={buttonsEnabled}
               />
             ))}
           />

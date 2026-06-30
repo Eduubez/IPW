@@ -16,6 +16,8 @@ interface AttachmentCardProps {
   notes?: { content: string; createdAt: string; authorName: string }[];
   triggerRenderFn: () => void;
   authorName: string;
+  deleteFn: () => void;
+  buttonsEnabled?: boolean;
 }
 
 export const AttachmentCard = ({
@@ -26,7 +28,9 @@ export const AttachmentCard = ({
   processId,
   proveId,
   notes,
-  triggerRenderFn
+  triggerRenderFn,
+  deleteFn,
+  buttonsEnabled = true,
 }: AttachmentCardProps) => {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [newNoteContent, setNewNoteContent] = useState("");
@@ -66,11 +70,21 @@ export const AttachmentCard = ({
         </div>
         <div className={styles["new-note-button-container"]}>
           <button
-            onClick={() => setShowNoteModal(true)}
+            onClick={buttonsEnabled ? () => setShowNoteModal(true) : undefined}
+            disabled={!buttonsEnabled}
             className={styles["download-button"]}>
             <span
               className={`material-symbols-outlined ${styles["card-download-button"]}`}>
               note_add
+            </span>
+          </button>
+          <button
+            onClick={buttonsEnabled ? deleteFn : undefined}
+            disabled={!buttonsEnabled}
+            className={styles["download-button"]}>
+            <span
+              className={`material-symbols-outlined ${styles["card-download-button"]}`}>
+              delete
             </span>
           </button>
         </div>
@@ -89,7 +103,7 @@ export const AttachmentCard = ({
                 <PrimaryButton
                   text={t("AttachmentCard.saveNoteButton")}
                   onClick={handleSaveNote}
-                  enabled={true}
+                  enabled={buttonsEnabled}
                 />
               </div>
             </div>

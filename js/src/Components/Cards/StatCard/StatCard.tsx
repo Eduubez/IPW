@@ -16,6 +16,7 @@ export function StatCard({
   button?:{
     text: string;
     onClick: () => void;
+    enabled: boolean;
   }
 }) {
   return (
@@ -32,7 +33,7 @@ export function StatCard({
           <span className={styles["value"]}>{value}</span>
           <span className={styles["text"]}>{text}</span>
           {button && (
-            <PrimaryButton onClick={button.onClick} text={button.text} enabled={true} />
+            <PrimaryButton onClick={button.onClick} text={button.text} enabled={button.enabled} />
           )}
         </>
       )}

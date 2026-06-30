@@ -56,6 +56,8 @@ const BOX_ACTIVITY_TYPE = [
   "CHANGED_END_DATE",
   "CREATED_REPORT",
   "CREATED_NOTE",
+  "CREATED_PROVE",
+  "DELETED_PROVE"
 ];
 
 const processPageState = (state?: string) => {
@@ -93,6 +95,13 @@ export default function ProcessPage() {
   const [showNewNoteModal, setShowNewNoteModal] = useState(false);
   const [newNote, setNewNote] = useState("");
   const [renderCountKey, setRenderCountKey] = useState(0);
+
+  const disableAllButons = () => {
+    return (
+      apiResponse?.state === STATES.CANCELED.toLowerCase() ||
+      apiResponse?.state === STATES.APPROVED_BY_MANAGER.toLowerCase()
+    );
+  }
 
   const openConfirmModal = (action: () => void) => {
     setConfirmAction(() => action);
@@ -206,11 +215,12 @@ export default function ProcessPage() {
         value: t("CreateProcessPage.fields.supervisor"),
         text: apiResponse.supervisor?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
-        button: apiResponse.supervisor?.email
+        button: apiResponse.supervisor.id != userStore.getUserId() && apiResponse.supervisor?.email
           ? {
               text: t("ProcessPage.notify"),
               onClick: () =>
                 (window.location.href = `mailto:${apiResponse.supervisor!.email}`),
+              enabled: !disableAllButons() && apiResponse.state !== STATES.APPROVED_BY_SUPERVISOR.toLowerCase(),
             }
           : undefined,
       },
@@ -218,11 +228,12 @@ export default function ProcessPage() {
         value: t("CreateProcessPage.fields.investigator"),
         text: apiResponse.investigator?.name || "N/A",
         icon: { name: Icon.Group, style: { color: Color.LightBlue } },
-        button: apiResponse.investigator?.email
+        button: apiResponse.investigator?.id != userStore.getUserId() && apiResponse.investigator?.email
           ? {
               text: t("ProcessPage.notify"),
               onClick: () =>
                 (window.location.href = `mailto:${apiResponse.investigator!.email}`),
+              enabled: !disableAllButons() && apiResponse.state !== STATES.APPROVED_BY_SUPERVISOR.toLowerCase(),
             }
           : undefined,
       },
@@ -261,10 +272,11 @@ export default function ProcessPage() {
         text: t(`Priority.${apiResponse.priority}`) || "N/A",
         icon: { name: Icon.Info, style: { color: Color.LightBlue } },
         button:
-          userStore.getActiveRole() === ROLE_KEYS.MANAGER
+          userStore.getActiveRole() === ROLE_KEYS.MANAGER || userStore.getActiveRole() === ROLE_KEYS.SUPERVISOR
             ? {
                 text: t("ProcessPage.changePriority"),
                 onClick: () => setShowPriorityModal(true),
+                enabled: !disableAllButons()
               }
             : undefined,
       },
@@ -301,7 +313,7 @@ export default function ProcessPage() {
     } = {
       processId: Number(id),
       proveId: null,
-      content: newNote,
+      content: newNote + Math.floor(Math.random() * 1000), // Append a random number to the note
     };
 
     const response = await NotesApi.createNote(Number(id), requestNote);
@@ -311,7 +323,6 @@ export default function ProcessPage() {
       setRenderCountKey((prev) => prev + 1);
     }
   };
-
   //#region supervisor
   const aproveProcess = async () => {
     const response = await ProcessApi.approve(Number(id));
@@ -384,7 +395,7 @@ export default function ProcessPage() {
       <PrimaryButton
         text={t("ProcessPage.submitProcess")}
         onClick={() => openConfirmModal(handleSubmitProcess)}
-        enabled={canSubmitProcess()}
+        enabled={canSubmitProcess() && !disableAllButons()}
       />,
     ],
     reportView: (
@@ -398,12 +409,12 @@ export default function ProcessPage() {
       <PrimaryButton
         text={t("ProcessPage.approveProcess")}
         onClick={() => openConfirmModal(aproveProcess)}
-        enabled={canAproveOrRejectProcess()}
+        enabled={canAproveOrRejectProcess() && !disableAllButons()}
       />,
       <PrimaryButton
         text={t("ProcessPage.rejectProcess")}
         onClick={() => openConfirmModal(rejectProcess)}
-        enabled={canAproveOrRejectProcess()}
+        enabled={canAproveOrRejectProcess() && !disableAllButons()}
       />,
     ],
     reportView: (
@@ -416,18 +427,18 @@ export default function ProcessPage() {
       <PrimaryButton
         text={t("ProcessPage.approveProcess")}
         onClick={() => openConfirmModal(aproveProcess)}
-        enabled={canAproveOrRejectProcess()}
+        enabled={canAproveOrRejectProcess() && !disableAllButons()}
       />,
       <PrimaryButton
         text={t("ProcessPage.rejectProcess")}
         onClick={() => openConfirmModal(rejectProcess)}
-        enabled={canAproveOrRejectProcess()}
+        enabled={canAproveOrRejectProcess() && !disableAllButons()}
       />,
       <PrimaryButton
         style={{ backgroundColor: Color.DarkRed }}
         text={t("ProcessPage.cancelProcess")}
         onClick={() => openConfirmModal(handleCancelProcess)}
-        enabled={true}
+        enabled={!disableAllButons()}
       />,
     ],
     reportView: (
@@ -540,8 +551,8 @@ export default function ProcessPage() {
               <div className={styles["note-header"]}>
                 <span>{t("ProcessPage.notesSection")}</span>
                 <PrimaryButton
-                  style={newNoteButtonStyle}
-                  enabled={true}
+                  style={{ ...newNoteButtonStyle, backgroundColor: disableAllButons() ? 'gray' : 'var(--color-dark-blue-100)' }}
+                  enabled={!disableAllButons()}
                   text="+"
                   onClick={() => setShowNewNoteModal(true)}
                 />
@@ -566,7 +577,7 @@ export default function ProcessPage() {
         </div>
         <div className={styles["d-container"]}>
           <WithBackground>
-            <Attachments proves={apiResponse?.proves} triggerRenderFn={() => setRenderCountKey(prev => prev + 1)} />
+            <Attachments proves={apiResponse?.proves} triggerRenderFn={() => setRenderCountKey(prev => prev + 1)} buttonsEnabled={!disableAllButons()} />
           </WithBackground>
           <WithBackground>
             <div className={styles["activity-box"]}>

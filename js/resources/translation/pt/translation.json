@@ -294,7 +294,9 @@
     "ASSIGNED_SUPERVISOR": "Supervisor atribuído ao processo",
     "CHANGED_END_DATE": "Data de expiração do processo alterada",
     "CREATED_REPORT": "Criou um relatório",
-    "CREATED_NOTE": "Adicionou uma nota"
+    "CREATED_NOTE": "Adicionou uma nota",
+    "CREATED_PROVE": "Adicionou um anexo",
+    "DELETED_PROVE": "Eliminou um anexo"
   },
   "Error": {
     "INTERNAL_ERROR": "Erro interno",
@@ -363,5 +365,6 @@
   "UploadAttachmentModal": {
     "header": "Carregar Anexo",
     "uploadButton": "Carregar"
-  }
+  },
+  "UploadSuccess":"Upload bem sucedido!"
 }

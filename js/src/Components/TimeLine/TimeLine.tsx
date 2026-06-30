@@ -9,6 +9,7 @@ import styles from "./timeline.module.css";
 import { TimeLineActivityItem } from "./TimeLineActivityItem/TimeLineActivityItem";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";
 import { useTranslation } from "react-i18next";
+import { formatDate } from "../../Utility/Helpers/DateHelpers";
 
 export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: boolean; label: string; date: Date; userName: string }[] }) {
   const { t } = useTranslation();
@@ -53,7 +54,7 @@ export function TimeLine({ loading ,items}: { loading?: boolean ,items: { done: 
           <TimelineContent>
             <TimeLineActivityItem
               title={t(`ActivityItem.${item.label}`)}
-              time={item.date.toLocaleTimeString()}
+              time={formatDate(item.date)}
               user={item.userName}
             />
           </TimelineContent>
