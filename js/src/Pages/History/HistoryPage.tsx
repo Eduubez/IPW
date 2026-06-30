@@ -113,7 +113,7 @@ export default function HistoryPage() {
         id: process.id,
         name: process.name,
         creationDate: formatDate(new Date(process.creationDate)),
-        area: process.area,
+        area: t(`Areas.${process.area}`),
         dueDate: formatDate(new Date(process.dueDate)),
         priority: <PriorityBadge priority={process.priority} />,
         state: <StateBadge state={process.state as StateType} />,

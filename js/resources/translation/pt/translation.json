@@ -75,7 +75,8 @@
     "state": "Estado",
     "roles": "Papeis",
     "expirationDate": "Expira em",
-    "location": "Localização"
+    "location": "Localização",
+    "status": "Estado"
   },
   "HistoryPage": {
     "Title": "O meu Histórico",
@@ -109,7 +110,9 @@
     "userModal": {
       "title": "Alterar utilizador",
       "changePassword": "Alterar Palavra-passe",
-      "changeRoles": "Alterar Papéis"
+      "changeRoles": "Alterar Papéis",
+      "deactivateUser": "Desativar Utilizador",
+      "activateUser": "Ativar Utilizador"
     },
     "createUser": {
       "title": "Novo utilizador",
@@ -145,6 +148,10 @@
       "errorNoRoles": "Escolhe pelo menos um papel.",
       "errorNoArea": "Escolhe uma área para este utilizador.",
       "success": "Papéis alterados com sucesso."
+    },
+    "gridStatus": {
+      "active": "Operacional",
+      "inactive": "Desativado"
     }
   },
   "NavigationItems": {

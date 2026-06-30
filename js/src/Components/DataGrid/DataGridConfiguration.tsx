@@ -1,5 +1,5 @@
 const dataGridConfiguration = {
-  jsxSearchableFields: ["priority", "state", "text"],
+  jsxSearchableFields: ["priority", "state", "text","status"],
   itemPerPage: 8,
 };
 
