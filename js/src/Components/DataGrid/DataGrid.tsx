@@ -2,10 +2,9 @@ import React, { useEffect, useId, useMemo, useState } from "react";
 import { WithBackground } from "../Layouts/WithBackground/WithBackground";
 import styles from "./datagrid.module.css";
 import PrimaryButton from "../Buttons/PrimaryButton/PrimaryButton";
-import { Icon } from "../Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import { useTranslation } from "react-i18next";
 import dataGridConfiguration from "./DataGridConfiguration";
-import LoadingComponent from "../LoadingComponent/LoadingComponent";
 
 type CellValue = string[] | string | number | React.ReactNode;
 type DataGridRow = {

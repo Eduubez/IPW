@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
 import styles from "./newprocess.module.css";
@@ -10,7 +9,6 @@ import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton"
 import { UsersApi } from "../../Utility/Api/UsersApi";
 import {
   AreasApi,
-  type AreaListResponse,
   type AreaResponse,
 } from "../../Utility/Api/AreasApi";
 import { useTranslation } from "react-i18next";

@@ -2,15 +2,13 @@ import { useTranslation } from "react-i18next";
 import { Header } from "../../../Components/Layouts/Header/Header";
 import styles from "./triatordashboard.module.css";
 import { StatContainerLayout } from "../../../Components/StatContainerLayout/StatContainerLayout";
-import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import { useEffect, useState, type JSX } from "react";
 import {
   ProcessApi,
   type ProcessResponse,
 } from "../../../Utility/Api/ProcessApi";
-import { Icon } from "../../../Components/Icons/Icons";
+import { Icon } from "../../../Config/Icons";
 import { PriorityBadge } from "../../../Components/Badge/PriorityBadge/PriorityBadge";
-import { useNavigate } from "react-router-dom";
 import {formatDate} from "../../../Utility/Helpers/DateHelpers";
 
 type CleanProcess = {
@@ -37,7 +35,6 @@ const cleanProcess = (processes: ProcessResponse[]): CleanProcess[] => {
 };
 
 export function TriatorDashboard() {
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState<CleanProcess[]>([]);
@@ -56,23 +53,6 @@ export function TriatorDashboard() {
   useEffect(() => {
     fetchProcess();
   }, []);
-
-  const gridColumns = [
-    "name",
-    "location",
-    "area",
-    "creationDate",
-    "expirationDate",
-    "priority",
-  ];
-  const gridActions = [
-    {
-      label: t("Dashboard.createNewProcess"),
-      onClick: () => {
-        navigate("/processes/new");
-      },
-    },
-  ];
 
   const statArray = [
     {

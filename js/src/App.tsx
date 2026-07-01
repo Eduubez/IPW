@@ -12,7 +12,7 @@ import ProcessPage from "./Pages/ProcessPage/ProcessPage";
 import HistoryPage from "./Pages/History/HistoryPage";
 import { ProtectedRoute } from "./Components/ProtectedRoute/ProtectedRoute";
 import { NotAuthorizedPage } from "./Pages/NotAuthorized/NotAuthorizedPage";
-import { ROLE_KEYS } from "./MockData/MockRoles";
+import { ROLE_KEYS } from "./Config/RolesConfig";
 function AppLayout() {
   const location = useLocation();
   const pathsWithoutSidebar = ["/login", "/role-selection"];

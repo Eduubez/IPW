@@ -1,10 +1,9 @@
 import styles from "./profile.module.css";
-import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { useTranslation } from "react-i18next";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
 import { InformationCard } from "../../Components/Cards/InformationCard/InformationCard";
-import { Icon } from "../../Components/Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { LanguageSwitcher } from "../../Components/LanguageSwitcher/LanguageSwitcher";
 import { userStore } from "../../Utility/Store/UserStore";

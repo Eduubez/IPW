@@ -5,15 +5,12 @@ import TextBox from "../../Components/Inputs/TextBox/TextBox";
 import { useState } from "react";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { Color } from "../../StyleGuide/colors";
-import { Icon } from "../../Components/Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import { AuthApi } from "../../Utility/Api/LoginApi";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useSnackbar } from "notistack";
-import { ToastType } from "../../Types/ToastType";
 
 export default function Login() {
   const { t } = useTranslation();
-  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState("");

@@ -9,7 +9,7 @@ import {
 import { Header } from "../../../Components/Layouts/Header/Header";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import { StateBadge, type StateType } from "../../../Components/Badge/StateBadge/StateBadge";
-import { STATES } from "../../../MockData/MockStates";
+import { STATES } from "../../../Config/StatesConfig";
 import styles from "./supervisordashboard.module.css";
 import { formatDate } from "../../../Utility/Helpers/DateHelpers";
 import dataGridConfiguration from "../../../Components/DataGrid/DataGridConfiguration";

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import PrimaryButton from "../../../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { AreasApi, type AreaResponse } from "../../../../Utility/Api/AreasApi";
 import { UsersApi, type UserResponse } from "../../../../Utility/Api/UsersApi";
-import { ROLES, ROLE_KEYS } from "../../../../MockData/MockRoles";
+import { ROLES, ROLE_KEYS } from "../../../../Config/RolesConfig";
 import styles from "./ChangeRolesModal.module.css";
 
 const AREA_ROLES = new Set([ROLE_KEYS.INVESTIGATOR, ROLE_KEYS.SUPERVISOR]);

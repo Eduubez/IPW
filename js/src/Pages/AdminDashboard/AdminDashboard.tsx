@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { StatCard as SummaryStatCard } from "../../Components/Cards/StatCard/StatCard";
-import { Icon } from "../../Components/Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import { Header } from "../../Components/Layouts/Header/Header";
 import { UsersApi, type UserResponse } from "../../Utility/Api/UsersApi";
 import ChangePasswordModal from "./Modals/ChangePasswordModal/ChangePasswordModal";
@@ -13,32 +13,32 @@ import { PrimaryBadge } from "../../Components/Badge/PrimaryBadge/PrimaryBadge";
 import { useTranslation } from "react-i18next";
 import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
-import { ROLE_KEYS } from "../../MockData/MockRoles";
+import { ROLE_KEYS } from "../../Config/RolesConfig";
 import { Color } from "../../StyleGuide/colors";
 import dataGridConfiguration from "../../Components/DataGrid/DataGridConfiguration";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserResponse[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isChangeRolesOpen, setIsChangeRolesOpen] = useState(false);
+  const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
 
-  const loadUsers = useCallback(async (page: number) => {
-    try {
-      setIsLoading(true);
-      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
-      const response = await UsersApi.getAll(offset, dataGridConfiguration.itemPerPage);
-      if (response.success) {
-        setUsers(response.data.results);
-        setTotalCount(response.data.totalCount);
-      }
-    } finally {
-      setIsLoading(false);
+  const loadUsers = async (page: number) => {
+    const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+    const response = await UsersApi.getAll(
+      offset,
+      dataGridConfiguration.itemPerPage,
+    );
+    if (response.success) {
+      setUsers(response.data.results);
+      setTotalCount(response.data.totalCount);
     }
-  }, []);
-
+  }
   const triggerRenderFn = useCallback(() => {
     if (currentPage === 1) {
       loadUsers(1);
@@ -46,10 +46,6 @@ export default function AdminDashboard() {
       setCurrentPage(1);
     }
   }, [currentPage, loadUsers]);
-  const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
-  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
-  const [isChangeRolesOpen, setIsChangeRolesOpen] = useState(false);
-  const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
 
   useEffect(() => {
     loadUsers(currentPage);
@@ -76,31 +72,31 @@ export default function AdminDashboard() {
       icon: { name: Icon.Group },
       text: t("DashboardAdmin.stats.total"),
       value: stats.total,
-      loading: isLoading,
+      loading: false,
     },
     {
       icon: { name: Icon.Visibility },
       text: t("DashboardAdmin.stats.triators"),
       value: stats.triators,
-      loading: isLoading,
+      loading: false,
     },
     {
       icon: { name: Icon.Search },
       text: t("DashboardAdmin.stats.investigators"),
       value: stats.investigators,
-      loading: isLoading,
+      loading: false,
     },
     {
       icon: { name: Icon.Shield },
       text: t("DashboardAdmin.stats.supervisors"),
       value: stats.supervisors,
-      loading: isLoading,
+      loading: false,
     },
     {
       icon: { name: Icon.Crown },
       text: t("DashboardAdmin.stats.managers"),
       value: stats.managers,
-      loading: isLoading,
+      loading: false,
     },
   ];
   const gridColumns = ["name", "roles", "email", "area", "status"];
@@ -123,9 +119,15 @@ export default function AdminDashboard() {
         );
       }),
       status: user.isActive ? (
-        <PrimaryBadge text={t("DashboardAdmin.gridStatus.active")} style={{backgroundColor: Color.GreenPrimary}}/>
+        <PrimaryBadge
+          text={t("DashboardAdmin.gridStatus.active")}
+          style={{ backgroundColor: Color.GreenPrimary }}
+        />
       ) : (
-        <PrimaryBadge text={t("DashboardAdmin.gridStatus.inactive")} style={{backgroundColor: Color.DarkRed}}/>
+        <PrimaryBadge
+          text={t("DashboardAdmin.gridStatus.inactive")}
+          style={{ backgroundColor: Color.DarkRed }}
+        />
       ),
     }));
   }, [users, t]);
@@ -161,7 +163,10 @@ export default function AdminDashboard() {
               : t("DashboardAdmin.userModal.activateUser")
           }
           onClick={() => {
-            handleDeactivateUser(Number(selectedUser!.id), selectedUser!.isActive);
+            handleDeactivateUser(
+              Number(selectedUser!.id),
+              selectedUser!.isActive,
+            );
             setIsModalOpen(false);
           }}
           enabled={true}

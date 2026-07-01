@@ -3,7 +3,7 @@ import styles from "./sidebar.module.css";
 import { useNavigate } from "react-router-dom";
 import { AuthApi } from "../../Utility/Api/LoginApi";
 import { userStore } from "../../Utility/Store/UserStore";
-import { ROLES } from "../../MockData/MockRoles";
+import { ROLES } from "../../Config/RolesConfig";
 
 export default function SideBar() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -21,8 +21,8 @@ export default function SideBar() {
     setIsExpanded(!isExpanded);
   };
   const handleLogout = async () => {
-    const response = await AuthApi.logout();
-
+    await AuthApi.logout();
+    userStore.clear();
     navigate("/login");
   };
 

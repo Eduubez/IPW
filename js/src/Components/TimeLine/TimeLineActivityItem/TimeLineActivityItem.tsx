@@ -1,5 +1,5 @@
 import styles from "./timelineactivityitem.module.css";
-import { Icon } from "../../Icons/Icons";
+import { Icon } from "../../../Config/Icons";
 
 export function TimeLineActivityItem({
   title,

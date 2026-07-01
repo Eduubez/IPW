@@ -8,25 +8,18 @@ import { DataGrid } from "../../Components/DataGrid/DataGrid";
 import {ProcessApi, type ProcessResponseApi} from "../../Utility/Api/ProcessApi";
 import { PriorityBadge } from "../../Components/Badge/PriorityBadge/PriorityBadge";
 import { useNavigate } from "react-router-dom";
-import { Icon } from "../../Components/Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import { Color } from "../../StyleGuide/colors";
-import { STATES } from "../../MockData/MockStates";
-import { ROLE_KEYS } from "../../MockData/MockRoles";
+import { STATES } from "../../Config/StatesConfig";
+import { ROLE_KEYS } from "../../Config/RolesConfig";
 import type { StateType } from "../../Components/Badge/StateBadge/StateBadge";
 import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 import dataGridConfiguration from "../../Components/DataGrid/DataGridConfiguration";
-const formatDate = (date: Date) => {
-  // format date to dd/mm/yyyy
-  const day = date.getDate().toString().padStart(2, "0");
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const year = date.getFullYear();
-  return `${day}/${month}/${year}`;
-};
+import { formatDate } from "../../Utility/Helpers/DateHelpers";
 
 export default function HistoryPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const userId = userStore.getUserId();
   const activeRole = userStore.getActiveRole();
   const [loading, setLoading] = useState(false);
   const [apiResponse, setApiResponse] =
@@ -147,7 +140,7 @@ export default function HistoryPage() {
       <div className={styles["history-stat-container"]}>
         <StatContainerLayout statArray={stats} loading={loading} />
       </div>
-      <DataGrid columns={columns} rows={processes} loading={loading} totalCount={totalCount} currentPage={currentPage} onPageChange={setCurrentPage} />
+      <DataGrid columns={columns} rows={processes} totalCount={totalCount} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   );
 }

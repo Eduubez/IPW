@@ -1,4 +1,4 @@
-import { ROLES } from "../../MockData/MockRoles";
+import { ROLES } from "../../Config/RolesConfig";
 import { Color } from "../../StyleGuide/colors";
 import type { CSSProperties } from "react";
 

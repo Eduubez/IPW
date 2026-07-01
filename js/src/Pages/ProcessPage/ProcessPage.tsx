@@ -5,14 +5,14 @@ import { Header } from "../../Components/Layouts/Header/Header";
 import { Color, getPriorityColor } from "../../StyleGuide/colors";
 import styles from "./processpage.module.css";
 import { StatCard } from "../../Components/Cards/StatCard/StatCard";
-import { Icon } from "../../Components/Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import { TimeLine } from "../../Components/TimeLine/TimeLine";
 import { useTranslation } from "react-i18next";
 import { WithBackground } from "../../Components/Layouts/WithBackground/WithBackground";
 import { ActivityApi } from "../../Utility/Api/ActivityApi";
 import { normalizeState } from "../../Utility/Helpers/ProcessStateHelpers";
-import { STATES } from "../../MockData/MockStates";
-import { ROLE_KEYS } from "../../MockData/MockRoles";
+import { STATES } from "../../Config/StatesConfig";
+import { ROLE_KEYS } from "../../Config/RolesConfig";
 import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
 import PrimaryButton from "../../Components/Buttons/PrimaryButton/PrimaryButton";
 import { ReportCard } from "../../Components/ReportCard/ReportCard";
@@ -300,7 +300,12 @@ export default function ProcessPage() {
       setLoading(false);
     };
     load();
-  }, [id, renderCountKey]);
+  }, [id]);
+
+  useEffect(() => {
+    if (renderCountKey === 0) return;
+    Promise.all([fetchProcessData(), fetchProcessActivity()]);
+  }, [renderCountKey]);
   const report = apiResponse?.report;
   const processState = normalizeState(apiResponse?.state);
   const hasReport = (report?.content?.length ?? 0) > 0;
@@ -313,7 +318,7 @@ export default function ProcessPage() {
     } = {
       processId: Number(id),
       proveId: null,
-      content: newNote + Math.floor(Math.random() * 1000), // Append a random number to the note
+      content: newNote
     };
 
     const response = await NotesApi.createNote(Number(id), requestNote);

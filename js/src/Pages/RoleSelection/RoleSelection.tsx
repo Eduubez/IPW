@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import styles from "./roleselection.module.css";
 import RoleCard from "../../Components/Cards/RoleCard/RoleCard";
 import { useTranslation } from "react-i18next";
-import { ROLES } from "../../MockData/MockRoles";
+import { ROLES } from "../../Config/RolesConfig";
 import { useNavigate } from "react-router";
 import { userStore } from "../../Utility/Store/UserStore";
 import { UsersApi } from "../../Utility/Api/UsersApi";
@@ -32,7 +32,7 @@ export default function RoleSelection() {
     return t("RoleSelection", { returnObjects: true }) as {
       title: string;
       description: string;
-    }; // needed cuz ts...
+    };
   }, [t]);
 
   const handleSelectRole = async (roleKey: string) => {

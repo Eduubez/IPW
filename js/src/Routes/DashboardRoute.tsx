@@ -4,7 +4,7 @@ import { userStore } from "../Utility/Store/UserStore";
 import { InvestigatorDashboard } from "../Pages/Dashboard/InvestigatorDashboard/InvestigatorDashboard";
 import { SupervisorDashboard } from "../Pages/Dashboard/SupervisorDashboard/SupervisorDashboard";
 import { ManagerDashboard } from "../Pages/Dashboard/ManagerDashboard/ManagerDashboard";
-import { ROLE_KEYS } from "../MockData/MockRoles";
+import { ROLE_KEYS } from "../Config/RolesConfig";
 
 export function DashboardRoute() {
   const activeRole = userStore.getActiveRole();

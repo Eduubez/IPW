@@ -4,7 +4,7 @@ import PrimaryButton from "../../../../Components/Buttons/PrimaryButton/PrimaryB
 import TextBox from "../../../../Components/Inputs/TextBox/TextBox";
 import { AreasApi, type AreaResponse } from "../../../../Utility/Api/AreasApi";
 import { UsersApi } from "../../../../Utility/Api/UsersApi";
-import { ROLES, ROLE_KEYS } from "../../../../MockData/MockRoles";
+import { ROLES, ROLE_KEYS } from "../../../../Config/RolesConfig";
 import styles from "./CreateUserModal.module.css";
 
 const AREA_ROLES = [ROLE_KEYS.INVESTIGATOR, ROLE_KEYS.SUPERVISOR];

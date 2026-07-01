@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "./rolecard.module.css";
 import PrimaryButton from "../../Buttons/PrimaryButton/PrimaryButton";
-import { Icon } from "../../Icons/Icons";
+import { Icon } from "../../../Config/Icons";
 import { useTranslation } from "react-i18next";
 import LoadingComponent from "../../LoadingComponent/LoadingComponent";
 

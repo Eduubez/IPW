@@ -1,4 +1,4 @@
-import { Icon } from "../Components/Icons/Icons";
+import { Icon } from "./Icons";
 import { Color } from "../StyleGuide/colors";
 import i18next from 'i18next'
 

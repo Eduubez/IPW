@@ -1,7 +1,7 @@
 import { PrimaryBadge } from "../PrimaryBadge/PrimaryBadge";
 import { Color } from "../../../StyleGuide/colors";
 import { useTranslation } from "react-i18next";
-import { STATES, type ProcessState } from "../../../MockData/MockStates";
+import { STATES, type ProcessState } from "../../../Config/StatesConfig";
 
 const NOT_ASSIGNED_STYLE = {
   background: Color.Gray,

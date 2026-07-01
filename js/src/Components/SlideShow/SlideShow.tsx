@@ -18,9 +18,10 @@ export function SlideShow({ content ,offContentArrow}: { content: React.ReactNod
 
       <div className={`${styles["slide-show"]} ${offContentArrow ? styles["slide-show-outter-arrow"] : ""}`}>
         {content[currentIndex]}
+        {content.length > 1 && (
         <button onClick={handleNext} className={styles["next-button"]}>
           <span className={`material-symbols-outlined ${styles["icon"]}`}>arrow_forward</span>
-        </button>
+        </button>)}
       </div>
 
   );

@@ -4,7 +4,7 @@ import TimelineSeparator from "@mui/lab/TimelineSeparator";
 import TimelineConnector from "@mui/lab/TimelineConnector";
 import TimelineContent from "@mui/lab/TimelineContent";
 import TimelineDot from "@mui/lab/TimelineDot";
-import { Icon } from "../Icons/Icons";
+import { Icon } from "../../Config/Icons";
 import styles from "./timeline.module.css";
 import { TimeLineActivityItem } from "./TimeLineActivityItem/TimeLineActivityItem";
 import LoadingComponent from "../LoadingComponent/LoadingComponent";

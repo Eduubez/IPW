@@ -8,7 +8,7 @@ import {
   StateBadge,
   type StateType,
 } from "../../../Components/Badge/StateBadge/StateBadge";
-import { STATES } from "../../../MockData/MockStates";
+import { STATES } from "../../../Config/StatesConfig";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { DataGrid } from "../../../Components/DataGrid/DataGrid";
@@ -63,25 +63,19 @@ const cleanProcess = (
 export function ManagerDashboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState<CleanProcess[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
 
-  const fetchProcess = useCallback(async (page: number) => {
-    try {
-      setLoading(true);
+  const fetchProcess = async (page: number) => {
+   
       const offset = (page - 1) * dataGridConfiguration.itemPerPage;
       const response = await ProcessApi.getAll(offset, dataGridConfiguration.itemPerPage);
       if (response.success) {
         setProcess(cleanProcess(response.data.results, navigate));
         setTotalCount(response.data.totalCount);
       }
-    } finally {
-      setLoading(false);
-    }
-  }, [navigate]);
-
+    } 
   useEffect(() => {
     fetchProcess(currentPage);
   }, [currentPage, fetchProcess]);
