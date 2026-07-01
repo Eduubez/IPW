@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import pt.isel.ipw.domain.DTO.input.CreateNoteRequest
 import pt.isel.ipw.domain.DTO.input.UpdateNoteRequest
+import pt.isel.ipw.domain.DTO.output.CreateNoteResponse
 import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.notes.toResponse
 import pt.isel.ipw.domain.process.toResponse
@@ -39,6 +40,7 @@ class NoteController(
 
 
         val result = noteService.createNote(id, note, userId, role)
+            .mapSuccess { CreateNoteResponse(id= it) }
         return handler(result, HttpStatus.CREATED) { error -> error.toHttp() }
     }
 

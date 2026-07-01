@@ -17,7 +17,7 @@ import tools.jackson.databind.ObjectMapper
     excludeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [JdbiConfig::class])]
 )class TestConfig {
     @Bean
-    fun jdbi(): Jdbi = DbConfig.getConnection()  // satisfies JdbiTransactionManager's dependency
+    fun jdbi(): Jdbi = DbConfig.getConnection()
 
 
     @Bean
