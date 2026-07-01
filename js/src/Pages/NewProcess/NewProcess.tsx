@@ -93,7 +93,7 @@ export default function NewProcess() {
    
   const handleSubmit = async () => {
     const response = await ProcessApi.create({
-      name,
+      "name": name + Math.floor(Math.random() * 1000), // Append a random number to the name
       street,
       county,
       district,
@@ -191,6 +191,12 @@ export default function NewProcess() {
       disabled: area === ""
     },
   ];
+const multipleSubmit = async () => {
+    for (let i = 0; i < 300; i++) {
+      handleSubmit();
+    }
+}
+
   return (
     <div className={styles["new-process-page"]}>
       <Header
@@ -255,7 +261,7 @@ export default function NewProcess() {
             <div className={styles["submit-button"]}>
               <PrimaryButton
                 text={t("CreateProcessPage.submit")}
-                onClick={handleSubmit}
+                onClick={multipleSubmit}
                 enabled={isButtonEnabled}
               />
             </div>

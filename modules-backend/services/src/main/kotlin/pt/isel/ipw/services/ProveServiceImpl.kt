@@ -155,7 +155,7 @@ class ProveServiceImpl(
         val process = processRepository.getById(processId)
             ?: return@run failure(ProveError.ProcessNotFound)
 
-        if (!canAccessProves(process, userId, role)) {
+        if (!canReadProves(process, userId, role)) {
             return@run failure(ProveError.UnauthorizedAccess)
         }
 
@@ -173,7 +173,7 @@ class ProveServiceImpl(
         val process = processRepository.getById(processId)
             ?: return@run failure(ProveError.ProcessNotFound)
 
-        if (!canAccessProves(process, userId, role)) {
+        if (!canReadProves(process, userId, role)) {
             return@run failure(ProveError.UnauthorizedAccess)
         }
 
@@ -263,6 +263,30 @@ class ProveServiceImpl(
             State.WAITING_APPROVAL_MANAGER ->
                 role == Roles.MANAGER
 
+            else -> false
+        }
+
+    private fun canReadProves(
+        process: ProcessView,
+        userId: Int,
+        role: String
+    ): Boolean =
+        when (process.state) {
+            State.CANCELED,
+            State.APPROVED_BY_MANAGER -> canAccessFinishedProcess(process, userId, role)
+            else -> canAccessProves(process, userId, role)
+        }
+
+    private fun canAccessFinishedProcess(
+        process: ProcessView,
+        userId: Int,
+        role: String
+    ): Boolean =
+        when (role) {
+            Roles.MANAGER -> true
+            Roles.INVESTIGATOR -> process.investigator?.id == userId
+            Roles.SUPERVISOR -> process.supervisor?.id == userId
+            Roles.TRIATOR -> process.triator.id == userId
             else -> false
         }
 

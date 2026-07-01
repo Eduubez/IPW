@@ -72,7 +72,6 @@ export function InvestigatorDashboard() {
     try {
       const response = await ProcessApi.getAll(0, 100);
       if (response.success) {
-        console.log(response.data.results);
         setProcess(cleanProcess(response.data.results, navigate));
       }
     } finally {

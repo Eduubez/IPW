@@ -1,5 +1,7 @@
 import { fetchApi, type ResponseApi } from "./FetchApi.tsx";
 import { userStore } from "../Store/UserStore.tsx";
+import { enqueueSnackbar } from "notistack";
+import i18next from "i18next";
 
 export type ProveResponse = {
     id: number;
@@ -44,7 +46,7 @@ async function createUploadUrl(
     processId: number,
     file: File,
 ): Promise<ResponseApi<CreateProveUploadUrlResponse>> {
-    return await fetchApi<CreateProveUploadUrlResponse>(
+    const response = await fetchApi<CreateProveUploadUrlResponse>(
         `process/${processId}/proves/upload-url`,
         {
             method: "POST",
@@ -58,6 +60,10 @@ async function createUploadUrl(
             },
         },
     );
+    if(response.success){
+        enqueueSnackbar(i18next.t("UploadSuccess"), { variant: "success" });
+    }
+    return response;
 }
 
 async function uploadFile(
@@ -144,3 +150,7 @@ async function deleteProve(
         },
     });
 }
+function enqueSnackbar(arg0: any, arg1: { variant: string; }) {
+    throw new Error("Function not implemented.");
+}
+
