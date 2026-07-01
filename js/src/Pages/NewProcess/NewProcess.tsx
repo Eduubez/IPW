@@ -191,12 +191,6 @@ export default function NewProcess() {
       disabled: area === ""
     },
   ];
-const multipleSubmit = async () => {
-    for (let i = 0; i < 300; i++) {
-      handleSubmit();
-    }
-}
-
   return (
     <div className={styles["new-process-page"]}>
       <Header
@@ -261,7 +255,7 @@ const multipleSubmit = async () => {
             <div className={styles["submit-button"]}>
               <PrimaryButton
                 text={t("CreateProcessPage.submit")}
-                onClick={multipleSubmit}
+                onClick={handleSubmit}
                 enabled={isButtonEnabled}
               />
             </div>
