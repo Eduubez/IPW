@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { userStore } from "../../Utility/Store/UserStore";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Header } from "../../Components/Layouts/Header/Header";
 import styles from "./historypage.module.css";
 import { StatContainerLayout } from "../../Components/StatContainerLayout/StatContainerLayout";
@@ -14,6 +14,7 @@ import { STATES } from "../../MockData/MockStates";
 import { ROLE_KEYS } from "../../MockData/MockRoles";
 import type { StateType } from "../../Components/Badge/StateBadge/StateBadge";
 import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
+import dataGridConfiguration from "../../Components/DataGrid/DataGridConfiguration";
 const formatDate = (date: Date) => {
   // format date to dd/mm/yyyy
   const day = date.getDate().toString().padStart(2, "0");
@@ -31,6 +32,8 @@ export default function HistoryPage() {
   const [apiResponse, setApiResponse] =
     useState<ProcessResponseApi | null>(null);
   const [processes, setProcesses] = useState<any[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
 
   const stats = useMemo(() => {
@@ -40,7 +43,7 @@ export default function HistoryPage() {
         return [
           {
             text: t("HistoryPage.TotalProcesses"),
-            value: processes.length.toString(),
+            value: totalCount.toString(),
             icon: { name: Icon.History, style: { color: Color.GreenPrimary } },
           },
           {
@@ -69,7 +72,7 @@ export default function HistoryPage() {
         return [
           {
             text: t("HistoryPage.TotalProcesses"),
-            value: processes.length.toString(),
+            value: totalCount.toString(),
             icon: { name: Icon.History, style: { color: Color.GreenPrimary } },
           },
           {
@@ -87,7 +90,7 @@ export default function HistoryPage() {
       default:
         return [];
     }
-  }, [apiResponse, activeRole, processes, t]);
+  }, [apiResponse, activeRole, processes, totalCount, t]);
   // Grid Props
   const columns = [
     "name",
@@ -99,13 +102,15 @@ export default function HistoryPage() {
   ];
 
 
-  const fetchHistory = async () => {
+  const fetchHistory = useCallback(async (page: number) => {
     setLoading(true);
     try {
-      const historyResponse = await ProcessApi.getHistory();
+      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+      const historyResponse = await ProcessApi.getHistory(offset, dataGridConfiguration.itemPerPage);
       if (!historyResponse.success) return;
 
       setApiResponse(historyResponse.data);
+      setTotalCount(historyResponse.data.totalCount);
 
       const fetchedProcesses = historyResponse.data.results
 
@@ -127,11 +132,11 @@ export default function HistoryPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [t, navigate]);
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    fetchHistory(currentPage);
+  }, [currentPage, fetchHistory]);
   return (
     <div className={styles["history-page-container"]}>
       <Header
@@ -142,7 +147,7 @@ export default function HistoryPage() {
       <div className={styles["history-stat-container"]}>
         <StatContainerLayout statArray={stats} loading={loading} />
       </div>
-      <DataGrid columns={columns} rows={processes} loading={loading} />
+      <DataGrid columns={columns} rows={processes} loading={loading} totalCount={totalCount} currentPage={currentPage} onPageChange={setCurrentPage} />
     </div>
   );
 }

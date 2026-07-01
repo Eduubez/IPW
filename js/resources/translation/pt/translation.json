@@ -348,7 +348,8 @@
     "STORAGE_ERROR": "Erro de armazenamento",
     "INVALID_NOTE_REQUEST": "Solicitação de nota inválida",
     "NOTE_NOT_FOUND": "Nota não encontrada",
-    "UNKNOWN_ERROR": "Erro desconhecido"
+    "UNKNOWN_ERROR": "Erro desconhecido",
+    "PROCESS_FINISHED": "Processo já está concluído"
   },
   "ContactAdmin": {
     "description": "Nenhum papel foi atribuído à sua conta. Por favor, contacte o administrador.",

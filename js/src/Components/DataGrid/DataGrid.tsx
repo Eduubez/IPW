@@ -24,7 +24,9 @@ type DataGridProps = {
   columns: string[];
   rows: DataGridRow[];
   searchTerm?: string;
-  loading?: boolean;
+  totalCount?: number;
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
 };
 
 const captitalizeFirstLetter = (text: string) =>
@@ -35,13 +37,14 @@ export function DataGrid({
   actions,
   columns,
   rows,
-  loading,
+  totalCount,
+  currentPage = 1,
+  onPageChange,
 }: DataGridProps) {
   const gridId = useId();
   const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
   const translatedColumns = useMemo(
     () =>
       columns.map((column) =>
@@ -105,35 +108,20 @@ export function DataGrid({
   );
 
   const pageSettings = useMemo(() => {
-    const totalPages = Math.ceil(
-      filteredRows.length / dataGridConfiguration.itemPerPage,
-    );
-    return {
-      totalPages,
-      pageSteps: Array.from({ length: totalPages }, (_, i) => i + 1),
-    };
-  }, [filteredRows.length]);
+    const totalPages = Math.max(1, Math.ceil((totalCount ?? rows.length) / dataGridConfiguration.itemPerPage));
+    return { totalPages };
+  }, [totalCount, rows.length]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [debouncedSearch]);
-
-  const paginatedRows = useMemo(() => {
-    const startIndex = (currentPage - 1) * dataGridConfiguration.itemPerPage;
-    return filteredRows.slice(
-      startIndex,
-      startIndex + dataGridConfiguration.itemPerPage,
-    );
-  }, [currentPage, filteredRows]);
+const paginatedRows = filteredRows;
 
   const handleNextPage = () => {
     if (currentPage < pageSettings.totalPages) {
-      setCurrentPage(currentPage + 1);
+      onPageChange?.(currentPage + 1);
     }
   };
   const handlePreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      onPageChange?.(currentPage - 1);
     }
   };
 
@@ -172,9 +160,6 @@ export function DataGrid({
               </div>
             )}
             <div className={styles["grid-content"]}>
-              {loading ? (
-                <LoadingComponent />
-              ) : (
                 <>
                   <div className={styles["columns"]}>
                     {translatedColumns.map((column) => (
@@ -225,7 +210,6 @@ export function DataGrid({
                     </button>
                   </div>
                 </>
-              )}
             </div>
           </div>
         </WithBackground>

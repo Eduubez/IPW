@@ -15,40 +15,49 @@ import { getRoleStyle } from "../../Utility/Helpers/RoleHelpers";
 import { PrimaryModal } from "../../Components/Modal/PrimaryModal";
 import { ROLE_KEYS } from "../../MockData/MockRoles";
 import { Color } from "../../StyleGuide/colors";
-import { StateBadge } from "../../Components/Badge/StateBadge/StateBadge";
+import dataGridConfiguration from "../../Components/DataGrid/DataGridConfiguration";
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [renderCountKey, setRenderCountKey] = useState(0);
-  const triggerRenderFn = () => setRenderCountKey((prev) => prev + 1);
-  const loadUsers = useCallback(async () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
+  const loadUsers = useCallback(async (page: number) => {
     try {
       setIsLoading(true);
-
-      const response = await UsersApi.getAll(0, 100);
-
+      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+      const response = await UsersApi.getAll(offset, dataGridConfiguration.itemPerPage);
       if (response.success) {
         setUsers(response.data.results);
+        setTotalCount(response.data.totalCount);
       }
     } finally {
       setIsLoading(false);
     }
   }, []);
+
+  const triggerRenderFn = useCallback(() => {
+    if (currentPage === 1) {
+      loadUsers(1);
+    } else {
+      setCurrentPage(1);
+    }
+  }, [currentPage, loadUsers]);
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isChangeRolesOpen, setIsChangeRolesOpen] = useState(false);
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
 
   useEffect(() => {
-    loadUsers();
-  }, [loadUsers, renderCountKey]);
+    loadUsers(currentPage);
+  }, [currentPage, loadUsers]);
 
   const stats = useMemo(() => {
     return {
-      total: users.length,
+      total: totalCount,
       triators: users.filter((user) => user.roles.includes(ROLE_KEYS.TRIATOR))
         .length,
       investigators: users.filter((user) =>
@@ -60,7 +69,7 @@ export default function AdminDashboard() {
       managers: users.filter((user) => user.roles.includes(ROLE_KEYS.MANAGER))
         .length,
     };
-  }, [users]);
+  }, [users, totalCount]);
 
   const statCards = [
     {
@@ -192,6 +201,9 @@ export default function AdminDashboard() {
         columns={gridColumns}
         rows={cleanRows}
         actions={gridActions}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
       {isModalOpen && (
         <PrimaryModal

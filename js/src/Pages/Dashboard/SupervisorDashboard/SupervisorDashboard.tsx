@@ -12,6 +12,7 @@ import { StateBadge, type StateType } from "../../../Components/Badge/StateBadge
 import { STATES } from "../../../MockData/MockStates";
 import styles from "./supervisordashboard.module.css";
 import { formatDate } from "../../../Utility/Helpers/DateHelpers";
+import dataGridConfiguration from "../../../Components/DataGrid/DataGridConfiguration";
 
 type CleanProcess = {
   name: string;
@@ -59,23 +60,22 @@ const cleanProcess = (
 export function SupervisorDashboard () {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState<CleanProcess[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchProcess = async () => {
-    try {
-      const response = await ProcessApi.getAll(0, 100);
+  const fetchProcess = async (page: number) => {
+      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+      const response = await ProcessApi.getAll(offset, dataGridConfiguration.itemPerPage);
       if (response.success) {
         setProcess(cleanProcess(response.data.results, navigate));
+        setTotalCount(response.data.totalCount);
       }
-    } finally {
-      setLoading(false);
-    }
-  };
+  }
 
   useEffect(() => {
-    fetchProcess();
-  }, []);
+    fetchProcess(currentPage);
+  }, [currentPage, fetchProcess]);
 
   const gridColumns = [
     "name",
@@ -96,7 +96,9 @@ export function SupervisorDashboard () {
         title={t("Dashboard.recentProcesses")}
         columns={gridColumns}
         rows={process}
-        loading={loading}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

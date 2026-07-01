@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from "react";
+import { useCallback, useEffect, useState, type JSX } from "react";
 import {
   ProcessApi,
   type ProcessResponse,
@@ -15,6 +15,7 @@ import { DataGrid } from "../../../Components/DataGrid/DataGrid";
 import { Header } from "../../../Components/Layouts/Header/Header";
 import styles from "./managerdashboard.module.css";
 import { formatDate } from "../../../Utility/Helpers/DateHelpers";
+import dataGridConfiguration from "../../../Components/DataGrid/DataGridConfiguration";
 
 type CleanProcess = {
   name: string;
@@ -64,21 +65,26 @@ export function ManagerDashboard() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState<CleanProcess[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchProcess = async () => {
+  const fetchProcess = useCallback(async (page: number) => {
     try {
-      const response = await ProcessApi.getAll(0, 100);
+      setLoading(true);
+      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+      const response = await ProcessApi.getAll(offset, dataGridConfiguration.itemPerPage);
       if (response.success) {
         setProcess(cleanProcess(response.data.results, navigate));
+        setTotalCount(response.data.totalCount);
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
-    fetchProcess();
-  }, []);
+    fetchProcess(currentPage);
+  }, [currentPage, fetchProcess]);
 
   const gridColumns = [
     "area",
@@ -100,7 +106,9 @@ export function ManagerDashboard() {
         title={t("Dashboard.recentProcesses")}
         columns={gridColumns}
         rows={process}
-        loading={loading}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );

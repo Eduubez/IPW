@@ -1,4 +1,4 @@
-import { useEffect, useState, type JSX } from "react";
+import { useCallback, useEffect, useState, type JSX } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PriorityBadge } from "../../../Components/Badge/PriorityBadge/PriorityBadge";
@@ -15,6 +15,7 @@ import {
 } from "../../../Components/Badge/StateBadge/StateBadge";
 import { STATES } from "../../../MockData/MockStates";
 import { formatDate } from "../../../Utility/Helpers/DateHelpers";
+import dataGridConfiguration from "../../../Components/DataGrid/DataGridConfiguration";
 
 type CleanProcess = {
   name: string;
@@ -67,21 +68,26 @@ export function InvestigatorDashboard() {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [process, setProcess] = useState<CleanProcess[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
-  const fetchProcess = async () => {
+  const fetchProcess = useCallback(async (page: number) => {
     try {
-      const response = await ProcessApi.getAll(0, 100);
+      setLoading(true);
+      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+      const response = await ProcessApi.getAll(offset, dataGridConfiguration.itemPerPage);
       if (response.success) {
         setProcess(cleanProcess(response.data.results, navigate));
+        setTotalCount(response.data.totalCount);
       }
     } finally {
       setLoading(false);
     }
-  };
+  }, [navigate]);
 
   useEffect(() => {
-    fetchProcess();
-  }, []);
+    fetchProcess(currentPage);
+  }, [currentPage, fetchProcess]);
 
   const gridColumns = [
     "name",
@@ -102,7 +108,9 @@ export function InvestigatorDashboard() {
         title={t("Dashboard.recentProcesses")}
         columns={gridColumns}
         rows={process}
-        loading={loading}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
       />
     </div>
   );
