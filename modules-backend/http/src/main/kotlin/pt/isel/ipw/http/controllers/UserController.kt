@@ -92,9 +92,12 @@ class UserController(
     @RolesAllowed(Roles.ADMIN)
     fun getAllUsers(
         @RequestParam(defaultValue = "0") offset: Int,
-        @RequestParam(defaultValue = "10") limit: Int
+        @RequestParam(defaultValue = "10") limit: Int,
+        @RequestParam(defaultValue = "") name: String,
+        @RequestParam (required = false) areaId: Int?,
+        @RequestParam (required = false) isActive: Boolean?,
     ): ResponseEntity<*> {
-        val result = userService.getAllUsers(offset, limit)
+        val result = userService.getAllUsers(offset, limit, areaId, isActive, name)
             .mapSuccess { users ->
                 ListResponse(
                     results = users.first.map {

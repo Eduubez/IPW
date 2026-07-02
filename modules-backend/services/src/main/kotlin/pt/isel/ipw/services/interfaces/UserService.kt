@@ -29,7 +29,7 @@ interface UserService {
 
     fun getUserRoles(email: String): GetUserRolesResult
 
-    fun getAllUsers(offset: Int, limit: Int): GetAllUsersResult
+    fun getAllUsers(offset: Int, limit: Int ,areaId: Int?, isActive: Boolean?, name: String): GetAllUsersResult
 
     fun getUserProfileInfo(userId: Int): GetUserProfileInfoResult
 

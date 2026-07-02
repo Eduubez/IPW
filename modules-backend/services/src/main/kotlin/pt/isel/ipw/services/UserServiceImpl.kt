@@ -199,13 +199,16 @@ class UserServiceImpl(
 
     override fun getAllUsers(
         offset: Int,
-        limit: Int
+        limit: Int,
+        areaId: Int?,
+        isActive: Boolean?,
+        name: String
     ): GetAllUsersResult = transactionManager.run {
 
         if (offset < 0) return@run failure(UserError.InvalidOffset)
         if (limit <= 0) return@run failure(UserError.InvalidLimit)
-
-        val (users, count) = usersRepository.getAllUsers(offset, limit)
+        if (areaId != null ) areasRepository.getAreaById(areaId) ?: return@run failure(UserError.AreaNotFound)
+        val (users, count) = usersRepository.getAllUsers(offset, limit, areaId, isActive, name)
 
         val hasNext = offset + users.size < count
         return@run success(Pair(users, ListProps(hasNext, count)))

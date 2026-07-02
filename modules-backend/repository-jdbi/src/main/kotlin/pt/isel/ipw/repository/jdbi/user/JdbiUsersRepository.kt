@@ -152,7 +152,29 @@ class JdbiUsersRepository(
             .singleOrNull()
     }
 
-    override fun getAllUsers(offset: Int, limit: Int): Pair<List<UserWithRoles>, Int> {
+    override fun getAllUsers(
+        offset: Int,
+        limit: Int,
+        areaId: Int?,
+        isActive: Boolean?,
+        name: String
+    ): Pair<List<UserWithRoles>, Int> {
+
+        val total = handle.createQuery(
+            """
+        select count(distinct u.id)
+        from Users u
+        left join Area a on u.area_id = a.id
+        where (:areaId::int is null or u.area_id = :areaId)
+          and (:isActive::boolean is null or u.is_active = :isActive)
+          and (:name = '' or lower(u.name) like '%' || lower(:name) || '%')
+        """
+        )
+            .bind("areaId", areaId)
+            .bind("isActive", isActive)
+            .bind("name", name)
+            .mapTo<Int>()
+            .one()
 
         val users = handle.createQuery(
             """
@@ -170,26 +192,22 @@ class JdbiUsersRepository(
         from Users u
         left join Area a on u.area_id = a.id
         left join User_Role ur on ur.user_id = u.id
+        where (:areaId::int is null or u.area_id = :areaId)
+          and (:isActive::boolean is null or u.is_active = :isActive)
+          and (:name = '' or lower(u.name) like '%' || lower(:name) || '%')
         group by u.id, u.name, u.email, u.area_id, a.name, u.is_active
         order by u.id
         offset :offset
         limit :limit
         """
         )
+            .bind("areaId", areaId)
+            .bind("isActive", isActive)
+            .bind("name", name)
             .bind("offset", offset)
             .bind("limit", limit)
             .mapTo<UserWithRoles>()
             .list()
-
-
-        val total = handle.createQuery(
-            """
-        select count(*)
-        from Users
-        """
-        )
-            .mapTo<Int>()
-            .one()
 
 
         return Pair(users, total)

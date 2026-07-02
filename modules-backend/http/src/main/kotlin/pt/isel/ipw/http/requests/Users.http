@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:8080/api
-@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlcyI6W10sInR5cGUiOiJsb2dpbiIsImlhdCI6MTc3ODA2Njc2MCwiZXhwIjoxNzc4MDY3MDYwfQ.MsF9Ujqu47l0pth7KrueoAgZyJPFT7dLXvtfihQYacZphXIM_UoRb_MFNmidDlN3sM9u5z0B3MNBZfqwRLhakA
-@accessToken =
+@loginToken =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1IiwidXNlcklkIjo1LCJyb2xlcyI6WyJhZG1pbiJdLCJ0eXBlIjoibG9naW4iLCJpYXQiOjE3ODMwMTM2NjIsImV4cCI6MTc4MzAxMzk2Mn0.hev6kbAgSfYyQfSGD4Egnh1RFVLG7GbSlGeyyYepsuy0uyPi260WdRoT_MZuluP3qYk8IktqmlUtrVPMoxmutw
+@accessToken =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1IiwidXNlcklkIjo1LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzMDEzODU5LCJleHAiOjE3ODMwMjEwNTl9.tfvPlpciMwBSI8T002FaWgUa_swMGNQSfLb2wPiG9y89hYlsl0yjZJMKBszJhGTTqugckFaIzGTuv8hd3IvhSw
 @refreshToken =
 
 ### Create User
@@ -20,7 +20,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "root@example.com",
+  "email": "andreia@ipw.pt",
   "password": "12345"
 }
 
@@ -30,7 +30,7 @@ Content-Type: application/json
 Authorization: Bearer {{loginToken}}
 
 {
-  "role": "supervisor"
+  "role": "admin"
 }
 
 ### Refresh Access Token
@@ -41,7 +41,7 @@ Authorization: Bearer {{refreshToken}}
 GET {{baseUrl}}/users/roles?email=chico@gmail.com
 
 ### Get All Users
-GET {{baseUrl}}/users?offset=0&limit=10
+GET {{baseUrl}}/users?offset=0&limit=2&name=&areaId=1&isActive=false
 Authorization: Bearer {{accessToken}}
 
 ### Protected endpoint example

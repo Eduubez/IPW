@@ -28,7 +28,13 @@ interface UsersRepository {
 
     fun getUserWithRolesById(userId: Int): UserWithRoles?
 
-    fun getAllUsers(offset: Int, limit: Int): Pair<List<UserWithRoles>, Int>
+    fun getAllUsers(
+        offset: Int,
+        limit: Int,
+        areaId: Int?,
+        isActive: Boolean?,
+        name: String
+    ): Pair<List<UserWithRoles>, Int>
 
     fun getAssignableUsersByRole(role: String, areaId: Int?): List<AssignableUser>
 
@@ -42,5 +48,5 @@ interface UsersRepository {
 
     fun removeUserRole(userId: Int, role: String)
 
-    fun getAdmin():User?
+    fun getAdmin(): User?
 }
