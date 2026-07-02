@@ -75,7 +75,7 @@ export function SupervisorDashboard () {
 
   useEffect(() => {
     fetchProcess(currentPage);
-  }, [currentPage, fetchProcess]);
+  }, [currentPage]);
 
   const gridColumns = [
     "name",

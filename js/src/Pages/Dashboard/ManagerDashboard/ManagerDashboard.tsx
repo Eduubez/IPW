@@ -78,7 +78,7 @@ export function ManagerDashboard() {
     } 
   useEffect(() => {
     fetchProcess(currentPage);
-  }, [currentPage, fetchProcess]);
+  }, [currentPage]);
 
   const gridColumns = [
     "area",

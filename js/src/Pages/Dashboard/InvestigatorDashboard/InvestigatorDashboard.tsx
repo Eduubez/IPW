@@ -84,7 +84,7 @@ export function InvestigatorDashboard() {
 
   useEffect(() => {
     fetchProcess(currentPage);
-  }, [currentPage, fetchProcess]);
+  }, [currentPage]);
 
   const gridColumns = [
     "name",
