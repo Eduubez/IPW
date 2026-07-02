@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { userStore } from "../../Utility/Store/UserStore";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Header } from "../../Components/Layouts/Header/Header";
 import styles from "./historypage.module.css";
 import { StatContainerLayout } from "../../Components/StatContainerLayout/StatContainerLayout";
@@ -21,12 +21,12 @@ export default function HistoryPage() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const activeRole = userStore.getActiveRole();
-  const [loading, setLoading] = useState(false);
   const [apiResponse, setApiResponse] =
     useState<ProcessResponseApi | null>(null);
   const [processes, setProcesses] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [filters, setFilters] = useState({ name: "", priority: "" });
 
 
   const stats = useMemo(() => {
@@ -95,19 +95,20 @@ export default function HistoryPage() {
   ];
 
 
-  const fetchHistory = useCallback(async (page: number) => {
-    setLoading(true);
-    try {
+  const fetchHistory = async (page: number, currentFilters: typeof filters) => {
       const offset = (page - 1) * dataGridConfiguration.itemPerPage;
-      const historyResponse = await ProcessApi.getHistory(offset, dataGridConfiguration.itemPerPage);
+      const historyResponse = await ProcessApi.getHistory(
+        offset,
+        dataGridConfiguration.itemPerPage,
+        currentFilters.priority || undefined,
+        currentFilters.name || undefined,
+      );
       if (!historyResponse.success) return;
 
       setApiResponse(historyResponse.data);
       setTotalCount(historyResponse.data.totalCount);
 
-      const fetchedProcesses = historyResponse.data.results
-
-      const clearedProcesses = fetchedProcesses.map((process) => ({
+      const clearedProcesses = historyResponse.data.results.map((process) => ({
         id: process.id,
         name: process.name,
         creationDate: formatDate(new Date(process.creationDate)),
@@ -116,20 +117,36 @@ export default function HistoryPage() {
         priority: <PriorityBadge priority={process.priority} />,
         state: <StateBadge state={process.state as StateType} />,
         stateString: process.state,
-        onClick: () => {
-          navigate(`/processes/${process.id}`);
-        },
+        onClick: () => navigate(`/processes/${process.id}`),
       }));
 
       setProcesses(clearedProcesses);
-    } finally {
-      setLoading(false);
-    }
-  }, [t, navigate]);
+  };
 
   useEffect(() => {
-    fetchHistory(currentPage);
-  }, [currentPage, fetchHistory]);
+    fetchHistory(currentPage, filters);
+  }, [currentPage]);
+
+  const handleSearch = (term: string) => {
+    const updated = { ...filters, name: term };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchHistory(1, updated);
+  };
+
+  const handleFilterChange = (field: string, value: string) => {
+    const updated = { ...filters, [field]: value };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchHistory(1, updated);
+  };
+
+  const priorityOptions = [
+    { id: "", name: t("Label.all") },
+    { id: "normal", name: t("Priority.NORMAL") },
+    { id: "with_priority", name: t("Priority.WITH_PRIORITY") },
+    { id: "urgent", name: t("Priority.URGENT") },
+  ];
   return (
     <div className={styles["history-page-container"]}>
       <Header
@@ -138,9 +155,24 @@ export default function HistoryPage() {
         loading={false}
       />
       <div className={styles["history-stat-container"]}>
-        <StatContainerLayout statArray={stats} loading={loading} />
+        <StatContainerLayout statArray={stats} />
       </div>
-      <DataGrid columns={columns} rows={processes} totalCount={totalCount} currentPage={currentPage} onPageChange={setCurrentPage} />
+      <DataGrid
+        columns={columns}
+        rows={processes}
+        totalCount={totalCount}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        onSearch={handleSearch}
+        filterDropdowns={[
+          {
+            label: t("Label.priority"),
+            field: "priority",
+            options: priorityOptions,
+            onSelect: (value) => handleFilterChange("priority", value),
+          },
+        ]}
+      />
     </div>
   );
 }

@@ -8,7 +8,7 @@ import styles from './dropdownmenu.module.css';
   
 
 
-export function DropDownMenu({label, options,onSelect,mandatory,disabled }: {label: string, options: any[], onSelect: (value: any) => void, mandatory?: boolean, disabled: boolean}) {
+export function DropDownMenu({label, options, onSelect, mandatory, disabled = false, field}: {label: string, options: any[], onSelect: (value: any) => void, mandatory?: boolean, disabled?: boolean, field?: string}) {
     const [selectedOption, setSelectedOption] = useState('');
     const formId = useId();
 

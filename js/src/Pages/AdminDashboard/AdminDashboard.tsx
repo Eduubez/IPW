@@ -27,29 +27,57 @@ export default function AdminDashboard() {
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
   const [isChangeRolesOpen, setIsChangeRolesOpen] = useState(false);
   const [isCreateUserOpen, setIsCreateUserOpen] = useState(false);
+  const [filters, setFilters] = useState({ name: undefined as string | undefined, areaId: undefined as string | undefined, isActive: undefined as string | undefined });
 
-  const loadUsers = async (page: number) => {
+  const loadUsers = async (
+    page: number,
+    currentFilters = { name: undefined as string | undefined, areaId: undefined as string | undefined, isActive: undefined as string | undefined },
+  ) => {
     const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+    const isActiveParam =
+      currentFilters.isActive === "true"
+        ? true
+        : currentFilters.isActive === "false"
+          ? false
+          : undefined;
     const response = await UsersApi.getAll(
       offset,
       dataGridConfiguration.itemPerPage,
+      currentFilters.name || undefined,
+      Number(currentFilters.areaId) || undefined,
+      isActiveParam,
     );
     if (response.success) {
       setUsers(response.data.results);
       setTotalCount(response.data.totalCount);
     }
-  }
+  };
+
   const triggerRenderFn = useCallback(() => {
     if (currentPage === 1) {
-      loadUsers(1);
+      loadUsers(1, filters);
     } else {
       setCurrentPage(1);
     }
-  }, [currentPage, loadUsers]);
+  }, [currentPage]);
 
   useEffect(() => {
-    loadUsers(currentPage);
-  }, [currentPage, loadUsers]);
+    loadUsers(currentPage, filters);
+  }, [currentPage]);
+
+  const handleSearch = (term: string) => {
+    const updated = { ...filters, name: term };
+    setFilters(updated);
+    setCurrentPage(1);
+    loadUsers(1, updated);
+  };
+
+  const handleFilterChange = (field: string, value: string) => {
+    const updated = { ...filters, [field]: value };
+    setFilters(updated);
+    setCurrentPage(1);
+    loadUsers(1, updated);
+  };
 
   const stats = useMemo(() => {
     return {
@@ -209,6 +237,31 @@ export default function AdminDashboard() {
         totalCount={totalCount}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
+        onSearch={handleSearch}
+        filterDropdowns={[
+          {
+            label: t("Label.state"),
+            field: "isActive",
+            options: [
+              { id: "", name: t("Label.all") },
+              { id: "true", name: t("DashboardAdmin.gridStatus.active") },
+              { id: "false", name: t("DashboardAdmin.gridStatus.inactive") },
+            ],
+            onSelect: (value) => handleFilterChange("isActive", value),
+          },
+          {
+            label: t("Label.area"),
+            field: "areaId",
+            options: [
+              { id: "", name: t("Label.all") },
+              { id: "1", name: t("Areas.1") },
+              { id: "2", name: t("Areas.2") },
+              { id: "3", name: t("Areas.3") },
+              { id: "4", name: t("Areas.4") },
+            ],
+            onSelect: (value) => handleFilterChange("areaId", value),
+          },
+      ]}
       />
       {isModalOpen && (
         <PrimaryModal

@@ -69,12 +69,18 @@ export function InvestigatorDashboard() {
   const [process, setProcess] = useState<CleanProcess[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [filters, setFilters] = useState({ name: "", priority: "" });
 
-  const fetchProcess = async (page: number) => {
+  const fetchProcess = async (
+    page: number,
+    currentFilters: typeof filters,
+  ) => {
     const offset = (page - 1) * dataGridConfiguration.itemPerPage;
     const response = await ProcessApi.getAll(
       offset,
       dataGridConfiguration.itemPerPage,
+      currentFilters.priority || undefined,
+      currentFilters.name || undefined,
     );
     if (response.success) {
       setProcess(cleanProcess(response.data.results, navigate));
@@ -83,8 +89,29 @@ export function InvestigatorDashboard() {
   };
 
   useEffect(() => {
-    fetchProcess(currentPage);
+    fetchProcess(currentPage, filters);
   }, [currentPage]);
+
+  const handleSearch = (term: string) => {
+    const updated = { ...filters, name: term };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchProcess(1, updated);
+  };
+
+  const handleFilterChange = (field: string, value: string) => {
+    const updated = { ...filters, [field]: value };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchProcess(1, updated);
+  };
+
+  const priorityOptions = [
+    { id: "", name: t("Label.all") },
+    { id: "normal", name: t("Priority.NORMAL") },
+    { id: "with_priority", name: t("Priority.WITH_PRIORITY") },
+    { id: "urgent", name: t("Priority.URGENT") },
+  ];
 
   const gridColumns = [
     "name",
@@ -108,6 +135,15 @@ export function InvestigatorDashboard() {
         totalCount={totalCount}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
+        onSearch={handleSearch}
+        filterDropdowns={[
+          {
+            label: t("Label.priority"),
+            field: "priority",
+            options: priorityOptions,
+            onSelect: (value) => handleFilterChange("priority", value),
+          },
+        ]}
       />
     </div>
   );

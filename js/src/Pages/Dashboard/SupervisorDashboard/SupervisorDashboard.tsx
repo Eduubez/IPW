@@ -63,19 +63,55 @@ export function SupervisorDashboard () {
   const [process, setProcess] = useState<CleanProcess[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [filters, setFilters] = useState({ name: "", priority: "", state: "" });
 
-  const fetchProcess = async (page: number) => {
-      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
-      const response = await ProcessApi.getAll(offset, dataGridConfiguration.itemPerPage);
-      if (response.success) {
-        setProcess(cleanProcess(response.data.results, navigate));
-        setTotalCount(response.data.totalCount);
-      }
-  }
+  const fetchProcess = async (
+    page: number,
+    currentFilters: typeof filters,
+  ) => {
+    const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+    const response = await ProcessApi.getAll(
+      offset,
+      dataGridConfiguration.itemPerPage,
+      currentFilters.priority || undefined,
+      currentFilters.name || undefined,
+      currentFilters.state || undefined,
+    );
+    if (response.success) {
+      setProcess(cleanProcess(response.data.results, navigate));
+      setTotalCount(response.data.totalCount);
+    }
+  };
 
   useEffect(() => {
-    fetchProcess(currentPage);
+    fetchProcess(currentPage, filters);
   }, [currentPage]);
+
+  const handleSearch = (term: string) => {
+    const updated = { ...filters, name: term };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchProcess(1, updated);
+  };
+
+  const handleFilterChange = (field: string, value: string) => {
+    const updated = { ...filters, [field]: value };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchProcess(1, updated);
+  };
+
+  const priorityOptions = [
+    { id: "", name: t("Label.all") },
+    { id: "normal", name: t("Priority.NORMAL") },
+    { id: "with_priority", name: t("Priority.WITH_PRIORITY") },
+    { id: "urgent", name: t("Priority.URGENT") },
+  ];
+
+  const stateOptions = [
+    { id: "", name: t("Label.all") },
+    { id: STATES.WAITING_APPROVAL_SUPERVISOR.toLowerCase(), name: t(`State.${STATES.NOT_STARTED}`) },
+  ];
 
   const gridColumns = [
     "name",
@@ -99,6 +135,21 @@ export function SupervisorDashboard () {
         totalCount={totalCount}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
+        onSearch={handleSearch}
+        filterDropdowns={[
+          {
+            label: t("Label.priority"),
+            field: "priority",
+            options: priorityOptions,
+            onSelect: (value) => handleFilterChange("priority", value),
+          },
+          {
+            label: t("Label.state"),
+            field: "state",
+            options: stateOptions,
+            onSelect: (value) => handleFilterChange("state", value),
+          },
+        ]}
       />
     </div>
   );

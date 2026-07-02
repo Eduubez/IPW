@@ -135,3 +135,19 @@
     justify-content: center;
     min-width: 5rem;
 }
+.filter-dropdowns{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+}
+.filter-dropdowns > div{
+    max-width: 15%;
+}
+
+.search-and-filters{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+}

@@ -155,8 +155,10 @@ async function getAll(
 async function getHistory(
     offset?: number,
     limit?: number,
+    priority?: string,
+    name?: string,
 ): Promise<ResponseApi<ProcessResponseApi>> {
-  const query = buildQuery({ offset: offset, limit: limit, history: true });
+  const query = buildQuery({ offset: offset, limit: limit, history: true, priority: priority, name: name });
   return await fetchApi<ProcessResponseApi>(`process${query}`, {
     method: "GET",
     headers: {

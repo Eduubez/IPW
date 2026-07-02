@@ -5,6 +5,7 @@ import PrimaryButton from "../Buttons/PrimaryButton/PrimaryButton";
 import { Icon } from "../../Config/Icons";
 import { useTranslation } from "react-i18next";
 import dataGridConfiguration from "./DataGridConfiguration";
+import { DropDownMenu } from "../DropDownMenu/DropDownMenu";
 
 type CellValue = string[] | string | number | React.ReactNode;
 type DataGridRow = {
@@ -17,6 +18,13 @@ type DataGridAction = {
   enabled?: boolean;
 };
 
+type FilterDropdownConfig = {
+  label: string;
+  field: string;
+  options: { id: string; name: string }[];
+  onSelect: (value: string) => void;
+};
+
 type DataGridProps = {
   title?: string;
   actions?: DataGridAction[];
@@ -26,6 +34,8 @@ type DataGridProps = {
   totalCount?: number;
   currentPage?: number;
   onPageChange?: (page: number) => void;
+  onSearch?: (term: string) => void;
+  filterDropdowns?: FilterDropdownConfig[];
 };
 
 const captitalizeFirstLetter = (text: string) =>
@@ -39,6 +49,8 @@ export function DataGrid({
   totalCount,
   currentPage = 1,
   onPageChange,
+  onSearch,
+  filterDropdowns,
 }: DataGridProps) {
   const gridId = useId();
   const { t } = useTranslation();
@@ -87,7 +99,11 @@ export function DataGrid({
   };
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(search);
+      if (onSearch) {
+        onSearch(search);
+      } else {
+        setDebouncedSearch(search);
+      }
     }, 300);
     return () => clearTimeout(timer);
   }, [search]);
@@ -107,11 +123,16 @@ export function DataGrid({
   );
 
   const pageSettings = useMemo(() => {
-    const totalPages = Math.max(1, Math.ceil((totalCount ?? rows.length) / dataGridConfiguration.itemPerPage));
+    const totalPages = Math.max(
+      1,
+      Math.ceil(
+        (totalCount ?? rows.length) / dataGridConfiguration.itemPerPage,
+      ),
+    );
     return { totalPages };
   }, [totalCount, rows.length]);
 
-const paginatedRows = filteredRows;
+  const paginatedRows = filteredRows;
 
   const handleNextPage = () => {
     if (currentPage < pageSettings.totalPages) {
@@ -127,6 +148,7 @@ const paginatedRows = filteredRows;
   return (
     <>
       <div className={styles["container"]}>
+        <div className={styles["search-and-filters"]}>
         <div className={styles["search-bar"]}>
           <div className={styles["icon-wrapper"]}>
             <span className="material-symbols-outlined">{Icon.Search}</span>
@@ -138,6 +160,18 @@ const paginatedRows = filteredRows;
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+        </div>
+        <div className={styles["filter-dropdowns"]}>
+        {filterDropdowns?.map((dropdown) => (
+          <DropDownMenu
+            key={dropdown.field}
+            label={dropdown.label}
+            field={dropdown.field}
+            options={dropdown.options}
+            onSelect={dropdown.onSelect}
+          />
+        ))}
+        </div>
         </div>
         <WithBackground>
           <div className={styles["data-grid"]}>
@@ -159,56 +193,56 @@ const paginatedRows = filteredRows;
               </div>
             )}
             <div className={styles["grid-content"]}>
-                <>
-                  <div className={styles["columns"]}>
-                    {translatedColumns.map((column) => (
-                      <div key={column} className={styles["cell"]}>
-                        <span>{column}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className={styles["rows"]}>
-                    {paginatedRows.map((row, rowIndex) => (
-                      <div
-                        key={`${gridId}-row-${rowIndex}`}
-                        className={styles["row"]}
-                        onClick={row.onClick}>
-                        {columns.map((column, columnIndex) => (
-                          <span
-                            key={`${gridId}-row-${rowIndex}-col-${columnIndex}`}
-                            className={styles["cell"]}>
-                            {Array.isArray(row[column])
-                              ? (row[column] as CellValue[]).map((item, i) => (
-                                  <span key={i}>{item}</span>
-                                ))
-                              : (row[column] as CellValue)}
-                          </span>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                  <div className={styles["pagination"]}>
-                    <button
-                      onClick={handlePreviousPage}
-                      className={styles["pagination-button"]}>
-                      <span className="material-symbols-outlined">
-                        {Icon.ArrowBack}
-                      </span>
-                    </button>
-                    <div className={styles["pagination-info"]}>
-                      <span>
-                        {currentPage}/{pageSettings.totalPages}
-                      </span>
+              <>
+                <div className={styles["columns"]}>
+                  {translatedColumns.map((column) => (
+                    <div key={column} className={styles["cell"]}>
+                      <span>{column}</span>
                     </div>
-                    <button
-                      onClick={handleNextPage}
-                      className={styles["pagination-button"]}>
-                      <span className="material-symbols-outlined">
-                        {Icon.ArrowForward}
-                      </span>
-                    </button>
+                  ))}
+                </div>
+                <div className={styles["rows"]}>
+                  {paginatedRows.map((row, rowIndex) => (
+                    <div
+                      key={`${gridId}-row-${rowIndex}`}
+                      className={styles["row"]}
+                      onClick={row.onClick}>
+                      {columns.map((column, columnIndex) => (
+                        <span
+                          key={`${gridId}-row-${rowIndex}-col-${columnIndex}`}
+                          className={styles["cell"]}>
+                          {Array.isArray(row[column])
+                            ? (row[column] as CellValue[]).map((item, i) => (
+                                <span key={i}>{item}</span>
+                              ))
+                            : (row[column] as CellValue)}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <div className={styles["pagination"]}>
+                  <button
+                    onClick={handlePreviousPage}
+                    className={styles["pagination-button"]}>
+                    <span className="material-symbols-outlined">
+                      {Icon.ArrowBack}
+                    </span>
+                  </button>
+                  <div className={styles["pagination-info"]}>
+                    <span>
+                      {currentPage}/{pageSettings.totalPages}
+                    </span>
                   </div>
-                </>
+                  <button
+                    onClick={handleNextPage}
+                    className={styles["pagination-button"]}>
+                    <span className="material-symbols-outlined">
+                      {Icon.ArrowForward}
+                    </span>
+                  </button>
+                </div>
+              </>
             </div>
           </div>
         </WithBackground>

@@ -143,9 +143,9 @@ async function create(input: UserRequest): Promise<ResponseApi<UserResponse>> {
 async function getAll(
   offset = 0,
   limit = 10,
-  name: string,
-  areaId: number,
-  isActive: boolean
+  name?: string,
+  areaId?: number,
+  isActive?: boolean
 ): Promise<ResponseApi<UserResponseList>> {
   const query = buildQuery({ offset: offset, limit: limit, name: name, areaId: areaId, isActive: isActive });
   const token = userStore.getAccessToken()?.trim();

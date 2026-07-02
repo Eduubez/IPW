@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import {
   ProcessApi,
   type ProcessResponse,
@@ -16,7 +16,6 @@ import { Header } from "../../../Components/Layouts/Header/Header";
 import styles from "./managerdashboard.module.css";
 import { formatDate } from "../../../Utility/Helpers/DateHelpers";
 import dataGridConfiguration from "../../../Components/DataGrid/DataGridConfiguration";
-
 type CleanProcess = {
   name: string;
   location: string;
@@ -38,6 +37,15 @@ const managerDashboardStatesMapper = (state: string) => {
       return "UNKNOWN";
   }
 };
+
+
+export function ManagerDashboard() {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const [process, setProcess] = useState<CleanProcess[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [filters, setFilters] = useState({ name: "", priority: "", state: "" });
 const cleanProcess = (
   processes: ProcessResponse[],
   navigate: (path: string) => void,
@@ -45,7 +53,7 @@ const cleanProcess = (
   return processes.map((process) => ({
     name: process.name,
     location: `${process.location.street}, ${process.location.district}`,
-    area: process.area,
+    area: t(`Areas.${process.area}`),
     creationDate: formatDate(new Date(process.creationDate)),
     expirationDate: formatDate(new Date(process.dueDate)),
     priority: <PriorityBadge priority={process.priority} />,
@@ -59,26 +67,53 @@ const cleanProcess = (
     onClick: () => navigate(`/processes/${process.id}`),
   }));
 };
+  const fetchProcess = async (
+    page: number,
+    currentFilters: typeof filters,
+  ) => {
+    const offset = (page - 1) * dataGridConfiguration.itemPerPage;
+    const response = await ProcessApi.getAll(
+      offset,
+      dataGridConfiguration.itemPerPage,
+      currentFilters.priority || undefined,
+      currentFilters.name || undefined,
+      currentFilters.state || undefined,
+    );
+    if (response.success) {
+      setProcess(cleanProcess(response.data.results, navigate));
+      setTotalCount(response.data.totalCount);
+    }
+  };
 
-export function ManagerDashboard() {
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-  const [process, setProcess] = useState<CleanProcess[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
-
-  const fetchProcess = async (page: number) => {
-   
-      const offset = (page - 1) * dataGridConfiguration.itemPerPage;
-      const response = await ProcessApi.getAll(offset, dataGridConfiguration.itemPerPage);
-      if (response.success) {
-        setProcess(cleanProcess(response.data.results, navigate));
-        setTotalCount(response.data.totalCount);
-      }
-    } 
   useEffect(() => {
-    fetchProcess(currentPage);
+    fetchProcess(currentPage, filters);
   }, [currentPage]);
+
+  const handleSearch = (term: string) => {
+    const updated = { ...filters, name: term };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchProcess(1, updated);
+  };
+
+  const handleFilterChange = (field: string, value: string) => {
+    const updated = { ...filters, [field]: value };
+    setFilters(updated);
+    setCurrentPage(1);
+    fetchProcess(1, updated);
+  };
+
+  const priorityOptions = [
+    { id: "", name: t("Label.all") },
+    { id: "normal", name: t("Priority.NORMAL") },
+    { id: "with_priority", name: t("Priority.WITH_PRIORITY") },
+    { id: "urgent", name: t("Priority.URGENT") },
+  ];
+
+  const stateOptions = [
+    { id: "", name: t("Label.all") },
+    { id: STATES.WAITING_APPROVAL_MANAGER.toLowerCase(), name: t(`State.${STATES.NOT_STARTED}`) },
+  ];
 
   const gridColumns = [
     "area",
@@ -89,6 +124,7 @@ export function ManagerDashboard() {
     "priority",
     "state",
   ];
+  
 
   return (
     <div className={styles["manager-dashboard-container"]}>
@@ -103,6 +139,33 @@ export function ManagerDashboard() {
         totalCount={totalCount}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
+        onSearch={handleSearch}
+        filterDropdowns={[
+          {
+            label: t("Label.priority"),
+            field: "priority",
+            options: priorityOptions,
+            onSelect: (value) => handleFilterChange("priority", value),
+          },
+          {
+            label: t("Label.state"),
+            field: "state",
+            options: stateOptions,
+            onSelect: (value) => handleFilterChange("state", value),
+          },
+                    {
+            label: t("Label.area"),
+            field: "areaId",
+            options: [
+              { id: "", name: t("Label.all") },
+              { id: "1", name: t("Areas.1") },
+              { id: "2", name: t("Areas.2") },
+              { id: "3", name: t("Areas.3") },
+              { id: "4", name: t("Areas.4") },
+            ],
+            onSelect: (value) => handleFilterChange("areaId", value),
+          },
+        ]}
       />
     </div>
   );

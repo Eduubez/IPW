@@ -34,7 +34,12 @@
     "enter": "Entrar",
     "email": "Email",
     "password": "Password",
-    "permissions": "Permissões"
+    "permissions": "Permissões",
+    "area": "Área",
+    "role": "Papel",
+    "state": "Estado",
+    "priority": "Prioridade",
+    "all": "Todos"
   },
   "RoleSelection": {
     "title": "Papeis disponíveis",
@@ -205,7 +210,11 @@
     "Job Accident": "Acidente de Trabalho",
     "Floods": "Inundações",
     "Fire": "Incêndio",
-    "Earthquake": "Terremoto"
+    "Earthquake": "Terremoto",
+    "1": "Acidente Automóvel",
+    "2": "Inundações",
+    "3": "Incêndio",
+    "4": "Terremoto"
   },
   "Dashboard": {
     "description": "Olá novamente, veja o que tem acontecido ultimamente!",
