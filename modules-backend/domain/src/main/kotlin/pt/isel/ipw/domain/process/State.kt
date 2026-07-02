@@ -28,7 +28,7 @@ enum class State {
         }
 
     companion object {
-        fun mapStringToState(value: String): State =
+        fun mapStringToState(value: String): State? =
             when (value.lowercase()) {
                 "not_assigned" -> NOT_ASSIGNED
                 "assigned" -> ASSIGNED
@@ -40,7 +40,7 @@ enum class State {
                 "approved_by_manager" -> APPROVED_BY_MANAGER
                 "rejected_by_manager" -> REJECTED_BY_MANAGER
                 "canceled" -> CANCELED
-                else -> throw IllegalArgumentException("Unknown state: $value")
+                else -> null
             }
     }
 

@@ -1,9 +1,12 @@
 @baseUrl = http://localhost:8080/api
-@loginToken = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0IiwidXNlcklkIjo0LCJyb2xlcyI6WyJzdXBlcnZpc29yIl0sInR5cGUiOiJsb2dpbiIsImlhdCI6MTc3ODUyNjQ4MCwiZXhwIjoxNzc4NTI2NzgwfQ.a4bxQ95XyhEbxBq-AK4tgTibx0yt3V1b7Yv7cgu1VVWDVAPIyZbszUbfHy5fIc3RhsncSu9HFGxejgPMJxVXmw
-@accessTokenTriator  =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoidHJpYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3Nzc2MjU0NzcsImV4cCI6MTc3NzYzMjY3N30.UpRVdoeZkTL_Io8Qka_QZVv0U8c8XpzXjYZfF2o6KjDo3f67I9zUh1Ytjt4WlOnUeUX2NVHEzx-zx4Wo7suxfw
+@loginToken =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgzMDA5OTAyLCJleHAiOjE3ODMwMTAyMDJ9.UiHfz5L-8-rAO3N4r-3uqkLEqesmNAyNxCUHiQ15lspGOolR6kio8kCsokadxi_0vHIVNlhE2xY8a24ZhtVtgA
+
+
+@accessTokenTriator  = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlIjoidHJpYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3ODI5OTk2NTgsImV4cCI6MTc4MzAwNjg1OH0.F3sucumUih1b2YQktNKt9BHMoUXVEZcyovNobEiPCiYFdBeSpEuc8G_ytYxk5nx_e_gNS6yBfLTc9031nlMnvg
 @refreshTokenTriator =
 
-@accessTokenInvestigator  =   eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIzIiwidXNlcklkIjozLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc3NzYyNTg0NywiZXhwIjoxNzc3NjMzMDQ3fQ.j3ZhzAmPZlPE6JMjxXygOQxMTDozcArnfP587tqOX4xZ0QLqwCKgQ3z6G3fp0ZKgls3ZsWl6xxq6pVCkWt_2dg
+@accessTokenInvestigator  =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MzAwOTkyOSwiZXhwIjoxNzgzMDE3MTI5fQ.GQhshatBSvAOjiqOqYhXSMblNtj1Y52ok0wIPEIITt1rA1D3oPIGZS8pxmktiUJi96TFtk7C7vWo7SjcjdCr5A
+
 @refreshTokenInvestigator =
 
 @accessTokenSupervisor  =
@@ -51,7 +54,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "alice@ipw.pt",
+  "email": "tiago@ipw.pt",
   "password": "12345"
 }
 
@@ -60,7 +63,7 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "bob@ipw.pt",
+  "email": "ana@ipw.pt",
   "password": "12345"
 }
 
@@ -116,8 +119,8 @@ Authorization: Bearer {{accessTokenTriator}}
   "area": "Car Accident",
   "priority": "normal",
   "expiresAt": "2026-12-31T23:59:59",
-  "investigatorId": 3,
-  "supervisorId": 4,
+  "investigatorId": 2,
+  "supervisorId": 3,
   "canBeFraud": false,
   "insuranceId": null,
   "typificationId": null,
@@ -135,11 +138,11 @@ Authorization: Bearer {{accessTokenInvestigator}}
 
 
 ### Get All Processes - investigator (sem filtros)
-GET {{baseUrl}}/process?area_id=1
+GET {{baseUrl}}/process?offset=0&limit=2&state=assigned
 Authorization: Bearer {{accessTokenInvestigator}}
 
 ### Get All Processes - supervisor (com paginação)
-GET {{baseUrl}}/process?offset=0&limit=5
+GET {{baseUrl}}/process?offset=5&limit=5
 Authorization: Bearer {{accessTokenSupervisor}}
 
 ### Get All Processes - investigator (filtrar por área)

@@ -89,7 +89,6 @@ export const ProcessApi = {
   getAll,
   getHistory,
   submit,
-  update,
   approve,
   reject,
   assignInvestigator,
@@ -140,8 +139,11 @@ async function submit(id: number): Promise<ResponseApi<void>> {
 async function getAll(
   offset?: number,
   limit?: number,
+  priority?: string,
+  name?: string,
+  state?: string
 ): Promise<ResponseApi<ProcessResponseApi>> {
-  const query = buildQuery({ offset: offset, limit: limit });
+  const query = buildQuery({ offset: offset, limit: limit, name: name, priority: priority, state: state });
   return await fetchApi<ProcessResponseApi>(`process${query}`, {
     method: "GET",
     headers: {
@@ -160,17 +162,6 @@ async function getHistory(
     headers: {
       Authorization: `Bearer ${userStore.getAccessToken()}`,
     },
-  });
-}
-
-// Update info about a process - Supervisor, Manager
-async function update(
-  id: number,
-  process: ProcessRequest,
-): Promise<ResponseApi<ProcessResponse>> {
-  return await fetchApi<ProcessResponse>(`process/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(process),
   });
 }
 

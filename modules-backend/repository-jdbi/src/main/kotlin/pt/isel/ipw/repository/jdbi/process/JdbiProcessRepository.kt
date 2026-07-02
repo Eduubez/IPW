@@ -237,6 +237,9 @@ class JdbiProcessRepository(
     override fun getAll(
         offset: Int,
         limit: Int,
+        name: String,
+        priority: String,
+        state: String,
         areaId: Int,
         userId: Int,
         role: String,
@@ -259,6 +262,9 @@ left join State st         on st.id = ps.state_id
 where ($userCondition)
 and (:areaId = 0 or p.area_id = :areaId)
 and (:hasStates = false or st.name = any(:processStates))
+and (:name = '' or lower(p.name) like '%' || lower(:name) || '%')
+and (:priority = '' or p.priority = :priority)
+and (:state = '' or st.name = :state)
 order by
   CASE p.priority
     WHEN 'urgent' THEN 1
@@ -277,10 +283,40 @@ limit :limit offset :offset
             .bind("offset", offset)
             .bind("hasStates", processStates.isNotEmpty())
             .bind("processStates", processStates.toTypedArray())
+            .bind("name", name)
+            .bind("priority", priority)
+            .bind("state", state)
             .mapTo(Int::class.java)
             .list()
 
-        if (processIds.isEmpty()) return Pair(emptyList(), 0)
+        val total = handle.createQuery(
+            """
+    select count(distinct p.id)
+    from Process p
+    left join Process_State ps 
+        on ps.process_id = p.id 
+        and ps.end_date is null
+    left join State st 
+        on st.id = ps.state_id
+    where ($userCondition)
+    and (:areaId = 0 or p.area_id = :areaId)
+    and (:hasStates = false or st.name = any(:processStates))
+    and (:name = '' or lower(p.name) like '%' || lower(:name) || '%')
+    and (:priority = '' or p.priority = :priority)
+    and (:state = '' or st.name = :state)
+    """
+        )
+            .bind("userId", userId)
+            .bind("areaId", areaId)
+            .bind("hasStates", processStates.isNotEmpty())
+            .bind("processStates", processStates.toTypedArray())
+            .bind("name", name)
+            .bind("priority", priority)
+            .bind("state", state)
+            .mapTo(Int::class.java)
+            .one()
+
+        if (processIds.isEmpty()) return Pair(emptyList(), total)
 
         val allNotes = handle.createQuery(
             """
@@ -343,26 +379,6 @@ where pv.process_id = any(:ids)
             .list()
             .groupBy { it.processId }
 
-        val total = handle.createQuery(
-            """
-    select count(distinct p.id)
-    from Process p
-    left join Process_State ps 
-        on ps.process_id = p.id 
-        and ps.end_date is null
-    left join State st 
-        on st.id = ps.state_id
-    where ($userCondition)
-    and (:areaId = 0 or p.area_id = :areaId)
-    and (:hasStates = false or st.name = any(:processStates))
-    """
-        )
-            .bind("userId", userId)
-            .bind("areaId", areaId)
-            .bind("hasStates", processStates.isNotEmpty())
-            .bind("processStates", processStates.toTypedArray())
-            .mapTo(Int::class.java)
-            .one()
 
         val processes =  handle.createQuery(
             """

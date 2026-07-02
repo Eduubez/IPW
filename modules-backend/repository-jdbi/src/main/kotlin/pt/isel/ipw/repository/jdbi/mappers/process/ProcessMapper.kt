@@ -24,7 +24,7 @@ class ProcessMapper(private val notes: List<Note>, private val activities: List<
             triator = UserMapper("triator_").map(rs, ctx),
             investigator = if (rs.getObject("investigator_id") != null) UserMapper("investigator_").map(rs, ctx) else null,
             supervisor = if (rs.getObject("supervisor_id") != null) UserMapper("supervisor_").map(rs, ctx) else null,
-            state = State.mapStringToState(rs.getString("state_")),
+            state = State.mapStringToState(rs.getString("state_"))!!,
             proves = proves,
             report = if (rs.getObject("report_id") != null) ReportMapper("report_").map(rs, ctx) else null,
             notes = notes,

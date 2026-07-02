@@ -103,6 +103,9 @@ class ProcessController(
     fun getAllProcesses(
         @RequestParam(defaultValue = "0") offset: Int,
         @RequestParam(defaultValue = "10") limit: Int,
+        @RequestParam(defaultValue = "") name: String,
+        @RequestParam(defaultValue = "") priority: String,
+        @RequestParam(defaultValue = "") state: String,
         @RequestParam(defaultValue = "false") history: Boolean,
     ): ResponseEntity<*> {
 
@@ -111,7 +114,15 @@ class ProcessController(
         val role = AuthenticatedUser.role()
             ?: return Problem.response(401, Problem.invalidToken)
 
-        val result = processService.getAllProcesses(offset, limit, history, userId, role)
+        val result = processService.getAllProcesses(
+            offset,
+            limit,
+            history,
+            name,
+            priority,
+            state,
+            userId,
+            role)
             .mapSuccess { res ->
                 ListResponse(
                     results = res.first.map { it.toResponse() },

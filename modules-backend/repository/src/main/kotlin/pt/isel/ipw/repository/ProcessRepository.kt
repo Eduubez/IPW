@@ -28,6 +28,9 @@ interface ProcessRepository {
     fun getAll(
         offset: Int,
         limit: Int,
+        name: String,
+        priority: String,
+        state: String,
         areaId: Int,
         userId: Int,
         role:String,

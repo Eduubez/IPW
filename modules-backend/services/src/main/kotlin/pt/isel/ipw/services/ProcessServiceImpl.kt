@@ -148,12 +148,16 @@ class ProcessServiceImpl(
         offset: Int,
         limit: Int,
         history: Boolean?,
+        name: String,
+        priority: String,
+        state: String,
         userId: Int,
         role: String
     ): GetAllProcessesResult =
         transactionManager.run {
 
-            val validation = validateFilters(limit, offset)
+            val validation = validateFilters(limit, offset, priority, state)
+
             val areaValidation = checkAreaId(userId, role)
 
             if (validation is Failure) {
@@ -171,6 +175,9 @@ class ProcessServiceImpl(
             val (processes, totalCount) =processRepository.getAll(
                 offset,
                 limit,
+                name,
+                priority,
+                state,
                 areaId ?: 0,
                 userId,
                 role,
@@ -380,9 +387,20 @@ class ProcessServiceImpl(
         return user.area == area
     }
 
-    private fun validateFilters(limit: Int?, offset: Int?): ProcessValidationResult {
+    private fun validateFilters(
+        limit: Int?,
+        offset: Int?,
+        priority: String,
+        state: String
+    ): ProcessValidationResult {
         if (limit != null && limit <= 0) return failure(ProcessError.InvalidLimit)
         if (offset != null && offset < 0) return failure(ProcessError.InvalidOffset)
+        if (state.isNotBlank()) {
+            State.mapStringToState(state) ?: return failure(ProcessError.InvalidState)
+        }
+        if(priority.isNotBlank()) {
+            Priority.mapStringToPriority(priority) ?: return failure(ProcessError.InvalidPriority)
+        }
         return success(Unit)
     }
 
