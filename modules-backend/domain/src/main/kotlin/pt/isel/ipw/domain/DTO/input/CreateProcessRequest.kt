@@ -18,4 +18,3 @@ data class CreateProcessRequest (
     val note: String? = null,
 )
 
-//id do triador obtem-se através do token

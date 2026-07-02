@@ -259,12 +259,15 @@ left join State st         on st.id = ps.state_id
 where ($userCondition)
 and (:areaId = 0 or p.area_id = :areaId)
 and (:hasStates = false or st.name = any(:processStates))
-order by   
-CASE priority
+order by
+  CASE p.priority
     WHEN 'urgent' THEN 1
-    WHEN 'with_priority' THEN 2
+    WHEN 'with_priority'   THEN 2
     WHEN 'normal' THEN 3
-  END
+    ELSE               4
+  END,
+  p.creation_date DESC,
+  p.id DESC
 limit :limit offset :offset
 """
         )
@@ -434,7 +437,16 @@ left join (
 ) cur_state             on cur_state.process_id = p.id
 left join Report r      on r.process_id      = p.id
 where p.id = any(:ids)
-order by p.creation_date desc
+order by
+  CASE p.priority
+    WHEN 'urgent' THEN 1
+    WHEN 'high'   THEN 2
+    WHEN 'normal' THEN 3
+    WHEN 'low'    THEN 4
+    ELSE               5
+  END,
+  p.creation_date DESC,
+  p.id DESC
 """
         )
             .bind("ids", processIds.toTypedArray())
