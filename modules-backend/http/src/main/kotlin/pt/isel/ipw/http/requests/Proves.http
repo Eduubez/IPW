@@ -1,26 +1,25 @@
 @baseUrl = http://localhost:8080/api
 
-@loginTokenInvestigator =
-@accessTokenInvestigator =
-
+@loginTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgxODA1MTQxLCJleHAiOjE3ODE4MDU0NDF9.FHJpb0mxWyUlXnKeLoNlSUS8Pcg2lfq4nM77RqEJbZPloVTQcB0fG1jN4se0rwsJSqFQxznabLorUcL6cQQaVA
+@accessTokenInvestigator =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MTgwNTE1OCwiZXhwIjoxNzgxODEyMzU4fQ.imKf-KGrka_Fj7g1YZXNJtjh9u9_z73f7sFaAt18ahBciP5U660NfAFR9ZoKxWIedgMa4yPVHIiw-0MFEw2ZSg
 @processId = 1
 
 # Ficheiro local usado no PUT para o MinIO.
-@fileName = flight.jpg
-@contentType = image/jpeg
-@fileSize = 6575
+@fileName = Logo.png
+@contentType = image/png
+@fileSize = 38500
 
-@uploadUrl =
-@storageKey =
+@uploadUrl =http://localhost:9000/process-attachments/processes/1/d852c722-053a-49d2-a69c-b1cc802c03e4-Logo.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ipw%2F20260618%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20260618T175441Z&X-Amz-Expires=600&X-Amz-SignedHeaders=host&X-Amz-Signature=4b5852c9ee07a9794228b28a954f177a3e4946b67e1be4dd39dd7fd5757f61f1
+@storageKey = processes/1/d852c722-053a-49d2-a69c-b1cc802c03e4-Logo.png
 
-@proveId =
+@proveId = 1
 
 ### Login - Investigator
 POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "bob@ipw.pt",
+  "email": "ana@ipw.pt",
   "password": "12345"
 }
 
@@ -49,7 +48,7 @@ Authorization: Bearer {{accessTokenInvestigator}}
 PUT {{uploadUrl}}
 Content-Type: {{contentType}}
 
-< C:\ISEL\flight.jpg
+< C:\Logo.png
 
 ### Create prove metadata
 POST {{baseUrl}}/process/{{processId}}/proves

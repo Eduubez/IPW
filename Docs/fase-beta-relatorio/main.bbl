@@ -1,13 +1,32 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
+
+\bibitem{e-clic}
+{e-Clic}.
+\newblock e-clic.
+\newblock https://e-clic.net, 2026.
+\newblock Acedido em maio de 2026.
+
+\bibitem{docuware}
+{DocuWare}.
+\newblock Docuware.
+\newblock https://start.docuware.com, 2026.
+\newblock Acedido em maio de 2026.
+
+\bibitem{sharepoint}
+{Microsoft}.
+\newblock Sharepoint.
+\newblock
+  https://www.microsoft.com/pt-pt/microsoft-365/sharepoint/collaboration, 2026.
+\newblock Acedido em maio de 2026.
 
 \bibitem{spring-boot}
-{Broadcom}.
+{Equipa Spring}.
 \newblock Spring boot reference documentation.
 \newblock \url{https://docs.spring.io/spring-boot/}, 2026.
 \newblock Acedido em maio de 2026.
 
 \bibitem{spring-security}
-{Broadcom}.
+{Equipa Spring}.
 \newblock Spring security reference.
 \newblock \url{https://docs.spring.io/spring-security/reference/}, 2026.
 \newblock Acedido em maio de 2026.
@@ -25,25 +44,25 @@ D.~F. Ferraiolo, D.~R. Kuhn, and R.~Chandramouli.
 \newblock Acedido em maio de 2026.
 
 \bibitem{material-ui}
-{Material UI Team}.
+{Equipa Material UI}.
 \newblock Material ui: React component library.
 \newblock \url{https://mui.com/material-ui/getting-started/}, 2026.
 \newblock Acedido em maio de 2026.
 
 \bibitem{react-i18next}
-{i18next Team}.
+{Equipa i18next}.
 \newblock react-i18next: Internationalization for react.
 \newblock \url{https://react.i18next.com/latest/usetranslation-hook}, 2026.
 \newblock Acedido em maio de 2026.
 
 \bibitem{jose}
-{Okta Team}.
+{Equipa Okta}.
 \newblock jose: Javascript object signing and encryption.
 \newblock \url{https://www.npmjs.com/package/jose}, 2026.
 \newblock Acedido em maio de 2026.
 
 \bibitem{notistack}
-{notistack Team}.
+{Equipa notistack}.
 \newblock notistack: Snackbar notification library for react.
 \newblock \url{https://notistack.com/api-reference}, 2026.
 \newblock Acedido em maio de 2026.
