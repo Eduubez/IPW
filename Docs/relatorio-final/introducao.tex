@@ -2,34 +2,45 @@
 % Capítulo 1
 %
 \chapter{Introdução} \label{cap:intro}
-Um processo de averiguação inicia-se com a receção, por parte da CAPT, de um pedido submetido por um dos seus clientes, habitualmente seguradoras Estes pedidos contêm informação preliminar relativa ao sinistro, nomeadamente a localização da ocorrência, os intervenientes envolvidos, a data deste, entre outros elementos relevantes para a abertura do processo de averiguação.
+
+Um sistema de \textit{Workflow} consiste em uma plataforma que permite parametrizar, automatizar e monitorizar uma sequência de atividades que juntas compôem um processo de negócio.
+Este tipo de sistema define o conjunto de regras para a execução das diferentes tarefas e determina os intervinentes em cada etapa desde a criação até à conclusão. Com esta rigidez, promove a normalização de procedimentos e diminui a ocorrência de erros.
+De forma complementar, um sistema de gestão documental permite armazenar, disponibilizar e controlar o acesso a documentos.
+Este sistema tem o objetivo de garantir a integridade, confidencialidade e disponibilidade da informação.
+
+No contexto da atividade da CAPT, estas duas componentes são fortemente complementares. Enquanto o sistema de \textit{workflow} coordena a execução das diferentes fases do processo de averiguação e a atribuição das respetivas responsabilidades, o sistema de gestão documental assegura que toda a documentação associada a cada processo, como fotografias, declarações, relatórios técnicos e restantes evidências, é armazenada, organizada e disponibilizada aos intervenientes autorizados.
+
+Um processo de averiguação inicia-se com a receção, por parte da CAPT, de um pedido submetido por um dos seus clientes, habitualmente seguradoras, estes pedidos contêm informação preliminar relativa ao sinistro, nomeadamente a localização da ocorrência, os intervenientes envolvidos, a data deste, entre outros elementos relevantes para a abertura do processo de averiguação.
 
 Atualmente, os pedidos são recebidos de forma não uniforme, o que introduz dificuldades operacionais no tratamento e acompanhamento dos processos, o que obriga os colaboradores da CAPT a recorrer a procedimentos pouco padronizados. A inexistência de uma plataforma centralizada limita ainda a capacidade da gestão em obter uma visão global da operação e em tomar decisões informadas, o que pode originar situações de distribuição desequilibrada de carga de trabalho e incumprimento de prazos.
 
 Após a receção de um pedido de averiguação, é necessário proceder à sua análise e atribuição de um averiguador e de um supervisor. O averiguador desloca-se ao local da ocorrência, realiza as diligências necessárias, recolhendo evidências relevantes e elabora um relatório técnico que contém toda a informação apurada durante o processo de investigação. Posteriormente, esse relatório é submetido para validação pelo supervisor, responsável por garantir que o conteúdo produzido cumpre os padrões de qualidade e conformidade definidos pela CAPT antes da sua entrega ao cliente final.
 
-Com a implementação da plataforma IPW (\textit{Insurance Portal Workflow}), pretende-se criar um ambiente de trabalho mais estruturado, centralizado e normalizado, permitindo uma definição clara das responsabilidades de cada interveniente e promovendo uma maior rastreabilidade dos processos de averiguação.
+Embora existam no mercado diversas plataformas de \textit{workflow} e gestão documental, estas são, na sua maioria, soluções de utilização genérica, concebidas para responder a um vasto conjunto de cenários organizacionais.
+Consequentemente, disponibilizam funcionalidades que não são relevantes para a realidade operacional da CAPT e exigem frequentemente processos de configuração e adaptação complexos para acomodar fluxos de trabalho específicos.
+Neste contexto, optou-se pelo desenvolvimento da plataforma IPW como uma solução personalizada, concebida de acordo com os procedimentos, intervenientes e regras de negócio da empresa.
+Esta abordagem permite disponibilizar apenas as funcionalidades efetivamente necessárias, o que simplifica a utilização da plataforma pelos colaboradores e assegura um maior alinhamento com o processo de averiguação de sinistros adotado pela organização.
 
 Para suportar esta organização operacional, foram definidos cinco perfis distintos de utilizador:
 
 \begin{itemize}
-\item \textbf{Triador} — responsável pela receção dos pedidos de averiguação, criação de processos e pela sua atribuição aos averiguadores e supervisores;
+  \item \textbf{Triador} — responsável pela receção dos pedidos de averiguação, criação de processos e pela sua atribuição aos averiguadores e supervisores;
 
-\item \textbf{Averiguador} — responsável pela realização das investigações no terreno e pela elaboração do respetivo relatório técnico;
+  \item \textbf{Averiguador} — responsável pela realização das investigações no terreno e pela elaboração do respetivo relatório técnico;
 
-\item \textbf{Supervisor} — responsável pela validação dos relatórios técnicos produzidos pelos averiguadores de uma determinada área de especialização, como, por exemplo, sinistros automóveis ou acidentes de trabalho;
+  \item \textbf{Supervisor} — responsável pela validação dos relatórios técnicos produzidos pelos averiguadores de uma determinada área de especialização, como, por exemplo, sinistros automóveis ou acidentes de trabalho;
 
-\item \textbf{Gestor} — responsável pela validação final dos relatórios aprovados pelos supervisores, assegurando um segundo nível de controlo e supervisão sobre as diferentes áreas operacionais da organização;
+  \item \textbf{Gestor} — responsável pela validação final dos relatórios aprovados pelos supervisores, assegurando um segundo nível de controlo e supervisão sobre as diferentes áreas operacionais da organização;
 
-\item \textbf{Administrador} — responsável pela gestão da plataforma IPW, incluindo a criação de utilizadores, atribuição de perfis e gestão de permissões de acesso.
+  \item \textbf{Administrador} — responsável pela gestão da plataforma IPW, incluindo a criação de utilizadores, atribuição de perfis e gestão de permissões de acesso.
 
 \end{itemize}
 
 \begin{figure}[H]
-\begin{center}
-\resizebox{150mm}{!}{\includegraphics{./figures/responsabilidades.png}}
-\end{center}
-\caption{Perfis de utilizadores da na plataforma IPW.}\label{fig:responsabilidades}
+  \begin{center}
+    \resizebox{150mm}{!}{\includegraphics{./figures/responsabilidades.png}}
+  \end{center}
+  \caption{Perfis de utilizadores da na plataforma IPW.}\label{fig:responsabilidades}
 \end{figure}
 
 \newpage
@@ -39,15 +50,15 @@ O presente projeto tem como principal objetivo o desenvolvimento da plataforma \
 De forma mais específica, definiram-se os seguintes objetivos:
 
 \begin{itemize}
-\item Centralizar a informação relativa aos processos de averiguação numa única plataforma integrada;
+  \item Centralizar a informação relativa aos processos de averiguação numa única plataforma integrada;
 
-\item Estruturar o processo de atribuição e acompanhamento de averiguações entre os diferentes intervenientes da organização;
+  \item Estruturar o processo de atribuição e acompanhamento de averiguações entre os diferentes intervenientes da organização;
 
-\item Garantir o registo e rastreabilidade das interações realizadas ao longo do ciclo de vida de um processo;
+  \item Garantir o registo e rastreabilidade das interações realizadas ao longo do ciclo de vida de um processo;
 
-\item Disponibilizar mecanismos de gestão documental associados aos processos de averiguação;
+  \item Disponibilizar mecanismos de gestão documental associados aos processos de averiguação;
 
-\item Fornecer indicadores operacionais e ferramentas de monitorização que suportem a supervisão e a tomada de decisão.
+  \item Fornecer indicadores operacionais e ferramentas de monitorização que suportem a supervisão e a tomada de decisão.
 
 \end{itemize}
 
@@ -59,20 +70,20 @@ De forma mais específica, definiram-se os seguintes objetivos:
 
 Existem diversas aplicações de \textit{workflow} disponíveis no mercado:
 \begin{itemize}
-    \item \textit{E-clic}~\cite{e-clic}: É uma plataforma empresarial de gestão documental e automação de \textit{workflows}, focada no controlo, organização e rastreabilidade de documentos e processos internos.
-    \item \textit{DocuWare}~\cite{docuware}: Plataforma cloud de gestão documental e automação de \textit{workflows} empresariais, utilizada para digitalizar processos, arquivar documentos e controlar aprovações internas.
-    \item \textit{Microsoft SharePoint}~\cite{sharepoint}: Plataforma colaborativa da \textit{Microsoft} focada na gestão de documentos, intranets corporativas e partilha de informação entre equipas. É amplamente utilizada em ambientes empresariais integrados com o ecossistema \textit{Microsoft 365}.
+  \item \textit{E-clic}~\cite{e-clic}: É uma plataforma empresarial de gestão documental e automação de \textit{workflows}, focada no controlo, organização e rastreabilidade de documentos e processos internos.
+  \item \textit{DocuWare}~\cite{docuware}: Plataforma cloud de gestão documental e automação de \textit{workflows} empresariais, utilizada para digitalizar processos, arquivar documentos e controlar aprovações internas.
+  \item \textit{Microsoft SharePoint}~\cite{sharepoint}: Plataforma colaborativa da \textit{Microsoft} focada na gestão de documentos, intranets corporativas e partilha de informação entre equipas. É amplamente utilizada em ambientes empresariais integrados com o ecossistema \textit{Microsoft 365}.
 \end{itemize}
 
 Apesar da existência deste tipo de aplicação ser muito ampla no mercado, este projeto focou-se em desenvolver um portal específico para a CAPT Consulting. A plataforma IPW foi concebida para responder às necessidades específicas da empresa acima referida, tendo em consideração as particularidades dos processos de averiguação de sinistros e a estrutura organizacional da empresa,é personalizada para o contexto da CAPT, o que promove uma maior facilidade a adoção por parte dos seus colaboradores.
 
 \section{Organização do documento}
-O presente relatório encontra-se estruturado em quatro capítulos. 
+O presente relatório encontra-se estruturado em quatro capítulos.
 
-No Capítulo 1 procede-se ao enquadramento do problema, à apresentação dos objetivos do projeto e à contextualização da plataforma IPW. 
+No Capítulo 1 procede-se ao enquadramento do problema, à apresentação dos objetivos do projeto e à contextualização da plataforma IPW.
 
-O Capítulo 2 é dedicado à descrição da solução proposta, incluindo a arquitetura do sistema, o modelo de dados e os principais aspetos de implementação das componentes \textit{backend} e \textit{frontend}. 
+O Capítulo 2 é dedicado à descrição da solução proposta, incluindo a arquitetura do sistema, o modelo de dados e os principais aspetos de implementação das componentes \textit{backend} e \textit{frontend}.
 
-No Capítulo 3 é apresentada a demonstração da aplicação, com incidência nos ecrãs desenvolvidos. 
+No Capítulo 3 é apresentada a demonstração da aplicação, com incidência nos ecrãs desenvolvidos.
 
 Finalmente, o Capítulo 4 reúne as conclusões do trabalho realizado e identifica as principais perspetivas de desenvolvimento futuro.
