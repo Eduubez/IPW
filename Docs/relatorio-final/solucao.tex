@@ -95,14 +95,14 @@ Por fim, a entidade \textit{Location} representa a localização associada ao si
 
 No que respeita às relações entre estas entidades, um processo encontra-se associado a uma seguradora, podendo a mesma seguradora estar associada a múltiplos processos, caracterizando assim uma relação de 1-para-N entre \textit{Insurance} e \textit{Process}.
 
-Relativamente à relação entre \textit{Process} e \textit{State}, um processo pode assumir diferentes estados ao longo do seu ciclo de vida, sendo possível que o mesmo estado esteja associado a diferentes processos. A cada relação entre estado e processo são armazenados a data de início (\textit{start date}) e a data de término (\textit{end date}), sendo que, caso seja o estado atual, este valor será nulo (\textit{null}).Esta relação permite representar a evolução e acompanhamento do processo dentro do sistema.
+Relativamente à relação entre \textit{Process} e \textit{State}, um processo pode assumir diferentes estados ao longo do seu ciclo de vida, sendo possível que o mesmo estado esteja associado a diferentes processos. A cada relação entre estado e processo são armazenados a data de início (\textit{start date}) e a data de término (\textit{end date}), sendo que, caso seja o estado atual, este valor será nulo (\textit{null}). Esta relação permite representar a evolução e acompanhamento do processo dentro do sistema.
 
 Por último, no que concerne à relação entre \textit{Process} e \textit{Location}, cada processo de sinistro encontra-se associado a uma localização específica, enquanto uma localização pode registar várias ocorrências.
 
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=1.1\textwidth]{./figures/entidades-processo-caracteristicas.png}
+    \includegraphics[width=\textwidth]{./figures/entidades-processo-caracteristicas.png}
   \end{center}
   \caption{Entidade processo e características.}\label{fig:entidades_processo_caracteristicas}
 \end{figure}
@@ -122,8 +122,9 @@ No que respeita ao conjunto de entidades associado à documentação, relatório
 
 Relativamente à entidade \textit{Report}, esta representa o relatório final detalhado pelo averiguador. É composta por um identificador único (\textit{id}), o conteudo do relatório (\textit{content}) e uma data de criação (\textit{creation date}) e, para caso seja necessário atualizar após a resposta dos superiores, uma data de modificação (\textit{updated at}). O propósito desta entidade é consolidar formalmente todas as conclusões para posterior apreciação por parte dos supervisores e gestores.
 
-No que concerne à entidade \textit{Prove}, esta destina-se ao armazenamento de evidências e elementos de prova recolhidos em sede de averiguação (tais como fotografias e vídeos). É constituída por um identificador único (\textit{id}), uma designação ou nome do ficheiro (\textit{file name}), o tipo de ficheiro (\textit{file type}), o \textit{url} que aponta para o recurso (\textit{file url}) e a respetiva data de carregamento (\textit{creation date}).
-%Importa salientar que o propósito principal desta entidade consiste em armazenar o \textit{url} que aponta diretamente para o recurso pretendido, o qual se encontra alojado na base de dados documental \textit{MinIO}. Desta forma, assegura-se uma gestão eficiente e isolada de ficheiros de grande volume (\textit{blobs}), mantendo na base de dados relacional apenas a referência e os metadados necessários para a sua localização e associação ao processo.
+No que concerne à entidade \textit{Prove}, esta destina-se ao registo de evidências e elementos de prova recolhidos em sede de averiguação, tais como fotografias, vídeos ou documentos. É constituída por um identificador único (\textit{id}), o processo associado (\textit{process}), o nome original do ficheiro (\textit{file name}), o tipo de conteúdo (\textit{content type}), o tamanho do ficheiro (\textit{file size}), a chave de armazenamento (\textit{storage key}), o utilizador responsável pelo carregamento (\textit{created by}) e a respetiva data de criação (\textit{created at}).
+
+Importa salientar que esta entidade não armazena diretamente o conteúdo binário dos ficheiros. A base de dados relacional mantém apenas a informação necessária para identificar, validar e associar cada anexo ao respetivo processo, enquanto o ficheiro propriamente dito é armazenado num serviço de armazenamento de objetos.
 
 Por fim, a entidade \textit{Note} funciona como um histórico de anotações internas. Permite que qualquer utilizador associado a um processo deixe um comentário, observações pontuais ou notas de esclarecimento. Esta entidade é composta por um identificador único (\textit{id}), o conteúdo textual da nota (\textit{content}), a data do registo (\textit{creation date}) e o autor (\textit{author}).
 
@@ -223,6 +224,20 @@ Nem todos os \textit{endpoints} passam pelo mesmo fluxo de autentica\c{c}\~{a}o.
 
 Esta organiza\c{c}\~{a}o permite separar responsabilidades entre autentica\c{c}\~{a}o, autoriza\c{c}\~{a}o e l\'{o}gica de neg\'{o}cio. O filtro \'{e} respons\'{a}vel por identificar o utilizador a partir do \textit{token}, o \textit{Spring Security} aplica as regras gerais de acesso e os controladores delegam nos servi\c{c}os a execu\c{c}\~{a}o das opera\c{c}\~{o}es de dom\'{i}nio. Como resultado, a aplica\c{c}\~{a}o consegue controlar o acesso \`{a}s suas funcionalidades de forma consistente com os diferentes pap\'{e}is existentes no \textit{workflow}.
 
+
+\subsection{Gest\~{a}o de anexos} \label{subsec:gestao-anexos}
+
+A aplicação disponibiliza mecanismos para associar anexos aos processos de averiguação, permitindo que os utilizadores envolvidos no fluxo de trabalho adicionem fotografias, vídeos ou documentos relevantes para a análise do sinistro. Esta funcionalidade complementa o relatório e as notas internas, permitindo centralizar no processo todos os elementos de suporte à decisão.
+
+A implementação dos anexos foi concebida separando a informação relacional dos ficheiros binários. A base de dados \textit{PostgreSQL} armazena os metadados de cada anexo, nomeadamente o nome do ficheiro, o tipo de conteúdo, o tamanho, o utilizador que efetuou o carregamento, a data de criação e a chave de armazenamento. O conteúdo do ficheiro é armazenado no \textit{MinIO}, um serviço de armazenamento de objetos compatível com o protocolo S3, organizado através de \textit{buckets} e objetos. Esta separação evita guardar ficheiros de grande dimensão diretamente na base de dados relacional e permite que esta continue focada na consistência dos dados de domínio.
+
+O fluxo de carregamento de anexos encontra-se dividido em diferentes etapas. Inicialmente, o \textit{frontend} informa o \textit{backend} de que pretende anexar um ficheiro a um determinado processo, enviando os metadados iniciais, como o nome, o tipo de conteúdo e o tamanho. O \textit{backend} valida se o utilizador tem permissões para interagir com os anexos desse processo, tendo em conta o seu papel ativo, o utilizador associado ao processo e o estado atual do \textit{workflow}. Caso as validações sejam satisfeitas, é gerada uma chave de armazenamento e um URL temporário de carregamento.
+
+Com esse URL temporário, o \textit{frontend} envia diretamente os bytes do ficheiro para o \textit{MinIO}, sem que o conteúdo binário tenha de atravessar o \textit{backend}. Depois de concluído o carregamento, o \textit{frontend} confirma a criação do anexo junto do \textit{backend}, enviando a chave de armazenamento previamente gerada. Nesta fase, o \textit{backend} volta a validar os dados recebidos e confirma a existência do objeto no \textit{MinIO} antes de registar os metadados na tabela \textit{Proves}. Esta confirmação evita que sejam persistidos anexos sem ficheiro associado.
+
+Para a consulta de anexos, a aplicação devolve ao \textit{frontend} os metadados existentes, incluindo o identificador do anexo, o nome do ficheiro, o tipo de conteúdo, o tamanho, a data de criação e a identificação do utilizador responsável pelo carregamento. Quando o utilizador pretende visualizar ou descarregar um anexo, o \textit{backend} valida novamente as permissões de acesso e gera um URL temporário de leitura para o respetivo objeto no \textit{MinIO}.
+
+As permissões associadas aos anexos seguem o estado atual do processo. Enquanto o processo se encontra numa fase ativa, apenas o papel responsável por essa fase pode adicionar, consultar ou remover anexos. Em estados finais, como processos aprovados ou cancelados, deixa de ser permitida a criação ou remoção de anexos, mantendo-se apenas a possibilidade de consulta por utilizadores autorizados. A criação e remoção de anexos também gera registos de atividade, assegurando rastreabilidade sobre quem realizou cada operação.
 
 \section{Servidor Frontend} \label{sec:frontend-server}
 
