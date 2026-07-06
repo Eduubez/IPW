@@ -8,15 +8,15 @@ O conteúdo encontra-se estruturado em quatro secções principais: a Secção 2
 
 \section{Arquitetura}
 
-Na Figura~\ref{fig:arquitetura_sistema} representa-se a arquitetura geral da aplicação desenvolvida no âmbito deste projeto. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
+Na Figura~\ref{fig:arquitetura} representa-se a arquitetura geral da aplicação desenvolvida no âmbito deste projeto. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
 
 
 
 \begin{figure}[h]
   \begin{center}
-    \includegraphics[width=1.0\textwidth]{./figures/Arquitetura.png}
+    \includegraphics[width=1.0\textwidth]{./figures/arquitetura.png}
   \end{center}
-  \caption{Arquitetura do sistema.}\label{fig:arquitetura_sistema}
+  \caption{Arquitetura do sistema.}\label{fig:arquitetura}
 \end{figure}
 
 
@@ -73,20 +73,21 @@ Recorre-se à entidade \textit{State} para representar o estado atual de um proc
 
 \begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=0.95\textwidth]{./figures/workflow-process-states.png}
+    \includegraphics[width=0.95\textwidth]{./figures/BPMN_States.png}
   \end{center}
-  \caption{Diagrama do \textit{workflow} e ciclo de vida dos estados de um processo.}\label{fig:workflow_process_states}
+  \caption{BPMN do \textit{workflow} de um processo.}\label{fig:workflow_process_states}
 \end{figure}
 
-O fluxo inicia-se obrigatoriamente com a criação do processo no estado \textit{Not Assigned}. Assim que a equipa responsável é definida (averiguador e supervisor), o processo evolui para \textit{Assigned}. O ciclo operacional propriamente dito começa quando o averiguador inicia a recolha de provas e criação do relatório, alterando o estado para \textit{On Going}. Após a conclusão da recolha de dados e preenchimento dos relatórios, o averiguador submete o processo, o qual transita automaticamente para \textit{Waiting Approval Supervisor}.
+\newpage
 
+O fluxo inicia-se obrigatoriamente com a criação do processo no estado \textit{Not Assigned}. Assim que a equipa responsável é definida (averiguador e supervisor), o processo evolui para \textit{Assigned}. O ciclo operacional propriamente dito começa quando o averiguador inicia a recolha de provas e criação do relatório, alterando o estado para \textit{On Going}. Após a conclusão da recolha de dados e preenchimento dos relatórios, o averiguador submete o processo, o qual transita automaticamente para \textit{Waiting Approval Supervisor}.
 A partir deste ponto crítico de validação, o \textit{workflow} ramifica-se de acordo com as decisões das hierarquias de supervisão e gestão:
 \begin{itemize}
     \item \textbf{Fluxo de Supervisão:} O supervisor avalia o trabalho submetido. Caso identifique desconformidades, o processo passa para \textit{Rejected by Supervisor}, sendo forçado a retroceder diretamente para o estado \textit{On Going} de modo a permitir que o averiguador efetue as devidas correções. Se o parecer for positivo, o estado passa a \textit{Approved by Supervisor}, encaminhando o processo de imediato para a fila de verificação seguinte sob o estado \textit{Waiting Approval Manager}.
     \item \textbf{Fluxo de Gestão:} O gestor (\textit{Manager}) assume a palavra final sobre o processo. Caso detete a necessidade de alterações profundas ou revisão, aplica o estado \textit{Rejected by Manager}, o que aciona um mecanismo de retorno ao estado de execução activa (\textit{On Going}). Havendo total conformidade com os requisitos institucionais, o gestor concede a validação definitiva, culminando no estado terminal de sucesso \textit{Approved by Manager}.
 \end{itemize}
 
-Adicionalmente, importa salvaguardar que, independentemente da fase em que se encontre na linha temporal descrita, qualquer processo pode ser cancelado a qualquer momento por decisão exclusiva do \textit{Manager}, assumindo nessa circunstância o estado de encerramento \textit{Canceled}.
+Adicionalmente, importa salvaguardar que, independentemente da fase em que se encontre na linha temporal descrita, qualquer processo pode ser cancelado a qualquer momento por decisão exclusiva do \textit{Manager}, assumindo nessa circunstância o estado de encerramento \textit{Canceled}. Para além disso, por este sistema se tratar de uma solução desenvolvida em resposta a um único \textit{workflow}, é importante salientar que qualquer mudança no \textit{workflow} levará à alteração dos estados de um processo, podendo haver a necessidade de aumetar ou diminuir os estados existentes.
 
 
 
