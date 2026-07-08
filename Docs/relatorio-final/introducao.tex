@@ -38,9 +38,9 @@ Para suportar esta organização operacional, foram definidos cinco perfis disti
 
 \begin{figure}[H]
   \begin{center}
-    \resizebox{150mm}{!}{\includegraphics{./figures/responsabilidades.png}}
+    \resizebox{150mm}{!}{\includegraphics{./figures/responsabilidade_white.png}}
   \end{center}
-  \caption{Perfis de utilizadores da na plataforma IPW.}\label{fig:responsabilidades}
+  \caption{Perfis de utilizadores na plataforma IPW.}\label{fig:responsabilidades}
 \end{figure}
 
 \newpage
@@ -68,14 +68,22 @@ De forma mais específica, definiram-se os seguintes objetivos:
 \section{Estado da Arte}
 \label{sec:estado_da_arte}
 
-Existem diversas aplicações de \textit{workflow} disponíveis no mercado:
+No contexto empresarial existem várias plataformas destinadas à gestão documental, automação de processos e organização de fluxos de trabalho. Estas soluções procuram reduzir a dispersão de informação, normalizar procedimentos internos e permitir que diferentes utilizadores acompanhem tarefas, documentos e decisões ao longo do tempo.
+
+Entre as soluções existentes no mercado, destacam-se plataformas como:
 \begin{itemize}
   \item \textit{E-clic}~\cite{e-clic}: É uma plataforma empresarial de gestão documental e automação de \textit{workflows}, focada no controlo, organização e rastreabilidade de documentos e processos internos.
   \item \textit{DocuWare}~\cite{docuware}: Plataforma cloud de gestão documental e automação de \textit{workflows} empresariais, utilizada para digitalizar processos, arquivar documentos e controlar aprovações internas.
   \item \textit{Microsoft SharePoint}~\cite{sharepoint}: Plataforma colaborativa da \textit{Microsoft} focada na gestão de documentos, intranets corporativas e partilha de informação entre equipas. É amplamente utilizada em ambientes empresariais integrados com o ecossistema \textit{Microsoft 365}.
 \end{itemize}
 
-Apesar da existência deste tipo de aplicação ser muito ampla no mercado, este projeto focou-se em desenvolver um portal específico para a CAPT Consulting. A plataforma IPW foi concebida para responder às necessidades específicas da empresa acima referida, tendo em consideração as particularidades dos processos de averiguação de sinistros e a estrutura organizacional da empresa,é personalizada para o contexto da CAPT, o que promove uma maior facilidade a adoção por parte dos seus colaboradores.
+Apesar destas plataformas disponibilizarem funcionalidades relevantes, como armazenamento de documentos, controlo de acessos, colaboração e definição de fluxos de aprovação, tratam-se de soluções genéricas. A sua adoção num contexto específico, como a averiguação de sinistros, exigiria configuração, adaptação de processos e, em alguns casos, integração com sistemas externos para representar corretamente os papéis, estados e regras de negócio da organização.
+
+A plataforma IPW distingue-se destas soluções por ter sido concebida especificamente para o contexto operacional da CAPT Consulting. Em vez de oferecer apenas mecanismos genéricos de gestão documental ou colaboração, o sistema modela diretamente o processo de averiguação de sinistros, incluindo papéis como triador, averiguador, supervisor, gestor e administrador, bem como estados próprios do ciclo de vida de um processo.
+
+Nesta abordagem, a base de dados assume um papel central como fonte de verdade do \textit{workflow}, armazenando o estado atual de cada processo, o histórico de transições, os intervenientes responsáveis, os relatórios, as notas e os anexos associados. Desta forma, a aplicação permite centralizar a informação de cada processo, controlar permissões de acordo com o papel ativo do utilizador e acompanhar a evolução do processo desde a sua criação até à aprovação final ou cancelamento.
+
+Assim, embora existam soluções maduras no mercado para gestão documental e automação de \textit{workflows}, o desenvolvimento do IPW justifica-se pela necessidade de uma plataforma ajustada ao domínio específico da averiguação de sinistros, reduzindo a dependência de adaptações manuais e permitindo representar de forma mais direta o funcionamento interno da organização.
 
 \section{Organização do documento}
 O presente relatório encontra-se estruturado em quatro capítulos.
