@@ -173,7 +173,7 @@ async function assignInvestigator(
   investigatorId: number,
 ): Promise<ResponseApi<void>> {
   return await fetchApi<void>(`process/${processId}/investigator`, {
-    method: "PUT",
+    method: "PATCH",
     body: JSON.stringify({ investigatorId }),
   });
 }

@@ -59,7 +59,7 @@ const updateReport = async (
   const response = await fetchApi<CreateReportResponse>(
     `${BASE_URL}${processId}/report`,
     {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify({
         content,
       }),

@@ -137,7 +137,7 @@ class ProveServiceImpl(
             processId = processId,
             userId = userId,
             action = ActivityActions.CREATED_PROVE.mapToString(),
-            description = "${user?.name ?: "User $userId"} added attachment $fileName."
+            description = "${user?.name ?: "User $userId"} added prove $fileName."
         )
 
         if (process.state == State.ASSIGNED) {
@@ -239,7 +239,7 @@ class ProveServiceImpl(
             processId = processId,
             userId = userId,
             action = ActivityActions.DELETED_PROVE.mapToString(),
-            description = "${user?.name ?: "User $userId"} deleted attachment ${prove.fileName}."
+            description = "${user?.name ?: "User $userId"} deleted prove ${prove.fileName}."
         )
 
         success(Unit)
