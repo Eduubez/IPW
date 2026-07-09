@@ -2,12 +2,12 @@
 
 \section{Conclus\~{a}o} \label{sec:conclusao}
 
-O projeto \textit{IPW} teve como objetivo principal conceber e desenvolver uma plataforma \textit{web} para apoiar a gest\~{a}o de processos de averigua\c{c}\~{a}o no contexto da CAPT Consulting. A solu\c{c}\~{a}o proposta procura responder \`{a}s limita\c{c}\~{o}es identificadas no processo atual, nomeadamente a dispers\~{a}o da informa\c{c}\~{a}o, a dificuldade em acompanhar o estado dos processos e a inexist\^{e}ncia de um \textit{workflow} centralizado e estruturado.
+O projeto \textit{IPW} teve como objetivo principal conceber e desenvolver plataforma \textit{web} para apoiar a gest\~{a}o de processos de averigua\c{c}\~{a}o no contexto da CAPT Consulting. A solu\c{c}\~{a}o proposta procura responder \`{a}s limita\c{c}\~{o}es identificadas no processo atual, nomeadamente a dispers\~{a}o da informa\c{c}\~{a}o, a dificuldade em acompanhar o estado dos processos e a inexist\^{e}ncia de um \textit{workflow} centralizado e estruturado.
 
-Ao longo do desenvolvimento foi definida uma arquitetura composta por uma aplica\c{c}\~{a}o \textit{frontend}, uma \textit{API} \textit{backend}, uma base de dados relacional e uma base de dados documental. O \textit{frontend} disponibiliza a interface de utiliza\c{c}\~{a}o da plataforma, enquanto o \textit{backend} concentra a l\'{o}gica de neg\'{o}cio, a autentica\c{c}\~{a}o, a autoriza\c{c}\~{a}o e o acesso aos dados. A base de dados foi modelada de forma a representar os principais conceitos do dom\'{i}nio, incluindo utilizadores, pap\'{e}is, \'{a}reas, processos, estados e hist\'{o}rico.
+Ao longo do desenvolvimento foi definida uma arquitetura composta por uma aplica\c{c}\~{a}o \textit{frontend}, uma \textit{API} \textit{backend}, uma base de dados relacional e um serviço de armazenamento. O \textit{frontend} disponibiliza a interface de utiliza\c{c}\~{a}o da plataforma, enquanto o \textit{backend} concentra a l\'{o}gica de neg\'{o}cio, a autentica\c{c}\~{a}o, a autoriza\c{c}\~{a}o e o acesso aos dados. A base de dados foi modelada de forma a representar os principais conceitos do dom\'{i}nio, incluindo utilizadores, pap\'{e}is, \'{a}reas, processos, estados e hist\'{o}rico.
 
 
-Nesta fase final, a plataforma IPW disponibiliza todas as funcionalidades obrigatórias definidas para o projeto. A aplicação permite autenticar utilizadores, selecionar o papel a desempenhar durante a sessão, gerir utilizadores e respetivos acessos, criar e acompanhar processos de averiguação, validar ou recusar processos, anexar e consultar documentação associada, bem como adicionar notas relativas aos processos e aos respetivos anexos.
+Nesta fase final, a plataforma IPW disponibiliza as funcionalidades obrigatórias definidas para o projeto. A plataforma desenvolvida permite autenticar utilizadores, selecionar o papel a desempenhar durante a sessão, gerir utilizadores e respetivos acessos, criar e acompanhar processos de averiguação, validar ou recusar processos, anexar e consultar documentação associada, bem como adicionar notas relativas aos processos e aos respetivos anexos.
 
 A implementação destas funcionalidades permitiu concretizar os objetivos inicialmente definidos para o projeto, disponibilizando uma solução integrada de \textit{workflow} e gestão documental adaptada aos processos de averiguação da CAPT Consulting. A plataforma contribui para a uniformização dos procedimentos, centralização da informação, melhoria da rastreabilidade das operações e reforço da capacidade de monitorização e supervisão da atividade.
 
@@ -19,6 +19,6 @@ Relativamente ao fluxo de atribuição de processos, poderá ser estudada a auto
 
 Outra evolução relevante consiste na integração da plataforma IPW com o projeto \textit{Insurance Report App} (IRA). Esta integração permitiria que os relatórios produzidos pelos averiguadores obedecessem a uma estrutura e conjunto de regras de validação uniformes, consequentemente uma maior consistência da informação produzida.
 
-Poderão ser introduzidas melhorias naos \textit{dashboards} dos perfis de utilizador, com a disponibilização de mais indicadores para cada função.
+Poderão ser introduzidas melhorias nos \textit{dashboards} dos perfis de utilizador, com a disponibilização de mais estatísticas para cada função.
 
 Por último, poderá ser considerada a automatização da receção dos pedidos de averiguação, esta evolução eliminaria a necessidade da intervenção manual do triador na criação dos processos. Esta abordagem passaria pela disponibilização de uma API que permitisse aos clientes da CAPT submeter diretamente novos pedidos à plataforma. Contudo, esta evolução exigiria a definição de mecanismos de interoperabilidade.
