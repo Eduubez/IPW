@@ -91,7 +91,7 @@ export default function NewProcess() {
    
   const handleSubmit = async () => {
     const response = await ProcessApi.create({
-      "name": name + Math.floor(Math.random() * 1000), // Append a random number to the name
+      name,
       street,
       county,
       district,

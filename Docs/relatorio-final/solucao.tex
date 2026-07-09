@@ -3,7 +3,7 @@
 %
 \chapter{Solu\c{c}\~{a}o Proposta} \label{cap:solucao}
 
-Neste capítulo apresenta-se detalhadamente a arquitetura, o modelo de dados e os detalhes de implementação da solução tecnológica desenvolvida. 
+Neste capítulo apresenta-se detalhadamente a arquitetura, o modelo de dados e os detalhes de implementação da solução tecnológica desenvolvida.
 O capítulo encontra-se estruturado em quatro secções principais: a Secção 2.1 descreve a arquitetura geral do sistema baseada num modelo \textit{client-server} em camadas; a Secção 2.2 detalha o modelo de dados (Entidade-Associação) e as regras de negócio automatizadas na base de dados; a Secção 2.3 aborda a componente de \textit{backend}, focando-se no desenvolvimento com \textit{Spring Boot} e nos mecanismos de segurança e controlo de acessos (\textit{RBAC}) com \textit{Spring Security}; por fim, a Secção 2.4 expõe a estrutura do servidor \textit{frontend} em \textit{React}, os seus componentes de proteção de rotas e as bibliotecas externas integradas.
 
 \section{Arquitetura}
@@ -35,10 +35,10 @@ O modelo de dados constitui a base da aplicação, sendo responsável por garant
 
 Com o objetivo de facilitar a análise e a compreensão da arquitetura de dados, a especificação do modelo foi segmentada em quatro grandes blocos funcionais, apresentados detalhadamente nas subsecções seguintes:
 \begin{itemize}
-    \item \textbf{Autenticação e Autorização:} focado na gestão de utilizadores, controlo de acessos baseado em papéis e ciclo de vida dos tokens;
-    \item \textbf{Gestão de Processos:} dedicado à entidade central do sistema (o processo), englobando o seu enquadramento e a máquina de estados que rege o seu ciclo de vida;
-    \item \textbf{Documentação e Provas:} responsável pelo armazenamento e associação de relatórios, provas e notas de auditoria interna;
-    \item \textbf{Relação do processo com o utilizador:} encarregue de modelar a afetação de peritos por áreas de especialidade e o registo imutável de atividades na plataforma.
+  \item \textbf{Autenticação e Autorização:} focado na gestão de utilizadores, controlo de acessos baseado em papéis e ciclo de vida dos tokens;
+  \item \textbf{Gestão de Processos:} dedicado à entidade central do sistema (o processo), englobando o seu enquadramento e a máquina de estados que rege o seu ciclo de vida;
+  \item \textbf{Documentação e Provas:} responsável pelo armazenamento e associação de relatórios, provas e notas de auditoria interna;
+  \item \textbf{Relação do processo com o utilizador:} encarregue de modelar a afetação de peritos por áreas de especialidade e o registo imutável de atividades na plataforma.
 \end{itemize}
 
 Nas secções que se seguem, decompõe-se este ecossistema, culminando na apresentação do Modelo Entidade-Associação global e nos detalhes da sua implementação prática.
@@ -97,8 +97,8 @@ Recorre-se à entidade \textit{State} para representar o estado atual de um proc
 O fluxo inicia-se obrigatoriamente com a criação do processo no estado \textit{Not Assigned}. Assim que a equipa responsável é definida (averiguador e supervisor), o processo evolui para \textit{Assigned}. O ciclo operacional propriamente dito começa quando o averiguador inicia a recolha de provas e criação do relatório, alterando o estado para \textit{On Going}. Após a conclusão da recolha de dados e preenchimento dos relatórios, o averiguador submete o processo, o qual transita automaticamente para \textit{Waiting Approval Supervisor}.
 A partir deste ponto crítico de validação, o \textit{workflow} ramifica-se de acordo com as decisões das hierarquias de supervisão e gestão:
 \begin{itemize}
-    \item \textbf{Fluxo de Supervisão:} O supervisor avalia o trabalho submetido. Caso identifique desconformidades, o processo passa para \textit{Rejected by Supervisor}, sendo forçado a retroceder diretamente para o estado \textit{On Going} de modo a permitir que o averiguador efetue as devidas correções. Se o parecer for positivo, o estado passa a \textit{Approved by Supervisor}, encaminhando o processo de imediato para a fila de verificação seguinte sob o estado \textit{Waiting Approval Manager}.
-    \item \textbf{Fluxo de Gestão:} O gestor (\textit{Manager}) assume a palavra final sobre o processo. Caso detete a necessidade de alterações profundas ou revisão, aplica o estado \textit{Rejected by Manager}, o que aciona um mecanismo de retorno ao estado de execução activa (\textit{On Going}). Havendo total conformidade com os requisitos institucionais, o gestor concede a validação definitiva, culminando no estado terminal de sucesso \textit{Approved by Manager}.
+  \item \textbf{Fluxo de Supervisão:} O supervisor avalia o trabalho submetido. Caso identifique desconformidades, o processo passa para \textit{Rejected by Supervisor}, sendo forçado a retroceder diretamente para o estado \textit{On Going} de modo a permitir que o averiguador efetue as devidas correções. Se o parecer for positivo, o estado passa a \textit{Approved by Supervisor}, encaminhando o processo de imediato para a fila de verificação seguinte sob o estado \textit{Waiting Approval Manager}.
+  \item \textbf{Fluxo de Gestão:} O gestor (\textit{Manager}) assume a palavra final sobre o processo. Caso detete a necessidade de alterações profundas ou revisão, aplica o estado \textit{Rejected by Manager}, o que aciona um mecanismo de retorno ao estado de execução activa (\textit{On Going}). Havendo total conformidade com os requisitos institucionais, o gestor concede a validação definitiva, culminando no estado terminal de sucesso \textit{Approved by Manager}.
 \end{itemize}
 
 Adicionalmente, importa salvaguardar que, independentemente da fase em que se encontre na linha temporal descrita, qualquer processo pode ser cancelado a qualquer momento por decisão exclusiva do \textit{Manager}, assumindo nessa circunstância o estado de encerramento \textit{Canceled}. Para além disso, por este sistema se tratar de uma solução desenvolvida em resposta a um único \textit{workflow}, é importante salientar que qualquer mudança no \textit{workflow} levará à alteração dos estados de um processo, podendo haver a necessidade de aumetar ou diminuir os estados existentes.
@@ -156,7 +156,7 @@ No que respeita ao conjunto de entidades responsável pela distribuição de tar
   \begin{center}
     \includegraphics[width=0.85\textwidth]{./figures/Entidades-process-user-area.png}
   \end{center}
-\caption{Mapeamento relacional incluindo processos, utilizadores, áreas de especialidade e atividades.}\label{fig:entidades_process_user_area}\end{figure}
+  \caption{Mapeamento relacional incluindo processos, utilizadores, áreas de especialidade e atividades.}\label{fig:entidades_process_user_area}\end{figure}
 
 Relativamente à entidade \textit{Area}, esta destina-se a classificar o ramo ou a tipologia de sinistro sob a qual o processo se enquadra. É composta por um identificador único (\textit{id}), um nome descritivo da área de atuação (\textit{name}) e um código de classificação interna (\textit{area code}). O seu propósito é segmentar os processos de acordo com a natureza do incidente para garantir que são tratados por profissionais qualificados na matéria.
 
@@ -166,14 +166,14 @@ No que concerne às relações entre estas entidades, a associação entre \text
 
 Relativamente à ligação entre as entidades \textit{User} e \textit{Area}, esta desdobra-se em dois relacionamentos distintos com propósitos e cardinalidades diferentes:
 \begin{itemize}
-    \item \textbf{Afetação à Área ($N$-para-$1$):} Determina a área de especialidade técnica e competência profissional à qual cada colaborador está afetado. Sob esta regra, cada utilizador pode estar estritamente associado a apenas uma única área de especialidade (por exemplo, pertencer exclusivamente ao ramo automóvel ou ao ramo de incêndios), enquanto uma mesma área de atuação pode contar com o suporte de múltiplos utilizadores aptos, caracterizando uma relação de muitos-para-um ($N$-para-$1$) da perspetiva do utilizador.
-    \item \textbf{Responsável pela Área ($1$-para-$1$):} Define de forma unívoca o utilizador que assume a chefia ou a responsabilidade máxima por uma determinada área de atuação. Trata-se de uma relação de um-para-um ($1$-para-$1$), garantindo que cada área possui apenas um responsável encarregue da sua coordenação.
+  \item \textbf{Afetação à Área ($N$-para-$1$):} Determina a área de especialidade técnica e competência profissional à qual cada colaborador está afetado. Sob esta regra, cada utilizador pode estar estritamente associado a apenas uma única área de especialidade (por exemplo, pertencer exclusivamente ao ramo automóvel ou ao ramo de incêndios), enquanto uma mesma área de atuação pode contar com o suporte de múltiplos utilizadores aptos, caracterizando uma relação de muitos-para-um ($N$-para-$1$) da perspetiva do utilizador.
+  \item \textbf{Responsável pela Área ($1$-para-$1$):} Define de forma unívoca o utilizador que assume a chefia ou a responsabilidade máxima por uma determinada área de atuação. Trata-se de uma relação de um-para-um ($1$-para-$1$), garantindo que cada área possui apenas um responsável encarregue da sua coordenação.
 \end{itemize}
 
 Por último, no que concerne às relações associadas à entidade \textit{Activity}, esta interliga-se de forma fulcral com os utilizadores e os processos:
 \begin{itemize}
-    \item \textbf{Relação com \textit{User} ($1$-para-$N$):} Um utilizador pode realizar múltiplas ações ao longo do tempo, gerando várias atividades no sistema, ao passo que cada atividade está associada a apenas um utilizador autor. Esta ligação caracteriza uma relação de $1$-para-$N$, permitindo rastrear o autor de cada modificação.
-    \item \textbf{Relação com \textit{Process} ($1$-para-$N$):} Cada processo centraliza o seu próprio histórico operacional, acumulando múltiplas atividades ao longo do seu ciclo de vida, enquanto cada atividade individual pertence a um único processo. Define-se, assim, uma relação de $1$-para-$N$, o que viabiliza a consulta de uma linha temporal completa de eventos por cada sinistro.
+  \item \textbf{Relação com \textit{User} ($1$-para-$N$):} Um utilizador pode realizar múltiplas ações ao longo do tempo, gerando várias atividades no sistema, ao passo que cada atividade está associada a apenas um utilizador autor. Esta ligação caracteriza uma relação de $1$-para-$N$, permitindo rastrear o autor de cada modificação.
+  \item \textbf{Relação com \textit{Process} ($1$-para-$N$):} Cada processo centraliza o seu próprio histórico operacional, acumulando múltiplas atividades ao longo do seu ciclo de vida, enquanto cada atividade individual pertence a um único processo. Define-se, assim, uma relação de $1$-para-$N$, o que viabiliza a consulta de uma linha temporal completa de eventos por cada sinistro.
 \end{itemize}
 
 
@@ -264,20 +264,20 @@ Adicionalmente, determinadas páginas da plataforma requerem permissões especí
 Apesar da existência destes mecanismos de proteção no \textit{frontend}, toda a validação de permissões e autorização é igualmente garantida no \textit{backend} da aplicação, assegurando que utilizadores sem permissões adequadas não conseguem aceder a recursos protegidos através de manipulação do cliente.
 
 \begin{figure}[H]
-\begin{center}
-\resizebox{150mm}{!}{\includegraphics{./figures/estrutura_pastas_front.png}}
-\end{center}
-\caption{Estrutura de pastas da componente \textit{frontend}}\label{fig:estrutura_pastas_front}
+  \begin{center}
+    \resizebox{150mm}{!}{\includegraphics{./figures/estrutura_pastas_front.png}}
+  \end{center}
+  \caption{Estrutura de pastas da componente \textit{frontend}}\label{fig:estrutura_pastas_front}
 \end{figure}
 \subsection{Bibliotecas Utilizadas}
 
 Para o desenvolvimento da componente \textit{frontend} foram utilizadas diversas bibliotecas externas ao projeto, descritas de seguida.
 
 \begin{itemize}
-    \item \textbf{Material UI}~\cite{material-ui} (v7.3.9) --- biblioteca de componentes visuais. Foi utilizada para componentes como \texttt{Modal}, \texttt{DropDownMenu} e \texttt{LoadingComponent}. 
-    \item \textbf{react-i18next}~\cite{react-i18next} (v16.6.1) --- biblioteca de internacionalização que permite a gestão de traduções na aplicação, suportando múltiplos idiomas de forma dinâmica.
+  \item \textbf{Material UI}~\cite{material-ui} (v7.3.9) --- biblioteca de componentes visuais. Foi utilizada para componentes como \texttt{Modal}, \texttt{DropDownMenu} e \texttt{LoadingComponent}.
+  \item \textbf{react-i18next}~\cite{react-i18next} (v16.6.1) --- biblioteca de internacionalização que permite a gestão de traduções na aplicação, suportando múltiplos idiomas de forma dinâmica.
 
-    \item \textbf{jose}~\cite{jose} (v6.2.3) --- biblioteca utilizada para a descodificação de \textit{JSON Web Tokens} (JWT) no lado do cliente.
+  \item \textbf{jose}~\cite{jose} (v6.2.3) --- biblioteca utilizada para a descodificação de \textit{JSON Web Tokens} (JWT) no cliente.
 
-    \item \textbf{notistack}~\cite{notistack} (v3.0.2) --- biblioteca para apresentação de notificações do tipo \textit{snackbar} ao utilizador.
+  \item \textbf{notistack}~\cite{notistack} (v3.0.2) --- biblioteca para apresentação de notificações do tipo \textit{snackbar} ao utilizador.
 \end{itemize}
