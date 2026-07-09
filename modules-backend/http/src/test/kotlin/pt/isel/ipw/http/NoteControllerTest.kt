@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig
 import pt.isel.ipw.domain.DTO.input.CreateNoteRequest
 import pt.isel.ipw.domain.DTO.input.UpdateNoteRequest
+import pt.isel.ipw.domain.DTO.output.CreateNoteResponse
 import pt.isel.ipw.domain.DTO.output.ListResponse
 import pt.isel.ipw.domain.roles.Roles
 import pt.isel.ipw.http.controllers.NoteController
@@ -35,7 +36,7 @@ class NoteControllerTest {
         val resp = noteController.createNote(1, req)
 
         assertEquals(201, resp.statusCode.value())
-        assertNotNull(resp.body as? Int)
+        assertNotNull(resp.body as? CreateNoteResponse)
     }
 
     @Test
@@ -230,7 +231,7 @@ class NoteControllerTest {
 
         val createResp = noteController.createNote(1, CreateNoteRequest(processId = 1, content = "Note to be updated later"))
         assertEquals(201, createResp.statusCode.value())
-        val noteId = createResp.body as Int
+        val noteId = (createResp.body as CreateNoteResponse).id
 
         val resp = noteController.updateNote(1, noteId, UpdateNoteRequest(content = "Successfully updated content"))
 
@@ -243,7 +244,7 @@ class NoteControllerTest {
 
         val createResp = noteController.createNote(1, CreateNoteRequest(processId = 1, content = "Note to be updated later"))
         assertEquals(201, createResp.statusCode.value())
-        val noteId = createResp.body as Int
+        val noteId = (createResp.body as CreateNoteResponse).id
 
         val resp = noteController.updateNote(1, noteId, UpdateNoteRequest(content = "ab"))
         val error = resp.body as Problem
@@ -258,7 +259,7 @@ class NoteControllerTest {
         TestUtils.setUpSecurityContext(userId = TestUtils.INVESTIGATOR_ID, role = Roles.INVESTIGATOR)
         val createResp = noteController.createNote(1, CreateNoteRequest(processId = 1, content = "Note authored by investigator"))
         assertEquals(201, createResp.statusCode.value())
-        val noteId = createResp.body as Int
+        val noteId = (createResp.body as CreateNoteResponse).id
         TestUtils.clearSecurityContext()
 
         TestUtils.setUpSecurityContext(userId = TestUtils.SUPERVISOR_ID, role = Roles.SUPERVISOR)

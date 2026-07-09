@@ -11,6 +11,8 @@ private val userErrorMap = mapOf(
     UserError.InvalidCredentials to Problem.invalidCredentials,
     UserError.InvalidRoleSelection to Problem.invalidRoleSelection,
     UserError.InvalidRoles to Problem.invalidRoles,
+    UserError.InvalidLimit to Problem.invalidLimit,
+    UserError.InvalidOffset to Problem.invalidOffset,
     UserError.InvalidToken to Problem.invalidToken,
     UserError.RefreshTokenNotFound to Problem.refreshTokenNotFound,
     UserError.ExpiredLoginToken to Problem.expiredLoginToken,
