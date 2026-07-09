@@ -3,8 +3,8 @@
 %
 \chapter{Solu\c{c}\~{a}o Proposta} \label{cap:solucao}
 
-Este capítulo apresenta detalhadamente a arquitetura, o modelo de dados e os detalhes de implementação da solução tecnológica desenvolvida. 
-O conteúdo encontra-se estruturado em quatro secções principais: a Secção 2.1 descreve a arquitetura geral do sistema baseada num modelo \textit{client-server} em camadas; a Secção 2.2 detalha o modelo de dados conceptual (Entidade-Associação) e as regras de negócio automatizadas na base de dados; a Secção 2.3 aborda a componente de \textit{backend}, focando-se no desenvolvimento com \textit{Spring Boot} e nos mecanismos de segurança e controlo de acessos (\textit{RBAC}) com \textit{Spring Security}; por fim, a Secção 2.4 expõe a estrutura do servidor \textit{frontend} em \textit{React}, os seus componentes de proteção de rotas e as bibliotecas externas integradas.
+Neste capítulo apresenta-se detalhadamente a arquitetura, o modelo de dados e os detalhes de implementação da solução tecnológica desenvolvida. 
+O capítulo encontra-se estruturado em quatro secções principais: a Secção 2.1 descreve a arquitetura geral do sistema baseada num modelo \textit{client-server} em camadas; a Secção 2.2 detalha o modelo de dados (Entidade-Associação) e as regras de negócio automatizadas na base de dados; a Secção 2.3 aborda a componente de \textit{backend}, focando-se no desenvolvimento com \textit{Spring Boot} e nos mecanismos de segurança e controlo de acessos (\textit{RBAC}) com \textit{Spring Security}; por fim, a Secção 2.4 expõe a estrutura do servidor \textit{frontend} em \textit{React}, os seus componentes de proteção de rotas e as bibliotecas externas integradas.
 
 \section{Arquitetura}
 
@@ -21,7 +21,7 @@ Na Figura~\ref{fig:arquitetura} representa-se a arquitetura geral da aplicação
 
 
 
-De um modo geral, a arquitetura baseia-se na interação entre três grandes blocos: o \textit{frontend}, o \textit{backend} e a base de dados. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
+De um modo geral, a arquitetura baseia-se na interação entre três grandes componente: o \textit{frontend}, o \textit{backend} e a base de dados. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
 
 A comunicação entre os vários componentes é realizada através de uma \textit{API} baseada em serviços \textit{REST}, assegurando um modelo de interação padronizado e independente da tecnologia utilizada no \textit{frontend}. Adicionalmente, foram adotados mecanismos de segurança para controlo de acesso e autenticação de utilizadores, garantindo a proteção dos recursos da aplicação.
 
@@ -30,17 +30,32 @@ Esta abordagem arquitetural favorece a modularidade, escalabilidade e manutenibi
 
 \cleardoublepage
 \section{Modelo de dados}
+
+O modelo de dados constitui a base da aplicação, sendo responsável por garantir a persistência, integridade e consistência de toda a informação que circula no sistema. Para suportar o ecossistema de gestão de processos e o fluxo associado, foi desenhado um modelo relacional robusto, capaz de mapear não só os dados estruturais das entidades, mas também de espelhar as regras de negócio e restrições operacionais diretamente na camada de persistência.
+
+Com o objetivo de facilitar a análise e a compreensão da arquitetura de dados, a especificação do modelo foi segmentada em quatro grandes blocos funcionais, apresentados detalhadamente nas subsecções seguintes:
+\begin{itemize}
+    \item \textbf{Autenticação e Autorização:} focado na gestão de utilizadores, controlo de acessos baseado em papéis e ciclo de vida dos tokens;
+    \item \textbf{Gestão de Processos:} dedicado à entidade central do sistema (o processo), englobando o seu enquadramento e a máquina de estados que rege o seu ciclo de vida;
+    \item \textbf{Documentação e Provas:} responsável pelo armazenamento e associação de relatórios, provas e notas de auditoria interna;
+    \item \textbf{Relação do processo com o utilizador:} encarregue de modelar a afetação de peritos por áreas de especialidade e o registo imutável de atividades na plataforma.
+\end{itemize}
+
+Nas secções que se seguem, decompõe-se este ecossistema, culminando na apresentação do Modelo Entidade-Associação global e nos detalhes da sua implementação prática.
+
+
+
 \subsection{Autenticação}
 
 No que respeita ao conjunto de entidades responsável pela autenticação e autorização de utilizadores, existem cinco entidades principais: \textit{User}, \textit{AccessToken}, \textit{RefreshToken}, \textit{LoginToken} e \textit{Role}. O modelo conceptual e a estrutura destas componentes encontram-se ilustrados na Figura~\ref{fig:entidades_auth}.
 
 Relativamente à entidade \textit{User}, esta é composta por um identificador único (\textit{id}), um nome (\textit{name}), uma \textit{string} correspondente ao \textit{hash} da palavra-passe do utilizador (\textit{password validation}) e um indicador responsável por informar se o utilizador se encontra ativo (\textit{isActive}).
 
-No que concerne à entidade \textit{AccessToken}, esta é composta por um \textit{token}, uma data de expiração (\textit{expiration date}) e um papel ativo associado (\textit{active role}). O propósito fundamental do \textit{AccessToken} consiste em autenticar os pedidos do utilizador e, simultaneamente, identificar o papel específico (\textit{Role}) que este vai desempenhar durante aquela determinada sessão.
+No que concerne à entidade \textit{AccessToken}, esta é composta por um \textit{token}, uma data de expiração (\textit{expiration date}) e um papel ativo associado (\textit{active role}). O propósito fundamental do \textit{AccessToken} consiste em autenticar os pedidos do utilizador e, simultaneamente, identificar o papel específico (\textit{Role}) que este vai desempenhar durante uma determinada sessão.
 
-A entidade \textit{RefreshToken} apresenta uma estrutura idêntica à do \textit{AccessToken}. No entanto, o seu propósito específico consiste em permitir a obtenção de um novo \textit{AccessToken} assim que este expire, garantindo a continuidade da sessão sem obrigar o utilizador a realizar um novo processo de \textit{login}.
+A entidade \textit{RefreshToken} apresenta uma estrutura idêntica à do \textit{AccessToken}. No entanto, o seu propósito específico consiste em permitir a obtenção de um novo \textit{AccessToken} assim que este expire, garantindo a continuidade da sessão sem obrigar o utilizador a realizar um novo processo de autenticação.
 
-Relativamente ao \textit{LoginToken}, este apresenta uma estrutura semelhante à das entidades anteriores, distinguindo-se pelo facto de não possuir qualquer papel associado e de manter o atributo de data de criação (\textit{creation date}). Este atributo é fundamental para conseguir guardar o registo da última sessão do utilizador, permitindo à aplicação saber a última vez que este esteve \textit{online}. Adicionalmente, o \textit{LoginToken} serve exclusivamente para autenticar inicialmente o utilizador no sistema e permitir a verificação de todos os papéis (\textit{Roles}) que este tem disponíveis para assumir.
+Relativamente ao \textit{LoginToken}, este apresenta uma estrutura semelhante à das entidades anteriores, distinguindo-se pelo facto de não possuir qualquer papel associado e de manter o atributo de data de criação (\textit{creation date}). Este atributo é fundamental para conseguir armazenar o registo da última sessão do utilizador, permitindo à aplicação saber a última vez que este esteve \textit{online}. Adicionalmente, o \textit{LoginToken} serve exclusivamente para autenticar inicialmente o utilizador no sistema e permitir a verificação de todos os papéis (\textit{Roles}) que este tem disponíveis para assumir.
 
 A entidade \textit{Role} é constituída apenas por um nome (\textit{name}), o qual está estritamente limitado a cinco valores possíveis: \textit{Admin}, \textit{Triator}, \textit{Investigator}, \textit{Supervisor} e \textit{Manager}. Esta limitação a um conjunto fixo de valores funciona como uma restrição de domínio (semelhante a um tipo enumerado), garantindo a integridade dos dados ao impedir a criação de papéis arbitrários e assegurando que o controlo de acessos no sistema se restringe apenas às funções previstas pelas regras de negócio da aplicação.
 
@@ -58,7 +73,6 @@ No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador 
   \end{center}
   \caption{Entidades de autenticação.}\label{fig:entidades_auth}
 \end{figure}
-\newpage
 
 \subsection{Gestão de processos}
 
@@ -163,9 +177,6 @@ Por último, no que concerne às relações associadas à entidade \textit{Activ
 \end{itemize}
 
 
-\newpage
-
-
 \subsection{Modelo completo}
 
 A abordagem descrita permitiu deslocar determinadas regras críticas de consistência para a própria base de dados, reduzindo a dependência exclusiva da camada aplicacional para a validação de estados e garantindo um comportamento mais robusto e consistente do sistema.
@@ -185,13 +196,13 @@ Como síntese de toda a estrutura relacional planeada, a Figura~\ref{fig:modelo_
 
 \subsection{Implementação}
 
-A componente de persistência de dados da aplicação foi implementada recorrendo ao \textit{PostgreSQL}, sendo responsável pelo armazenamento e gestão da informação associada aos diferentes módulos do sistema.
+A componente de persistência de dados da aplicação foi implementada recorrendo ao \textit{PostgreSQL}\cite{postgresql}.
 
 A organização da base de dados encontra-se dividida em diferentes ficheiros \texttt{.sql}, cada um com responsabilidades específicas no processo de configuração e inicialização do sistema. Esta separação permite uma melhor modularização da infraestrutura de dados, facilitando a manutenção, evolução e reutilização dos \textit{scripts}.
 
 Existe um ficheiro dedicado à criação da estrutura da base de dados, responsável pela definição das tabelas, relações, restrições de integridade e restantes objetos necessários ao modelo relacional. Para além deste, existem ficheiros específicos para o preenchimento inicial de tabelas contendo informação estática ou previamente conhecida, nomeadamente tabelas como \textit{State}, \textit{Role} e \textit{Area}. Este mecanismo permite garantir que determinados dados essenciais ao funcionamento do sistema se encontram disponíveis desde o momento da inicialização da aplicação.
 
-Adicionalmente, a base de dados integra um conjunto de \textit{triggers} (gatilhos) responsáveis por automatizar determinadas regras de negócio diretamente ao nível da persistência de dados. A opção pela utilização de \textit{triggers} fundamenta-se na sua natureza reativa e orientada a eventos. Ao contrário das funções ou procedimentos armazenados tradicionais, que exigem uma invocação explícita através de código na camada aplicacional, os \textit{triggers} reagem de forma automática e imediata aquando da ocorrência de um evento específico na base de dados (como a inserção, modificação ou remoção de registos). Esta execução transparente garante que as regras críticas de integridade e consistência da informação são salvaguardadas de forma autónoma diretamente no motor do \textit{PostgreSQL}, independentemente de qual o serviço ou operação que originou o pedido.
+Adicionalmente, a base de dados integra um conjunto de \textit{triggers} responsáveis por automatizar determinadas regras de negócio diretamente ao nível da persistência de dados. A opção pela utilização de \textit{triggers} fundamenta-se na sua natureza reativa e orientada a eventos. Ao contrário das funções ou procedimentos armazenados tradicionais, que exigem uma invocação explícita através de código na camada aplicacional, os \textit{triggers} reagem de forma automática e imediata aquando da ocorrência de um evento específico na base de dados (como a inserção, modificação ou remoção de registos). Esta execução transparente garante que as regras críticas de integridade e consistência da informação são salvaguardadas de forma autónoma diretamente no motor do \textit{PostgreSQL}, independentemente de qual o serviço ou operação que originou o pedido.
 
 Um dos \textit{triggers} implementados é responsável por fechar automaticamente o estado anterior de um processo quando um novo estado é inserido na tabela de estados do processo. Desta forma, sempre que ocorre uma mudança de estado, o estado anteriormente ativo passa automaticamente a possuir uma data de fim associada.
 
@@ -199,10 +210,9 @@ Para além do \textit{trigger} supracitado, também existe um \textit{trigger} r
 
 Foi igualmente implementado um \textit{trigger} responsável por atualizar automaticamente o campo \textit{updated\_at} sempre que um relatório é modificado. Esta abordagem permite manter informação temporal consistente relativamente às alterações efetuadas sobre os relatórios armazenados no sistema.
 
-Por fim, foi implementado um mecanismo automático associado à criação e atribuição de processos. Após a inserção de um novo processo, é criado automaticamente o estado inicial correspondente. Caso o processo possua simultaneamente um investigador e um supervisor associados, o estado definido é \textit{assigned}; caso contrário, o sistema atribui automaticamente o estado \textit{not\_assigned}. Adicionalmente, quando um processo passa posteriormente a possuir investigador e supervisor definidos, um \textit{trigger} deteta essa alteração e insere automaticamente o estado \textit{assigned}.
+Por fim, foi implementado um mecanismo automático associado à criação e atribuição de processos. Após a inserção de um novo processo, é criado automaticamente o estado inicial correspondente. Caso o processo possua simultaneamente um investigador e um supervisor associados, o estado definido é \textit{assigned}; caso contrário, o sistema atribui automaticamente o estado \textit{not\_assigned}. Adicionalmente, quando um investigador e um supervisor são atribuidos a um processo, o \textit{trigger} deteta essa alteração e insere automaticamente o estado \textit{assigned}.
 
 Esta abordagem permite deslocar determinadas regras críticas de consistência para a própria base de dados, reduzindo a dependência exclusiva da camada aplicacional para validação de estados e garantindo um comportamento mais robusto e consistente do sistema.
-\newpage
 
 
 
