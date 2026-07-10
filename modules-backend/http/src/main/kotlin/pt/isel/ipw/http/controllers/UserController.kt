@@ -3,14 +3,7 @@ package pt.isel.ipw.http.controllers
 import jakarta.annotation.security.RolesAllowed
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import pt.isel.ipw.domain.DTO.input.ChangeUserPasswordRequest
 import pt.isel.ipw.domain.DTO.input.ChangeUserRolesRequest
 import pt.isel.ipw.domain.DTO.input.ChangeUserStatusRequest
@@ -46,7 +39,7 @@ class UserController(
 ) {
 
     @PostMapping
-    //@RolesAllowed(Roles.ADMIN)
+    @RolesAllowed(Roles.ADMIN)
     fun createUser(@RequestBody body: CreateUserRequest): ResponseEntity<*> {
         val result = userService.createUser(
             body.name,
@@ -192,7 +185,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PutMapping("/{userId}/roles")
+    @PatchMapping("/{userId}/roles")
     @RolesAllowed(Roles.ADMIN)
     fun changeUserRoles(
         @PathVariable userId: Int,
@@ -202,7 +195,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PutMapping("/{userId}/password")
+    @PatchMapping("/{userId}/password")
     @RolesAllowed(Roles.ADMIN)
     fun changeUserPassword(
         @PathVariable userId: Int,
@@ -212,7 +205,7 @@ class UserController(
         return handler(result, HttpStatus.OK) { error -> error.toHttp() }
     }
 
-    @PutMapping("/{userId}/status")
+    @PatchMapping("/{userId}/status")
     @RolesAllowed(Roles.ADMIN)
     fun changeUserStatus(
         @PathVariable userId: Int,

@@ -387,11 +387,13 @@ class UserControllerTest {
     }
 
     private fun createTestUser(): Int {
+        TestUtils.setUpSecurityContext(userId = TestUtils.ADMIN_ID, role = Roles.ADMIN)
         val resp = userController.createUser(validCreateUserRequest())
         return (resp.body as CreateUserResponse).id
     }
 
     private fun createInvestigatorUser(): Int {
+        TestUtils.setUpSecurityContext(userId = TestUtils.ADMIN_ID, role = Roles.ADMIN)
         val resp = userController.createUser(
             CreateUserRequest(
                 name = "Ivo",
@@ -404,11 +406,14 @@ class UserControllerTest {
         return (resp.body as CreateUserResponse).id
     }
 
-    private fun validCreateUserRequest() = CreateUserRequest(
-        name = "Chico",
-        email = "chico@gmail.com",
-        password = "12345",
-        areaId = null,
-        roles = listOf(Roles.ADMIN)
-    )
+    private fun validCreateUserRequest(): CreateUserRequest {
+        TestUtils.setUpSecurityContext(userId = TestUtils.ADMIN_ID, role = Roles.ADMIN)
+        return CreateUserRequest(
+            name = "Chico",
+            email = "chico@gmail.com",
+            password = "12345",
+            areaId = null,
+            roles = listOf(Roles.ADMIN)
+        )
+    }
 }

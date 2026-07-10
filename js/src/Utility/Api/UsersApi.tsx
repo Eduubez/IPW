@@ -168,7 +168,7 @@ async function changeUserRoles(
   const token = userStore.getAccessToken()?.trim();
 
   const response = await fetchApi<void>(`users/${userId}/roles`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -192,7 +192,7 @@ async function changeUserPassword(
   const token = userStore.getAccessToken()?.trim();
 
   const response = await fetchApi<void>(`users/${userId}/password`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       Authorization: "Bearer " + token,
     },
@@ -216,7 +216,7 @@ async function changeUserStatus(
   const token = userStore.getAccessToken()?.trim();
 
   const response = await fetchApi<void>(`users/${userId}/status`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       Authorization: "Bearer " + token,
     },

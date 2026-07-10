@@ -316,7 +316,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = 0,
             limit = 10,
-            role = "triator"
+            role = "triator",
+            name = "",
+            priority = "",
+            state = ""
         )
 
         assertTrue(result is Success)
@@ -335,7 +338,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = 0,
             limit = 10,
-            role = "investigator"
+            role = "investigator",
+            name = "",
+            priority = "",
+            state = ""
         )
 
         assertTrue(result is Success)
@@ -367,7 +373,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = 0,
             limit = 10,
-            role = "supervisor"
+            role = "supervisor",
+            name = "",
+            priority = "",
+            state = ""
         )
 
         assertTrue(result is Success)
@@ -399,7 +408,10 @@ class ProcessServiceImplTest {
             offset = 0,
             history = null,
             limit = 100,
-            role = "manager"
+            role = "manager",
+            name = "",
+            priority = "",
+            state = ""
         )
 
         assertTrue(result is Success)
@@ -417,7 +429,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = 0,
             limit = 10,
-            role = "investigator"
+            role = "investigator",
+            name = "",
+            priority = "",
+            state = ""
         )
         assertTrue(result is Success)
         val processes = (result as Success).value.first
@@ -435,7 +450,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = 0,
             limit = 2,
-            role = "triator"
+            role = "triator",
+            name = "",
+            priority = "",
+            state = ""
         )
 
         val result2 = processService.getAllProcesses(
@@ -443,7 +461,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = 2,
             limit = 2,
-            role = "triator"
+            role = "triator",
+            name = "",
+            priority = "",
+            state = ""
         )
 
         assertTrue(result1 is Success)
@@ -462,7 +483,10 @@ class ProcessServiceImplTest {
             history = null,
             offset = -1,
             limit = 10,
-            role = "triator"
+            role = "triator",
+            name = "",
+            priority = "",
+            state = ""
         )
         assertTrue(result is Failure || (result is Success && (result as Success).value.first.isEmpty()))
     }
@@ -474,26 +498,14 @@ class ProcessServiceImplTest {
             history = null,
             offset = 0,
             limit = 0,
-            role = "triator"
+            role = "triator",
+            name = "",
+            priority = "",
+            state = ""
         )
         assertTrue(result is Failure || (result is Success && (result).value.first.isEmpty()))
     }
 
-
-//    @Test
-//    fun `getAllProcesses - history true returns all processes`(){
-//        val result = processService.getAllProcesses(
-//            userId = testUtils.SUPERVISOR_ID,
-//            history = true,
-//            offset = 0,
-//            limit = 10,
-//            role = Roles.SUPERVISOR
-//        )
-//
-//        assertTrue(result is Success)
-//        assertTrue((result as Success).value.first.find { it.state == State.APPROVED_BY_MANAGER} != null)
-//
-//    }
 
     @Test
     fun `getAllProcesses - limit and skip `(){
@@ -503,7 +515,10 @@ class ProcessServiceImplTest {
             history = false,
             offset = 0,
             limit = 2,
-            role = Roles.INVESTIGATOR
+            role = Roles.INVESTIGATOR,
+            name = "",
+            priority = "",
+            state = ""
         )
 
         val result2 = processService.getAllProcesses(
@@ -511,7 +526,10 @@ class ProcessServiceImplTest {
             history = false,
             offset = 2,
             limit = 2,
-            role = Roles.INVESTIGATOR
+            role = Roles.INVESTIGATOR,
+            name = "",
+            priority = "",
+            state = ""
         )
 
         val result3 = processService.getAllProcesses(
@@ -519,7 +537,10 @@ class ProcessServiceImplTest {
             history = false,
             offset = 4,
             limit = 2,
-            role = Roles.INVESTIGATOR
+            role = Roles.INVESTIGATOR,
+            name = "",
+            priority = "",
+            state = ""
         )
 
         val result4 = processService.getAllProcesses(
@@ -527,7 +548,10 @@ class ProcessServiceImplTest {
             history = false,
             offset = 2,
             limit = 1,
-            role = Roles.INVESTIGATOR
+            role = Roles.INVESTIGATOR,
+            name = "",
+            priority = "",
+            state = ""
         )
 
         assertTrue(result1 is Success)

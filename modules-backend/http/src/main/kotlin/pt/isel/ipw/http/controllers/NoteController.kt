@@ -45,7 +45,6 @@ class NoteController(
     }
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
-
     @GetMapping("/{id}/note")
     fun getNotesByProcessId(
         @PathVariable id: Int,
@@ -96,7 +95,6 @@ class NoteController(
 
 
     @RolesAllowed(Roles.INVESTIGATOR, Roles.SUPERVISOR, Roles.MANAGER)
-
     @PatchMapping("/{id}/note/{noteId}")
     fun updateNote(
         @PathVariable id: Int,

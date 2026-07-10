@@ -209,21 +209,30 @@ class UserServiceImplTest {
         val users1 = assertSuccess(
             userService.getAllUsers(
                 offset = 0,
-                limit = 2
+                limit = 2,
+                areaId = null,
+                isActive = null,
+                name = ""
             )
         )
 
         val users2 = assertSuccess(
             userService.getAllUsers(
                 offset = 2,
-                limit = 2
+                limit = 2,
+                areaId = null,
+                isActive = null,
+                name = ""
             )
         )
 
         val users3 = assertSuccess(
             userService.getAllUsers(
                 offset = 4,
-                limit = 2
+                limit = 2,
+                areaId = null,
+                isActive = null,
+                name = ""
             )
         )
 
@@ -251,7 +260,10 @@ class UserServiceImplTest {
         val error = assertFailure(
             userService.getAllUsers(
                 offset = -1,
-                limit = 10
+                limit = 10,
+                areaId = null,
+                isActive = null,
+                name = ""
             )
         )
 
@@ -263,7 +275,10 @@ class UserServiceImplTest {
         val error = assertFailure(
             userService.getAllUsers(
                 offset = 0,
-                limit = 0
+                limit = 0,
+                areaId = null,
+                isActive = null,
+                name = ""
             )
         )
 

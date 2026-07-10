@@ -56,7 +56,7 @@ Cada endpoint inclui:
 
 ### Get Processes
 
-**Endpoint:** `GET /process?offset={offset}&limit={limit}&history={history}`
+**Endpoint:** `GET /process?offset={offset}&limit={limit}&history={history}&state={state}&priority={priority}&name={name}`
 
 **Roles:**
 
@@ -115,7 +115,7 @@ Cada endpoint inclui:
 
 ### Submit Process
 
-**Endpoint:** `PATCH /processes/{id}`
+**Endpoint:** `POST /processes/{id}`
 
 **Roles:**
 
@@ -249,20 +249,6 @@ Cada endpoint inclui:
 
 ## Notes
 
-### Get Notes by Process
-
-**Endpoint:** `GET /process/{processId}/note`
-
-**Roles:**
-
-- Investigator
-- Supervisor
-- Manager
-
-**Info:**
-
-- Retorna todas as notas associadas a um processo
-
 
 ### Create Note
 
@@ -278,6 +264,20 @@ Cada endpoint inclui:
 
 - Cria uma nota associada a um processo ou a uma prova
 - O autor é automaticamente o utilizador autenticado
+
+### Get Notes by Process
+
+**Endpoint:** `GET /process/{processId}/note`
+
+**Roles:**
+
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+
+- Retorna todas as notas associadas a um processo
 
 ### Get Notes by Prove
 
@@ -312,7 +312,7 @@ Cada endpoint inclui:
 
 ### Get All Users
 
-**Endpoint:** `GET /users?offset={offset}&limit={limit}&areaId={areaId}&isActive{isActive}`
+**Endpoint:** `GET /users?offset={offset}&limit={limit}&areaId={areaId}&isActive={isActive}`
 
 **Roles:**
 
@@ -440,7 +440,7 @@ Cada endpoint inclui:
 
 ### Change User Roles
 
-**Endpoint** `PUT /users/{userId}/roles`
+**Endpoint** `PATCH /users/{userId}/roles`
 
 **Roles**
 
@@ -452,7 +452,7 @@ Cada endpoint inclui:
 
 ### Change User Password
 
-**Endpoint** `PUT /users/{userId}/password`
+**Endpoint** `PATCH /users/{userId}/password`
 
 **Roles**
 
@@ -464,7 +464,7 @@ Cada endpoint inclui:
 
 ### Change User Status
 
-**Endpoint** `PUT /users/{userId}/status`
+**Endpoint** `PATCH /users/{userId}/status`
 
 **Roles**
 
@@ -581,21 +581,6 @@ Cada endpoint inclui:
 
 ## Prove
 
-### Create Prove
-
-**Endpoint:** `POST /process/{processId}/proves`
-
-**Roles:**
-
-- Investigator
-- Supervisor
-- Manager
-
-**Info:**
-
-- Criar nova prova associada a um processo
-
-
 ### Create Upload Url
 
 **Endpoint:** `POST /process/{processId}/proves/upload-url`
@@ -608,7 +593,21 @@ Cada endpoint inclui:
 
 **Info:**
 
-- ???
+- Criar um url para fazer upload para o MinIO
+
+### Create Prove
+
+**Endpoint:** `POST /process/{processId}/proves`
+
+**Roles:**
+
+- Investigator
+- Supervisor
+- Manager
+
+**Info:**
+
+- Armazenar metadata da prova criada no MinIO
 
 ### Get Proves By Process
 
@@ -656,18 +655,12 @@ Cada endpoint inclui:
 
 ### Get Admin Information
 
-**Endpoint:** `DELETE /process/{processId}/proves/{proveId}`
+**Endpoint:** `GET /process/{processId}/proves/{proveId}`
 
 **Roles:**
 
-- Triator
-- Investigator
-- Supervisor
-- Manager
-- Admin
+- Não necessita de role
 
 **Info:**
 
-- Obter informação do Admin
-
-???????????????????????
+- Obter informação do Admin para o contactar
