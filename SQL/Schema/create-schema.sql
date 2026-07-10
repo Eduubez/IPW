@@ -157,7 +157,7 @@ create table Diligence
 create table State
 (
     id         serial primary key,
-    name       varchar(100)
+    name       varchar(100),
         check ( name in
                 (
                  'not_assigned',
@@ -231,9 +231,3 @@ create table Activity
     created_at  timestamp    not null default current_timestamp
 );
 
-select *
-from Users;
-select *
-from Activity;
-select *
-from State join Process_State PS on State.id = PS.state_id;

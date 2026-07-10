@@ -30,7 +30,7 @@ begin
     select id into v_area_car from Area where name = 'Car Accident';
     select id into v_area_fire from Area where name = 'Fire';
 
-    -- Insert 5 Users (password_hash is a bcrypt placeholder) - all passwords -> '12345'
+    -- Insert 5 users. All sample passwords are '12345'.
     insert into Users(name, email, password_hash, area_id) values
         ('Tiago Triador',     'tiago@ipw.pt',      '$2a$10$E8Rg/TrDsbjQnr2QY/cbreSuzOl0iQizuGzDoSs6h24StXCHgza7a', null)
     returning id into v_triator_id;
@@ -62,10 +62,10 @@ begin
 
     -- -----------------------------------------------------------------------
     -- 10 Processes
-    -- Alice (triator) is triator on ALL 10 → satisfies "at least 3 processes"
-    -- Eve has NO process at all
-    -- Processes 1-5: fully assigned (investigator + supervisor) → trigger sets 'assigned'
-    -- Processes 6-10: only triator assigned → trigger sets 'not_assigned'
+    -- Tiago is triator on all 10 processes.
+    -- Andreia has no process assigned.
+    -- Processes 1-5 are fully assigned, so the trigger sets 'assigned'.
+    -- Processes 6-10 only have a triator, so the trigger sets 'not_assigned'.
     -- -----------------------------------------------------------------------
 
     -- Insert a shared location

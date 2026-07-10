@@ -236,12 +236,6 @@ class UserServiceImplTest {
             )
         )
 
-        println(users1.second.totalCount)
-        println( users1.first)
-        println(users2.first)
-        println(users3.first)
-
-
         val createdUser = users3.first.first { it.id == createdUserId }
 
         assertEquals("Chico", createdUser.name)

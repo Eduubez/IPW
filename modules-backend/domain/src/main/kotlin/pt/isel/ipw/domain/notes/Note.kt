@@ -13,10 +13,6 @@ data class Note (
     val creationDate: LocalDateTime
 )
 
-
-
-
-
 fun Note.toResponse(): NoteResponse =
     NoteResponse(
         id = id,

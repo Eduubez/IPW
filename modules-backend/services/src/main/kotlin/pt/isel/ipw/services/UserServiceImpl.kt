@@ -55,7 +55,9 @@ class UserServiceImpl(
         error?.let { return@run failure(it) }
 
         // salt é gerado automaticamente
-        val passwordHash = passwordEncoder.encode(password)!!
+        val passwordHash = requireNotNull(passwordEncoder.encode(password)) {
+            "Password encoder returned null"
+        }
 
         val userId = usersRepository.createUser(
             name = name,
@@ -67,7 +69,8 @@ class UserServiceImpl(
         usersRepository.addUserRoles(userId, normalizedRoles)
 
         if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
-            assignAreaBoss(areaId!!, userId)
+            val supervisorAreaId = areaId ?: return@run failure(UserError.AreaRequired)
+            assignAreaBoss(supervisorAreaId, userId)
         }
 
         success(userId)
@@ -82,7 +85,7 @@ class UserServiceImpl(
         val error: UserError? = validateLogin(user, password)
         error?.let { return@run failure(it) }
 
-        val validUser = user!!
+        val validUser = user ?: return@run failure(UserError.InvalidCredentials)
         val roles = usersRepository.getUserRoles(validUser.id)
 
         // 1 user = 1 active session
@@ -241,7 +244,8 @@ class UserServiceImpl(
         areasRepository.clearBossByUserId(userId)
 
         if (normalizedRoles.any { it == Roles.SUPERVISOR }) {
-            assignAreaBoss(areaId!!, userId)
+            val supervisorAreaId = areaId ?: return@run failure(UserError.AreaRequired)
+            assignAreaBoss(supervisorAreaId, userId)
         }
 
         success(Unit)
@@ -257,7 +261,9 @@ class UserServiceImpl(
         val error = validatePassword(newPassword)
         error?.let { return@run failure(it) }
 
-        val passwordHash = passwordEncoder.encode(newPassword)!!
+        val passwordHash = requireNotNull(passwordEncoder.encode(newPassword)) {
+            "Password encoder returned null"
+        }
 
         usersRepository.updateUserPassword(userId, passwordHash)
 

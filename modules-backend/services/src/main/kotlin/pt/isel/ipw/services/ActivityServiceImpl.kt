@@ -23,10 +23,7 @@ class ActivityServiceImpl(
         when {
             offset < 0 -> failure(ActivityError.InvalidOffset)
             limit <= 0 -> failure(ActivityError.InvalidLimit)
-
-            // TODO: validar quando ProcessRepository estiver pronto
-            // !processRepository.isProcessStoredById(processId) -> failure(ActivityError.ProcessNotFound)
-
+            processRepository.getById(processId) == null -> failure(ActivityError.ProcessNotFound)
             else -> success(activityRepository.getByProcessId(processId, offset, limit))
         }
     }

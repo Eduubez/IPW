@@ -1,5 +1,5 @@
 create or replace procedure clean_database()
-language plpgsql
+    language plpgsql
 as $$
 begin
     truncate table

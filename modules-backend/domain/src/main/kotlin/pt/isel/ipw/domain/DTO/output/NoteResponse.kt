@@ -9,5 +9,5 @@ data class NoteResponse (
     val authorId: Int,
     val authorName: String,
     val createdAt: String,
-    )
+)
 
