@@ -1,19 +1,8 @@
 @baseUrl = http://localhost:8080/api
-@loginToken =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1IiwidXNlcklkIjo1LCJyb2xlcyI6WyJhZG1pbiJdLCJ0eXBlIjoibG9naW4iLCJpYXQiOjE3ODMwMTM2NjIsImV4cCI6MTc4MzAxMzk2Mn0.hev6kbAgSfYyQfSGD4Egnh1RFVLG7GbSlGeyyYepsuy0uyPi260WdRoT_MZuluP3qYk8IktqmlUtrVPMoxmutw
-@accessToken =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI1IiwidXNlcklkIjo1LCJyb2xlIjoiYWRtaW4iLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzgzMDEzODU5LCJleHAiOjE3ODMwMjEwNTl9.tfvPlpciMwBSI8T002FaWgUa_swMGNQSfLb2wPiG9y89hYlsl0yjZJMKBszJhGTTqugckFaIzGTuv8hd3IvhSw
+
+@loginToken =
+@accessToken =
 @refreshToken =
-
-### Create User
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-  "name": "Chico",
-  "email": "chico@gmail.com",
-  "password": "12345",
-  "areaId": null,
-  "roles": ["admin"]
-}
 
 ### Login
 POST {{baseUrl}}/users/login
@@ -33,6 +22,19 @@ Authorization: Bearer {{loginToken}}
   "role": "admin"
 }
 
+### Create User
+POST {{baseUrl}}/users
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "name": "Chico",
+  "email": "chico@gmail.com",
+  "password": "12345",
+  "areaId": null,
+  "roles": ["admin"]
+}
+
 ### Refresh Access Token
 POST {{baseUrl}}/users/refresh-token
 Authorization: Bearer {{refreshToken}}
@@ -41,9 +43,9 @@ Authorization: Bearer {{refreshToken}}
 GET {{baseUrl}}/users/roles?email=chico@gmail.com
 
 ### Get All Users
-GET {{baseUrl}}/users?offset=0&limit=2&name=&areaId=1&isActive=false
+GET {{baseUrl}}/users?offset=0&limit=2&name=&areaId=1&isActive=true
 Authorization: Bearer {{accessToken}}
 
 ### Protected endpoint example
-GET {{baseUrl}}/history/6
+GET {{baseUrl}}/process/1
 Authorization: Bearer {{accessToken}}

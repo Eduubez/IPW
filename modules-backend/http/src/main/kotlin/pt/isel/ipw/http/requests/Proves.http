@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080/api
 
-@loginTokenInvestigator = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgxODA1MTQxLCJleHAiOjE3ODE4MDU0NDF9.FHJpb0mxWyUlXnKeLoNlSUS8Pcg2lfq4nM77RqEJbZPloVTQcB0fG1jN4se0rwsJSqFQxznabLorUcL6cQQaVA
-@accessTokenInvestigator =eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MTgwNTE1OCwiZXhwIjoxNzgxODEyMzU4fQ.imKf-KGrka_Fj7g1YZXNJtjh9u9_z73f7sFaAt18ahBciP5U660NfAFR9ZoKxWIedgMa4yPVHIiw-0MFEw2ZSg
+@loginTokenInvestigator =
+@accessTokenInvestigator =
 @processId = 1
 
 # Ficheiro local usado no PUT para o MinIO.
@@ -44,7 +44,6 @@ Authorization: Bearer {{accessTokenInvestigator}}
 }
 
 ### Upload file bytes to MinIO
-# Nao uses Authorization aqui. A autorizacao ja vai dentro da presigned URL.
 PUT {{uploadUrl}}
 Content-Type: {{contentType}}
 

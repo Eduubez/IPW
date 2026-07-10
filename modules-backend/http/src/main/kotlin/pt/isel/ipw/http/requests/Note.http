@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:8080/api
 
-@loginTokenInvestigator =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgyNTAxMDIxLCJleHAiOjE3ODI1MDEzMjF9.iVL1FxXSgrk2PFWOGoQ4vPueX2TSTyF8dD2UEcTfocILeTtGVn3cgQegbk3cKcRFy06M204Eqxmi6rHf4gnY4A
-@accessTokenInvestigator =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MjUwMTA1MSwiZXhwIjoxNzgyNTA4MjUxfQ.H61mvuNFXqYpgipK5nATwYEElQ2RU61Ib1IqMciOsq7gGzF3mBjmww53bijqtO5gyHwNcL2bs8UVcJT4kBdEbA
+@loginTokenInvestigator =
+@accessTokenInvestigator =
 
 @processId = 1
 
@@ -42,18 +42,4 @@ Authorization: Bearer {{accessTokenInvestigator}}
 GET {{baseUrl}}/process/{{processId}}/note
 Authorization: Bearer {{accessTokenInvestigator}}
 
-
-### Get Notes By Process Id - Investigator
-GET {{baseUrl}}/process/{{processId}}/proves/{{proveId}}/note
-Authorization: Bearer {{accessTokenInvestigator}}
-
-
-### Update Note
-PATCH {{baseUrl}}/process/{{processId}}/note/{{noteId}}
-Content-Type: application/json
-Authorization: Bearer {{accessTokenInvestigator}}
-
-{
-  "content": "UPDATED!!!"
-}
 

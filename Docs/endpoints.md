@@ -115,7 +115,7 @@ Cada endpoint inclui:
 
 ### Submit Process
 
-**Endpoint:** `POST /processes/{id}`
+**Endpoint:** `POST /processes/{id}/submit`
 
 **Roles:**
 

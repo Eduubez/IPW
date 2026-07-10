@@ -1,53 +1,18 @@
 @baseUrl = http://localhost:8080/api
-@loginToken =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlcyI6WyJpbnZlc3RpZ2F0b3IiXSwidHlwZSI6ImxvZ2luIiwiaWF0IjoxNzgzMDA5OTAyLCJleHAiOjE3ODMwMTAyMDJ9.UiHfz5L-8-rAO3N4r-3uqkLEqesmNAyNxCUHiQ15lspGOolR6kio8kCsokadxi_0vHIVNlhE2xY8a24ZhtVtgA
 
+@loginTokenTriator =
+@loginTokenInvestigator =
+@loginTokenSupervisor =
 
-@accessTokenTriator  = eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwidXNlcklkIjoxLCJyb2xlIjoidHJpYXRvciIsInR5cGUiOiJhY2Nlc3MiLCJpYXQiOjE3ODI5OTk2NTgsImV4cCI6MTc4MzAwNjg1OH0.F3sucumUih1b2YQktNKt9BHMoUXVEZcyovNobEiPCiYFdBeSpEuc8G_ytYxk5nx_e_gNS6yBfLTc9031nlMnvg
+@accessTokenTriator  =
 @refreshTokenTriator =
 
-@accessTokenInvestigator  =  eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwidXNlcklkIjoyLCJyb2xlIjoiaW52ZXN0aWdhdG9yIiwidHlwZSI6ImFjY2VzcyIsImlhdCI6MTc4MzAwOTkyOSwiZXhwIjoxNzgzMDE3MTI5fQ.GQhshatBSvAOjiqOqYhXSMblNtj1Y52ok0wIPEIITt1rA1D3oPIGZS8pxmktiUJi96TFtk7C7vWo7SjcjdCr5A
+@accessTokenInvestigator  =
 
 @refreshTokenInvestigator =
 
 @accessTokenSupervisor  =
 @refreshTokenSupervisor =
-
-
-### Create User - Triador
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-  "name": "Chico Triator",
-  "email": "chicoT@gmail.com",
-  "password": "12345",
-  "areaId": null,
-  "roles": ["triator"]
-}
-
-### Create User - Supervisor
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-  "name": "Chico Supervisor",
-  "email": "chicoS@gmail.com",
-  "password": "12345",
-  "areaId": 4,
-  "roles": ["supervisor"]
-}
-
-### Create User - Investigator
-POST {{baseUrl}}/users
-Content-Type: application/json
-
-{
-  "name": "Chico Investigator",
-  "email": "chicoI@gmail.com",
-  "password": "12345",
-  "areaId": 2,
-  "roles": ["investigator"]
-}
 
 ### Login - Triator
 POST {{baseUrl}}/users/login
@@ -72,33 +37,33 @@ POST {{baseUrl}}/users/login
 Content-Type: application/json
 
 {
-  "email": "carol@ipw.pt",
+  "email": "sofia@ipw.pt",
   "password": "12345"
 }
 
 
-### Select Role - usar loginToken no Authorization header
+### Select Role - Triator
 POST {{baseUrl}}/users/auth/select-role
 Content-Type: application/json
-Authorization: Bearer {{loginToken}}
+Authorization: Bearer {{loginTokenTriator}}
 
 {
   "role": "triator"
 }
 
-### Select Role - usar loginToken no Authorization header
+### Select Role - Investigator
 POST {{baseUrl}}/users/auth/select-role
 Content-Type: application/json
-Authorization: Bearer {{loginToken}}
+Authorization: Bearer {{loginTokenInvestigator}}
 
 {
   "role": "investigator"
 }
 
-### Select Role - usar loginToken no Authorization header
+### Select Role - Supervisor
 POST {{baseUrl}}/users/auth/select-role
 Content-Type: application/json
-Authorization: Bearer {{loginToken}}
+Authorization: Bearer {{loginTokenSupervisor}}
 
 {
   "role": "supervisor"
@@ -127,23 +92,17 @@ Authorization: Bearer {{accessTokenTriator}}
   "note": "Nota inicial do processo"
 }
 
-
-
-
-
 ### Get by id processes - Investigator
 GET {{baseUrl}}/process/1
 Authorization: Bearer {{accessTokenInvestigator}}
 
-
-
 ### Get All Processes - investigator (sem filtros)
-GET {{baseUrl}}/process?offset=0&limit=2&state=assigned
+GET {{baseUrl}}/process
 Authorization: Bearer {{accessTokenInvestigator}}
 
 ### Get All Processes - supervisor (com paginação)
 GET {{baseUrl}}/process?offset=5&limit=5
-Authorization: Bearer {{accessTokenSupervisor}}
+Authorization: Bearer {{accessTokenInvestigator}}
 
 ### Get All Processes - investigator (filtrar por área)
 GET {{baseUrl}}/process?offset=0&limit=2&area_id=1
@@ -151,9 +110,5 @@ Authorization: Bearer {{accessTokenInvestigator}}
 
 ### Get Activities by Process - investigator (sem filtros)
 GET {{baseUrl}}/activity/process/12
-Authorization: Bearer {{accessTokenInvestigator}}
-
-### Get Activities by Process - investigator (com paginação)
-GET {{baseUrl}}/activity/process/1?offset=0&limit=5
 Authorization: Bearer {{accessTokenInvestigator}}
 
