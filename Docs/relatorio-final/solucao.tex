@@ -8,7 +8,7 @@ O capítulo encontra-se estruturado em quatro secções principais: a Secção 2
 
 \section{Arquitetura}
 
-Na Figura~\ref{fig:arquitetura} representa-se a arquitetura geral da aplicação desenvolvida no âmbito deste projeto. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
+Na Figura~\ref{fig:arquitetura} e na Figura~\ref{fig:fluxo_aplicacao} representam-se, respetivamente, a arquitetura geral da aplicação desenvolvida no âmbito deste projeto e o seu fluxo. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
 
 
 
@@ -19,6 +19,12 @@ Na Figura~\ref{fig:arquitetura} representa-se a arquitetura geral da aplicação
   \caption{Arquitetura do sistema.}\label{fig:arquitetura}
 \end{figure}
 
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[width=1.0\textwidth]{./figures/fluxo_aplicacao.png}
+  \end{center}
+  \caption{Fluxo da aplicação.}\label{fig:fluxo_aplicacao}
+\end{figure}
 
 
 De um modo geral, a arquitetura baseia-se na interação entre três grandes componente: o \textit{frontend}, o \textit{backend} e a base de dados. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
