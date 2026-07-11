@@ -4,19 +4,15 @@
 \chapter{Solu\c{c}\~{a}o Proposta} \label{cap:solucao}
 
 Neste capítulo apresenta-se detalhadamente a arquitetura, o modelo de dados e os detalhes de implementação da solução tecnológica desenvolvida.
-O capítulo encontra-se estruturado em quatro secções principais: a Secção 2.1 descreve a arquitetura geral do sistema baseada num modelo \textit{client-server} em camadas; a Secção 2.2 detalha o modelo de dados (Entidade-Associação) e as regras de negócio automatizadas na base de dados; a Secção 2.3 aborda a componente de \textit{backend}, focando-se no desenvolvimento com \textit{Spring Boot} e nos mecanismos de segurança e controlo de acessos (\textit{RBAC}) com \textit{Spring Security}; por fim, a Secção 2.4 expõe a estrutura do servidor \textit{frontend} em \textit{React}, os seus componentes de proteção de rotas e as bibliotecas externas integradas.
+O capítulo encontra-se estruturado em quatro secções principais: a Secção 2.1 descreve a arquitetura geral do sistema baseada num modelo \textit{client-server} em camadas; a Secção 2.2 detalha o modelo de dados (Entidade-Associação) e as regras de negócio implementadas na base de dados; a Secção 2.3 aborda a componente de \textit{backend}, focando-se no desenvolvimento com \textit{Spring Boot} e nos mecanismos de segurança e controlo de acessos (\textit{RBAC}) com \textit{Spring Security}; por fim, a Secção 2.4 expõe a estrutura do servidor \textit{frontend} em \textit{React}, os seus componentes de proteção de rotas e as bibliotecas externas integradas.
 
 \section{Arquitetura}
 
 Na Figura~\ref{fig:arquitetura} e na Figura~\ref{fig:fluxo_aplicacao} representam-se, respetivamente, a arquitetura geral da aplicação desenvolvida no âmbito deste projeto e o seu fluxo. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
 
- 
+De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componentes: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente dos diferentes componentes do sistema.
 
-
- 
-De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componentes: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
-
-A comunicação entre o componente de \textit{frontend} e o componente de \textit{backend} é realizada através de uma \textit{API} baseada em serviços \textit{REST}, proporcionando uma interação padronizada e independente da tecnologia utilizada no \textit{frontend}. O componente de \textit{backend} é responsável pelo acesso à base de dados, recorrendo à biblioteca \textit{JDBI} para a persistência e consulta de dados. Adicionalmente, a comunicação entre o componente de \textit{backend} e o componente de armazenamento \textit{MinIO} é efetuada através do protocolo \textit{HTTP}, utilizando a \textit{API} disponibilizada por este para o armazenamento e acesso a ficheiros. Por fim, foram implementados mecanismos de autenticação e controlo de acesso, assegurando a proteção dos recursos e a segurança global da aplicação.
+A comunicação entre o componente de \textit{frontend} e o componente de \textit{backend} é realizada através de uma \textit{API} baseada em serviços \textit{REST}, proporcionando uma interação padronizada e independente da tecnologia utilizada no \textit{frontend}. O componente de \textit{backend} é responsável pelo acesso à base de dados, recorrendo à biblioteca \textit{JDBI}\cite{jdbi} para a persistência e consulta de dados. Adicionalmente, a comunicação entre o componente de \textit{backend} e o componente de armazenamento \textit{MinIO} é efetuada através do protocolo \textit{HTTP}, utilizando a \textit{API} disponibilizada por este para o armazenamento e acesso a ficheiros. Por fim, foram implementados mecanismos de autenticação e controlo de acesso, assegurando a proteção dos recursos e a segurança global da aplicação.
 
 Esta abordagem arquitetural favorece a modularidade, escalabilidade e manutenibilidade do sistema, permitindo ainda uma melhor adaptação a futuras extensões ou alterações funcionais.
 
@@ -35,26 +31,26 @@ Esta abordagem arquitetural favorece a modularidade, escalabilidade e manutenibi
 \end{figure}
 
 
-\cleardoublepage
+\newpage
 \section{Modelo de dados}
 
 O modelo de dados constitui a base da aplicação, sendo responsável por garantir a persistência, integridade e consistência de toda a informação que circula no sistema. Para suportar o ecossistema de gestão de processos e o fluxo associado, foi desenhado um modelo relacional robusto, capaz de mapear não só os dados estruturais das entidades, mas também de espelhar as regras de negócio e restrições operacionais diretamente na camada de persistência.
 
 Com o objetivo de facilitar a análise e a compreensão da arquitetura de dados, a especificação do modelo foi segmentada em quatro grandes blocos funcionais, apresentados detalhadamente nas subsecções seguintes:
 \begin{itemize}
-  \item \textbf{Autenticação e Autorização:} focado na gestão de utilizadores, controlo de acessos baseado em papéis e ciclo de vida dos tokens;
+  \item \textbf{Autenticação e Autorização:} focado na gestão de utilizadores, controlo de acessos baseado em papéis e ciclo de vida dos \textit{tokens};
   \item \textbf{Gestão de Processos:} dedicado à entidade central do sistema (o processo), englobando o seu enquadramento e a máquina de estados que rege o seu ciclo de vida;
   \item \textbf{Documentação e Provas:} responsável pelo armazenamento e associação de relatórios, provas e notas de auditoria interna;
   \item \textbf{Relação do processo com o utilizador:} encarregue de modelar a afetação de peritos por áreas de especialidade e o registo imutável de atividades na plataforma.
 \end{itemize}
 
-Nas secções que se seguem, decompõe-se este ecossistema, culminando na apresentação do Modelo Entidade-Associação global e nos detalhes da sua implementação prática.
+Nas secções seguintes deste capítulo, decompõe-se o modelo de dados, culminando na apresentação do Modelo Entidade-Associação global e nos detalhes da sua implementação prática.
 
 
 
 \subsection{Autenticação}
 
-No que respeita ao conjunto de entidades responsável pela autenticação e autorização de utilizadores, existem cinco entidades principais: \textit{User}, \textit{AccessToken}, \textit{RefreshToken}, \textit{LoginToken} e \textit{Role}. O modelo conceptual e a estrutura destas componentes encontram-se ilustrados na Figura~\ref{fig:entidades_auth}.
+No que respeita ao conjunto de entidades responsável pela autenticação e autorização de utilizadores, existem cinco entidades principais: \textit{User}, \textit{AccessToken}, \textit{RefreshToken}, \textit{LoginToken} e \textit{Role}. O modelo conceptual e a estrutura destas entidades encontram-se ilustradas na Figura~\ref{fig:entidades_auth}.
 
 Relativamente à entidade \textit{User}, esta é composta por um identificador único (\textit{id}), um nome (\textit{name}), uma \textit{string} correspondente ao \textit{hash} da palavra-passe do utilizador (\textit{password validation}) e um indicador responsável por informar se o utilizador se encontra ativo (\textit{isActive}).
 
@@ -68,7 +64,7 @@ A entidade \textit{Role} é constituída apenas por um nome (\textit{name}), o q
 
 No que respeita às relações entre estas entidades, um utilizador pode estar associado a diferentes \textit{LoginToken}, \textit{AccessToken} e \textit{RefreshToken}, permitindo a autenticação e a manutenção da sessão do mesmo nas diferentes etapas da aplicação.
 
-Relativamente à relação entre as entidades de \textit{token} (\textit{AccessToken} e \textit{RefreshToken}) e a entidade \textit{Role}, esta existe devido à necessidade de o \textit{token} de acesso e de renovação transportarem informação acerca do papel desempenhado pelo utilizador durante uma determinada sessão.
+Relativamente à relação entre as entidades de \textit{token} (\textit{AccessToken} e \textit{RefreshToken}) e a entidade \textit{Role}, esta existe devido à necessidade de o \textit{token} de acesso e de renovação transportarem informação acerca do papel desempenhado pelo utilizador durante uma sessão.
 
 No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador pode possuir múltiplos papéis e, simultaneamente, o mesmo papel pode estar associado a diferentes utilizadores, caracterizando assim uma relação de $N$-para-$N$.
 \begin{figure}[!ht]
@@ -86,9 +82,9 @@ No que respeita ao conjunto de entidades associado à gestão de processos, dest
 
 Relativamente à entidade \textit{Process}, esta constitui a entidade central do domínio da aplicação. É composta por um identificador único (\textit{id}), um nome (\textit{name}), um nível de prioridade (\textit{priority}), uma data de inserção no sistema (\textit{creation date}), uma data prevista de conclusão (\textit{due date}).
 
-No que concerne à entidade \textit{Insurance}, esta representa a seguradora associada ao processo. É constituída por um identificador único (\textit{id}) e por um nome (\textit{name}).
+No que concerne à entidade \textit{Insurance}, esta representa a seguradora associada ao processo, sendo constituída por um identificador único (\textit{id}) e por um nome (\textit{name}).
 
-Recorre-se à entidade \textit{State} para representar o estado atual de um processo ao longo do seu ciclo de vida, sendo esta composta por um identificador único (\textit{id}) e um nome (\textit{name}). Por forma a garantir o cumprimento estrito das regras de negócio, os estados possíveis encontram-se rigidamente delimitados a um conjunto predefinido de valores, cuja sequência operacional e transições lógicas estão ilustradas na Figura~\ref{fig:workflow_process_states}.
+A entidade \textit{State} representa o estado de um processo ao longo do seu ciclo de vida, sendo esta composta por um identificador único (\textit{id}) e um nome (\textit{name}). Por forma a garantir o cumprimento estrito das regras de negócio, os estados possíveis encontram-se rigidamente delimitados a um conjunto predefinido de valores, cuja sequência operacional e transições lógicas estão representadas na Figura~\ref{fig:workflow_process_states}.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -126,11 +122,10 @@ Por último, no que concerne à relação entre \textit{Process} e \textit{Locat
   \caption{Entidade processo e características.}\label{fig:entidades_processo_caracteristicas}
 \end{figure}
 
-\newpage
 
 \subsubsection{Documentação e Provas do Processo}
 
-No que respeita ao conjunto de entidades associado à documentação, relatórios e suporte probatório dos sinistros, destacam-se as entidades \textit{Report}, \textit{Prove} e \textit{Note}. Estas componentes são fundamentais para assegurar a recolha de evidências, o registo de observações contínuas e a formalização das conclusões obtidas ao longo da averiguação de um processo. A estrutura e o mapeamento relacional deste módulo encontram-se ilustrados na Figura~\ref{fig:entidades_report_notes}.
+No que respeita ao conjunto de entidades associado à documentação, relatórios e suporte probatório dos sinistros, destacam-se as entidades \textit{Report}, \textit{Prove} e \textit{Note}. Estas entidades são fundamentais para assegurar a recolha de evidências, o registo de observações contínuas e a formalização das conclusões obtidas ao longo da averiguação de um processo. A estrutura e o mapeamento relacional deste módulo encontram-se ilustrados na Figura~\ref{fig:entidades_report_notes}.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -138,8 +133,8 @@ No que respeita ao conjunto de entidades associado à documentação, relatório
   \end{center}
   \caption{Entidades de documentação, provas e notas do processo.}\label{fig:entidades_report_notes}
 \end{figure}
-
-Relativamente à entidade \textit{Report}, esta representa o relatório final detalhado pelo averiguador. É composta por um identificador único (\textit{id}), o conteudo do relatório (\textit{content}) e uma data de criação (\textit{creation date}) e, para caso seja necessário atualizar após a resposta dos superiores, uma data de modificação (\textit{updated at}). O propósito desta entidade é consolidar formalmente todas as conclusões para posterior apreciação por parte dos supervisores e gestores.
+\newpage
+Relativamente à entidade \textit{Report}, esta representa o relatório final detalhado pelo averiguador. É composta por um identificador único (\textit{id}), o conteúdo do relatório (\textit{content}) e uma data de criação (\textit{creation date}) e, para caso seja necessário atualizar após a resposta dos superiores, uma data de modificação (\textit{updated at}). O propósito desta entidade é consolidar formalmente todas as conclusões para posterior apreciação por parte dos supervisores e gestores.
 
 No que concerne à entidade \textit{Prove}, esta destina-se ao registo de evidências associadas ao processo de averiguação, tais como fotografias, vídeos ou documentos recolhidos durante a análise do sinistro. É constituída por um identificador único (\textit{id}), o processo associado (\textit{process}), o nome original do ficheiro (\textit{file name}), o tipo de conteúdo (\textit{content type}), o tamanho do ficheiro (\textit{file size}), a chave de armazenamento (\textit{storage key}), o utilizador responsável pelo carregamento (\textit{created by}) e a respetiva data de criação (\textit{created at}).
 
@@ -156,7 +151,7 @@ Por último, no que concerne à relação com a entidade \textit{Note}, esta apr
 
 \subsubsection{Processos, Área e Utilizador}
 
-No que respeita ao conjunto de entidades responsável pela distribuição de tarefas, pela definição do âmbito de especialidade dos utilizadores e pelo registo de auditoria do sistema, destacam-se as entidades \textit{Process}, \textit{User}, \textit{Area} e \textit{Activity}. Estas componentes são essenciais para operacionalizar a alocação de peritos, segmentar as competências técnicas e manter um histórico imutável de todas as ações realizadas na plataforma. A estrutura destas interligações encontra-se representada na Figura~\ref{fig:entidades_process_user_area}.
+No que respeita ao conjunto de entidades responsável pela distribuição de tarefas, pela definição do âmbito de especialidade dos utilizadores e pelo registo de auditoria do sistema, destacam-se as entidades \textit{Process}, \textit{User}, \textit{Area} e \textit{Activity}. Estas entidades são essenciais para operacionalizar a alocação de peritos, segmentar as competências técnicas e manter um histórico imutável de todas as ações realizadas na plataforma. A estrutura destas interligações encontra-se representada na Figura~\ref{fig:entidades_process_user_area}.
 \begin{figure}[!ht]
   \begin{center}
     \includegraphics[width=0.85\textwidth]{./figures/Entidades-process-user-area.png}
@@ -171,7 +166,7 @@ No que concerne às relações entre estas entidades, a associação entre \text
 
 Relativamente à ligação entre as entidades \textit{User} e \textit{Area}, esta desdobra-se em dois relacionamentos distintos com propósitos e cardinalidades diferentes:
 \begin{itemize}
-  \item \textbf{Afetação à Área ($N$-para-$1$):} Determina a área de especialidade técnica e competência profissional à qual cada colaborador está afetado. Sob esta regra, cada utilizador pode estar estritamente associado a apenas uma única área de especialidade (por exemplo, pertencer exclusivamente ao ramo automóvel ou ao ramo de incêndios), enquanto uma mesma área de atuação pode contar com o suporte de múltiplos utilizadores aptos, caracterizando uma relação de muitos-para-um ($N$-para-$1$) da perspetiva do utilizador.
+  \item \textbf{Afetação à Área ($N$-para-$1$):} Determina a área de especialidade técnica e competência profissional à qual cada colaborador está afetado. Sob esta regra, cada utilizador pode estar estritamente associado a apenas uma única área de especialidade, por exemplo, pertencer exclusivamente ao ramo automóvel ou ao ramo de incêndios, enquanto uma mesma área de atuação pode contar com o suporte de múltiplos utilizadores aptos, caracterizando uma relação de muitos-para-um ($N$-para-$1$) da perspetiva do utilizador.
   \item \textbf{Responsável pela Área ($1$-para-$1$):} Define de forma unívoca o utilizador que assume a chefia ou a responsabilidade máxima por uma determinada área de atuação. Trata-se de uma relação de um-para-um ($1$-para-$1$), garantindo que cada área possui apenas um responsável encarregue da sua coordenação.
 \end{itemize}
 
@@ -186,7 +181,7 @@ Por último, no que concerne às relações associadas à entidade \textit{Activ
 
 A abordagem descrita permitiu deslocar determinadas regras críticas de consistência para a própria base de dados, reduzindo a dependência exclusiva da camada aplicacional para a validação de estados e garantindo um comportamento mais robusto e consistente do sistema.
 
-Como síntese de toda a estrutura relacional planeada, a Figura~\ref{fig:modelo_ea_sem_atributos} demonstra, de forma completa e integrada, o modelo Entidade-Associação global desenvolvido para suportar o ecossistema da aplicação.
+Como síntese de toda a estrutura relacional planeada, a Figura~\ref{fig:modelo_ea_sem_atributos} demonstra, de forma completa e integrada, o modelo Entidade-Associação global desenvolvido para suportar o ecossistema da aplicação aqui proposta.
 
 \begin{figure}[!ht]
   \begin{center}
@@ -201,11 +196,11 @@ Como síntese de toda a estrutura relacional planeada, a Figura~\ref{fig:modelo_
 
 \subsection{Implementação}
 
-A componente de persistência de dados da aplicação foi implementada recorrendo ao \textit{PostgreSQL}\cite{postgresql}.
+A componente de persistência de dados foi implementada recorrendo ao \textit{PostgreSQL}\cite{postgresql}.
 
 A organização da base de dados encontra-se dividida em diferentes ficheiros \texttt{.sql}, cada um com responsabilidades específicas no processo de configuração e inicialização do sistema. Esta separação permite uma melhor modularização da infraestrutura de dados, facilitando a manutenção, evolução e reutilização dos \textit{scripts}.
 
-Existe um ficheiro dedicado à criação da estrutura da base de dados, responsável pela definição das tabelas, relações, restrições de integridade e restantes objetos necessários ao modelo relacional. Para além deste, existem ficheiros específicos para o preenchimento inicial de tabelas contendo informação estática ou previamente conhecida, nomeadamente tabelas como \textit{State}, \textit{Role} e \textit{Area}. Este mecanismo permite garantir que determinados dados essenciais ao funcionamento do sistema se encontram disponíveis desde o momento da inicialização da aplicação.
+Existe um ficheiro dedicado à criação da estrutura da base de dados, responsável pela definição das tabelas, relações, restrições de integridade e restantes objetos necessários ao modelo relacional. Para além deste, existem ficheiros específicos para o preenchimento inicial de tabelas contendo informação estática ou previamente conhecida, nomeadamente tabelas como \textit{State}, \textit{Role} e \textit{Area}. Este mecanismo permite garantir que dados essenciais ao funcionamento do sistema se encontram disponíveis desde o momento da inicialização da aplicação.
 
 Adicionalmente, a base de dados integra um conjunto de \textit{triggers} responsáveis por automatizar determinadas regras de negócio diretamente ao nível da persistência de dados. A opção pela utilização de \textit{triggers} fundamenta-se na sua natureza reativa e orientada a eventos. Ao contrário das funções ou procedimentos armazenados tradicionais, que exigem uma invocação explícita através de código na camada aplicacional, os \textit{triggers} reagem de forma automática e imediata aquando da ocorrência de um evento específico na base de dados (como a inserção, modificação ou remoção de registos). Esta execução transparente garante que as regras críticas de integridade e consistência da informação são salvaguardadas de forma autónoma diretamente no motor do \textit{PostgreSQL}, independentemente de qual o serviço ou operação que originou o pedido.
 
@@ -223,7 +218,7 @@ Esta abordagem permite deslocar determinadas regras críticas de consistência p
 
 \section{Backend e seguran\c{c}a} \label{sec:backend-seguranca}
 
-A componente \textit{backend} da aplica\c{c}\~{a}o foi implementada na linguagem Kotlin, utilizando a framework \textit{Spring Boot}~\cite{spring-boot} para a constru\c{c}\~{a}o de uma \textit{API REST}. Esta \textit{API} suporta as opera\c{c}\~{o}es principais do sistema, incluindo a autentica\c{c}\~{a}o e autoriza\c{c}\~{a}o de utilizadores, a gest\~{a}o de utilizadores, a cria\c{c}\~{a}o e acompanhamento de processos, a gest\~{a}o de \'{a}reas, a consulta de hist\'{o}rico e as restantes funcionalidades disponibilizadas \`{a} interface \textit{web}.
+A componente \textit{backend} da aplica\c{c}\~{a}o foi implementada na linguagem Kotlin, utilizando a \textit{framework} \textit{Spring Boot}~\cite{spring-boot} para a constru\c{c}\~{a}o de uma \textit{API REST}. Esta \textit{API} suporta as opera\c{c}\~{o}es principais do sistema, incluindo a autentica\c{c}\~{a}o e autoriza\c{c}\~{a}o de utilizadores, a gest\~{a}o de utilizadores, a cria\c{c}\~{a}o e acompanhamento de processos, a gest\~{a}o de \'{a}reas, a consulta de hist\'{o}rico e as restantes funcionalidades disponibilizadas \`{a} interface \textit{web}.
 
 A seguran\c{c}a da \textit{API} \'{e} assegurada atrav\'{e}s do \textit{Spring Security}~\cite{spring-security}. Este componente permite integrar mecanismos de autentica\c{c}\~{a}o e autoriza\c{c}\~{a}o diretamente na camada \textit{HTTP}, garantindo que os \textit{endpoints} da aplica\c{c}\~{a}o apenas s\~{a}o executados por utilizadores autenticados e, quando aplic\'{a}vel, com o papel adequado. Para este efeito, a aplica\c{c}\~{a}o utiliza \textit{JSON Web Tokens (JWT)}~\cite{rfc-jwt}, que transportam a identifica\c{c}\~{a}o do utilizador e o papel ativo na sess\~{a}o.
 
@@ -233,7 +228,7 @@ O controlo de acessos segue uma abordagem baseada em pap\'{e}is, tamb\'{e}m conh
 
 Ao n\'{i}vel da camada \textit{HTTP}, as permiss\~{o}es s\~{a}o expressas atrav\'{e}s de anota\c{c}\~{o}es como \texttt{@RolesAllowed}, associadas aos m\'{e}todos dos controladores. Desta forma, cada \textit{endpoint} declara explicitamente os pap\'{e}is autorizados a execut\'{a}-lo. Esta abordagem torna a pol\'{i}tica de autoriza\c{c}\~{a}o mais vis\'{i}vel no c\'{o}digo e reduz o risco de expor opera\c{c}\~{o}es sens\'{i}veis a utilizadores sem permiss\~{a}o.
 
-A valida\c{c}\~{a}o dos access tokens \'{e} realizada por um filtro \textit{HTTP} dedicado, integrado na cadeia de filtros do \textit{Spring Security}. Este filtro extrai o \textit{token} do cabe\c{c}alho \texttt{Authorization}, valida a sua assinatura, confirma o seu tipo e validade temporal, e cria uma representa\c{c}\~{a}o do utilizador autenticado no contexto de seguran\c{c}a do Spring. Essa informa\c{c}\~{a}o fica dispon\'{i}vel atrav\'{e}s do \texttt{SecurityContextHolder}, permitindo que os controladores acedam ao identificador do utilizador e ao papel ativo no pedido.
+A valida\c{c}\~{a}o dos \textit{access tokens} \'{e} realizada por um filtro \textit{HTTP} dedicado, integrado na cadeia de filtros do \textit{Spring Security}. Este filtro extrai o \textit{token} do cabe\c{c}alho \texttt{Authorization}, valida a sua assinatura, confirma o seu tipo e validade temporal, e cria uma representa\c{c}\~{a}o do utilizador autenticado no contexto de seguran\c{c}a do Spring. Essa informa\c{c}\~{a}o fica dispon\'{i}vel atrav\'{e}s do \texttt{SecurityContextHolder}, permitindo que os controladores acedam ao identificador do utilizador e ao papel ativo no pedido.
 
 Nem todos os \textit{endpoints} passam pelo mesmo fluxo de autentica\c{c}\~{a}o. \textit{Endpoints} como \textit{login}, sele\c{c}\~{a}o de papel e renova\c{c}\~{a}o de \textit{token} t\^{e}m um tratamento espec\'{i}fico, uma vez que ainda n\~{a}o utilizam, ou n\~{a}o utilizam exclusivamente, um \textit{access token}. Por esse motivo, o filtro \textit{JWT} \'{e} configurado para ignorar estes \textit{endpoints}, permitindo que sejam tratados pelos respetivos mecanismos de autentica\c{c}\~{a}o ou renova\c{c}\~{a}o.
 
@@ -254,9 +249,9 @@ Para a consulta de anexos, o \textit{backend} devolve ao \textit{frontend} os me
 
 As permissões associadas aos anexos seguem o estado atual do processo. Enquanto o processo se encontra numa fase ativa, apenas o papel responsável por essa fase pode adicionar, consultar ou remover anexos. Em estados finais, como processos aprovados ou cancelados, deixa de ser permitida a criação ou remoção de anexos, mantendo-se apenas a possibilidade de consulta por utilizadores autorizados. A criação e remoção de anexos também gera registos de atividade, assegurando rastreabilidade sobre quem realizou cada operação.
 
-\section{Servidor Frontend} \label{sec:frontend-server}
+\section{Servidor \textit{Frontend}} \label{sec:frontend-server}
 
-A componente de \textit{frontend} da aplicação foi desenvolvida com recurso ao servidor \textit{Vite}, utilizando \textit{React} e \textit{TypeScript} como principais tecnologias.
+A componente de \textit{frontend} da aplicação foi desenvolvida com recurso ao servidor \textit{Vite}\cite{vite-dev}, utilizando \textit{React}\cite{react-docs} e \textit{TypeScript}\cite{typescript-lang} como principais tecnologias.
 
 A arquitetura do \textit{frontend} encontra-se organizada em diferentes camadas funcionais, nomeadamente páginas, autenticação, comunicação, componentes e estilos (figura \ref{fig:estrutura_pastas_front}). A camada de páginas é responsável pela organização das diferentes vistas da aplicação, incluindo páginas como autenticação, \textit{dashboard}, gestão de processos e detalhe de processos. A camada de autenticação centraliza a lógica relacionada com o processo de autenticação, armazenamento de tokens de acesso e controlo de sessões dos utilizadores.
 
