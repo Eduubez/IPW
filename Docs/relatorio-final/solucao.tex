@@ -10,7 +10,15 @@ O capítulo encontra-se estruturado em quatro secções principais: a Secção 2
 
 Na Figura~\ref{fig:arquitetura} e na Figura~\ref{fig:fluxo_aplicacao} representam-se, respetivamente, a arquitetura geral da aplicação desenvolvida no âmbito deste projeto e o seu fluxo. A solução foi concebida segundo um modelo de arquitetura \textit{client-server}, estruturado em diferentes camadas lógicas, de forma a garantir uma clara separação de responsabilidades e uma melhor organização do sistema.
 
+ 
 
+
+ 
+De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componente: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
+
+A comunicação entre o componente de \textit{frontend} e o componente de \textit{backend} é realizada através de uma \textit{API} baseada em serviços \textit{REST}, proporcionando uma interação padronizada e independente da tecnologia utilizada no \textit{frontend}. O componente de \textit{backend} é responsável pelo acesso à base de dados, recorrendo à biblioteca \textit{JDBI} para a persistência e consulta de dados. Adicionalmente, a comunicação entre o componente de \textit{backend} e o componente de armazenamento \textit{MinIO} é efetuada através do protocolo \textit{HTTP}, utilizando a \textit{API} disponibilizada por este para o armazenamento e acesso a ficheiros. Por fim, foram implementados mecanismos de autenticação e controlo de acesso, assegurando a proteção dos recursos e a segurança global da aplicação.
+
+Esta abordagem arquitetural favorece a modularidade, escalabilidade e manutenibilidade do sistema, permitindo ainda uma melhor adaptação a futuras extensões ou alterações funcionais.
 
 \begin{figure}[h]
   \begin{center}
@@ -25,13 +33,6 @@ Na Figura~\ref{fig:arquitetura} e na Figura~\ref{fig:fluxo_aplicacao} representa
   \end{center}
   \caption{Fluxo da aplicação.}\label{fig:fluxo_aplicacao}
 \end{figure}
-
-
-De um modo geral, a arquitetura baseia-se na interação entre três grandes componente: o \textit{frontend}, o \textit{backend} e a base de dados. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
-
-A comunicação entre os vários componentes é realizada através de uma \textit{API} baseada em serviços \textit{REST}, assegurando um modelo de interação padronizado e independente da tecnologia utilizada no \textit{frontend}. Adicionalmente, foram adotados mecanismos de segurança para controlo de acesso e autenticação de utilizadores, garantindo a proteção dos recursos da aplicação.
-
-Esta abordagem arquitetural favorece a modularidade, escalabilidade e manutenibilidade do sistema, permitindo ainda uma melhor adaptação a futuras extensões ou alterações funcionais.
 
 
 \cleardoublepage
@@ -100,7 +101,7 @@ Recorre-se à entidade \textit{State} para representar o estado atual de um proc
 
 \newpage
 
-O fluxo inicia-se obrigatoriamente com a criação do processo no estado \textit{Not Assigned}. Assim que a equipa responsável é definida (averiguador e supervisor), o processo evolui para \textit{Assigned}. O ciclo operacional propriamente dito começa quando o averiguador inicia a recolha de provas e criação do relatório, alterando o estado para \textit{On Going}. Após a conclusão da recolha de dados e preenchimento dos relatórios, o averiguador submete o processo, o qual transita automaticamente para \textit{Waiting Approval Supervisor}.
+O fluxo inicia-se no estado \textit{Assigned}, com a criação do processo e atribuição da equipa responsável (averiguador e supervisor). O ciclo operacional propriamente dito começa quando o averiguador inicia a recolha de provas e criação do relatório, alterando o estado para \textit{On Going}. Após a conclusão da recolha de dados e preenchimento dos relatórios, o averiguador submete o processo, o qual transita automaticamente para \textit{Waiting Approval Supervisor}.
 A partir deste ponto crítico de validação, o \textit{workflow} ramifica-se de acordo com as decisões das hierarquias de supervisão e gestão:
 \begin{itemize}
   \item \textbf{Fluxo de Supervisão:} O supervisor avalia o trabalho submetido. Caso identifique desconformidades, o processo passa para \textit{Rejected by Supervisor}, sendo forçado a retroceder diretamente para o estado \textit{On Going} de modo a permitir que o averiguador efetue as devidas correções. Se o parecer for positivo, o estado passa a \textit{Approved by Supervisor}, encaminhando o processo de imediato para a fila de verificação seguinte sob o estado \textit{Waiting Approval Manager}.
