@@ -20,7 +20,7 @@
 
 \title{Descrição da Organização}
 \author{Grupo 20}
-\date{Junho de 2026}
+\date{Julho de 2026}
 
 \begin{document}
 
@@ -50,7 +50,7 @@ O código-fonte e a documentação do projeto encontram-se disponíveis no repos
 
 O repositório contém a implementação da aplicação, os scripts de base de dados, a configuração dos \textit{containers} Docker e a documentação produzida ao longo do desenvolvimento.
 
-Para a versão beta, o desenvolvimento principal da aplicação encontra-se na \texttt{tag} v1.0.
+Para a versão final, o desenvolvimento da plataforma encontra-se na \texttt{tag} poc-v1.0.
 
 \section{Organização do repositório}
 
@@ -70,7 +70,7 @@ Na raiz do repositório encontram-se também ficheiros de configuração relevan
 
 \section{Pré-requisitos}
 
-Para executar a versão beta da aplicação é necessário ter instalado:
+Para executar a versão final é necessário ter instalado:
 
 \begin{itemize}
   \item \textit{Git}, para obter o código-fonte a partir do repositório;
@@ -78,7 +78,7 @@ Para executar a versão beta da aplicação é necessário ter instalado:
   \item um navegador web, para aceder à interface da aplicação.
 \end{itemize}
 
-Não é necessária a instalação manual de PostgreSQL, Node.js ou Gradle para a execução normal da versão beta, uma vez que estes componentes são utilizados através dos \textit{containers} definidos no ficheiro \texttt{docker-compose.yml}.
+Não é necessária a instalação manual de PostgreSQL, Node.js ou Gradle para a execução normal da versão final, uma vez que estes componentes são utilizados através dos \textit{containers} definidos no ficheiro \texttt{docker-compose.yml}.
 
 \section{Execução da aplicação}
 
@@ -94,7 +94,7 @@ git clone https://github.com/Eduubez/IPW.git
   \item Fazer checkout para a seguinte tag:
 
         \begin{lstlisting}[style=command]
-git checkout v1.0
+git checkout poc-v1.0
         \end{lstlisting}
 
   \item Aceder à diretoria raiz do projeto:
@@ -136,22 +136,25 @@ docker compose down -v
 
 Durante a inicialização da base de dados são executados scripts SQL que criam o esquema da aplicação e inserem dados iniciais para demonstração. Estes dados incluem áreas, utilizadores, papéis e processos de exemplo.
 
-Todos os utilizadores de teste têm a password \texttt{12345}. Alguns utilizadores disponíveis na versão beta são:
+Todos os utilizadores de teste têm a password \texttt{12345}. Os utilizadores disponíveis na versão final são:
 
 \begin{itemize}
-  \item \texttt{alice@ipw.pt} -- utilizador com papel de triador;
-  \item \texttt{bob@ipw.pt} -- utilizador com papel de averiguador;
-  \item \texttt{carol@ipw.pt} -- utilizador com papel de supervisor;
-  \item \texttt{david@ipw.pt} -- utilizador com papel de gestor;
-  \item \texttt{eve@ipw.pt} -- utilizador com papel de administrador.
+  \item \texttt{tiago@ipw.pt} -- utilizador com papel de triador;
+  \item \texttt{ana@ipw.pt} -- utilizador com papel de averiguador;
+  \item \texttt{sofia@ipw.pt} -- utilizador com papel de supervisor;
+  \item \texttt{gabriel@ipw.pt} -- utilizador com papel de gestor;
+  \item \texttt{andreia@ipw.pt} -- utilizador com papel de administrador.
 \end{itemize}
 
 Estes utilizadores permitem testar os principais fluxos da aplicação, incluindo autenticação, seleção de papel, consulta de processos e criação ou acompanhamento de processos, de acordo com as permissões associadas a cada papel.
 
-\section{Notas sobre a versão beta}
+\section{Portal MinIO}
 
-A versão beta disponibilizada tem como objetivo demonstrar os principais fluxos da aplicação, incluindo autenticação, seleção de papel, consulta de processos, criação de processos e acompanhamento do seu estado.
+Para aceder à consola web do MinIO, que é utilizada para armazenar anexos dos processos, pode ser utilizado as seguintes credenciais:
+\begin{itemize}
+  \item \texttt{Utilizador}: \texttt{ipw};
+  \item \texttt{Password}: \texttt{ipw-password}.
+\end{itemize}
 
-Algumas funcionalidades encontram-se ainda em desenvolvimento ou poderão sofrer alterações até à versão final.
 
 \end{document}

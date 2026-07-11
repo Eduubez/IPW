@@ -14,7 +14,7 @@ Na Figura~\ref{fig:arquitetura} e na Figura~\ref{fig:fluxo_aplicacao} representa
 
 
  
-De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componente: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
+De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componentes: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
 
 A comunicação entre o componente de \textit{frontend} e o componente de \textit{backend} é realizada através de uma \textit{API} baseada em serviços \textit{REST}, proporcionando uma interação padronizada e independente da tecnologia utilizada no \textit{frontend}. O componente de \textit{backend} é responsável pelo acesso à base de dados, recorrendo à biblioteca \textit{JDBI} para a persistência e consulta de dados. Adicionalmente, a comunicação entre o componente de \textit{backend} e o componente de armazenamento \textit{MinIO} é efetuada através do protocolo \textit{HTTP}, utilizando a \textit{API} disponibilizada por este para o armazenamento e acesso a ficheiros. Por fim, foram implementados mecanismos de autenticação e controlo de acesso, assegurando a proteção dos recursos e a segurança global da aplicação.
 
@@ -70,17 +70,15 @@ No que respeita às relações entre estas entidades, um utilizador pode estar a
 
 Relativamente à relação entre as entidades de \textit{token} (\textit{AccessToken} e \textit{RefreshToken}) e a entidade \textit{Role}, esta existe devido à necessidade de o \textit{token} de acesso e de renovação transportarem informação acerca do papel desempenhado pelo utilizador durante uma determinada sessão.
 
-No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador pode possuir múltiplos papéis e, simultaneamente, o mesmo papel pode estar associado a diferentes utilizadores, caracterizando assim uma relação de $N$-para-$N$.\begin{figure}[h]
-
-
-
-
-  \begin{center}
-    \includegraphics[width=1.0\textwidth]{./figures/Entidades-auth.png}
-  \end{center}
-  \caption{Entidades de autenticação.}\label{fig:entidades_auth}
+No que concerne à relação entre \textit{User} e \textit{Role}, um utilizador pode possuir múltiplos papéis e, simultaneamente, o mesmo papel pode estar associado a diferentes utilizadores, caracterizando assim uma relação de $N$-para-$N$.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.95\textwidth]{./figures/Entidades-auth.png}
+    \caption{Entidades de autenticação.}
+    \label{fig:entidades_auth}
 \end{figure}
 
+\newpage
 \subsection{Gestão de processos}
 
 
@@ -159,12 +157,12 @@ Por último, no que concerne à relação com a entidade \textit{Note}, esta apr
 \subsubsection{Processos, Área e Utilizador}
 
 No que respeita ao conjunto de entidades responsável pela distribuição de tarefas, pela definição do âmbito de especialidade dos utilizadores e pelo registo de auditoria do sistema, destacam-se as entidades \textit{Process}, \textit{User}, \textit{Area} e \textit{Activity}. Estas componentes são essenciais para operacionalizar a alocação de peritos, segmentar as competências técnicas e manter um histórico imutável de todas as ações realizadas na plataforma. A estrutura destas interligações encontra-se representada na Figura~\ref{fig:entidades_process_user_area}.
-\begin{figure}[htbp]
+\begin{figure}[!ht]
   \begin{center}
     \includegraphics[width=0.85\textwidth]{./figures/Entidades-process-user-area.png}
   \end{center}
   \caption{Mapeamento relacional incluindo processos, utilizadores, áreas de especialidade e atividades.}\label{fig:entidades_process_user_area}\end{figure}
-
+\newpage
 Relativamente à entidade \textit{Area}, esta destina-se a classificar o ramo ou a tipologia de sinistro sob a qual o processo se enquadra. É composta por um identificador único (\textit{id}), um nome descritivo da área de atuação (\textit{name}) e um código de classificação interna (\textit{area code}). O seu propósito é segmentar os processos de acordo com a natureza do incidente para garantir que são tratados por profissionais qualificados na matéria.
 
 No que concerne à entidade \textit{Activity}, esta funciona como um registo detalhado de auditoria das operações efetuadas no sistema. É composta por um identificador único (\textit{id}), a ação específica realizada sobre um determinado sinistro (\textit{action}), a data e hora do registo (\textit{creation date}) e uma descrição textual detalhada do evento (\textit{description}).
@@ -190,14 +188,14 @@ A abordagem descrita permitiu deslocar determinadas regras críticas de consist�
 
 Como síntese de toda a estrutura relacional planeada, a Figura~\ref{fig:modelo_ea_sem_atributos} demonstra, de forma completa e integrada, o modelo Entidade-Associação global desenvolvido para suportar o ecossistema da aplicação.
 
-\begin{figure}[h]
+\begin{figure}[!ht]
   \begin{center}
     \includegraphics[width=1.0\textwidth]{./figures/modelo-ea-sem-atributos.png}
   \end{center}
   \caption{Modelo entidade-associação completo (sem atributos).}\label{fig:modelo_ea_sem_atributos}
 \end{figure}
 
-
+\newpage
 
 
 
