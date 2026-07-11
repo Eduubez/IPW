@@ -14,7 +14,7 @@ Na Figura~\ref{fig:arquitetura} e na Figura~\ref{fig:fluxo_aplicacao} representa
 
 
  
-De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componente: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
+De um modo geral, a arquitetura baseia-se na interação entre quatro grandes componentes: o \textit{frontend}, o \textit{backend}, a base de dados e o \textit{MinIO}. Esta organização permite isolar as preocupações de cada componente, facilitando a evolução independente das diferentes partes do sistema.
 
 A comunicação entre o componente de \textit{frontend} e o componente de \textit{backend} é realizada através de uma \textit{API} baseada em serviços \textit{REST}, proporcionando uma interação padronizada e independente da tecnologia utilizada no \textit{frontend}. O componente de \textit{backend} é responsável pelo acesso à base de dados, recorrendo à biblioteca \textit{JDBI} para a persistência e consulta de dados. Adicionalmente, a comunicação entre o componente de \textit{backend} e o componente de armazenamento \textit{MinIO} é efetuada através do protocolo \textit{HTTP}, utilizando a \textit{API} disponibilizada por este para o armazenamento e acesso a ficheiros. Por fim, foram implementados mecanismos de autenticação e controlo de acesso, assegurando a proteção dos recursos e a segurança global da aplicação.
 
